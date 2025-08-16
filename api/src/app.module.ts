@@ -1,0 +1,167 @@
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { CoreModule } from './core/core.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { join, resolve } from 'path';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import configuration from './config/configuration';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AccountEntity } from './account/entities/account.entity';
+import { RoleEntity } from './account/entities/role.entity';
+import { MenuEntity } from './account/entities/menu.entity';
+import { ModuleEntity } from './account/entities/module.entity';
+import { PermEntity } from './account/entities/perm.entity';
+import { DepEntity } from './account/entities/dep.entity';
+import { MenuRoleEntity } from './account/entities/menu-role.entity';
+import { HelloResolver } from './common/graphql/hello.resolver';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { ModulePermEntity } from './account/entities/module-perm.entity';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JWT_CONSTANTS } from './config/constants';
+import { FooModule } from './foo/foo.module';
+import { ModuleResolver } from './graphql/resolvers/module.resolver';
+import { UpdateModuleResolver } from './graphql/resolvers/update-module.resolver';
+import { CreateModuleResolver } from './graphql/resolvers/create-module.resolver';
+import { DeleteModuleResolver } from './graphql/resolvers/delete-module.resolver';
+import { ModuleService } from './account/module.service';
+import { AccountResolver } from './graphql/resolvers/account.resolver';
+import { CreateAccountResolver } from './graphql/resolvers/create-account.resolver';
+import { CreateDepResolver } from './graphql/resolvers/create-dep.resolver';
+import { CreateMenuResolver } from './graphql/resolvers/create-menu.resolver';
+import { CreatePermResolver } from './graphql/resolvers/create-perm.resolver';
+import { CreateRoleResolver } from './graphql/resolvers/create-role.resolver';
+import { DeleteAccountResolver } from './graphql/resolvers/delete-account.resolver';
+import { DeleteDepResolver } from './graphql/resolvers/delete-dep.resolver';
+import { DeleteMenuResolver } from './graphql/resolvers/delete-menu.resolver';
+import { DeletePermResolver } from './graphql/resolvers/delete-perm.resolver';
+import { DeleteRoleResolver } from './graphql/resolvers/delete-role.resolver';
+import { DepResolver } from './graphql/resolvers/dep.resolver';
+import { MenuResolver } from './graphql/resolvers/menu.resolver';
+import { RoleResolver } from './graphql/resolvers/role.resolver';
+import { RoutesResolver } from './graphql/resolvers/routes.resolver';
+import { SetRolePermsResolver } from './graphql/resolvers/set-role-perms.resolver';
+import { UpdateAccountResolver } from './graphql/resolvers/update-account.resolver';
+import { UpdateDepResolver } from './graphql/resolvers/update-dep.resolver';
+import { UpdateMenuResolver } from './graphql/resolvers/update-menu.resolver';
+import { UpdatePermResolver } from './graphql/resolvers/update-perm.resolver';
+import { UpdateRoleResolver } from './graphql/resolvers/update-role.resolver';
+import { AccountModule } from './account/account.module';
+import { DepService } from './account/dep.service';
+import { MenuService } from './account/menu.service';
+import { MenuRoleService } from './account/menu-role.service';
+import { ModulePermService } from './account/module-perm.service';
+import { PermService } from './account/perm.service';
+import { RoleMenuService } from './account/role-menu.service';
+import { AccountRoleService } from './account/account-role.service';
+import { FooService } from './foo/foo.service';
+import { JwtStrategy } from './auth/strategies/jwt.strategy';
+import { LocalStrategy } from './auth/strategies/local.strategy';
+import { AuthModule } from './auth/auth.module';
+import { AuthMiddleware } from './common/middleware/auth.middleware';
+import { LoginResolver } from './graphql/resolvers/login.resolver';
+
+@Module({
+  imports: [
+    AuthModule,
+    CoreModule,
+    JwtModule.register({
+      secret: JWT_CONSTANTS.secret,
+      signOptions: { expiresIn: JWT_CONSTANTS.expiresIn }
+    }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      sortSchema: true,
+      playground: process.env.NODE_ENV !== 'production',
+      introspection: process.env.NODE_ENV !== 'production',
+      graphiql: true,
+    }),
+    ConfigModule.forRoot({
+      envFilePath: resolve(process.cwd(), `.env.${process.env.NODE_ENV || 'dev'}`),
+      isGlobal: true,
+      load: [configuration]
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('POSTGRES_HOST'),
+        port: configService.get('POSTGRES_PORT'), //
+        username: configService.get('POSTGRES_USERNAME'),
+        password: configService.get('POSTGRES_PASSWORD'),
+        database: configService.get('POSTGRES_DATABASE'),
+        synchronize: process.env.NODE_ENV !== 'production', // development only
+        autoLoadEntities: true,
+        namingStrategy: new SnakeNamingStrategy(),
+        // logging: process.env.NODE_ENV !== 'production',
+        // logger: 'advanced-console',
+      }),
+      inject: [ConfigService]
+    }),
+    TypeOrmModule.forFeature([
+      DepEntity,
+      RoleEntity,
+      MenuEntity,
+      ModuleEntity,
+      PermEntity,
+      ModulePermEntity,
+      MenuRoleEntity,
+      AccountEntity
+    ]),
+    FooModule,
+    AccountModule
+  ],
+  controllers: [AppController],
+  providers: [
+    HelloResolver,
+    LocalStrategy,
+    JwtStrategy,
+    JwtService,
+    FooService,
+    AppService, 
+    ConfigService, 
+    DepService,
+    MenuService,
+    AccountRoleService,
+    MenuRoleService,
+    RoleMenuService,
+    ModuleService,
+    ModulePermService,
+    PermService,
+    ModuleResolver,
+    UpdateModuleResolver,
+    CreateModuleResolver,
+    DeleteModuleResolver,
+    AccountResolver,
+    CreateAccountResolver,
+    CreateDepResolver,
+    CreateMenuResolver,
+    CreatePermResolver,
+    CreateRoleResolver,
+    DeleteAccountResolver,
+    DeleteDepResolver,
+    DeleteMenuResolver,
+    DeletePermResolver,
+    DeleteRoleResolver,
+    DepResolver,
+    MenuResolver,
+    RoleResolver,
+    RoutesResolver,
+    SetRolePermsResolver,
+    UpdateAccountResolver,
+    UpdateDepResolver,
+    UpdateMenuResolver,
+    UpdatePermResolver,
+    UpdateRoleResolver,
+    LoginResolver,
+  ],
+})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    // consumer
+    //   .apply(AuthMiddleware)
+    //   .forRoutes('graphql');
+  }
+}

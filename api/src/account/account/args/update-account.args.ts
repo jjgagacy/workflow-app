@@ -1,0 +1,1 @@
+type UpdateAccountArgs = SetAccountArgs & UpdatedArgs;

@@ -1,0 +1,233 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Account {
+  created_at: String!
+  created_by: String!
+  email: String!
+  id: Int!
+  last_ip: String
+  mobile: String!
+  realName: String!
+  roleKeys: [String!]
+  roles: [String!]
+  status: Int!
+  username: String!
+}
+
+input AccountInput {
+  email: String
+  id: Float
+  mobile: String
+  password: String
+  realName: String
+  roles: [Int!]
+  status: Int
+  username: String
+}
+
+type AccountList {
+  data: [Account!]!
+  pageInfo: PageInfo
+}
+
+type AccountResponse {
+  id: Int!
+}
+
+type Dep {
+  id: Int!
+  key: String!
+  manager: Account
+  name: String!
+  parent: String!
+  remarks: String!
+}
+
+input DepInput {
+  key: String
+  managerId: Float
+  name: String
+  parent: String
+  remarks: String
+}
+
+type DepResponse {
+  id: Int
+}
+
+input LoginInput {
+  password: String!
+  username: String!
+}
+
+type LoginResponse {
+  access_token: String
+  isSuper: Boolean
+  name: String
+  roles: [String!]
+}
+
+type Menu {
+  id: Int!
+  key: String!
+  module: Module
+  modulePerm: [ModulePerm!]
+  name: String!
+  parent: String!
+  scope: [Scope!]
+  sort: Int!
+  status: Int!
+}
+
+input MenuInput {
+  id: Int
+  key: String
+  moduleId: Float
+  name: String
+  parent: String
+  sort: Int
+  status: Int
+}
+
+type MenuResponse {
+  id: Int!
+}
+
+type Module {
+  id: Int!
+  key: String!
+  name: String!
+  perms: [Perm!]
+}
+
+input ModuleInput {
+  id: Float
+  key: String!
+  name: String!
+}
+
+type ModuleList {
+  data: [Module!]!
+  pageInfo: PageInfo
+}
+
+type ModulePerm {
+  key: String!
+  name: String!
+}
+
+type ModuleResponse {
+  id: Int!
+}
+
+type Mutation {
+  createAccount(input: AccountInput!): AccountResponse!
+  createDep(input: DepInput!): DepResponse!
+  createMenu(input: MenuInput!): MenuResponse!
+  createModule(input: ModuleInput!): ModuleResponse!
+  createPerm(input: PermInput!): Boolean!
+  createRole(input: RoleInput!): RoleResponse!
+  deleteAccount(id: Int!): Boolean!
+  deleteDep(id: Int!): Boolean!
+  deleteMenu(id: Int!): Boolean!
+  deleteModule(id: Int!): Boolean!
+  deletePerm(input: PermInput!): Boolean!
+  deleteRole(id: Int!): Boolean!
+  login(input: LoginInput!): LoginResponse!
+  setRolePerms(key: String!, menus: [RoleSetPermMenu!]!): Boolean!
+  updateAccount(input: AccountInput!): AccountResponse!
+  updateAccountPassword(newPassword: String!, password: String!): Boolean!
+  updateDep(input: DepInput!): DepResponse!
+  updateMenu(input: MenuInput!): MenuResponse!
+  updateModule(input: ModuleInput!): ModuleResponse!
+  updatePerm(input: PermInput!): Boolean!
+  updateRole(input: RoleInput!): RoleResponse!
+}
+
+type PageInfo {
+  page: Int!
+  pageSize: Int!
+  total: Int!
+}
+
+type Perm {
+  key: String!
+  name: String!
+  restrictLevel: Int
+}
+
+input PermInput {
+  key: String!
+  module: String!
+  name: String
+  restrictLevel: Int
+}
+
+type Query {
+  accountInfo: Account!
+  accounts(email: String, id: Int, limit: Int, mobile: String, page: Int, realName: String, roleId: Int, username: String): AccountList!
+  deps(key: String, name: String, parent: String): [Dep!]!
+  hello: String!
+  menus(key: String, module: Boolean, modulePerm: Boolean, name: String, parent: String, scope: Boolean, status: Int): [Menu!]!
+  modules(key: String, limit: Int, name: String, page: Int): ModuleList!
+  roles(hasMenus: Boolean, hasRolePerms: Boolean, id: Int, key: String, limit: Int, name: String, page: Int, parent: String, status: Int): RoleList!
+  routes: [Route!]!
+}
+
+type Role {
+  created_at: String!
+  created_by: String!
+  id: Int!
+  key: String!
+  name: String!
+  parent: String!
+  rolePerms: [RolePerms!]
+  status: Int!
+}
+
+input RoleInput {
+  id: Float
+  key: String
+  name: String
+  parent: String
+  status: Float
+}
+
+type RoleList {
+  data: [Role!]!
+  pageInfo: PageInfo
+}
+
+type RolePerms {
+  key: String!
+  perms: [String!]!
+  scope: [String!]!
+}
+
+type RoleResponse {
+  id: Int!
+}
+
+input RoleSetPermMenu {
+  key: String!
+  perms: [String!]
+  scope: [String!]
+}
+
+type Route {
+  icon: String
+  key: String!
+  label: String!
+  lazy: Boolean
+  parent: String
+  path: String
+  roles: [String!]
+  sort: Float!
+}
+
+type Scope {
+  key: String!
+  name: String!
+}

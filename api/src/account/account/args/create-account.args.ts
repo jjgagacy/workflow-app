@@ -1,0 +1,1 @@
+type CreateAccountArgs = SetAccountArgs & CreatedArgs;

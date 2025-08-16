@@ -1,0 +1,1 @@
+type CreateRoleArgs = SetRoleArgs & CreatedArgs;
