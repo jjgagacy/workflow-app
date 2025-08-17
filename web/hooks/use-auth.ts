@@ -28,6 +28,7 @@ export function useAuth() {
         name: string;
         roles: string[];
         is_super: boolean;
+        avatar?: string;
     }>(() =>
         getSessionData('session:userinfo', { name: '', roles: [], is_super: false })
     );

@@ -1,0 +1,39 @@
+.tagview__container {
+  background: #f0f2f5;
+  padding: 8px 16px;
+}
+
+.tagview__tags {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.tagview__tag {
+  padding: 4px 12px;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #e8e8e8;
+  height: 38px;
+}
+
+.tagview__tag-link {
+  white-space:nowrap;
+}
+
+.tagview__tag.active {
+  background: #8d95cd;
+  color: white;
+}
+
+.tagview__close-icon {
+  padding: 0 4px;
+}
+
+.tagview__close-icon:hover {
+  color: #ff4d4f;
+}

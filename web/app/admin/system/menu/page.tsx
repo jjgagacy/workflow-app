@@ -1,7 +1,9 @@
+'use client';
+
 export default function Page() {
     return (
         <div>
-            <h1>Page Blog</h1>
+            <h1>Menu</h1>
         </div>
     );
 }
