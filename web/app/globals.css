@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities";
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
@@ -11,6 +12,17 @@ html[data-theme="light"] {
     /* 默认明亮模式变量 */
     --background: #ffffff;
     --foreground: #0a0a0a;
+  }
+}
+
+@layer base {
+  html {
+    font-size: var(--text-sm);
+  }
+  @media (max-width: 1023px) { 
+    html {
+      font-size: var(--text-md);
+    }
   }
 }
 

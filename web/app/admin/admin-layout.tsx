@@ -12,8 +12,8 @@ import { Icon12Hours, Icon3dCubeSphereOff, IconAbc, IconAdjustmentsPin, IconAler
 import { convertMenuToRoutes } from "@/utils/menu";
 import Keepalive from "../components/header/keepalive";
 import { usePathname, useRouter } from "next/navigation";
-import { useTagsView } from "@/hooks/use-tagview";
 import { ViewProvider } from "../components/hooks/use-view";
+import { useTagsViewStore } from "@/hooks/use-tagview-store";
 
 interface AdminLayoutProps {
     children: ReactNode;
@@ -22,11 +22,9 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children, routes, ...rest }: AdminLayoutProps) {
     const [isCollapsed, setIsCollapsed] = usePersistentState("sidebarExpanded", false);
-    const { tags: aliveList, addTag, include } = useTagsView();
+    const { tags: aliveList, addTag, include } = useTagsViewStore();
     const router = useRouter();
     const pathname = usePathname();
-
-    // console.log(include, aliveList, '---------------');
 
     const menuItems: MenuItem[] = [
         {
@@ -93,19 +91,6 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
         return findMatchingRoute(mergeRoutes, pathname);
     }, [pathname, mergeRoutes]);
 
-    // 渲染当前路由对应的组件
-    // const renderCurrentRoute = useMemo(() => {
-    //     if (!mergeRoutes) return null;
-
-    //     if (!matchRoute.component) return null;
-    //     const MatchedComponent = matchRoute.component;
-    //     return (
-    //         <ViewProvider value={{ name: matchRoute.key }}>
-    //             <MatchedComponent key={matchRoute.key} />
-    //         </ViewProvider>
-    //     );
-    // }, [mergeRoutes]);
-
     // 路由变化时更新标签
     useEffect(() => {
         if (matchRoute) {
@@ -120,7 +105,7 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
     }, [matchRoute, pathname, router]);
 
     return (
-        <div className="flex min-h-screen bg-gradient-to-br from-gray-100 to-gray-50">
+        <div className="flex min-h-screen bg-gradient-to-br from-gray-100 to-gray-50 dark:bg-black dark:from-black dark:to-black">
             <Sidebar onToggleCollapse={handleChildEvent} collapsed={isCollapsed}>
                 <Navigation collapsed={isCollapsed} routes={mergeRoutes} />
             </Sidebar>
@@ -128,6 +113,7 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
                 <Navbar />
                 <TagView routes={mergeRoutes} aliveList={aliveList} />
                 <div className="flex-1 overflow-y-auto p-4">
+                    {/* <Breadcrumb /> */}
                     <Keepalive
                         active={matchRoute === null ? null : matchRoute.key}
                         include={include}
@@ -137,7 +123,6 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
                             {children}
                         </ViewProvider>
                     </Keepalive>
-                    {/* <Breadcrumb /> */}
                 </div>
             </div>
         </div>

@@ -30,6 +30,7 @@ export const useGraphQLMutation = <TData, TVariables extends object = object>(
         try {
             return await client.request<TData>(mutation, variables);
         } catch (error: any) {
+            console.error('GraphQL Mutation Error:', error);
             // 捕获 GraphQL 错误并转换为 JSON 格式
             const errorData = error.response?.errors?.[0] || {
                 message: error?.message,

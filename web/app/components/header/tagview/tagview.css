@@ -1,5 +1,5 @@
 .tagview__container {
-  background: #f0f2f5;
+  background: var(--background);
   padding: 8px 16px;
 }
 
@@ -10,15 +10,12 @@
 }
 
 .tagview__tag {
-  padding: 4px 12px;
-  background: white;
-  border-radius: 4px;
+  @apply px-2 py-1 rounded-lg bg-white text-black;
+  @apply dark:bg-black dark:text-white;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid #e8e8e8;
-  height: 38px;
 }
 
 .tagview__tag-link {
@@ -26,14 +23,20 @@
 }
 
 .tagview__tag.active {
-  background: #8d95cd;
-  color: white;
+  @apply bg-blue-600 text-white;
+  @apply dark:bg-blue-800 dark:hover:bg-blue-800 dark:text-white;
 }
 
 .tagview__close-icon {
   padding: 0 4px;
 }
 
-.tagview__close-icon:hover {
-  color: #ff4d4f;
+.tagview__tag .tagview__close-icon:hover {
+  @apply text-gray-400 ;
+  @apply dark:text-gray-400;
+}
+
+.tagview__tag.active .tagview__close-icon:hover {
+  @apply text-blue-200;
+  @apply dark:text-blue-400;
 }

@@ -22,7 +22,7 @@ export function Navbar() {
             <div className="flex h-[3rem]">
                 {/* Left navigation (optional) */}
                 <div className="flex flex-1 items-center">
-                    <Link href="/" className="text-xl font-bold text-gray-900">
+                    <Link href="/" className="text-xl font-bold">
                         系统名称
                     </Link>
                 </div>
@@ -70,12 +70,12 @@ export function Navbar() {
                             leaveFrom="transform opacity-100 scale-100"
                             leaveTo="transform opacity-0 scale-95"
                         >
-                            <MenuItems className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-1 focus:outline-none z-50">
+                            <MenuItems className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-1 focus:outline-none z-100">
                                 <MenuItem>
                                     {() => (
                                         <button
                                             onClick={() => router.push('/profile')}
-                                            className={`flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left`}
+                                            className={`flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-gray-100`}
                                         >
                                             <IconUser className="mr-2 h-4 w-4" />
                                             个人中心
@@ -86,7 +86,7 @@ export function Navbar() {
                                     {() => (
                                         <button
                                             onClick={() => router.push('/settings')}
-                                            className={`flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left`}
+                                            className={`flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-gray-100`}
                                         >
                                             <IconUserCog className="mr-2 h-4 w-4" />
                                             系统设置
@@ -97,7 +97,7 @@ export function Navbar() {
                                     {() => (
                                         <button
                                             onClick={handleLogout}
-                                            className={`flex items-center px-4 py-2 text-sm text-red-600 w-full text-left`}
+                                            className={`flex items-center px-4 py-2 text-sm text-red-600 w-full text-left hover:bg-gray-100`}
                                         >
                                             <IconLogout className="mr-2 h-4 w-4" />
                                             退出登录
