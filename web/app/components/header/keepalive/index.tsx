@@ -16,7 +16,6 @@ interface KeepAliveProps {
 interface CachedComponent {
     name: string;
     node: any;
-    idx: number;
     active: boolean;
 }
 
@@ -29,7 +28,6 @@ function KeepAliveComponent({ active, children, name, renderDiv }: {
     const [targetElement] = useState(() => document.createElement('div'));
     const activateRef = useRef(false);
     activateRef.current = activateRef.current || active;
-// console.log(active, name, targetElement, '**');
     useEffect(() => {
         if (active) {
             if (renderDiv.current) {
@@ -38,7 +36,6 @@ function KeepAliveComponent({ active, children, name, renderDiv }: {
         } else {
             try {
                 if (renderDiv.current && targetElement.parentNode === renderDiv.current) {
-                    console.log('remove child', name);
                     renderDiv.current.removeChild(targetElement);
                 }
             } catch (e) {
@@ -64,17 +61,7 @@ function KeepAlive({ active, children, exclude, include, isAsyncInclude = false 
     const components = useRef<CachedComponent[]>([]);
     const [asyncInclude] = useState(isAsyncInclude);
     const update = useUpdate();
-// console.log(active, '-------------');
     useLayoutEffect(() => {
-        const activeComponent = components.current.find(com => com.active);
-        if (activeComponent) {
-            if (activeComponent.name != active) {
-                // console.log(React.isValidElement(activeComponent.node), '*');
-                console.log('clone node', activeComponent.name, '*********');
-                activeComponent.node = React.cloneElement(activeComponent.node as ReactElement, { key: activeComponent.name });
-            }
-        }
-        // console.log(active, activeComponent, '^^^^^^^^^^^^^^');
         if (active === undefined || active === null) {
             return;
         }
@@ -83,19 +70,14 @@ function KeepAlive({ active, children, exclude, include, isAsyncInclude = false 
             components.current = components.current.slice(1);
         }
         const component = components.current.find((com) => com.name === active);
-        console.log(active, component === undefined ? 'not find' : 'founed', '*****************');
         if (component === undefined) {
             if (isValidElement(children)) {
                 const componentData = cloneElement(children);
-                const component: any = componentData.type;
-                const MemoComponent = memo(component);
-                console.log(active, children, '++++++++')
                 components.current = [
                     ...components.current,
                     {
                         name: active,
                         node: componentData,
-                        idx: 1,
                         active: true,
                     }
                 ];
@@ -107,9 +89,7 @@ function KeepAlive({ active, children, exclude, include, isAsyncInclude = false 
                 update();
             }
         } else {
-            console.log(active, component.idx, 'aaaaaaaaaa')
             component.active = true;
-            component.idx++;
         }
         return () => {
             if (
@@ -119,31 +99,28 @@ function KeepAlive({ active, children, exclude, include, isAsyncInclude = false 
                 return;
             }
  
-            // components.current = components.current.filter(({ name }) => {
-            //     if (exclude && exclude.includes(name)) {
-            //         return false;
-            //     }
-            //     if (include) {
-            //         return include.includes(name);
-            //     }
-            //     return true;
-            // });
-            // console.log(components.current, 'cccccccccccccc');
+            components.current = components.current.filter(({ name }) => {
+                if (exclude && exclude.includes(name)) {
+                    return false;
+                }
+                if (include) {
+                    return include.includes(name);
+                }
+                return true;
+            });
         };
 
     }, [children, active, exclude, include, update, asyncInclude, maxLen]);
 
-    // console.log(components.current, '!!')
     return (
         <div ref={container} className="keep-alive">
-            {components.current.map(({ name, node, idx }) => (
+            {components.current.map(({ name, node }) => (
                 <KeepAliveComponent
                     key={name}
                     active={name === active}
                     name={name}
                     renderDiv={container}
                 >
-                    <i>{idx}</i>
                     {node}
                 </KeepAliveComponent>
             ))}

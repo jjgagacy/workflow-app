@@ -1,7 +1,7 @@
 'use client';
 
 import { Route } from "@/types/route";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { Sidebar } from "../components/sidebar";
 import { Navigation } from "../components/sidebar/navigation";
 import { Navbar } from "../components/header/navbar";
@@ -22,11 +22,13 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children, routes, ...rest }: AdminLayoutProps) {
     const [isCollapsed, setIsCollapsed] = usePersistentState("sidebarExpanded", false);
-    const [mergeRoutes, setMergeRoutes] = useState<Route[]>([]);
     const { tags: aliveList, addTag, include } = useTagsView();
     const router = useRouter();
     const pathname = usePathname();
-    const [menus, setMenus] = useState<MenuItem[]>([
+
+    // console.log(include, aliveList, '---------------');
+
+    const menuItems: MenuItem[] = [
         {
             key: 'dashboard',
             title: "仪表盘",
@@ -58,16 +60,14 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
                 path: child.path,
             }))
         })) || [])
-    ]);
+    ];
+
+    const [menus, setMenus] = useState<MenuItem[]>(menuItems);
+    const [mergeRoutes, setMergeRoutes] = useState<Route[]>(convertMenuToRoutes(menuItems));
 
     const handleChildEvent = (data: boolean) => {
         setIsCollapsed(data);
     }
-
-    useEffect(() => {
-        // console.log('menu effect');
-        setMergeRoutes(convertMenuToRoutes(menus));
-    }, [menus]);
 
     // 获取当前匹配的路由
     const matchRoute = useMemo(() => {
@@ -108,7 +108,6 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
 
     // 路由变化时更新标签
     useEffect(() => {
-        // console.log('admin layout', matchRoute, '((');
         if (matchRoute) {
             addTag({
                 key: matchRoute.key,
