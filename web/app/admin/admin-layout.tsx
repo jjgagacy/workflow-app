@@ -110,9 +110,11 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
             // router.push('/404');
         }
     }, [matchRoute, pathname, router]);
-
+    
+    // theme-xx replace xx to your theme
+    
     return (
-        <div className="flex min-h-screen bg-gradient-to-br from-gray-100 to-gray-50 dark:bg-black dark:from-black dark:to-black">
+        <div className="flex theme-xx min-h-screen bg-gradient-to-br from-gray-100 to-gray-50 dark:bg-black dark:from-black dark:to-black">
             <Sidebar onToggleCollapse={handleChildEvent} collapsed={isCollapsed}>
                 <Navigation collapsed={isCollapsed} routes={mergeRoutes} />
             </Sidebar>

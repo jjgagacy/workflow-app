@@ -1,5 +1,4 @@
 .tagview__container {
-  background: var(--background);
   padding: 8px 16px;
 }
 
@@ -10,8 +9,7 @@
 }
 
 .tagview__tag {
-  @apply px-2 py-1 rounded-lg bg-white text-black;
-  @apply dark:bg-black dark:text-white;
+  @apply px-2 py-1 rounded-lg bg-secondary text-secondary-foreground;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -23,8 +21,7 @@
 }
 
 .tagview__tag.active {
-  @apply bg-blue-600 text-white;
-  @apply dark:bg-blue-800 dark:hover:bg-blue-800 dark:text-white;
+  @apply bg-primary text-primary-foreground;
 }
 
 .tagview__close-icon {
@@ -32,11 +29,10 @@
 }
 
 .tagview__tag .tagview__close-icon:hover {
-  @apply text-gray-400 ;
+  @apply text-gray-400;
   @apply dark:text-gray-400;
 }
 
 .tagview__tag.active .tagview__close-icon:hover {
-  @apply text-blue-200;
-  @apply dark:text-blue-400;
+  @apply text-primary-foreground/90
 }

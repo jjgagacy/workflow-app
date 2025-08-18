@@ -40,19 +40,19 @@
     }
 
     .btn-primary {
-        @apply shadow bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500
+        @apply shadow bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-blue-500
     }
 
     .btn-secondary {
-        @apply shadow bg-green-600 text-white hover:bg-green-700 focus:ring-green-500
+        @apply shadow bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:ring-blue-500
     }
 
     .btn-warning {
-        @apply shadow bg-yellow-600 text-white hover:bg-yellow-700 focus:ring-yellow-500
+        @apply shadow bg-warning text-warning-foreground hover:bg-warning/90 focus:ring-yellow-500
     }
 
     .btn-tertiary {
-        @apply shadow bg-red-600 text-white hover:bg-red-700 focus:ring-red-500
+        @apply shadow bg-muted text-muted-foreground hover:bg-muted/90 focus:ring-blue-500
     }
 
     .btn-ghost {
