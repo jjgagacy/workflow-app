@@ -37,6 +37,7 @@ export function Navigation({ collapsed, routes }: NavigationProps) {
             key: 'system',
             title: "系统设置",
             icon: <Icon12Hours className="w-5 h-5" />,
+            path: '/admin/system',
             children: [
                 { key: 'account', title: "账户", icon: <IconAbc className="w-4 h-4" />, path: "/admin/system/account" },
                 { key: 'dep', title: "部门", icon: <IconLocationCode className="w-4 h-4" />, path: "/admin/system/dep" },

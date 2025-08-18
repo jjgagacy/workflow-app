@@ -22,11 +22,17 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children, routes, ...rest }: AdminLayoutProps) {
     const [isCollapsed, setIsCollapsed] = usePersistentState("sidebarExpanded", false);
-    const { tags: aliveList, addTag, include } = useTagsViewStore();
+    const { addTag, include } = useTagsViewStore();
     const router = useRouter();
     const pathname = usePathname();
 
     const menuItems: MenuItem[] = [
+        {
+            key: 'admin',
+            title: "首页",
+            icon: <IconEyeCog className="w-5 h-5" />,
+            path: "/admin"
+        },
         {
             key: 'dashboard',
             title: "仪表盘",
@@ -37,6 +43,7 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
             key: 'system',
             title: "系统设置",
             icon: <Icon12Hours className="w-5 h-5" />,
+            path: '/admin/system',
             children: [
                 { key: 'account', title: "账户", icon: <IconAbc className="w-4 h-4" />, path: "/admin/system/account" },
                 { key: 'dep', title: "部门", icon: <IconLocationCode className="w-4 h-4" />, path: "/admin/system/dep" },
@@ -110,10 +117,9 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
                 <Navigation collapsed={isCollapsed} routes={mergeRoutes} />
             </Sidebar>
             <div className={`flex-1 flex flex-col overflow-x-auto transition-all ${isCollapsed ? 'ml-32' : 'ml-64'}`}>
-                <Navbar />
-                <TagView routes={mergeRoutes} aliveList={aliveList} />
+                <Navbar routes={mergeRoutes} />
+                <TagView routes={mergeRoutes} />
                 <div className="flex-1 overflow-y-auto p-4">
-                    {/* <Breadcrumb /> */}
                     <Keepalive
                         active={matchRoute === null ? null : matchRoute.key}
                         include={include}

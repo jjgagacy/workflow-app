@@ -2,7 +2,6 @@
 
 import { useTagsViewStore } from "@/hooks/use-tagview-store";
 import { Route } from "@/types/route";
-import { TagItem } from "@/types/tagview";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -16,10 +15,9 @@ interface Tag {
 interface TagViewProps {
     dispatch?: React.Dispatch<any>,
     routes: Route[];
-    aliveList: TagItem[];
 }
 
-export function TagView({ routes, dispatch }: TagViewProps) {
+export function TagView({ routes }: TagViewProps) {
     const router = useRouter();
     const pathname = usePathname();
     // 使用自定义 Hook

@@ -1,13 +1,18 @@
 'use client';
 
 import { useAuth } from "@/hooks/use-auth";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Fragment, useState } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
 import { IconBell, IconChevronDown, IconLogout, IconUser, IconUserCog } from "@tabler/icons-react";
+import { Breadcrumbs } from "./breadcrumbs";
+import { Route } from "@/types/route";
 
-export function Navbar() {
+interface NavbarProps {
+    routes: Route[];
+}
+
+export function Navbar({ routes }: NavbarProps) {
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
     const { user, logout } = useAuth();
@@ -22,9 +27,7 @@ export function Navbar() {
             <div className="flex h-[3rem]">
                 {/* Left navigation (optional) */}
                 <div className="flex flex-1 items-center">
-                    <Link href="/" className="text-xl font-bold">
-                        系统名称
-                    </Link>
+                    <Breadcrumbs routes={routes} />
                 </div>
 
                 {/* Right user info */}
@@ -32,7 +35,7 @@ export function Navbar() {
                     {/* Notification bell */}
                     <button
                         type="button"
-                        className="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none"
+                        className="p-1 mr-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none"
                     >
                         <span className="sr-only">View notifications</span>
                         <IconBell className="h-6 w-6" aria-hidden="true" />
@@ -70,12 +73,12 @@ export function Navbar() {
                             leaveFrom="transform opacity-100 scale-100"
                             leaveTo="transform opacity-0 scale-95"
                         >
-                            <MenuItems className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-1 focus:outline-none z-100">
+                            <MenuItems className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 py-1 focus:outline-none z-100">
                                 <MenuItem>
                                     {() => (
                                         <button
                                             onClick={() => router.push('/profile')}
-                                            className={`flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-gray-100`}
+                                            className={`flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white`}
                                         >
                                             <IconUser className="mr-2 h-4 w-4" />
                                             个人中心
@@ -86,7 +89,7 @@ export function Navbar() {
                                     {() => (
                                         <button
                                             onClick={() => router.push('/settings')}
-                                            className={`flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-gray-100`}
+                                            className={`flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white`}
                                         >
                                             <IconUserCog className="mr-2 h-4 w-4" />
                                             系统设置
@@ -97,7 +100,7 @@ export function Navbar() {
                                     {() => (
                                         <button
                                             onClick={handleLogout}
-                                            className={`flex items-center px-4 py-2 text-sm text-red-600 w-full text-left hover:bg-gray-100`}
+                                            className={`flex items-center px-4 py-2 text-sm text-red-600 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white`}
                                         >
                                             <IconLogout className="mr-2 h-4 w-4" />
                                             退出登录
