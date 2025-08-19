@@ -18,7 +18,7 @@ export function Sidebar({ collapsed, onToggleCollapse, children}: SidebarProps) 
                         }`}
                 >
                     {/* Header with logo and collapse button */}
-                    <div className={`flex items-center ${collapsed ? 'justify-center' : 'justify-between'} p-4 border-b shrink-0 h-[3rem]`}>
+                    <div className={`flex items-center ${collapsed ? 'justify-center' : 'justify-between'} p-4  border-b border-[var(--border)] shrink-0 h-[3rem]`}>
                         {!collapsed && <Icon360View className="w-6 h-6 text-blue-700" />}
                         <button
                             onClick={() => onToggleCollapse(!collapsed)}

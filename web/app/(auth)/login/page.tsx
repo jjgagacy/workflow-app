@@ -125,6 +125,7 @@ export default function Page() {
                     loading={isLoading}
                     disabled={isLoading}
                     className="w-full shadow"
+                    variant={'primary'}
                     size={'large'}
                 >登录</Button>
             </form>

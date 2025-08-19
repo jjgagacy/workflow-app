@@ -17,7 +17,6 @@ const routeMapping: Record<string, BreadcrumbItem[]> = {
 };
 
 function findRouteTitle(routes: Route[], path: string): string {
-    console.log(routes);
     for (const route of routes) {
         // console.log('match', route.path, path);
         if (isMatchingPath(route.path, path)) {
@@ -46,7 +45,6 @@ export function useBreadcrumbs(routes: Route[]): BreadcrumbItem[] {
         const segments = pathname.split('/').filter(Boolean);
         return segments.map((segment, index) => {
             const path = `/${segments.slice(0, index + 1).join('/')}`;
-            console.log(path);
             return {
                 link: path,
                 title: findRouteTitle(routes, path)

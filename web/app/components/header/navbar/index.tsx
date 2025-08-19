@@ -4,9 +4,12 @@ import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { Fragment, useState } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
-import { IconBell, IconChevronDown, IconLogout, IconUser, IconUserCog } from "@tabler/icons-react";
+import { IconBell, IconChevronDown, IconLogout, IconMoodSpark, IconPercentage50, IconUser, IconUserCog } from "@tabler/icons-react";
 import { Breadcrumbs } from "./breadcrumbs";
 import { Route } from "@/types/route";
+import { usePersistentState } from "@/hooks/use-persistent-state";
+import { useTheme } from "next-themes";
+import { ThemeSelector } from "../theme-selector";
 
 interface NavbarProps {
     routes: Route[];
@@ -14,6 +17,8 @@ interface NavbarProps {
 
 export function Navbar({ routes }: NavbarProps) {
     const [isOpen, setIsOpen] = useState(false);
+    const [darkMode, setDarkMode] = usePersistentState<boolean>('darkMode', false);
+    const { theme, setTheme } = useTheme();
     const router = useRouter();
     const { user, logout } = useAuth();
 
@@ -40,6 +45,21 @@ export function Navbar({ routes }: NavbarProps) {
                         <span className="sr-only">View notifications</span>
                         <IconBell className="h-6 w-6" aria-hidden="true" />
                     </button>
+
+                    <button
+                        type="button"
+                        className="p-1 mr-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none"
+                        onClick={() => {
+                            const newTheme = theme === 'dark' ? 'light' : 'dark';
+                            setTheme(newTheme);
+                            setDarkMode(newTheme === 'dark' ? true : false);
+                        }}
+                    >
+                        <span className="sr-only">View notifications</span>
+                        <IconPercentage50 className="h-6 w-6" aria-hidden="true" />
+                    </button>
+
+                    <ThemeSelector />
 
                     {/* User dropdown */}
                     <Menu as="div" className="relative">
@@ -110,6 +130,7 @@ export function Navbar({ routes }: NavbarProps) {
                             </MenuItems>
                         </Transition>
                     </Menu>
+
                 </div>
             </div>
         </div>

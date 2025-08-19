@@ -4,6 +4,8 @@ import "./globals.css";
 import I18nServer from "./components/i18n-server";
 import { getServerLocale } from "@/i18n/server";
 import { ThemeProvider } from "next-themes";
+import { cookies } from "next/headers";
+import Providers from "./components/layout/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,6 +28,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const locale = await getServerLocale();
+  const cookieStore = await cookies();
+  const activeThemeValue = cookieStore.get('active_theme')?.value;
+
   return (
     <html lang={locale ?? 'en'} suppressHydrationWarning>
       <body
@@ -38,7 +43,9 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <I18nServer>
-            {children}
+            <Providers activeThemeValue={activeThemeValue || 'Default'}>
+              {children}
+            </Providers>
           </I18nServer>
         </ThemeProvider>
       </body>
