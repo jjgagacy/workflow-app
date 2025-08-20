@@ -68,7 +68,7 @@ export function TagView({ routes }: TagViewProps) {
     }, [aliveList, addTag, router]);
 
     return (
-        <div className="tagview__container w-full overflow-x-auto sticky top-0 z-50 transition-all">
+        <div className="tagview__container w-full overflow-x-auto sticky top-0 z-40 transition-all">
             <div className="tagview__tags">
                 {tags.map((tag) => (
                     <div

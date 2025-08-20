@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react';
 import { ActiveThemeProvider } from '../active-theme';
+import { Toasters } from './toasters';
 
 export default function Providers({
     children, activeThemeValue
@@ -9,6 +10,7 @@ export default function Providers({
     return (
         <>
             <ActiveThemeProvider initialTheme={activeThemeValue}>
+                <Toasters />
                 {children}
             </ActiveThemeProvider>
         </>

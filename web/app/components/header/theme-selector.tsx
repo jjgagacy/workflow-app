@@ -47,7 +47,7 @@ export function ThemeSelector() {
                             <MenuItem key={theme.name}>
                                 {() => (
                                     <div className="flex items-center justify-between px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white">
-                                        <button className="text-primary w-full text-left flex-1" onClick={() => setActiveTheme(theme.value) }>
+                                        <button className="w-full text-left flex-1" onClick={() => setActiveTheme(theme.value) }>
                                             {theme.name}
                                         </button>
                                         {theme.value === activeTheme && (
@@ -63,7 +63,7 @@ export function ThemeSelector() {
                             <MenuItem key={theme.name}>
                                 {() => (
                                     <div className="flex items-center justify-between px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white">
-                                        <button className="text-primary w-full text-left flex-1" onClick={() => setActiveTheme(theme.value) }>
+                                        <button className="w-full text-left flex-1" onClick={() => setActiveTheme(theme.value) }>
                                             {theme.name}
                                         </button>
                                         {theme.value === activeTheme && (
