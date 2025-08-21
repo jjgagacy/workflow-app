@@ -4,6 +4,7 @@ import Button from "@/app/components/base/button";
 import { useDialog } from "@/app/components/hooks/use-dialog";
 import { Dialog } from "@/app/ui/dialog";
 import { Input } from "@/app/ui/input";
+import { Select } from "@/app/ui/select";
 import { Textarea } from "@/app/ui/textarea";
 import { toast } from "@/app/ui/toast";
 import { useState } from "react";
@@ -40,6 +41,14 @@ export default function Page() {
         }
     }
 
+    const selectItems = [
+        { value: 1, name: '选项一' },
+        { value: 2, name: '选项二' },
+        { value: 3, name: '选项三' },
+        { value: 4, name: '选项四' },
+        { value: 5, name: '选项五' }
+    ];
+
     return (
         <div>
             <h1 className="mt-4">Dashboard</h1>
@@ -73,6 +82,7 @@ export default function Page() {
             <div className="flex flex-col gap-2">
                 <Input type="text" placeholder="please input..." />
                 <Textarea placeholder="a simple description" />
+                <Select items={selectItems} allowSearch={false}></Select>
             </div>
 
             <Dialog

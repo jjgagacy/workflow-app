@@ -17,6 +17,8 @@ html[data-theme="dark"] {
   --color-destructive-foreground: oklch(0.205 0 0);
   --color-warning: oklch(0.828 0.189 84.429);
   --color-warning-foreground: oklch(0.205 0 0);
+  --color-selection-hover: var(--color-gray-700);
+  --color-selection-active: var(--color-gray-700);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);

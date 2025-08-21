@@ -119,8 +119,8 @@ export function Navigation({ collapsed, routes }: NavigationProps) {
                                 onMouseLeave={handleMouseLeave as any}
                             >
                                 <div
-                                    className={`navigation-menu__trigger flex items-center px-2 py-1 w-full rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 ${collapsed ? "justify-center" : ""
-                                        } ${isActive(item.path) ? "bg-blue-50" : ""}`}
+                                    className={`navigation-menu__trigger flex items-center px-2 py-1 w-full rounded-lg hover:bg-selection-hover ${collapsed ? "justify-center" : ""
+                                        } ${isActive(item.path) ? "bg-selection-active" : ""}`}
                                     title={item.title}
                                 >
                                     {item.icon}
@@ -131,8 +131,8 @@ export function Navigation({ collapsed, routes }: NavigationProps) {
                         <div>
                             <Link
                                 href={item.path || '#'}
-                                className={`flex items-center px-2 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 ${collapsed ? "justify-center" : ""
-                                    } ${isActive(item.path) ? "bg-blue-50 dark:bg-gray-800" : ""}`}
+                                className={`flex items-center px-2 py-1 rounded-lg hover:bg-selection-hover ${collapsed ? "justify-center" : ""
+                                    } ${isActive(item.path) ? "bg-selection-active" : ""}`}
                                 title={item.title}
                             >
                                 <span>{item.icon}</span>
@@ -144,8 +144,8 @@ export function Navigation({ collapsed, routes }: NavigationProps) {
                     ) : (
                         <div>
                             <div
-                                className={`flex items-center px-2 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer ${collapsed ? "justify-center" : "justify-between"
-                                    } ${item.children.some(c => isActive(c.path)) ? "bg-blue-50 dark:bg-gray-800" : ""}`}
+                                className={`flex items-center px-2 py-1 rounded-lg hover:bg-selection-hover cursor-pointer ${collapsed ? "justify-center" : "justify-between"
+                                    } ${item.children.some(c => isActive(c.path)) ? "bg-selection-active" : ""}`}
                                 onClick={() => toggleSubmenu(item.title)}
                             >
                                 <div className="flex items-center">
@@ -168,8 +168,8 @@ export function Navigation({ collapsed, routes }: NavigationProps) {
                                         <Link
                                             key={child.key}
                                             href={child.path || '#'}
-                                            className={`flex items-center px-2 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 ${collapsed ? "justify-center" : ""
-                                                } ${isActive(child.path) ? "bg-blue-50 dark:bg-gray-800" : ""}`}
+                                            className={`flex items-center px-2 py-1 rounded-lg hover:bg-selection-hover ${collapsed ? "justify-center" : ""
+                                                } ${isActive(child.path) ? "bg-selection-active" : ""}`}
                                         >
                                             <span>{child.icon}</span>
                                             <span className="ml-3">{child.title}</span>
@@ -200,7 +200,7 @@ export function Navigation({ collapsed, routes }: NavigationProps) {
                                 key={child.key}
                                 href={child.path || '#'}
                                 className={`flex items-center pt-2 pb-2 rounded-lg hover:bg-gray-100 pl-4 ${collapsed ? "justify-start" : ""
-                                    } ${isActive(child.path) ? "bg-blue-50" : ""}`}
+                                    } ${isActive(child.path) ? "bg-gray-100" : ""}`}
                             >
                                 <span>{child.icon}</span>
                                 <span className="ml-3">{child.title}</span>

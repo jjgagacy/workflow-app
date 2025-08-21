@@ -20,6 +20,8 @@
   --color-destructive-foreground: oklch(0.205 0 0);
   --color-warning: oklch(0.828 0.189 84.429);
   --color-warning-foreground: oklch(0.205 0 0);
+  --color-selection-hover: var(--color-gray-100);
+  --color-selection-active: var(--color-gray-50);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
