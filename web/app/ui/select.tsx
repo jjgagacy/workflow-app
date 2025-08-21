@@ -3,7 +3,7 @@
 import { cn } from "@/utils/classnames";
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions, Listbox } from "@headlessui/react";
 import { IconCheck, IconChevronDown, IconChevronUp } from "@tabler/icons-react";
-import { useCallback, useEffect, useRef, useState, type FC } from "react";
+import { useEffect, useRef, useState, type FC } from "react";
 
 export type Item = {
     value: number | string;
@@ -53,7 +53,6 @@ export const Select: FC<ISelectProps> = ({
 
     const filterItems: Item[] = query === '' ? (items || []) : (items || []).filter(i => i.name.toLowerCase().includes(query.toLowerCase()));
 
-    console.log('filterItems', filterItems, open);
     return (
         <Combobox
             as={'div'}
@@ -134,24 +133,3 @@ export const Select: FC<ISelectProps> = ({
     );
 }
 
-export const SimpleSelect: FC<ISelectProps> = ({ ...props }) => {
-    const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-
-    useEffect(() => {
-        const existed = props.items?.find(i => i.value === props.defaultValue) || null;
-        if (existed) {
-            setSelectedItem(existed);
-        }
-    }, [props.defaultValue, props.items]);
-
-    const listboxRef = useRef<HTMLDivElement>(null);
-
-    return (
-        <Listbox
-            ref={listboxRef}
-            value={selectedItem}
-            >
-
-        </Listbox>
-    );
-}

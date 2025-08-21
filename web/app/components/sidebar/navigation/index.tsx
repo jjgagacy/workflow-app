@@ -199,7 +199,7 @@ export function Navigation({ collapsed, routes }: NavigationProps) {
                             <Link
                                 key={child.key}
                                 href={child.path || '#'}
-                                className={`flex items-center pt-2 pb-2 rounded-lg hover:bg-gray-100 pl-4 ${collapsed ? "justify-start" : ""
+                                className={`flex items-center pt-2 pb-2 rounded-md hover:bg-gray-100 pl-4 ${collapsed ? "justify-start" : ""
                                     } ${isActive(child.path) ? "bg-gray-100" : ""}`}
                             >
                                 <span>{child.icon}</span>

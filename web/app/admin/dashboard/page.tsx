@@ -7,6 +7,8 @@ import { Input } from "@/app/ui/input";
 import { Select } from "@/app/ui/select";
 import { Textarea } from "@/app/ui/textarea";
 import { toast } from "@/app/ui/toast";
+import { TreeNode, TreeSelect } from "@/app/ui/tree-select";
+import { arrayToTree, treeToFlatten } from "@/utils/trees";
 import { useState } from "react";
 
 export default function Page() {
@@ -49,6 +51,28 @@ export default function Page() {
         { value: 5, name: '选项五' }
     ];
 
+
+    const treeData: TreeNode[] = [
+        {
+            id: 1,
+            name: 'Node 1',
+            children: [
+                {
+                    id: 2,
+                    name: 'Node 1.1',
+                    children: [
+                        { id: 3, name: 'Node 1.1.1' }
+                    ]
+                },
+                { id: 4, name: 'Node 1.2' }
+            ]
+        },
+        {
+            id: 5,
+            name: 'Node 2'
+        }
+    ];
+
     return (
         <div>
             <h1 className="mt-4">Dashboard</h1>
@@ -83,6 +107,7 @@ export default function Page() {
                 <Input type="text" placeholder="please input..." />
                 <Textarea placeholder="a simple description" />
                 <Select items={selectItems} allowSearch={false}></Select>
+                <TreeSelect options={treeData} idKey="id" labelKey="name" multiple={true} onChange={(e) => console.log(e)}></TreeSelect>
             </div>
 
             <Dialog
