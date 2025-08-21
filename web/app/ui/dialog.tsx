@@ -2,7 +2,8 @@
 
 import { ReactNode } from "react";
 import { Dialog as HeadlessDialog, DialogPanel, DialogTitle, Description } from '@headlessui/react'
-import Loading from "../components/base/loading";
+import Button from "../components/base/button";
+import Spinner from "../components/base/spinner";
 
 interface DialogProps {
     isOpen: boolean;
@@ -10,7 +11,7 @@ interface DialogProps {
     description?: string;
     children?: ReactNode;
     confirmText?: string;
-    cancelText?: string;
+    cancelText?: string | null;
     onConfirm: () => void;
     onCancel: () => void;
     destructive?: boolean;
@@ -38,9 +39,9 @@ export function Dialog(props: DialogProps) {
             <DialogPanel className="fixed inset-0 z-50 flex items-center justify-center">
                 <div className="fixed inset-0 bg-black/50 z-60"></div>
                 <div className="fixed inset-0 z-70 flex items-center justify-center">
-                    <div className={`bg-background rounded-lg border px-2 w-full max-w-md shadow-lg outline-none ${className}`}>
+                    <div className={`bg-background rounded-lg px-2 w-full max-w-md shadow-lg outline-none ${className}`}>
                         <DialogTitle>
-                            <div className="flex justify-between items-center border-b px-6 py-4">
+                            <div className="flex justify-between items-center border-b border-[var(--border)]  px-4 py-4">
                                 <h3 className="text-lg font-medium">
                                     {title}
                                 </h3>
@@ -52,35 +53,35 @@ export function Dialog(props: DialogProps) {
                                 </button>
                             </div>
                         </DialogTitle>
+
                         {description && (
-                            <Description>This will permanently deactivate your account</Description>
+                            <Description className='py-4 px-4'>{description}</Description>
                         )}
 
                         {children && (
-                            <div className="mt-4 px-6 py-4">
+                            <div className="px-4 py-4">
                                 {children}
                             </div>
                         )}
-                        <div className="mt-6 flex justify-end gap-4 px-6 py-4">
-                            <button
-                                className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+                        <div className="flex justify-end gap-4 px-6 py-4">
+                            {cancelText && (<Button
+                                variant={'secondary'}
+                                className="inline-flex items-center justify-center"
                                 onClick={onCancel}
                             >
                                 {cancelText}
-                            </button>
-                            <button
-                                className={`inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white transition-colors ${destructive
-                                        ? "bg-red-600 hover:bg-red-700"
-                                        : "bg-blue-600 hover:bg-blue-700"
-                                    } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            </Button>)}
+                            <Button
+                                variant={`${destructive ? 'warning' : 'primary'}`}
+                                className={`inline-flex items-center justify-center ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                                 onClick={onConfirm}
                                 disabled={isLoading}
                             >
-                                <span className="flex items-center justify-center">
-                                    {isLoading && <Loading />}
+                                <span className="flex items-center justify-center gap-1">
                                     {confirmText}
+                                    {isLoading && <Spinner />}
                                 </span>
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>

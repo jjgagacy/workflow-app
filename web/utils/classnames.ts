@@ -6,3 +6,4 @@ const classNames = (...cls: cn.ArgumentArray) => {
 }
 
 export default classNames;
+export { classNames as cn }

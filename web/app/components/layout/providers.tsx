@@ -3,6 +3,7 @@
 import { ReactNode } from 'react';
 import { ActiveThemeProvider } from '../active-theme';
 import { Toasters } from './toasters';
+import { DialogProvider } from '../hooks/use-dialog';
 
 export default function Providers({
     children, activeThemeValue
@@ -10,8 +11,10 @@ export default function Providers({
     return (
         <>
             <ActiveThemeProvider initialTheme={activeThemeValue}>
-                <Toasters />
-                {children}
+                <DialogProvider>
+                    <Toasters />
+                    {children}
+                </DialogProvider>
             </ActiveThemeProvider>
         </>
     );

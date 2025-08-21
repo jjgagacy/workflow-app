@@ -1,13 +1,12 @@
 'use client';
-import { isParentMenuItem, MenuItem } from '@/types/menu';
+import { MenuItem } from '@/types/menu';
 
 
 import {
-    Icon123, Icon12Hours, Icon360, Icon3dCubeSphereOff, IconAbc,
-    IconAdjustmentsPin, IconAdOff, IconAlertHexagonFilled, IconAlertSquare,
-    IconAlignBoxRightBottom, IconAlignBoxRightMiddleFilled, IconApps,
-    IconAvocado, IconBarbell, IconBellZ, IconChevronDown, IconChevronRight,
-    IconEyeCog, IconLocationCode, IconUser
+    Icon12Hours, Icon3dCubeSphereOff, IconAbc,
+    IconAdjustmentsPin, IconAlertHexagonFilled, IconAlertSquare,
+    IconChevronDown, IconChevronRight,
+    IconEyeCog, IconLocationCode
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -212,5 +211,4 @@ export function Navigation({ collapsed, routes }: NavigationProps) {
             )}
         </div>
     );
-
 }

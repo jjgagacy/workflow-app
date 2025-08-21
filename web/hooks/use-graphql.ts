@@ -1,3 +1,5 @@
+'use client';
+
 import { useGraphQLClient } from '@/api/graphql'
 import { DocumentNode } from 'graphql'
 import useSWR from 'swr';

@@ -13,6 +13,7 @@ const buttonVariants = cva(
                 'secondary': 'btn-secondary',
                 'ghost': 'btn-ghost',
                 'tertiary': 'btn-tertiary',
+                'alert': 'btn-alert'
             },
             size: {
                 small: 'btn-small',

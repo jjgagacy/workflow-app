@@ -1,12 +1,44 @@
 'use client';
 
 import Button from "@/app/components/base/button";
+import { useDialog } from "@/app/components/hooks/use-dialog";
 import { Dialog } from "@/app/ui/dialog";
+import { Input } from "@/app/ui/input";
+import { Textarea } from "@/app/ui/textarea";
 import { toast } from "@/app/ui/toast";
 import { useState } from "react";
 
 export default function Page() {
-    const [showDialog, setShowDialog] = useState(false);
+    const [openDialog, setOpenDialog] = useState(false);
+    const { showDialog, showAlert, showConfirm } = useDialog();
+
+    const handleDelete = async () => {
+        // use dialog
+        const confirmed = await showDialog({
+            title: "确认删除",
+            description: "您确定要删除此项吗？此操作不可撤销。",
+            confirmText: "删除",
+            cancelText: "取消",
+            destructive: true,
+            onConfirm: async () => {
+            }
+        });
+
+        if (confirmed) {
+            console.log('Item deleted');
+        }
+    };
+
+    const handleAlert = async () => {
+        await showAlert('确定操作吗');
+    }
+
+    const handleConfirm = async () => {
+        const confirmed = await showConfirm('确定吗？？？', '修改修改修改');
+        if (confirmed) {
+            console.log('confirmed');
+        }
+    }
 
     return (
         <div>
@@ -30,18 +62,28 @@ export default function Page() {
             </div>
             
             <h1 className="mt-4">dialog</h1>
-            <Button variant={'secondary'} onClick={() => setShowDialog(true)}>show dialog</Button>
+            <div className="flex gap-2">
+                <Button variant={'secondary'} onClick={() => setOpenDialog(true)}>show dialog</Button>
+                <Button variant={'secondary'} onClick={() => handleDelete()}>show delete dialog</Button>
+                <Button variant={'secondary'} onClick={() => handleAlert()}>show alert</Button>
+                <Button variant={'secondary'} onClick={() => handleConfirm()}>show confirm</Button>
+            </div>
 
+            <h1 className="mt-4">forms</h1>
+            <div className="flex flex-col gap-2">
+                <Input type="text" placeholder="please input..." />
+                <Textarea placeholder="a simple description" />
+            </div>
 
             <Dialog
-                isOpen={showDialog}
-                isLoading={false}
+                isOpen={openDialog}
+                isLoading={true}
                 title={'this is title data'}
                 description=""
                 confirmText="确定"
                 cancelText="取消"
                 onConfirm={() => 1}
-                onCancel={() => setShowDialog(false)}
+                onCancel={() => setOpenDialog(false)}
             >
                 this is content dialog
             </Dialog>
