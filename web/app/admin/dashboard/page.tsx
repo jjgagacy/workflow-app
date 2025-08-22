@@ -2,9 +2,13 @@
 
 import Button from "@/app/components/base/button";
 import { useDialog } from "@/app/components/hooks/use-dialog";
+import { Accordion } from "@/app/ui/accordion";
+import { Checkbox } from "@/app/ui/checkbox";
 import { Dialog } from "@/app/ui/dialog";
 import { Input } from "@/app/ui/input";
-import { Select } from "@/app/ui/select";
+import { Radio } from "@/app/ui/radio";
+import { Select, SimpleSelect } from "@/app/ui/select";
+import { Switch } from "@/app/ui/switch";
 import { Textarea } from "@/app/ui/textarea";
 import { toast } from "@/app/ui/toast";
 import { TreeNode, TreeSelect } from "@/app/ui/tree-select";
@@ -73,6 +77,22 @@ export default function Page() {
         }
     ];
 
+    const faqItems = [
+        {
+            title: "What is your refund policy?",
+            description: "If you're unhappy with your purchase, we'll refund you in full.",
+            defaultOpen: true
+        },
+        {
+            title: "Do you offer technical support?",
+            description: "No, we don't offer technical support for free products."
+        },
+        {
+            title: "How long does delivery take?",
+            description: "Delivery usually takes 3-5 business days depending on your location."
+        }
+    ]
+
     return (
         <div>
             <h1 className="mt-4">Dashboard</h1>
@@ -106,8 +126,21 @@ export default function Page() {
             <div className="flex flex-col gap-2">
                 <Input type="text" placeholder="please input..." />
                 <Textarea placeholder="a simple description" />
-                <Select items={selectItems} allowSearch={false}></Select>
+                <Select onChange={(arg) => console.log(arg.target.value) }>
+                    <option>Canada</option>
+                    <option>Mexico</option>
+                    <option>United States</option>
+                </Select>
+                <SimpleSelect items={selectItems} allowSearch={false}></SimpleSelect>
                 <TreeSelect options={treeData} idKey="id" labelKey="name" multiple={true} onChange={(e) => console.log(e)}></TreeSelect>
+                <label className="flex items-center gap-1"><Checkbox />复选框</label>
+                <label className="flex items-center gap-1"><Radio />单选框</label>
+                <Switch checked={true} onChange={(arg) => console.log(arg)} />
+            </div>
+
+            <h1 className="mt-4">accordion</h1>
+            <div className="flex flex-col gap-2">
+                <Accordion items={faqItems} />
             </div>
 
             <Dialog

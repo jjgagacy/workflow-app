@@ -1,9 +1,9 @@
 'use client';
 
 import { cn } from "@/utils/classnames";
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions, Listbox } from "@headlessui/react";
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions, Select as HeadlessSelect } from "@headlessui/react";
 import { IconCheck, IconChevronDown, IconChevronUp } from "@tabler/icons-react";
-import { useEffect, useRef, useState, type FC } from "react";
+import { ReactNode, useEffect, useRef, useState, type FC } from "react";
 
 export type Item = {
     value: number | string;
@@ -26,7 +26,7 @@ export type ISelectProps = {
     renderOption?: ({item, selected}: { item: Item, selected: boolean}) => React.ReactNode;
 }
 
-export const Select: FC<ISelectProps> = ({ 
+export const SimpleSelect: FC<ISelectProps> = ({ 
     className,
     items,
     disabled,
@@ -72,7 +72,7 @@ export const Select: FC<ISelectProps> = ({
                 <>
                     {allowSearch ?
                         <ComboboxInput
-                            className={cn('w-full border border-gray-300 rounded-md pl-3 pr-10 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-s',
+                            className={cn('w-full border border-[var(--border)] rounded-md pl-3 pr-10 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-s',
                                 disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-background',
                                 optionClassName
                             )}
@@ -93,7 +93,7 @@ export const Select: FC<ISelectProps> = ({
                     <ComboboxButton
                         className={cn('absolute inset-y-0 right-0 flex items-center pr-2', disabled ? 'cursor-not-allowed' : 'cursor-pointer')}
                     >
-                        {open ? <IconChevronUp className="h-5 w-5 text-gray-500" /> : <IconChevronDown className="h-5 w-5 text-gray-500 rotate-180" />}
+                         <IconChevronDown className={`h-5 w-5 text-gray-500 ${open ? 'rotate-180' : ''}`} />
                     </ComboboxButton>
 
                     {(filterItems.length > 0 && open) && (
@@ -133,3 +133,19 @@ export const Select: FC<ISelectProps> = ({
     );
 }
 
+export const Select = ({ className, children, ...props }: React.ComponentProps<'select'>) => {
+    return (
+        <HeadlessSelect
+            className={cn(
+                'w-full border border-[var(--border)] bg-background rounded-md pl-3 pr-10 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-left',
+                'focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25',
+                // Make the text of each option black on Windows
+                '*:text-black',
+                className
+            )}
+            {...props}
+        >
+            {children}
+        </HeadlessSelect>
+    );
+}

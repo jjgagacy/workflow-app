@@ -13,6 +13,7 @@
     "@formatjs/intl-localematcher": "^0.6.1",
     "@headlessui/react": "^2.2.7",
     "@tabler/icons-react": "^3.34.1",
+    "@tanstack/react-table": "^8.21.3",
     "ahooks": "^3.9.0",
     "class-variance-authority": "^0.7.1",
     "classnames": "^2.5.1",
@@ -25,6 +26,7 @@
     "negotiator": "^1.0.0",
     "next": "15.4.6",
     "next-themes": "^0.4.6",
+    "nuqs": "^2.5.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-i18next": "^15.6.1",
@@ -32,6 +34,7 @@
     "swr": "^2.3.6",
     "tailwind-merge": "^3.3.1",
     "use-context-selector": "^2.0.0",
+    "zod": "^4.0.17",
     "zustand": "^5.0.7"
   },
   "devDependencies": {

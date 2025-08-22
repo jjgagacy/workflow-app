@@ -4,6 +4,7 @@ import { cn } from "@/utils/classnames";
 import { treeToFlatten } from "@/utils/trees";
 import { IconCaretUpDown, IconChevronDown, IconChevronRight, IconX } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type FC } from "react";
+import { Checkbox } from "./checkbox";
 
 export type TreeNode = {
     [key: string]: any;
@@ -247,7 +248,7 @@ export const TreeSelect: FC<ITreeSelectProps> = ({
                     )}
 
                     {multiple && (
-                        <input
+                        <Checkbox
                             type="checkbox"
                             id={`checkbox-${node[idKey]}`}
                             checked={isChecked}
@@ -258,7 +259,7 @@ export const TreeSelect: FC<ITreeSelectProps> = ({
                                 e.stopPropagation();
                                 handleSelect(node, e.target.checked);
                             }}
-                            className="w-4 h-4 mr-1 rounded-md focus:ring-blue-500"
+                            className="mr-1"
                         />
                     )}
                     <span>{node[labelKey]}</span>

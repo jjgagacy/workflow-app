@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from "@/utils/classnames"
 import * as React from "react"
 

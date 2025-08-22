@@ -81,7 +81,7 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
             for (const route of routes) {
                 // Check if current route matches
                 // console.log(route.path, targetPath, '))')
-                if (route.path === targetPath) {
+                if (route.path === targetPath || (route.path && targetPath.startsWith(route.path) && targetPath.length > route.path.length)) {
                     // console.log(route, '::')
                     return route;
                 }
@@ -121,7 +121,7 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
             <div className={`flex-1 flex flex-col overflow-x-auto transition-all ${isCollapsed ? 'ml-32' : 'ml-64'}`}>
                 <Navbar routes={mergeRoutes} />
                 <TagView routes={mergeRoutes} />
-                <div className="flex-1 overflow-y-auto p-4">
+                <div className="flex-1 overflow-y-auto p-6">
                     <Keepalive
                         active={matchRoute === null ? null : matchRoute.key}
                         include={include}
