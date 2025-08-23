@@ -56,7 +56,7 @@
     }
 
     .btn-ghost {
-        @apply border-gray-600 text-gray-600 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-gray-100
+        @apply border-[var(--border)] text-gray-600 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-gray-100
     }
 
     .btn-alert {

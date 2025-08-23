@@ -51,9 +51,11 @@ export const dataTableConfig = {
     ],
     filterVariants: [
         'text',
-        'numeric',
+        'number',
         'boolean',
+        'range',
         'date',
+        'dateRange',
         'select',
         'multiSelect',
     ] as const,

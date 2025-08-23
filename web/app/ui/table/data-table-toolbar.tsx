@@ -1,8 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import type { Column, Table } from '@tanstack/react-table';
+import type { Column, RowData, Table } from '@tanstack/react-table';
 import { cn } from '@/utils/classnames';
+import { Input } from '../input';
+import Button from '@/app/components/base/button';
+import { IconCross } from '@tabler/icons-react';
+import { DataTableViewOptions } from './data-table-view-options';
 
 interface DataTableToolbarProps<TData> extends React.ComponentProps<'div'> {
     table: Table<TData>;
@@ -35,8 +39,83 @@ export function DataTableToolbar<TData>({
             )}
             {...props}
         >
-            
-
+            <div className='flex flex-1 flex-wrap items-center gap-2'>
+                {columns.map(column => (
+                    <DataTableToolbarFilter key={column.id} column={column} />
+                ))}
+                {isFiltered && (
+                    <Button
+                        aria-label='Reset Filters'
+                        variant={'ghost'}
+                        size={'small'}
+                        className=''
+                        onClick={onReset}
+                    >
+                        <IconCross />
+                        Reset
+                    </Button>
+                )}
+            </div>
+            <div className='flex items-center gap-2'>
+                {/* more toolbar action */}
+                {children}
+                <DataTableViewOptions table={table} />
+            </div>
         </div>
     );
+}
+
+interface DataTableToolbarFilterProps<TData> {
+    column: Column<TData>;
+}
+
+function DataTableToolbarFilter<TData>({
+    column
+}: DataTableToolbarFilterProps<TData>) {
+    const columnMeta = column.columnDef.meta;
+
+    const onFilterRender = React.useCallback(() => {
+        if (!columnMeta?.variant) return null;
+
+        switch (columnMeta.variant) {
+            case 'text':
+                return (
+                    <Input
+                        placeholder={columnMeta.placeholder ?? columnMeta.label}
+                        value={(column.getFilterValue() as string) ?? ''}
+                        onChange={event => column.setFilterValue(event.target.value)}
+                        className='h-8 w-40 lg:w-56'
+                    />
+                );
+            case 'number':
+                return (
+                    <div className='relative'>
+                        <Input
+                            type='number'
+                            inputMode='numeric'
+                            placeholder={columnMeta.placeholder ?? columnMeta.label}
+                            value={(column.getFilterValue() as string) ?? ''}
+                            onChange={event => column.setFilterValue(event.target.value)}
+                            className={cn('h-8 w-[120px]', columnMeta.unit && 'pr-8')}
+                        />
+                        {columnMeta.unit && (
+                            <span className='bg-accent text-muted-foreground absolute top-0 right-0 bottom-0 flex items-center rounded-r-md px-2 text-sm'>
+                                {columnMeta.unit}
+                            </span>
+                        )}
+                    </div>
+                );
+            case 'range':
+                return null; // todo
+            case 'dateRange':
+                return null;  // todo
+            case 'select':
+            case 'multiSelect':
+                return null; // todo
+            default:
+                return null;
+        }
+    }, [column, columnMeta]);
+
+    return onFilterRender();
 }

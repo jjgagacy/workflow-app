@@ -1,7 +1,9 @@
 'use client';
 
 import { DataTable } from "@/app/ui/table/data-table";
+import { DataTableToolbar } from "@/app/ui/table/data-table-toolbar";
 import { useDataTable } from "@/hooks/use-data-table";
+import { PER_PAGE } from "@/utils/search-params";
 import { ColumnDef } from "@tanstack/react-table";
 import { parseAsInteger, useQueryState } from "nuqs";
 
@@ -16,7 +18,7 @@ export function AccountTable<TData, TValue>({
     totalItems,
     columns
 }: AccountTableParams<TData, TValue>) {
-    const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
+    const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(PER_PAGE));
     const pageCount = Math.ceil(totalItems / pageSize);
     const { table } = useDataTable({
         data,
@@ -28,7 +30,7 @@ export function AccountTable<TData, TValue>({
 
     return (
         <DataTable table={table}>
-
+            <DataTableToolbar table={table} />
         </DataTable>
     );
 }
