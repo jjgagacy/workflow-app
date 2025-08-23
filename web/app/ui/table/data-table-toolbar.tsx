@@ -55,10 +55,10 @@ export function DataTableToolbar<TData>({
                         Reset
                     </Button>
                 )}
+                {children}
             </div>
             <div className='flex items-center gap-2'>
                 {/* more toolbar action */}
-                {children}
                 <DataTableViewOptions table={table} />
             </div>
         </div>

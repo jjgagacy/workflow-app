@@ -8,7 +8,7 @@ export const columns: ColumnDef<Account, any>[] = [
     columnHelper.accessor("username", {
         header: "账户名",
         cell: info => info.getValue(),
-        meta: { label: '账户名' }
+        meta: { label: '账户名', variant: 'text' }
     }),
     columnHelper.accessor("realName", {
         header: "姓名",

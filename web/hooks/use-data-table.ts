@@ -39,8 +39,8 @@ const PAGE_KEY = 'page';
 const PER_PAGE_KEY = 'perPage';
 const SORT_KEY = 'sort';
 const ARRAY_SEPARATOR = ',';
-const DEBOUNCE_MS = 300; // 防抖：等待一定的时间后执行，如果事件再次出发，则重新计时
-const THROGGLE_MS = 300; // 节流：在一定时间内只允许执行一次
+export const DEBOUNCE_MS = 300; // 防抖：等待一定的时间后执行，如果事件再次出发，则重新计时
+export const THROGGLE_MS = 300; // 节流：在一定时间内只允许执行一次
 
 interface UseDataTableProps<TData> extends Omit<
     TableOptions<TData>, // 从 TableOptions<TData> 中排除指定的 6 个属性

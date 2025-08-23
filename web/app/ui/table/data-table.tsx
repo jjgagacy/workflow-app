@@ -89,6 +89,11 @@ export function DataTable<TData>({ table, actionBar, children }: DataTableProps<
             </div>
             <div className='flex flex-col gap-2.5'>
                 {/* pagination */}
+                <DataTablePagination table={table} />
+                {/* 选中的操作 */}
+                {actionBar &&
+                    table.getFilteredSelectedRowModel().rows.length > 0 &&
+                    actionBar}
             </div>
         </div>
     );
