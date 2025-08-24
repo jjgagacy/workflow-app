@@ -2,8 +2,9 @@
 
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { Account } from "./data";
+import { Badge } from "@/app/components/base/badge";
 
-const columnHelper = createColumnHelper<Account>();
+export const columnHelper = createColumnHelper<Account>();
 export const columns: ColumnDef<Account, any>[] = [
     columnHelper.accessor("username", {
         header: "账户名",
@@ -28,12 +29,9 @@ export const columns: ColumnDef<Account, any>[] = [
     columnHelper.accessor("status", {
         header: "状态",
         cell: info => (
-            <span className={`px-2 py-1 rounded-full text-xs ${info.getValue() === 1
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-                }`}>
+            <Badge variant={info.getValue() === 1 ? 'success' : 'danger'}>
                 {info.getValue() === 1 ? "启用" : "禁用"}
-            </span>
+            </Badge>
         ),
         meta: { label: '状态' }
     }),

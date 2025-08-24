@@ -1,5 +1,6 @@
 'use client';
 
+import { Badge } from "@/app/components/base/badge";
 import Button from "@/app/components/base/button";
 import { useDialog } from "@/app/components/hooks/use-dialog";
 import { Accordion } from "@/app/ui/accordion";
@@ -102,6 +103,18 @@ export default function Page() {
                 <Button variant={'warning'}>warning</Button>
                 <Button variant={'tertiary'}>tertiary</Button>
                 <Button variant={'ghost'}>ghost</Button>
+            </div>
+
+            <h1 className="mt-4">badge</h1>
+            <div className="flex gap-2">
+                <Badge>badge</Badge>
+                <Badge variant={'default'}>default</Badge>
+                <Badge variant={'primary'}>primary</Badge>
+                <Badge variant={'indigo'} bordered={true}>indigo bordered</Badge>
+                <Badge variant={'pink'} size={'xs'}>pink xs</Badge>
+                <Badge variant={'purple'} size={'sm'}>purple sm</Badge>
+                <Badge variant={'success'} size={'lg'}>success lg</Badge>
+                <Badge variant={'warning'} dot={true}>warning dot</Badge>
             </div>
 
             <h1 className="mt-4">toasters</h1>

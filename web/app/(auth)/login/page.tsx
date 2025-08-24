@@ -26,7 +26,6 @@ export default function Page() {
     const router = useRouter();
     const loginMutation = api.user.useLogin();
 
-
     usePageTitle(t('login.login_title'));
 
     const handleSubmit = async (e: React.FormEvent) => {

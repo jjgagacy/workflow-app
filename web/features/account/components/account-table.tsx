@@ -11,8 +11,11 @@ import { PER_PAGE } from "@/utils/search-params";
 import { ColumnDef } from "@tanstack/react-table";
 import request from "graphql-request";
 import { parseAsInteger, parseAsString, useQueryState, useQueryStates } from "nuqs";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
+import { columnHelper } from "./columns";
+import { Account } from "./data";
+import Link from "next/link";
 
 interface AccountTableParams<TData, TValue> {
     data: TData[];
@@ -43,9 +46,62 @@ export function AccountTable<TData, TValue>({
     const total = accounts?.pageInfo?.total || 0;
     const pageCount = Math.ceil(total / pageSize);
 
+    const onDelete = (account: Account) => {
+
+    }
+
+    const onToggleStatus = (account: Account) => {
+
+    }
+
+    const operatorColumn: ColumnDef<Account, any>[] = [
+        columnHelper.display({
+            id: "actions",
+            header: "操作",
+            meta: { label: '操作' },
+            cell: ({ row }) => {
+                const account = row.original;
+
+                if (account.username === 'admin') {
+                    return null;
+                }
+
+                return (
+                    <div className="flex space-x-2">
+                        <Button
+                            variant={'primary'}
+                            className=""
+                            size={'small'}
+                        >
+                            <Link href={`/admin/system/account/${account.id}`}>
+                                编辑
+                            </Link>
+                        </Button>
+                        <Button
+                            onClick={() => onDelete(account)}
+                            variant={'alert'}
+                            className=""
+                            size={'small'}
+                        >
+                            删除
+                        </Button>
+                        <Button
+                            onClick={() => onToggleStatus(account)}
+                            variant={'secondary'}
+                            className=""
+                            size={'small'}
+                        >
+                            {account.status === 1 ? "禁用" : "启用"}
+                        </Button>
+                    </div>
+                );
+            }
+        })
+    ];
+
     const { table } = useDataTable({
         data,
-        columns,
+        columns: [...columns, ...operatorColumn] as ColumnDef<Account, any>[],
         pageCount: pageCount,
         shallow: false, // Setting to false triggers a network request with the updated querystring.
         debounceMs: 500,
