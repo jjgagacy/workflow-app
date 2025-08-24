@@ -1,5 +1,6 @@
 'use client';
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/app/ui/card";
 import usePageTitle from "@/hooks/use-page-title";
 
 export default function AccountForm({
@@ -12,8 +13,15 @@ export default function AccountForm({
     usePageTitle(pageTitle);
 
     return (
-        <div className='mx-auto w-full'>
-            {accountId}
-        </div>
+        <Card className='mx-auto w-full'>
+            <CardHeader>
+                <CardTitle className="text-left text-2xl font-bold">
+                    {pageTitle}
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                content
+            </CardContent>
+        </Card>
     );
 }

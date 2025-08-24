@@ -4,6 +4,7 @@ import { Badge } from "@/app/components/base/badge";
 import Button from "@/app/components/base/button";
 import { useDialog } from "@/app/components/hooks/use-dialog";
 import { Accordion } from "@/app/ui/accordion";
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/ui/card";
 import { Checkbox } from "@/app/ui/checkbox";
 import { Dialog } from "@/app/ui/dialog";
 import { Input } from "@/app/ui/input";
@@ -155,6 +156,25 @@ export default function Page() {
             <div className="flex flex-col gap-2">
                 <Accordion items={faqItems} />
             </div>
+
+            <h1 className="mt-4">card</h1>
+            <div className="flex flex-col gap-2">
+                <Card className="mx-auto w-full">
+                    <CardHeader>
+                        <CardTitle className="text-left text-2xl font-bold">This is a foo</CardTitle>
+                        <CardAction className="">
+                            <Button className="mr-1">编辑</Button>
+                            <Button variant={'alert'}>删除</Button>
+                        </CardAction>
+                    </CardHeader>
+                    <CardContent>
+                        <CardDescription>This is description</CardDescription>
+                        This is card content
+                    </CardContent>
+                </Card>
+            </div>
+
+
 
             <Dialog
                 isOpen={openDialog}
