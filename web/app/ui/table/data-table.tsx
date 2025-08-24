@@ -4,6 +4,7 @@ import { type Table as TanstackTable, flexRender } from '@tanstack/react-table';
 import type { ColumnSort, Row, RowData } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../table';
 import { getCommonPinningStyles } from '@/utils/data-table';
+import { DataTablePagination } from './data-table-pagination';
 
 interface DataTableProps<TData> extends React.ComponentProps<'div'> {
     table: TanstackTable<TData>;

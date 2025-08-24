@@ -9,7 +9,7 @@ import { TagView } from "../components/header/tagview";
 import { usePersistentState } from "@/hooks/use-persistent-state";
 import { MenuItem } from "@/types/menu";
 import { Icon12Hours, Icon3dCubeSphereOff, IconAbc, IconAdjustmentsPin, IconAlertHexagonFilled, IconAlertSquare, IconEyeCog, IconLocationCode } from "@tabler/icons-react";
-import { convertMenuToRoutes } from "@/utils/menu";
+import { convertMenuToRoutes, findMatchingRoute } from "@/utils/menu";
 import Keepalive from "../components/header/keepalive";
 import { usePathname, useRouter } from "next/navigation";
 import { ViewProvider } from "../components/hooks/use-view";
@@ -77,24 +77,6 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
     // 获取当前匹配的路由
     const matchRoute = useMemo(() => {
         // Recursive function to search through routes and their children
-        const findMatchingRoute = (routes: Route[], targetPath: string): Route | null => {
-            for (const route of routes) {
-                // Check if current route matches
-                // console.log(route.path, targetPath, '))')
-                if (route.path === targetPath || (route.path && targetPath.startsWith(route.path) && targetPath.length > route.path.length)) {
-                    // console.log(route, '::')
-                    return route;
-                }
-                // If route has children, search recursively
-                if (route.children) {
-                    const foundInChildren = findMatchingRoute(route.children, targetPath);
-                    if (foundInChildren) {
-                        return foundInChildren;
-                    }
-                }
-            }
-            return null;
-        };
         return findMatchingRoute(mergeRoutes, pathname);
     }, [pathname, mergeRoutes]);
 

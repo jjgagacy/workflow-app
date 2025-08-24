@@ -2,6 +2,8 @@
 
 import { useTagsViewStore } from "@/hooks/use-tagview-store";
 import { Route } from "@/types/route";
+import { findMatchingRoute } from "@/utils/menu";
+import { treeToFlatten } from "@/utils/trees";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -57,15 +59,16 @@ export function TagView({ routes }: TagViewProps) {
     useEffect(() => {
         // 初始化时添加当前路由到标签视图
         const currentPath = pathname;
-        const matchedRoute = routes.find(route => route.path === currentPath);
+        const matchedRoute = findMatchingRoute(routes, currentPath);
+
         if (matchedRoute && !include.includes(matchedRoute.key)) {
             addTag({
                 key: matchedRoute.key,
                 name: matchedRoute.title,
-                path: matchedRoute.path
+                path: matchedRoute.path,
             });
         }
-    }, [aliveList, addTag, router]);
+    }, [aliveList, addTag, router, pathname]);
 
     return (
         <div className="tagview__container w-full overflow-x-auto sticky top-0 z-40 transition-all">
