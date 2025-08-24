@@ -62,7 +62,8 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
             description: message,
             confirmText: '确定',
             cancelText: null,
-            onConfirm: () => {}
+            onConfirm: () => {},
+            className: '!w-[260px]'
         });
     }, [showDialog]);
 
