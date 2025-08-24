@@ -17,7 +17,7 @@ export default async function AccountListPage() {
     // 根据filter获取数据
 
     const accounts: Account[] = [];
-    const totalAccounts = 0;
+    const totalAccounts = 100;
 
     return (
         <AccountTable

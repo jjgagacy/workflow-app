@@ -34,9 +34,9 @@ export function DataTableViewOptions<TData>({
             >
                 <Button
                     variant={'ghost'}
-                    className='flex justify-between items-center gap-2  whitespace-nowrap p-0 border-[var(--border)]'
+                    className='flex justify-between items-center gap-2 whitespace-nowrap p-0 border-[var(--border)]'
                 >
-                    <IconFilter className='text-gray-400 dark:text-gray-900 size-5' />
+                    <IconFilter className='text-gray-400 dark:text-white size-5' />
                     <span>View</span>
                 </Button>
             </PopoverButton>

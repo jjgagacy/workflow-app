@@ -31,8 +31,6 @@ export function AccountTable<TData, TValue>({
 
     const { search, page } = queryStates;
 
-    console.log('page', page);
-
     const requestAccounts = async (params?: any) => {
         console.log('request...');
     };

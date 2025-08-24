@@ -56,10 +56,10 @@
     }
 
     .btn-ghost {
-        @apply border-[var(--border)] text-gray-600 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-gray-100
+        @apply border-[var(--border)] text-gray-600 rounded-md hover:bg-muted/90 dark:text-gray-300 focus:outline-none focus:ring-gray-100
     }
 
     .btn-alert {
-        @apply shadow bg-destructive text-destructive-foreground hover:bg-destructive/90 focus:ring-red-500 text-white
+        @apply shadow bg-destructive text-destructive-foreground hover:bg-destructive/90 focus:ring-red-500
     }
 }

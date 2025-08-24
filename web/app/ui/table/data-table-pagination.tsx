@@ -40,8 +40,8 @@ export function DataTablePagination<TData>({
                     <p className="text-sm font-medium whitespace-nowrap">Rows per page</p>
                     <Select
                         value={`${table.getState().pagination.pageSize}`}
-                        onChange={(value) => {
-                            table.setPageSize(Number(value))
+                        onChange={(event) => {
+                            table.setPageSize(Number(event.target.value))
                         }}
                     >
                         {pageSizeOptions.map((pageSize) => (
@@ -57,25 +57,25 @@ export function DataTablePagination<TData>({
                     <Button
                         aria-label="Go to first page"
                         variant={'ghost'}
-                        className="hidden size-8 lg:flex"
+                        className="size-10 flex items-center justify-center"
                         onClick={() => table.setPageIndex(0)}
-                        disabled={!table.getCanPreviousPage()}
-                    >
-                        <IconChevronLeft />
-                    </Button>
-                    <Button
-                        aria-label="Go to previous page"
-                        variant={'ghost'}
-                        className="size-8"
-                        onClick={() => table.previousPage()}
                         disabled={!table.getCanPreviousPage()}
                     >
                         <IconChevronsLeft />
                     </Button>
                     <Button
+                        aria-label="Go to previous page"
+                        variant={'ghost'}
+                        className="size-10 flex items-center justify-center"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        <IconChevronLeft />
+                    </Button>
+                    <Button
                         aria-label="Go to next page"
                         variant={'ghost'}
-                        className="size-8"
+                        className="size-10 flex items-center justify-center"
                         onClick={() => table.nextPage()}
                         disabled={!table.getCanNextPage()}
                     >
@@ -84,11 +84,11 @@ export function DataTablePagination<TData>({
                     <Button
                         aria-label="Go to last page"
                         variant={'ghost'}
-                        className="sie-8"
+                        className="size-10 flex items-center justify-center"
                         onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                         disabled={!table.getCanNextPage()}
                     >
-                        <IconChevronsRight />
+                        <IconChevronsRight className="" />
                     </Button>
                 </div>
             </div>
