@@ -15,9 +15,10 @@ import { useEffect, useRef, useState } from 'react';
 interface NavigationProps {
     collapsed: boolean;
     routes?: MenuItem[];
+    toggleMobileSidebar?: () => void;
 }
 
-export function Navigation({ collapsed, routes }: NavigationProps) {
+export function Navigation({ collapsed, routes, toggleMobileSidebar }: NavigationProps) {
     const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({});
     const [hoveredItem, setHoveredItem] = useState('');
     const [menuPosition, setMenuPosition] = useState(0);
@@ -131,6 +132,7 @@ export function Navigation({ collapsed, routes }: NavigationProps) {
                         <div>
                             <Link
                                 href={item.path || '#'}
+                                onClick={() => toggleMobileSidebar?.()}
                                 className={`flex items-center px-2 py-1 rounded-lg hover:bg-selection-hover ${collapsed ? "justify-center" : ""
                                     } ${isActive(item.path) ? "bg-selection-active" : ""}`}
                                 title={item.title}
@@ -167,6 +169,7 @@ export function Navigation({ collapsed, routes }: NavigationProps) {
                                     {item.children.map((child) => (
                                         <Link
                                             key={child.key}
+                                            onClick={() => toggleMobileSidebar?.()}
                                             href={child.path || '#'}
                                             className={`flex items-center px-2 py-1 rounded-lg hover:bg-selection-hover ${collapsed ? "justify-center" : ""
                                                 } ${isActive(child.path) ? "bg-selection-active" : ""}`}
@@ -198,6 +201,7 @@ export function Navigation({ collapsed, routes }: NavigationProps) {
                         {menuItems.find(i => i.key === hoveredItem)?.children?.map(child => (
                             <Link
                                 key={child.key}
+                                onClick={() => toggleMobileSidebar?.()}
                                 href={child.path || '#'}
                                 className={`flex items-center pt-2 pb-2 rounded-md hover:bg-gray-100 pl-4 ${collapsed ? "justify-start" : ""
                                     } ${isActive(child.path) ? "bg-gray-100" : ""}`}

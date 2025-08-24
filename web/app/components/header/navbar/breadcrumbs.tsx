@@ -2,6 +2,7 @@ import { Route } from "@/types/route";
 import { IconChevronRight } from "@tabler/icons-react";
 import Link from "next/link";
 import { useBreadcrumbs } from "../../hooks/use-breadcrumbs";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface BreadcrumbsProps {
     routes: Route[];
@@ -9,9 +10,10 @@ interface BreadcrumbsProps {
 
 export function Breadcrumbs({ routes }: BreadcrumbsProps) {
     const crumbs = useBreadcrumbs(routes);
+    const isMobile = useIsMobile();
 
     return (
-        <div className="flex items-center justify-between space-x-2">
+        <div className={`flex items-center ${isMobile ? 'hidden' : ''} justify-between space-x-2`}>
             <nav aria-label="Breadcrumb">
                 <ol className="flex items-center space-x-2">
                     {crumbs.map((crumb, index) => (

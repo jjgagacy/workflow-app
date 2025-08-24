@@ -17,7 +17,7 @@
   --color-accent: oklch(0.97 0 0);
   --color-accent-foreground: oklch(0.205 0 0);
   --color-destructive: oklch(0.577 0.245 27.325);
-  --color-destructive-foreground: oklch(0.205 0 0);
+  --color-destructive-foreground: oklch(1 0 0);
   --color-warning: oklch(0.828 0.189 84.429);
   --color-warning-foreground: oklch(0.205 0 0);
   --color-selection-hover: var(--color-gray-100);

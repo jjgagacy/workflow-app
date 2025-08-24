@@ -14,6 +14,7 @@ import Keepalive from "../components/header/keepalive";
 import { usePathname, useRouter } from "next/navigation";
 import { ViewProvider } from "../components/hooks/use-view";
 import { useTagsViewStore } from "@/hooks/use-tagview-store";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AdminLayoutProps {
     children: ReactNode;
@@ -22,9 +23,15 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children, routes, ...rest }: AdminLayoutProps) {
     const [isCollapsed, setIsCollapsed] = usePersistentState("sidebarExpanded", false);
+    const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
     const { addTag, include } = useTagsViewStore();
     const router = useRouter();
     const pathname = usePathname();
+    const isMobile = useIsMobile();
+
+    const toggleMobileSidebar = () => {
+        setMobileSidebarOpen(!mobileSidebarOpen);
+    };
 
     const menuItems: MenuItem[] = [
         {
@@ -70,8 +77,16 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
     const [menus, setMenus] = useState<MenuItem[]>(menuItems);
     const [mergeRoutes, setMergeRoutes] = useState<Route[]>(convertMenuToRoutes(menuItems));
 
+    // 移动端自动折叠侧边栏
+    useEffect(() => {
+        if (isMobile) {
+            setIsCollapsed(true);
+        }
+    }, [isMobile, setIsCollapsed]);
+
     const handleChildEvent = (data: boolean) => {
-        setIsCollapsed(data);
+        if (isMobile) toggleMobileSidebar();
+        else setIsCollapsed(data);
     }
 
     // 获取当前匹配的路由
@@ -92,16 +107,44 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
             // router.push('/404');
         }
     }, [matchRoute, pathname, router]);
+
+    // 计算侧边栏宽度
+    const sidebarWidth = useMemo(() => {
+        if (isMobile) {
+            return 'ml-0';
+        }
+        return isCollapsed ? 'ml-32' : 'ml-64';
+    }, [isCollapsed, isMobile]);
     
     // theme-xx replace xx to your theme
     
     return (
         <div className="flex theme-xx min-h-screen bg-gradient-to-br from-gray-100 to-gray-50 dark:bg-black dark:from-black dark:to-black">
-            <Sidebar onToggleCollapse={handleChildEvent} collapsed={isCollapsed}>
-                <Navigation collapsed={isCollapsed} routes={mergeRoutes} />
-            </Sidebar>
-            <div className={`flex-1 flex flex-col overflow-x-auto transition-all ${isCollapsed ? 'ml-32' : 'ml-64'}`}>
-                <Navbar routes={mergeRoutes} />
+            {/* 桌面端侧边栏 */}
+            {!isMobile && (
+                <Sidebar onToggleCollapse={handleChildEvent} collapsed={isCollapsed}>
+                    <Navigation collapsed={isCollapsed} routes={mergeRoutes} />
+                </Sidebar>
+            )}
+            {/* 移动端侧边栏抽屉 */}
+            {isMobile && mobileSidebarOpen && (
+                <div className="fixed inset-0 z-50">
+                    <div
+                        className="absolute inset-0 bg-black bg-opacity-50"
+                        onClick={() => setMobileSidebarOpen(false)}
+                    />
+                    <div className="absolute left-0 top-0 h-full w-64 bg-white dark:bg-gray-900 shadow-lg">
+                        <Sidebar onToggleCollapse={handleChildEvent} collapsed={false}>
+                            <Navigation collapsed={false} routes={mergeRoutes} toggleMobileSidebar={toggleMobileSidebar} />
+                        </Sidebar>
+                    </div>
+                </div>
+            )}
+            <div className={`flex-1 flex flex-col overflow-x-auto transition-all ${sidebarWidth}`}>
+                <Navbar 
+                    routes={mergeRoutes}
+                    onMenuClick={isMobile ? toggleMobileSidebar : undefined}
+                />
                 <TagView routes={mergeRoutes} />
                 <div className="flex-1 overflow-y-auto p-6">
                     <Keepalive

@@ -49,7 +49,11 @@ export function useBreadcrumbs(routes: Route[]): BreadcrumbItem[] {
                 link: path,
                 title: findRouteTitle(routes, path)
             } as BreadcrumbItem
-        });
+        })
+            .filter(item => {
+                // 过滤掉标题为空、undefined 或 "Untitled" 的项
+                return item.title && item.title.trim() !== '' && item.title !== 'Untitled';
+            });
     }, [pathname, routes]);
 
     return breadcrumbs;
