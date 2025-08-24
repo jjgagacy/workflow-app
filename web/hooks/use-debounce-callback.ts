@@ -2,8 +2,9 @@
 
 import * as React from 'react';
 import { useCallbackRef } from './use-callback-ref';
+import { DEBOUNCE_MS } from './use-data-table';
 
-export function useDebounceCallback<T extends (...args: never[]) => unknown>(callback: T, delay: number) {
+export function useDebounceCallback<T extends (...args: never[]) => unknown>(callback: T, delay: number = DEBOUNCE_MS) {
     const handleCallback = useCallbackRef(callback);
     const debounedTimerRef = React.useRef(0);
 

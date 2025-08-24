@@ -4,6 +4,7 @@ import { Account } from "./components/data";
 import { columns } from "./components/columns";
 
 export default async function AccountListPage() {
+    // server request
     const page = searchParams.page;
     const pageLimit = searchParams.perPage;
     const keyword = searchParams.keyword;
@@ -15,9 +16,8 @@ export default async function AccountListPage() {
     };
 
     // 根据filter获取数据
-
     const accounts: Account[] = [];
-    const totalAccounts = 100;
+    const totalAccounts = 0;
 
     return (
         <AccountTable
