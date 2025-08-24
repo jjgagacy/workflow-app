@@ -63,6 +63,7 @@ interface UseDataTableProps<TData> extends Omit<
     scroll?: boolean; // 是否启用滚动
     shallow?: boolean; // 是否启用浅比较
     startTransition?: React.TransitionStartFunction; // React 18 的 startTransition 函数
+    onStateChange?: (params: any) => Promise<any>;
 }
 
 export function useDataTable<T>(props: UseDataTableProps<T>) {
@@ -248,6 +249,18 @@ export function useDataTable<T>(props: UseDataTableProps<T>) {
         },
         [debouncedSetFilterValues,  filterableColumns, enableAdvancedFilters]
     );
+
+    // 监听状态变化并通知父组件
+    React.useEffect(() => {
+        if (props.onStateChange) {
+            props.onStateChange({
+                page,
+                sorting,
+                perPage,
+                filterValues
+            });
+        }
+    }, [page, sorting, perPage, filterValues, props.onStateChange]);
 
     const table = useReactTable({
         ...tableProps,

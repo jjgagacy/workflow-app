@@ -1,5 +1,6 @@
 'use client';
 
+import Button from "@/app/components/base/button";
 import { Input } from "@/app/ui/input";
 import { DataTable } from "@/app/ui/table/data-table";
 import { DataTableToolbar } from "@/app/ui/table/data-table-toolbar";
@@ -8,7 +9,7 @@ import { useDebounceCallback } from "@/hooks/use-debounce-callback";
 import { PER_PAGE } from "@/utils/search-params";
 import { ColumnDef } from "@tanstack/react-table";
 import { parseAsInteger, parseAsString, useQueryState, useQueryStates } from "nuqs";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 interface AccountTableParams<TData, TValue> {
     data: TData[];
@@ -32,20 +33,32 @@ export function AccountTable<TData, TValue>({
     const { search, page } = queryStates;
 
     const requestAccounts = async (params?: any) => {
-        console.log('request...');
+        // other filter values, sorting, ...
+        console.log('request...', search, page, pageSize);
     };
 
-    const handleSearch = useDebounceCallback(async () => {
-        await requestAccounts();
+    const handleSearch = useDebounceCallback(async (params?: any) => {
+        await requestAccounts(params);
     }, DEBOUNCE_MS);
+
+    const handleStateChange = async (params?: any) => {
+        handleSearch(params);
+    }
 
     const { table } = useDataTable({
         data,
         columns,
         pageCount: pageCount,
         shallow: false, // Setting to false triggers a network request with the updated querystring.
-        debounceMs: 500
+        debounceMs: 500,
+        onStateChange: handleStateChange
     });
+
+    const onReset = useCallback(async () => {
+        setQueryStates({ page: null, search: null });
+        table.resetColumnFilters();
+        await requestAccounts();
+    }, [table]);
 
     return (
         <DataTable table={table}>
@@ -54,6 +67,7 @@ export function AccountTable<TData, TValue>({
                     id="search"
                     type="text"
                     value={search} // 直接使用 queryStates 中的 search
+                    className="w-56"
                     onChange={(e) => {
                         setQueryStates({ search: e.target.value, page: 1 });
                         handleSearch();
@@ -61,6 +75,11 @@ export function AccountTable<TData, TValue>({
                     placeholder="按账户名称搜索..."
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 />
+                <Button
+                    variant={'ghost'}
+                    size={'large'}
+                    onClick={() => onReset()}
+                >Reset</Button>
             </DataTableToolbar>
         </DataTable>
     );
