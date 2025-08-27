@@ -5,7 +5,7 @@ import { cva, VariantProps } from "class-variance-authority";
 import React, { forwardRef } from "react";
 
 const badgeVariants = cva(
-    'inline-flex items-center justify-center rounded-full font-medium transition-colors',
+    'inline-flex items-center justify-center rounded-full font-medium transition-colors whitespace-nowrap',
     {
         variants: {
             variant: {
@@ -66,7 +66,7 @@ const badgeVariants = cva(
         ],
         defaultVariants: {
             variant: 'default',
-            size: 'md',
+            size: 'sm',
             rounded: 'full',
             bordered: false,
         }

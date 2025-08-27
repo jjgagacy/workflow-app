@@ -39,6 +39,12 @@ export const DELETE_ACCOUNT = gql`
   }
 `;
 
+export const TOGGLE_ACCOUNT_STATUS = gql`
+  mutation ToggleAccountStatusMutation($id: Int!) {
+    toggleAccountStatus(id: $id)
+  }
+`
+
 export const CREATE_ROLE = gql`
   mutation CreateRoleMutation($input: RoleInput!) {
     createRole(input: $input) {

@@ -16,6 +16,7 @@ import useSWR from "swr";
 import { columnHelper } from "./columns";
 import { Account } from "./data";
 import Link from "next/link";
+import { useUpdate } from "@/hooks/use-update";
 
 interface AccountTableParams<TData, TValue> {
     data: TData[];
@@ -33,25 +34,45 @@ export function AccountTable<TData, TValue>({
     });
     const { search, page } = queryStates;
     const [debouncedSearch, setDebouncedSearch] = useState(search);
+    const toggleStatusMutation = api.account.useToggleAccountStatus();
+    const deleteAccount = api.account.useDeleteAccount();
 
     useEffect(() => {
+        if (search === '') return;
         const timer = setTimeout(() => {
             setDebouncedSearch(search);
         }, DEBOUNCE_MS);
         return () => clearTimeout(timer);
     }, [search]);
 
-    const { accounts, isLoading } = api.account.useGetAccounts({ username: debouncedSearch, page, limit: pageSize });
-    const data = accounts?.data || [];
+    const { accounts } = api.account.useGetAccounts({ username: debouncedSearch, page, limit: pageSize });
+    const [data, setData] = useState<Account[]>([]);
+
+    useEffect(() => {
+        console.log(123);
+        if (accounts?.data) {
+            setData(accounts?.data);
+        }
+    }, [accounts?.data]);
+
     const total = accounts?.pageInfo?.total || 0;
     const pageCount = Math.ceil(total / pageSize);
 
-    const onDelete = (account: Account) => {
-
+    const onDelete = async (account: Account) => {
+        if (confirm('确认删除吗？')) {
+            await deleteAccount(account.id);
+            setData(prev =>
+                prev.filter((item) => item.id !== account.id)
+            );
+        }
     }
 
-    const onToggleStatus = (account: Account) => {
-
+    const onToggleStatus = async (account: Account) => {
+        const newStatus = account.status === 0 ? 1 : 0;
+        await toggleStatusMutation(account.id);
+        setData(prev => 
+            prev.map((item) => item.id === account.id ? { ...item, status: newStatus} : item)
+        );
     }
 
     const operatorColumn: ColumnDef<Account, any>[] = [
@@ -109,6 +130,7 @@ export function AccountTable<TData, TValue>({
 
     const onReset = useCallback(async () => {
         setQueryStates({ page: null, search: null });
+        setDebouncedSearch('');
         table.resetColumnFilters();
     }, [table]);
 

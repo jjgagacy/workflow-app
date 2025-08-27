@@ -137,6 +137,7 @@ type Mutation {
   deleteRole(id: Int!): Boolean!
   login(input: LoginInput!): LoginResponse!
   setRolePerms(key: String!, menus: [RoleSetPermMenu!]!): Boolean!
+  toggleAccountStatus(id: Int!): Boolean!
   updateAccount(input: AccountInput!): AccountResponse!
   updateAccountPassword(newPassword: String!, password: String!): Boolean!
   updateDep(input: DepInput!): DepResponse!

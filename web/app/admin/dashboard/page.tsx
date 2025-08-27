@@ -9,6 +9,7 @@ import { Checkbox } from "@/app/ui/checkbox";
 import { Dialog } from "@/app/ui/dialog";
 import { Input } from "@/app/ui/input";
 import { Radio } from "@/app/ui/radio";
+import { RadioGroup, RadioGroupItem } from "@/app/ui/radio-group";
 import { Select, SimpleSelect } from "@/app/ui/select";
 import { Switch } from "@/app/ui/switch";
 import { Textarea } from "@/app/ui/textarea";
@@ -150,6 +151,14 @@ export default function Page() {
                 <label className="flex items-center gap-1"><Checkbox />复选框</label>
                 <label className="flex items-center gap-1"><Radio />单选框</label>
                 <Switch checked={true} onChange={(arg) => console.log(arg)} />
+                <RadioGroup name='status' defaultValue={1} onValueChange={(e) => console.log(e)}>
+                    <RadioGroupItem value={1}>启用</RadioGroupItem>
+                    <RadioGroupItem value={0}>禁用</RadioGroupItem>
+                </RadioGroup>
+                <RadioGroup name='userName' defaultValue={'alex'} onValueChange={(e) => console.log(e)} orientation="horizontal">
+                    <RadioGroupItem value={'alex'}>Alex</RadioGroupItem>
+                    <RadioGroupItem value={'joe'}>Joe</RadioGroupItem>
+                </RadioGroup>
             </div>
 
             <h1 className="mt-4">accordion</h1>
@@ -173,7 +182,6 @@ export default function Page() {
                     </CardContent>
                 </Card>
             </div>
-
 
 
             <Dialog

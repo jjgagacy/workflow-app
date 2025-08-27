@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from "@nestjs/graphql";
+import { Args, Int, Mutation, Resolver } from "@nestjs/graphql";
 import { AccountService } from "src/account/account.service";
 import { AccountResponse } from "../types/account-response.type";
 import { AccountInput } from "../types/account-input.type";
@@ -67,4 +67,15 @@ export class UpdateAccountResolver {
         const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
         return strongRegex.test(password);
     }
+
+    @Mutation(() => Boolean)
+    async toggleAccountStatus(@CurrentUser() user: any, @Args({ name: 'id', type: () => Int}) id: number): Promise<Boolean> {
+        const dto: UpdateAccountDto = {
+            id: id,
+            updatedBy: user.name
+        }
+        await this.accountService.toggleStatus(dto);
+        return true;
+    }
+
 }

@@ -182,4 +182,25 @@ export class AccountService {
             return { data, total: data.length };
         }
     }
+
+    async toggleStatus(dto: UpdateAccountDto): Promise<void> {
+        const accountId = dto.id;
+        if (!accountId) {
+            throw new BadRequestException(
+                errorObject('参数错误', { key: accountId }),
+            );
+        }
+        const existingAccount = await this.getById(accountId);
+        if (!existingAccount) {
+            throw new BadRequestException(
+                errorObject('用户不存在', { key: accountId }),
+            );
+        }
+        const newStatus = existingAccount.status === 1 ? 0 : 1;
+        const updateFields = {
+            status: newStatus,
+            operate: this.mapOperateFields(dto),
+        };
+        await this.accountRepository.update(accountId, updateFields);
+    }
 }
