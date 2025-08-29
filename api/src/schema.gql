@@ -169,6 +169,7 @@ input PermInput {
 type Query {
   accountInfo: Account!
   accounts(email: String, id: Int, limit: Int, mobile: String, page: Int, realName: String, roleId: Int, username: String): AccountList!
+  depInfo(key: String!): Dep!
   deps(key: String, name: String, parent: String): [Dep!]!
   hello: String!
   menus(key: String, module: Boolean, modulePerm: Boolean, name: String, parent: String, scope: Boolean, status: Int): [Menu!]!

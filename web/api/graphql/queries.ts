@@ -146,3 +146,20 @@ export const GET_DEPS = gql`
     }
   }
 `;
+
+export const GET_DEP = gql`
+  query($key: String!) {
+    depInfo(key: $key) {
+      id,
+      key,
+      name,
+      parent,
+      remarks,
+      manager {
+        id,
+        username,
+        realName
+      }
+    }
+  }
+`;

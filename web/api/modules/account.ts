@@ -13,7 +13,7 @@ export const useGetAccounts = (params: {
   mobile?: string;
   roleId?: string;
 } = {}) => {
-  const { data, error, isLoading } = useGraphQLQuery<{ accounts: any }, typeof params>(
+  const { data, error, isLoading, mutate } = useGraphQLQuery<{ accounts: any }, typeof params>(
     GET_ACCOUNTS,
     params,
     {
@@ -25,7 +25,8 @@ export const useGetAccounts = (params: {
   return { 
     accounts: data?.accounts, 
     isLoading, 
-    error 
+    error,
+    mutate
   };
 };
 

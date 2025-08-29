@@ -22,7 +22,7 @@ export type ITreeSelectProps = {
     labelKey?: string;
     search?: boolean;
     multiple?: boolean;
-    onChange?: (selected: TreeNode | (string | number)[] | null) => void;
+    onChange?: (selected: TreeNode | (string | number)[] | any) => void;
 }
 
 export const TreeSelect: FC<ITreeSelectProps> = ({ 
@@ -102,9 +102,9 @@ export const TreeSelect: FC<ITreeSelectProps> = ({
     const handleClickOutside = useCallback((event: MouseEvent) => {
         if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
             setIsOpen(false);
-            if (selectedArr.length === 0) setSelectedLabel("请选择...");
+            if (selectedArr.length === 0 && !selectedValue) setSelectedLabel("请选择...");
         }
-    }, [selectedArr]);
+    }, [selectedArr, selectedValue]);
 
     // 辅助函数：根据 ID 查找节点
     const findNodeById = useCallback((nodes: TreeNode[], id: string | number): TreeNode | null => {

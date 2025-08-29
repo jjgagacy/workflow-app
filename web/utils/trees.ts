@@ -98,7 +98,7 @@ export function arrayToTree<T extends Record<string, any>>(
       // 找到父节点并添加到其children
       const parent = nodeMap.get(parentId);
       const currentNode = nodeMap.get(nodeId);
-      
+
       if (parent && currentNode) {
         parent[childrenKey].push(currentNode);
       } else if (currentNode) {
@@ -345,4 +345,31 @@ export function deepCopyTreeRobust(tree: TreeNode[]): TreeNode[] {
 
     return copied;
   });
+}
+
+
+/**
+ * 过滤掉指定部门及其所有子部门
+ * @param departments 所有部门树形数据
+ * @param currentKey 当前部门key（需要排除的部门）
+ * @param idKey 部门标识字段，默认为'key'
+ * @returns 过滤后的部门树
+ */
+export function filterCurrentAndChildren<T extends { children?: T[] }>(
+  departments: T[],
+  currentKey: string,
+  idKey: keyof T = 'key' as keyof T
+): T[] {
+  return departments
+    .filter(dept => dept[idKey] !== currentKey) // 先过滤掉当前部门
+    .map(dept => {
+      // 递归处理子部门
+      if (dept.children && dept.children.length > 0) {
+        return {
+          ...dept,
+          children: filterCurrentAndChildren(dept.children, currentKey, idKey)
+        };
+      }
+      return dept;
+    });
 }

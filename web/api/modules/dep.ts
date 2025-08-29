@@ -1,11 +1,11 @@
 // services/departmentService.ts
 import { useGraphQLQuery, useGraphQLMutation } from "@/hooks/use-graphql";
 import { CREATE_DEP, UPDATE_DEP, DELETE_DEP } from '../graphql/mutations';
-import { GET_DEPS } from '../graphql/queries';
+import { GET_DEP, GET_DEPS } from '../graphql/queries';
 
 // 获取部门列表
 export const useGetDeps = (params: { key?: string; name?: string; parent?: string } = {}) => {
-  const { data, error, isLoading } = useGraphQLQuery<{ deps: any }, { input: typeof params }>(
+  const { data, error, isLoading, mutate } = useGraphQLQuery<{ deps: any }, { input: typeof params }>(
     GET_DEPS,
     { input: params },
     {
@@ -17,9 +17,28 @@ export const useGetDeps = (params: { key?: string; name?: string; parent?: strin
   return { 
     deps: data?.deps, 
     isLoading, 
-    error 
+    error,
+    mutate
   };
 };
+
+// 获取部门详情
+export const useGetDepInfo = ({ key }: { key: string }) => {
+  const { data, error, isLoading } = useGraphQLQuery<{depInfo: any}, { key: string}>(
+    GET_DEP,
+    { key },
+    {
+      shouldRetryOnError: false,
+      revalidateOnReconnect: true
+    }
+  );
+
+  return {
+    dep: data?.depInfo,
+    isLoading,
+    error
+  };
+}
 
 // 创建部门
 export const useCreateDep = () => {
@@ -45,9 +64,9 @@ export const useUpdateDep = () => {
 
 // 删除部门
 export const useDeleteDep = () => {
-  const mutation = useGraphQLMutation<{deleteDep: any}, {id: string}>(DELETE_DEP);
+  const mutation = useGraphQLMutation<{deleteDep: any}, {id: number}>(DELETE_DEP);
   
-  return async (id: string) => {
+  return async (id: number) => {
     const response = await mutation({ id });
     return response.deleteDep;
   };

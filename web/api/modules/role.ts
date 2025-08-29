@@ -14,7 +14,7 @@ export const useGetRoles = (params: {
   status?: string;
   hasRolePerms?: boolean;
 } = {}) => {
-  const { data, error, isLoading } = useGraphQLQuery<{ roles: any }, typeof params>(
+  const { data, error, isLoading, mutate } = useGraphQLQuery<{ roles: any }, typeof params>(
     GET_ROLES,
     params,
     {
@@ -26,7 +26,8 @@ export const useGetRoles = (params: {
   return { 
     roles: data?.roles, 
     isLoading, 
-    error 
+    error,
+    mutate
   };
 };
 

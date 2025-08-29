@@ -11,7 +11,7 @@ export const useGetMenus = (params: {
   status?: string;
   module?: string;
 } = {}) => {
-  const { data, error, isLoading } = useGraphQLQuery<{ menus: any }, typeof params>(
+  const { data, error, isLoading, mutate } = useGraphQLQuery<{ menus: any }, typeof params>(
     GET_MENUS,
     params,
     {
@@ -23,7 +23,8 @@ export const useGetMenus = (params: {
   return { 
     menus: data?.menus, 
     isLoading, 
-    error 
+    error,
+    mutate
   };
 };
 

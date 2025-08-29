@@ -27,18 +27,19 @@ interface AccountTableParams<TData, TValue> {
 export function AccountTable<TData, TValue>({
     columns
 }: AccountTableParams<TData, TValue>) {
-    const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(PER_PAGE));
+    // const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(PER_PAGE));
     const [queryStates, setQueryStates] = useQueryStates({
         page: parseAsInteger.withDefault(1),
         search: parseAsString.withDefault(''),
+        pageSize: parseAsInteger.withDefault(PER_PAGE)
     });
-    const { search, page } = queryStates;
+    const { search, page, pageSize } = queryStates;
     const [debouncedSearch, setDebouncedSearch] = useState(search);
     const toggleStatusMutation = api.account.useToggleAccountStatus();
     const deleteAccount = api.account.useDeleteAccount();
 
     useEffect(() => {
-        if (search === '') return;
+        //if (search === '') return;
         const timer = setTimeout(() => {
             setDebouncedSearch(search);
         }, DEBOUNCE_MS);
@@ -49,7 +50,6 @@ export function AccountTable<TData, TValue>({
     const [data, setData] = useState<Account[]>([]);
 
     useEffect(() => {
-        console.log(123);
         if (accounts?.data) {
             setData(accounts?.data);
         }
@@ -123,9 +123,9 @@ export function AccountTable<TData, TValue>({
     const { table } = useDataTable({
         data,
         columns: [...columns, ...operatorColumn] as ColumnDef<Account, any>[],
-        pageCount: pageCount,
+        pageCount,
         shallow: false, // Setting to false triggers a network request with the updated querystring.
-        debounceMs: 500,
+        debounceMs: DEBOUNCE_MS,
     });
 
     const onReset = useCallback(async () => {
@@ -145,7 +145,7 @@ export function AccountTable<TData, TValue>({
                     onChange={(e) => {
                         setQueryStates({ search: e.target.value, page: 1 });
                     }}
-                    placeholder="按账户名称搜索..."
+                    placeholder="按关键词搜索..."
                 />
                 <Button
                     variant={'ghost'}

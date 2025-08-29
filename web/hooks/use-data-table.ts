@@ -12,6 +12,7 @@ import {
     type Updater,
     type VisibilityState,
     getCoreRowModel,
+    getExpandedRowModel,
     getFacetedMinMaxValues,
     getFacetedRowModel,
     getFacetedUniqueValues,

@@ -27,7 +27,7 @@ export const useUpdatePassword = () => {
 
 // 获取账户信息（查询操作）
 export const useAccountInfo = () => {
-  const { data, error, isLoading } = useGraphQLQuery<{ accountInfo: any }, {}>(
+  const { data, error, isLoading, mutate } = useGraphQLQuery<{ accountInfo: any }, {}>(
     GET_ACCOUNT_INFO,
     {},
     {
@@ -39,6 +39,7 @@ export const useAccountInfo = () => {
   return {
     accountInfo: data?.accountInfo,
     isLoading,
-    error
+    error,
+    mutate
   };
 };

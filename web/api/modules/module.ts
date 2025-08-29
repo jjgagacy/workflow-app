@@ -17,7 +17,7 @@ export const useGetModules = (params: {
   key?: string;
   name?: string;
 } = {}) => {
-  const { data, error, isLoading } = useGraphQLQuery<{ modules: any }, typeof params>(
+  const { data, error, isLoading, mutate} = useGraphQLQuery<{ modules: any }, typeof params>(
     GET_MODULES,
     params,
     {
@@ -25,11 +25,12 @@ export const useGetModules = (params: {
       revalidateOnReconnect: true
     }
   );
-  
+
   return { 
     modules: data?.modules, 
     isLoading, 
-    error 
+    error,
+    mutate
   };
 };
 
@@ -54,12 +55,12 @@ export const useCreateModule = () => {
 // 更新模块
 export const useUpdateModule = () => {
   const mutation = useGraphQLMutation<{updateModule: any}, {input: {
-    id: string;
+    id: number;
     key: string;
     name: string;
   }}>(UPDATE_MODULE);
   
-  return async (params: { id: string; key: string; name: string }) => {
+  return async (params: { id: number; key: string; name: string }) => {
     const response = await mutation({ 
       input: {
         id: params.id,
@@ -73,9 +74,9 @@ export const useUpdateModule = () => {
 
 // 删除模块
 export const useDeleteModule = () => {
-  const mutation = useGraphQLMutation<{deleteModule: any}, {id: string}>(DELETE_MODULE);
+  const mutation = useGraphQLMutation<{deleteModule: any}, {id: number}>(DELETE_MODULE);
   
-  return async (id: string) => {
+  return async (id: number) => {
     const response = await mutation({ id });
     return response.deleteModule;
   };
