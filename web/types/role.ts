@@ -5,4 +5,5 @@ export type Role = {
     parent: string;
     rolePerm?: string[];
     status: number;
+    children?: Role[];
 }

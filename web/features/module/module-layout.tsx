@@ -16,7 +16,12 @@ export function ModuleLayout() {
 }
 
 export function ModulePage() {
-    const {openModal} = useModalContext();
+    const {openModal, resetModalData} = useModalContext();
+
+    const handleAddModule = () => {
+        resetModalData();
+        openModal('module');
+    }
     
     return (
         <div className="flex flex-1 flex-col space-y-4">
@@ -26,7 +31,7 @@ export function ModulePage() {
                     description="编辑操作权限信息" />
                 <Button
                     variant={'primary'}
-                    onClick={() => openModal()}
+                    onClick={handleAddModule}
                 >
                     <IconPlus className="mr-2 h-4 w-4" /> 添加权限组
                 </Button>

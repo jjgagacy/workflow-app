@@ -14,6 +14,7 @@ import { columnHelper } from "./columns";
 import Button from "@/app/components/base/button";
 import { useModalContext } from "@/hooks/use-model";
 import { ModuleForm } from "../module-form";
+import { ModulePermPage } from "../module-perm";
 
 interface ModuleTableParams<TData, TValue> {
     data: TData[];
@@ -32,8 +33,7 @@ export function ModuleTable<TData, TValue>({
     const { search, page, pageSize } = queryStates;
     const [debouncedSearch, setDebouncedSearch] = useState(search);
     const deleteModuleMutation = api.module.useDeleteModule();
-    const deleteModulePerm = api.module.useDeleteModulePerm();
-    const { openModal, closeModal, isModalOpen} = useModalContext();
+    const { openModal, closeModal, isModalOpen } = useModalContext();
     const [currentModule, setCurrentModule] = useState<Module | undefined>(undefined);
 
     useEffect(() => {
@@ -66,11 +66,12 @@ export function ModuleTable<TData, TValue>({
 
     const openEditModal = (module: Module) => {
         setCurrentModule(module);
-        openModal();
+        openModal('module', module);
     }
 
     const openPermModal = (module: Module) => {
-
+        setCurrentModule(module);
+        openModal('perm', module);
     }
 
     const handleModuleForm = async () => {
@@ -150,9 +151,16 @@ export function ModuleTable<TData, TValue>({
             </DataTable>
 
             <ModuleForm
-                isOpen={isModalOpen}
+                isOpen={isModalOpen('module')}
                 onOpenChange={() => closeModal()}
-                currentModule={currentModule}
+                module={currentModule}
+                onSubmitSuccess={handleModuleForm}
+            />
+
+            <ModulePermPage
+                isOpen={isModalOpen('perm')}
+                onOpenChange={() => closeModal()}
+                module={currentModule!}
                 onSubmitSuccess={handleModuleForm}
             />
         </>

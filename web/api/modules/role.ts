@@ -61,7 +61,7 @@ export const useCreateRole = () => {
 // 更新角色
 export const useUpdateRole = () => {
   const mutation = useGraphQLMutation<{updateRole: any}, {input: {
-    id: string;
+    id: number;
     key: string;
     parent?: string;
     name: string;
@@ -69,7 +69,7 @@ export const useUpdateRole = () => {
   }}>(UPDATE_ROLE);
   
   return async (params: { 
-    id: string;
+    id: number;
     key: string;
     parent?: string;
     name: string;
@@ -90,9 +90,9 @@ export const useUpdateRole = () => {
 
 // 删除角色
 export const useDeleteRole = () => {
-  const mutation = useGraphQLMutation<{deleteRole: any}, {id: string}>(DELETE_ROLE);
+  const mutation = useGraphQLMutation<{deleteRole: any}, {id: number}>(DELETE_ROLE);
   
-  return async (id: string) => {
+  return async (id: number) => {
     const response = await mutation({ id });
     return response.deleteRole;
   };

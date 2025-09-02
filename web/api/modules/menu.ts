@@ -9,7 +9,9 @@ export const useGetMenus = (params: {
   name?: string;
   parent?: string;
   status?: string;
-  module?: string;
+  module?: boolean;
+  scope?: boolean;
+  modulePerm?: boolean;
 } = {}) => {
   const { data, error, isLoading, mutate } = useGraphQLQuery<{ menus: any }, typeof params>(
     GET_MENUS,
@@ -90,7 +92,7 @@ export const useUpdateMenu = () => {
     key: string;
     parent?: string;
     name: string;
-    status?: string;
+    status?: number;
     sort?: number;
     moduleId?: string;
   }}>(UPDATE_MENU);
@@ -99,7 +101,7 @@ export const useUpdateMenu = () => {
     key: string;
     parent?: string;
     name: string;
-    status?: string;
+    status?: number;
     sort?: number;
     moduleId?: string;
   }) => {
@@ -119,9 +121,9 @@ export const useUpdateMenu = () => {
 
 // 删除菜单
 export const useDeleteMenu = () => {
-  const mutation = useGraphQLMutation<{deleteMenu: any}, {id: string}>(DELETE_MENU);
+  const mutation = useGraphQLMutation<{deleteMenu: any}, {id: number}>(DELETE_MENU);
   
-  return async (id: string) => {
+  return async (id: number) => {
     const response = await mutation({ id });
     return response.deleteMenu;
   };

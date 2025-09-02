@@ -1,7 +1,7 @@
 import { PageContainer } from "@/app/components/layout/page-container";
 import { Suspense } from "react";
 import Loading from "../../loading";
-import { ModuleLayout } from "@/features/module/model-layout";
+import { ModuleLayout } from "@/features/module/module-layout";
 
 export default function Page() {
     return (

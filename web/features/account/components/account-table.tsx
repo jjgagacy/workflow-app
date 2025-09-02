@@ -46,7 +46,7 @@ export function AccountTable<TData, TValue>({
         return () => clearTimeout(timer);
     }, [search]);
 
-    const { accounts } = api.account.useGetAccounts({ username: debouncedSearch, page, limit: pageSize });
+    const { accounts, mutate } = api.account.useGetAccounts({ username: debouncedSearch, page, limit: pageSize });
     const [data, setData] = useState<Account[]>([]);
 
     useEffect(() => {

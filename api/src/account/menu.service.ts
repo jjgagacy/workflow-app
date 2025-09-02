@@ -27,6 +27,15 @@ export class MenuService {
     ) {}
 
     /**
+     * 根据菜单id获取详情
+     * @param id 
+     * @returns 
+     */
+    async getById(id: number): Promise<MenuEntity | null> {
+        return this.menuRepository.findOne({ where: { id }, relations: { module: true }})
+    }
+
+    /**
      * 获取菜单详情
      * @param key - 菜单key
      * @returns 菜单实体或null

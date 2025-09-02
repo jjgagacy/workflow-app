@@ -32,7 +32,6 @@ export function DepartmentTable<TData, TValue>({
     const deleteDepartment = api.dep.useDeleteDep();
 
     useEffect(() => {
-        if (search === '') return;
         const timer = setTimeout(() => {
             setDebouncedSearch(search);
         }, DEBOUNCE_MS);
@@ -78,7 +77,7 @@ export function DepartmentTable<TData, TValue>({
             const filteredDepartments = filterDepartmentsBySearch(fullDepartmentTree, debouncedSearch);
             setData(filteredDepartments);
         }
-    }, [deps]);
+    }, [deps, debouncedSearch]);
 
     const removeDepartmentFromTree = (deps: Department[], idToRemove: number): Department[] => {
         return deps
@@ -155,13 +154,13 @@ export function DepartmentTable<TData, TValue>({
                     }}
                     placeholder="按关键词搜索..."
                 />
-                    <Button
-                        variant={'ghost'}
-                        size={'large'}
-                        onClick={() => onReset()}
-                    >
-                        Reset
-                    </Button>
+                <Button
+                    variant={'ghost'}
+                    size={'large'}
+                    onClick={() => onReset()}
+                >
+                    Reset
+                </Button>
             </DataTableToolbar>
         </DataTable>
     );

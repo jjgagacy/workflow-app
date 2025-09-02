@@ -88,14 +88,14 @@ export const useCreateModulePerm = () => {
     module: string;
     key: string;
     name: string;
-    restrictLevel?: string;
+    restrictLevel?: number;
   }}>(CREATE_MODULE_PERM);
   
   return async (params: { 
     module: string;
     key: string;
     name: string;
-    restrictLevel?: string;
+    restrictLevel?: number;
   }) => {
     const response = await mutation({ 
       input: {
@@ -115,14 +115,14 @@ export const useUpdateModulePerm = () => {
     module: string;
     key: string;
     name: string;
-    restrictLevel?: string;
+    restrictLevel?: number;
   }}>(UPDATE_MODULE_PERM);
   
   return async (params: { 
     module: string;
     key: string;
     name: string;
-    restrictLevel?: string;
+    restrictLevel?: number;
   }) => {
     const response = await mutation({ 
       input: {
