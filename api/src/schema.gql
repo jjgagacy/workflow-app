@@ -172,6 +172,7 @@ type Query {
   depInfo(key: String!): Dep!
   deps(key: String, name: String, parent: String): [Dep!]!
   hello: String!
+  menuInfo(id: Int!): Menu!
   menus(key: String, module: Boolean, modulePerm: Boolean, name: String, parent: String, scope: Boolean, status: Int): [Menu!]!
   modules(key: String, limit: Int, name: String, page: Int): ModuleList!
   roles(hasMenus: Boolean, hasRolePerms: Boolean, id: Int, key: String, limit: Int, name: String, page: Int, parent: String, status: Int): RoleList!

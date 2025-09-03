@@ -2,6 +2,7 @@
 import { useGraphQLQuery, useGraphQLMutation } from "@/hooks/use-graphql";
 import { CREATE_MENU, UPDATE_MENU, DELETE_MENU } from '../graphql/mutations';
 import { GET_MENUS, GET_MENUS2 } from "../graphql/queries";
+import { Menu } from "@/features/menu/components/data";
 
 // 获取菜单列表 (GET_MENUS)
 export const useGetMenus = (params: {
@@ -23,7 +24,7 @@ export const useGetMenus = (params: {
   );
   
   return { 
-    menus: data?.menus, 
+    menus: data?.menus as Menu[], 
     isLoading, 
     error,
     mutate
@@ -59,18 +60,18 @@ export const useCreateMenu = () => {
     key: string;
     parent?: string;
     name: string;
-    status?: string;
+    status?: number;
     sort?: number;
-    moduleId?: string;
+    moduleId?: number;
   }}>(CREATE_MENU);
   
   return async (params: {
     key: string;
     parent?: string;
     name: string;
-    status?: string;
+    status?: number;
     sort?: number;
-    moduleId?: string;
+    moduleId?: number;
   }) => {
     const response = await mutation({ 
       input: {
