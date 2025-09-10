@@ -61,6 +61,14 @@ import { LocalStrategy } from './auth/strategies/local.strategy';
 import { AuthModule } from './auth/auth.module';
 import { AuthMiddleware } from './common/middleware/auth.middleware';
 import { LoginResolver } from './graphql/resolvers/login.resolver';
+import { AgentModule } from './agent/agent.module';
+import { ModelRuntimeModule } from './model_runtime/model_runtime.module';
+import { McpModule } from './mcp/mcp.module';
+import { PromptModule } from './prompt/prompt.module';
+import { RagModule } from './rag/rag.module';
+import { ToolModule } from './tool/tool.module';
+import { WorkflowModule } from './workflow/workflow.module';
+import { AppModule } from './app/app.module';
 
 @Module({
   imports: [
@@ -111,7 +119,15 @@ import { LoginResolver } from './graphql/resolvers/login.resolver';
       AccountEntity
     ]),
     FooModule,
-    AccountModule
+    AccountModule,
+    AgentModule,
+    ModelRuntimeModule,
+    McpModule,
+    PromptModule,
+    RagModule,
+    ToolModule,
+    WorkflowModule,
+    AppModule
   ],
   controllers: [AppController],
   providers: [

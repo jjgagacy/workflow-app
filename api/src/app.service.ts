@@ -3,6 +3,9 @@ import { DataSource } from 'typeorm';
 import { FooService } from './foo/foo.service';
 import { AccountService } from './account/account.service';
 import { RoleService } from './account/role.service';
+import { AccountEntity } from './account/entities/account.entity';
+import { PASSWORD_SALT } from './config/constants';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AppService {
@@ -19,14 +22,13 @@ export class AppService {
     // console.log('Database connected:', this.dataSource.isInitialized);
     
     // 测试插入account和dep，插入后会自动更新account中的dep字段是新创建的部门id
-
     // const accountRepository = this.dataSource.getRepository(AccountEntity);
     // const account = new AccountEntity();
     // account.username = 'admin';
-    // account.password = 'admin123';
+    // account.password = await bcrypt.hash('admin', PASSWORD_SALT);
     // account.realName = 'Administrator';
-    // account.email = 'jj@qq.com';
-    // account.mobile = '1234567890';
+    // account.email = 'jjgagacy@163.com';
+    // account.mobile = '18701470971';
     // account.status = 0; // 0 for active
     // account.lastIp = 'localhost';
     // account.operate = {
