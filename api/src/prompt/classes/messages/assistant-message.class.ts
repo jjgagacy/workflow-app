@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { PromptMessageRole } from "src/prompt/enums/prompt-message.enum";
 import { PromptMessage } from "../prompt-message.class";
 import { Type } from "class-transformer";
@@ -6,7 +7,7 @@ import { Type } from "class-transformer";
 export class AssistantPromptMessage extends PromptMessage {
     role: PromptMessageRole = PromptMessageRole.ASSISTANT;
 
-    static ToolCallFunction = class {
+    static ToolCallFunction = class  {
         name: string;
 
         arguments: string;
@@ -19,7 +20,6 @@ export class AssistantPromptMessage extends PromptMessage {
 
         function: InstanceType<typeof AssistantPromptMessage.ToolCallFunction>;
     }
-
 
     @Type(() => AssistantPromptMessage.ToolCall)
     tool_calls: InstanceType<typeof AssistantPromptMessage.ToolCall>[] = [];

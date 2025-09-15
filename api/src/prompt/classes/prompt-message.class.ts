@@ -63,6 +63,7 @@ export abstract class PromptMessage {
                 } else {
                     throw new Error(`Invalid prompt message: ${prompt}`);
                 }
+                prompts.push(validatedPrompt);
             }
             return prompts;
         }

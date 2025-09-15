@@ -56,7 +56,7 @@ export class LLMUsage extends ModelUsage {
         }
 
         const usage = new LLMUsage();
-        usage.prompt_tokens = record?.prompt_tokens || 0;
+        usage.prompt_tokens = parseFloat(record?.prompt_tokens || '0');
         usage.completion_tokens = completion_tokens;
         usage.total_tokens = total_tokens;
         usage.prompt_unit_price = parseFloat(record?.prompt_unit_price?.toString() || '0');
@@ -73,10 +73,6 @@ export class LLMUsage extends ModelUsage {
     }
 
     plus(other: LLMUsage): LLMUsage {
-        if (this.total_tokens === 0) {
-            return other;
-        }
-
         const usage = new LLMUsage();
         usage.prompt_tokens = this.prompt_tokens + other.prompt_tokens;
         usage.prompt_unit_price = other.prompt_unit_price;
