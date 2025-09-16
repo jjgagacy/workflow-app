@@ -14,3 +14,10 @@ type Plugin struct {
 	ManifestType           manifest_entites.ManifestType    `gorm:"size:127" json:"manifest_type"`
 	RemoteDeclaration      plugin_entites.PluginDeclaration `gorm:"serializer:json;type:text;size:65535"`
 }
+
+type PluginDeclaration struct {
+	Model
+	PluginUniqueIdentifier string                           `json:"plugin_unique_identifier" gorm:"size:255;unique"`
+	PluginID               string                           `json:"plugin_id" gorm:"size:255;index"`
+	Declaration            plugin_entites.PluginDeclaration `gorm:"serializer:json;type:text;size:65535" json:"declaration"`
+}

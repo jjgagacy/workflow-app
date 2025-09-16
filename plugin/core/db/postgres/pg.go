@@ -95,11 +95,10 @@ func InitDB(config *PGConfig) (*gorm.DB, error) {
 }
 
 func buildDSN(config *PGConfig, useDefaultDB bool) string {
-	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s TimeZone=%s",
+	dsn := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=%s TimeZone=%s",
 		config.Host,
 		config.Port,
 		config.User,
-		config.Pass,
 		func() string {
 			if useDefaultDB {
 				return config.DefaultDBName
@@ -109,6 +108,9 @@ func buildDSN(config *PGConfig, useDefaultDB bool) string {
 		config.SSLMode,
 		config.TimeZone,
 	)
+	if config.Pass != "" {
+		dsn = fmt.Sprintf("%s password=%s", dsn, config.Pass)
+	}
 	if config.Charset != "" {
 		dsn = fmt.Sprintf("%s client_encoding=%s", dsn, config.Charset)
 	}

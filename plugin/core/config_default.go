@@ -18,7 +18,7 @@ func (config *Config) SetDefault() {
 	setDefaultInt(&config.PluginMaxExecutionTimeout, 10*60)
 	setDefaultString(&config.PluginStorageType, oss.OSS_TYPE_LOCAL)
 	setDefaultInt(&config.PluginMediaCacheSize, 1024)
-	setDefaultBoolPtr(&config.PluginEndpointEnabled, true)
+	setDefaultBoolPtr(&config.PluginEndPointEnabled, true)
 	setDefaultString(&config.DBSslMode, "disable")
 	setDefaultString(&config.PluginInstalledPath, "plugin")
 	setDefaultString(&config.PluginMediaCachePath, "assets")

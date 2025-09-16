@@ -91,3 +91,21 @@ type GoogleCloudStorage struct {
 	Bucket      string
 	Credentials string
 }
+
+type TencentCOS struct {
+	Region    string
+	SecretID  string
+	SecretKey string
+	Bucket    string
+}
+
+type Args struct {
+	S3                 *S3
+	Local              *Local
+	AzureBlob          *AzureBlob
+	AliyunOSS          *AliyunOSS
+	TencentCOS         *TencentCOS
+	GoogleCloudStorage *GoogleCloudStorage
+	HuaweiOBS          *HuaweiOBS
+	VolcengineTOS      *VolcengineTOS
+}

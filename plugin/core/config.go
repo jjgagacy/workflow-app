@@ -15,6 +15,7 @@ type Config struct {
 
 	PluginStorageType      string `envconfig:"PLUGIN_STORAGE_TYPE" validate:"required"`
 	PluginStorageOssBucket string `envconfig:"PLUGIN_STORAGE_OSS_BUCKET"`
+	PluginStorageLocalRoot string `envconfig:"PLUGIN_STORAGE_LOCAL_ROOT"`
 
 	// request timeout
 	PluginMaxExecutionTimeout int `envconfig:"PLUGIN_MAX_EXECUTION_TIMEOUT" validate:"required"`
@@ -61,7 +62,7 @@ type Config struct {
 	DBCharset         string `envconfig:"DB_CHARSET"`
 
 	// plugin endpoint
-	PluginEndpointEnabled *bool `envconfig:"PLUGIN_ENDPOINT_ENABLED"`
+	PluginEndPointEnabled *bool `envconfig:"PLUGIN_ENDPOINT_ENABLED"`
 
 	// storage
 	PluginWorkingPath      string `envconfig:"PLUGIN_WORKING_PATH"` // where the plugin finally running

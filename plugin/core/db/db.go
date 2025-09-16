@@ -14,6 +14,15 @@ var DB *gorm.DB
 func migrate() error {
 	err := DB.AutoMigrate(
 		model.Plugin{},
+		model.PluginInstallation{},
+		model.PluginDeclaration{},
+		model.EndPoint{},
+		model.AIModelInstallation{},
+		model.ToolInstallation{},
+		model.TaskInstallation{},
+		model.TenantStorage{},
+		model.AgentStrategyInstallation{},
+		model.ServerlessRuntime{},
 	)
 	if err != nil {
 		return err
@@ -38,6 +47,7 @@ func Init(config *core.Config) {
 			ConnMaxLifeTime: config.DBConnMaxLifetime,
 			Charset:         config.DBCharset,
 			Extras:          config.DBExtras,
+			TimeZone:        config.DBTimeZone,
 		})
 	} else {
 		log.Fatalf("unsupported database type: %v", config.DBType)

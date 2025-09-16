@@ -60,7 +60,7 @@ func TestConfigValidate(t *testing.T) {
 		DBTimeZone:        "Asia/Shanghai",
 
 		// 插件端点配置
-		PluginEndpointEnabled:           boolPtr(true),
+		PluginEndPointEnabled:           boolPtr(true),
 		InvocationConnectionIdleTimeout: 500,
 
 		// 存储路径配置

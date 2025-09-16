@@ -1,0 +1,3 @@
+package plugin_entites
+
+type PluginUniqueIdentifier string
