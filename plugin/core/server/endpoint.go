@@ -6,7 +6,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jjgagacy/workflow-app/plugin/core"
+	"github.com/jjgagacy/workflow-app/plugin/core/db"
+	"github.com/jjgagacy/workflow-app/plugin/model"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/endpoint_entities"
+	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entites"
+	"github.com/jjgagacy/workflow-app/plugin/service"
 )
 
 type EndPointHandler = func(ctx *gin.Context, hookId string, maxExecutionTime time.Duration, path string)
@@ -42,5 +46,29 @@ func validatePath(path string) bool {
 }
 
 func (app *App) EndPointHandler(ctx *gin.Context, hookId string, maxExecutionTime time.Duration, path string) {
-	// todo
+	endPoint, err := db.GetOne[model.EndPoint](
+		db.Equal("hook_id", hookId),
+	)
+	if err != nil {
+		ctx.JSON(404, gin.H{"error": "Endpoint not found"})
+		return
+	}
+
+	// get plugin installation
+	pluginInstallation, err := db.GetOne[model.PluginInstallation](
+		db.Equal("plugin_id", endPoint.PluginID),
+		db.Equal("tenant_id", endPoint.TenantID),
+	)
+	if err != nil {
+		ctx.JSON(404, gin.H{"error": "Plugin installation not found"})
+		return
+	}
+	_, err = plugin_entites.NewPluginUniqueIdentifier(pluginInstallation.PluginUniqueIdentifier)
+	if err != nil {
+		ctx.JSON(500, gin.H{"error": "Invalid plugin unique identifier"})
+		return
+	}
+
+	// service
+	service.EndPoint(ctx, &endPoint, &pluginInstallation, maxExecutionTime, path)
 }

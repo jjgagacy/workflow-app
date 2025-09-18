@@ -5,7 +5,7 @@ import (
 
 	"github.com/jjgagacy/workflow-app/plugin/core"
 	"github.com/jjgagacy/workflow-app/plugin/core/db"
-	"github.com/jjgagacy/workflow-app/plugin/manager"
+	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager"
 	"github.com/jjgagacy/workflow-app/plugin/oss"
 	"github.com/jjgagacy/workflow-app/plugin/oss/factory"
 )
@@ -33,8 +33,9 @@ func (app *App) Run(config *core.Config) {
 
 	oss := initOSS(config)
 
-	manager := manager.InitGlobalManager(oss, config)
-
+	// create manager
+	manager := plugin_manager.InitGlobalManager(oss, config)
+	// init manager
 	manager.Launch(config)
 
 	// start http server
