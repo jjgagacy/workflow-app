@@ -12,7 +12,7 @@ import (
 	"github.com/jjgagacy/workflow-app/plugin/model"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/endpoint_entities"
-	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entites"
+	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
 )
 
 func copyRequest(req *http.Request, hookId string, path string) (*bytes.Buffer, error) {
@@ -79,7 +79,7 @@ func EndPoint(ctx *gin.Context, endPoint *model.EndPoint, pluginInstallation *mo
 		return
 	}
 
-	identifier, err := plugin_entites.NewPluginUniqueIdentifier(pluginInstallation.PluginUniqueIdentifier)
+	identifier, err := plugin_entities.NewPluginUniqueIdentifier(pluginInstallation.PluginUniqueIdentifier)
 	if err != nil {
 		ctx.JSON(500, entities.UniqueIdentifierInvalidError(err).ToResponse())
 		return

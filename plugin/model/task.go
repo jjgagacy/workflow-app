@@ -1,6 +1,6 @@
 package model
 
-import "github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entites"
+import "github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
 
 type TaskInstallStatus string
 
@@ -12,13 +12,13 @@ const (
 )
 
 type TaskPluginInstallStatus struct {
-	PluginUniqueIdentifier plugin_entites.PluginUniqueIdentifier `json:"plugin_unique_identifier"`
-	Label                  plugin_entites.I18nObject             `json:"label"`
-	Icon                   string                                `json:"icon"`
-	IconDark               string                                `json:"icon_dark"`
-	PluginID               string                                `json:"plugin_id"`
-	Status                 TaskInstallStatus                     `json:"status"`
-	Message                string                                `json:"message"`
+	PluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier `json:"plugin_unique_identifier"`
+	Label                  plugin_entities.I18nObject             `json:"label"`
+	Icon                   string                                 `json:"icon"`
+	IconDark               string                                 `json:"icon_dark"`
+	PluginID               string                                 `json:"plugin_id"`
+	Status                 TaskInstallStatus                      `json:"status"`
+	Message                string                                 `json:"message"`
 }
 
 type TaskInstallation struct {

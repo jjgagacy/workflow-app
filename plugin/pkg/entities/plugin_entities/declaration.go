@@ -1,6 +1,8 @@
-package plugin_entites
+package plugin_entities
 
-import "github.com/jjgagacy/workflow-app/plugin/pkg/entities/manifest_entites"
+import (
+	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/manifest_entites"
+)
 
 type PluginCategory string
 

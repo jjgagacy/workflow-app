@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 // GenericQuery is a function for GORM queries
@@ -38,6 +39,12 @@ func WithTransaction(fn func(db *gorm.DB) error, ctx ...*gorm.DB) error {
 	}
 	tx.Commit()
 	return nil
+}
+
+func WithTransactionContext(tx *gorm.DB) GenericQuery {
+	return func(_ *gorm.DB) *gorm.DB {
+		return tx
+	}
 }
 
 func GetOne[T any](query ...GenericQuery) (T, error) {
@@ -137,6 +144,13 @@ func Create(data any, ctx ...*gorm.DB) error {
 	return DB.Create(data).Error
 }
 
+func Update(data any, ctx ...*gorm.DB) error {
+	if len(ctx) > 0 {
+		return ctx[0].Save(data).Error
+	}
+	return DB.Save(data).Error
+}
+
 func Delete(data any, ctx ...*gorm.DB) error {
 	if len(ctx) > 0 {
 		return ctx[0].Delete(data).Error
@@ -183,7 +197,6 @@ func NotEqual[T GenericEqualableConstraint](field string, value T) GenericQuery 
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where(fmt.Sprintf("%s <> ?", field), value)
 	}
-}
 }
 
 func GreaterThan[T GenericComparableConstraint](field string, value T) GenericQuery {
@@ -247,5 +260,12 @@ func Page(page int, pageSize int) GenericQuery {
 		}
 		offset := (page - 1) * pageSize
 		return db.Offset(offset).Limit(pageSize)
+	}
+}
+
+// WLock applies a write lock to the selected rows
+func WLock() GenericQuery {
+	return func(tx *gorm.DB) *gorm.DB {
+		return tx.Clauses(clause.Locking{Strength: "UPDATE"})
 	}
 }

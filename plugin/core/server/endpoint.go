@@ -9,7 +9,7 @@ import (
 	"github.com/jjgagacy/workflow-app/plugin/core/db"
 	"github.com/jjgagacy/workflow-app/plugin/model"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/endpoint_entities"
-	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entites"
+	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
 	"github.com/jjgagacy/workflow-app/plugin/service"
 )
 
@@ -63,7 +63,7 @@ func (app *App) EndPointHandler(ctx *gin.Context, hookId string, maxExecutionTim
 		ctx.JSON(404, gin.H{"error": "Plugin installation not found"})
 		return
 	}
-	_, err = plugin_entites.NewPluginUniqueIdentifier(pluginInstallation.PluginUniqueIdentifier)
+	_, err = plugin_entities.NewPluginUniqueIdentifier(pluginInstallation.PluginUniqueIdentifier)
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": "Invalid plugin unique identifier"})
 		return

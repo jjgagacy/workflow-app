@@ -43,6 +43,21 @@ const (
 	PROMPT_MESSAGE_CONTENT_TYPE_DOCUMENT PromptMessageContentType = "document"
 )
 
+var validPromptMessageRoles = map[PromptMessageRole]bool{
+	PROMPT_MESSAGE_ROLE_SYSTEM:    true,
+	PROMPT_MESSAGE_ROLE_USER:      true,
+	PROMPT_MESSAGE_ROLE_ASSISTANT: true,
+	PROMPT_MESSAGE_ROLE_TOOL:      true,
+}
+
+var validPromptMessageContentTypes = map[PromptMessageContentType]bool{
+	PROMPT_MESSAGE_CONTENT_TYPE_TEXT:     true,
+	PROMPT_MESSAGE_CONTENT_TYPE_IMAGE:    true,
+	PROMPT_MESSAGE_CONTENT_TYPE_AUDIO:    true,
+	PROMPT_MESSAGE_CONTENT_TYPE_VIDEO:    true,
+	PROMPT_MESSAGE_CONTENT_TYPE_DOCUMENT: true,
+}
+
 type PromptMessageContent struct {
 	Type         PromptMessageContentType `json:"type"`
 	Base64Data   string                   `json:"base64_data"`
@@ -65,22 +80,12 @@ type PromptMessageToolCall struct {
 
 func isPromptMessageRole(fl validator.FieldLevel) bool {
 	value := fl.Field().String()
-	switch PromptMessageRole(value) {
-	case PROMPT_MESSAGE_ROLE_SYSTEM, PROMPT_MESSAGE_ROLE_USER, PROMPT_MESSAGE_ROLE_ASSISTANT, PROMPT_MESSAGE_ROLE_TOOL:
-		return true
-	default:
-		return false
-	}
+	return validPromptMessageRoles[PromptMessageRole(value)]
 }
 
 func isPromptMessageContentType(fl validator.FieldLevel) bool {
 	value := fl.Field().String()
-	switch PromptMessageContentType(value) {
-	case PROMPT_MESSAGE_CONTENT_TYPE_TEXT, PROMPT_MESSAGE_CONTENT_TYPE_IMAGE, PROMPT_MESSAGE_CONTENT_TYPE_AUDIO, PROMPT_MESSAGE_CONTENT_TYPE_VIDEO, PROMPT_MESSAGE_CONTENT_TYPE_DOCUMENT:
-		return true
-	default:
-		return false
-	}
+	return validPromptMessageContentTypes[PromptMessageContentType(value)]
 }
 
 func isPromptMessageContent(fl validator.FieldLevel) bool {

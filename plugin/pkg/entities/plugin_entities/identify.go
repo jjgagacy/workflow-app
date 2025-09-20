@@ -1,4 +1,4 @@
-package plugin_entites
+package plugin_entities
 
 import (
 	"errors"

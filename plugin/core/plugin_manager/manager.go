@@ -6,12 +6,12 @@ import (
 	"github.com/jjgagacy/workflow-app/plugin/core"
 	"github.com/jjgagacy/workflow-app/plugin/core/invocation"
 	"github.com/jjgagacy/workflow-app/plugin/oss"
-	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entites"
+	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
 	"github.com/jjgagacy/workflow-app/plugin/utils"
 )
 
 type PluginManager struct {
-	m utils.Map[string, plugin_entites.PluginLifetime]
+	m utils.Map[string, plugin_entities.PluginLifetime]
 	// configuration
 	config *core.Config
 	// max launching lock to prevent too many plugins launching at the same time
@@ -19,7 +19,7 @@ type PluginManager struct {
 	// invoke interface
 	backwardsInvocation invocation.BackwardsInvocation
 	// register plugin
-	pluginRegisters []func(lifetime plugin_entites.PluginLifetime) error
+	pluginRegisters []func(lifetime plugin_entities.PluginLifetime) error
 	// l is a lock to launch local plugins
 	localPluginLaunchingLock *utils.GranularityLock
 }
@@ -41,7 +41,7 @@ func InitGlobalManager(oss oss.OSS, config *core.Config) *PluginManager {
 	return manager
 }
 
-func (p *PluginManager) Get(identity plugin_entites.PluginUniqueIdentifier) (plugin_entites.PluginLifetime, error) {
+func (p *PluginManager) Get(identity plugin_entities.PluginUniqueIdentifier) (plugin_entities.PluginLifetime, error) {
 	if identity.RemoteLike() || p.config.Platform == core.PLATFORM_LOCAL {
 		// check if it's a debugging plugin or a local plugin
 

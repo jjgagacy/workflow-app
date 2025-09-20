@@ -1,4 +1,9 @@
-package plugin_entites
+package plugin_entities
+
+import (
+	"github.com/go-playground/validator/v10"
+	"github.com/jjgagacy/workflow-app/plugin/pkg/validators"
+)
 
 type ConfigOption struct {
 	Value string     `json:"value"`
@@ -15,4 +20,13 @@ type ProviderConfig struct {
 	Label    *I18nObject    `json:"label"`
 	Help     *I18nObject    `json:"help"`
 	URL      *string        `json:"url"`
+}
+
+func isScope(fl validator.FieldLevel) bool {
+	// todo
+	return true
+}
+
+func init() {
+	validators.EntitiesValidator.RegisterValidation("is_scope", isScope)
 }
