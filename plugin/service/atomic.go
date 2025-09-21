@@ -5,6 +5,7 @@ import (
 	"github.com/jjgagacy/workflow-app/plugin/model"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/manifest_entites"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
+	"github.com/jjgagacy/workflow-app/plugin/types"
 	"gorm.io/gorm"
 )
 
@@ -25,7 +26,7 @@ func AtomicInstallPlugin(
 		db.Equal("tenant_id", tenantId),
 	)
 	if err == nil {
-		return nil, nil, ErrPluginAlreadyExists
+		return nil, nil, types.ErrPluginAlreadyExists
 	}
 
 	err = db.WithTransaction(func(tx *gorm.DB) error {
@@ -37,7 +38,7 @@ func AtomicInstallPlugin(
 			db.WLock(),
 		)
 
-		if err == ErrRecordNotFound {
+		if err == types.ErrRecordNotFound {
 			plugin := &model.Plugin{
 				PluginID:               pluginUniqueIdentifier.PluginID(),
 				PluginUniqueIdentifier: pluginUniqueIdentifier.String(),
@@ -174,8 +175,8 @@ func AtomicUninstallPlugin(
 
 	// check plugin has been uninstalled
 	if err != nil {
-		if err == ErrRecordNotFound {
-			return nil, ErrPluginHasUninstalled
+		if err == types.ErrRecordNotFound {
+			return nil, types.ErrPluginHasUninstalled
 		} else {
 			return nil, err
 		}
@@ -188,8 +189,8 @@ func AtomicUninstallPlugin(
 			db.WLock(),
 		)
 
-		if err == ErrRecordNotFound {
-			return ErrPluginHasUninstalled
+		if err == types.ErrRecordNotFound {
+			return types.ErrPluginHasUninstalled
 		} else if err != nil {
 			return err
 		} else {
@@ -208,8 +209,8 @@ func AtomicUninstallPlugin(
 			db.Equal("tenant_id", tenantId),
 		)
 
-		if err == ErrRecordNotFound {
-			return ErrPluginHasUninstalled
+		if err == types.ErrRecordNotFound {
+			return types.ErrPluginHasUninstalled
 		} else if err != nil {
 			return err
 		} else {
@@ -301,8 +302,8 @@ func AtomicUpgradePlugin(
 			db.WLock(),
 		)
 
-		if err == ErrRecordNotFound {
-			return ErrPluginNotInstalled
+		if err == types.ErrRecordNotFound {
+			return types.ErrPluginNotInstalled
 		} else if err != nil {
 			return err
 		}
@@ -313,7 +314,7 @@ func AtomicUpgradePlugin(
 			db.Equal("plugin_unique_identifier", newPluginUniqueIdentifier.String()),
 		)
 
-		if err == ErrRecordNotFound {
+		if err == types.ErrRecordNotFound {
 			// create new plugin
 			plugin = model.Plugin{
 				PluginID:               newPluginUniqueIdentifier.PluginID(),

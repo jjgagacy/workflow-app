@@ -62,7 +62,7 @@ func (p *PluginManager) Launch(config *core.Config) {
 		},
 	)
 	if err != nil {
-		log.Panic("Failed to create invocation client: %s", err)
+		log.Panicf("Failed to create invocation client: %s", err)
 	}
 	p.backwardsInvocation = invocation
 
