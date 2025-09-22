@@ -10,7 +10,7 @@ import (
 
 var (
 	pool *ants.Pool
-	mu   sync.Mutex
+	pl   sync.Mutex
 )
 
 type PoolStatus struct {
@@ -19,15 +19,15 @@ type PoolStatus struct {
 	Total int `json:"total"`
 }
 
-func IsInit() bool {
-	mu.Lock()
-	defer mu.Unlock()
+func IsInitPool() bool {
+	pl.Lock()
+	defer pl.Unlock()
 	return pool != nil
 }
 
 func InitPool(size int, sentryOption ...sentry.ClientOptions) {
-	mu.Lock()
-	defer mu.Unlock()
+	pl.Lock()
+	defer pl.Unlock()
 
 	if pool != nil {
 		return
@@ -96,4 +96,45 @@ func WithMaxRoutine(maxRoutine int, tasks []func(), done ...func()) {
 			d()
 		}
 	})
+}
+
+func ReleasePool() {
+	pl.Lock()
+	defer pl.Unlock()
+
+	if pool != nil {
+		pool.Release()
+		pool = nil
+	}
+}
+
+func WithMaxRoutineBlocking(maxRoutine int, tasks []func(), done ...func()) {
+	if maxRoutine <= 0 {
+		maxRoutine = 1
+	}
+
+	if maxRoutine > len(tasks) {
+		maxRoutine = len(tasks)
+	}
+
+	var wg sync.WaitGroup
+	sem := make(chan struct{}, maxRoutine)
+
+	for _, task := range tasks {
+		wg.Add(1)
+		sem <- struct{}{}
+		go func(tsk func()) {
+			defer wg.Done()
+			defer func() { <-sem }()
+			tsk()
+		}(task)
+	}
+
+	// 等待所有任务完成
+	wg.Wait()
+
+	// 执行完成回调
+	for _, d := range done {
+		d()
+	}
 }

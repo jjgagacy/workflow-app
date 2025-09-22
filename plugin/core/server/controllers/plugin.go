@@ -39,25 +39,25 @@ func InstallPluginFromIdentifiers(config *core.Config) gin.HandlerFunc {
 			TenantID               string                                   `url:"tenant_id" validate:"required"`
 			PluginUniqueIdentifier []plugin_entities.PluginUniqueIdentifier `json:"plugin_unique_identifies" validate:"required,max=64,dive,plugin_unique_identifier"`
 			Source                 string                                   `json:"source" validate:"required"`
-			Meta                   []map[string]any                         `json:"meta" validate:"omitempty"`
+			Metas                  []map[string]any                         `json:"meta" validate:"omitempty"`
 		}) {
-			if request.Meta == nil {
-				request.Meta = []map[string]any{}
+			if request.Metas == nil {
+				request.Metas = []map[string]any{}
 			}
 
-			if len(request.Meta) != len(request.PluginUniqueIdentifier) {
+			if len(request.Metas) != len(request.PluginUniqueIdentifier) {
 				ctx.JSON(http.StatusOK, entities.BadRequestError(errors.New("the number of meta and plugin unique identifiers not match")).ToResponse())
 				return
 			}
 
-			for i := range request.Meta {
-				if request.Meta[i] == nil {
-					request.Meta[i] = map[string]any{}
+			for i := range request.Metas {
+				if request.Metas[i] == nil {
+					request.Metas[i] = map[string]any{}
 				}
 			}
 
 			ctx.JSON(http.StatusOK, service.InstallPluginFromIdentifier(
-				config, request.TenantID, request.PluginUniqueIdentifier, request.Source, request.Meta,
+				config, request.TenantID, request.PluginUniqueIdentifier, request.Source, request.Metas,
 			))
 		})
 	}

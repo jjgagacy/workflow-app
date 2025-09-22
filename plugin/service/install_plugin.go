@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/martian/v3/log"
 	"github.com/jjgagacy/workflow-app/plugin/cache"
 	"github.com/jjgagacy/workflow-app/plugin/core"
 	"github.com/jjgagacy/workflow-app/plugin/core/db"
@@ -34,9 +33,50 @@ func InstallPluginFromIdentifier(
 	tenantId string,
 	pluginUniqueIdentifiers []plugin_entities.PluginUniqueIdentifier,
 	source string,
-	meta []map[string]any,
+	metas []map[string]any,
 ) *entities.Response {
-	panic("")
+	response, err := InstallPluginRuntimeToTenant(
+		config,
+		tenantId,
+		pluginUniqueIdentifiers,
+		source,
+		metas,
+		func(
+			pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier,
+			declaration *plugin_entities.PluginDeclaration,
+			meta map[string]any,
+		) error {
+			runtimeType := plugin_entities.PluginRuntimeType("")
+
+			switch config.Platform {
+			case core.PLATFORM_SERVERLESS:
+				runtimeType = plugin_entities.PLUGIN_RUNTIME_TYPE_SERVERLESS
+			case core.PLATFORM_LOCAL:
+				runtimeType = plugin_entities.PLUGIN_RUNTIME_TYPE_LOCAL
+			default:
+				return fmt.Errorf("unsupported platform: %s", config.Platform)
+			}
+
+			_, _, err := AtomicInstallPlugin(
+				tenantId,
+				pluginUniqueIdentifier,
+				runtimeType,
+				declaration,
+				source,
+				meta,
+			)
+			return err
+		},
+	)
+
+	if err != nil {
+		if errors.Is(err, types.ErrPluginAlreadyExists) {
+			return entities.BadRequestError(err).ToResponse()
+		}
+		return entities.InternalError(err).ToResponse()
+	}
+
+	return entities.NewSuccessResponse(response)
 }
 
 func InstallPluginRuntimeToTenant(
@@ -51,11 +91,12 @@ func InstallPluginRuntimeToTenant(
 	pluginWaitingInstallations := []plugin_entities.PluginUniqueIdentifier{}
 
 	runtimeType := plugin_entities.PluginRuntimeType("")
-	if config.Platform == core.PLATFORM_LOCAL {
+	switch config.Platform {
+	case core.PLATFORM_LOCAL:
 		runtimeType = plugin_entities.PLUGIN_RUNTIME_TYPE_LOCAL
-	} else if config.Platform == core.PLATFORM_SERVERLESS {
+	case core.PLATFORM_SERVERLESS:
 		runtimeType = plugin_entities.PLUGIN_RUNTIME_TYPE_SERVERLESS
-	} else {
+	default:
 		return nil, fmt.Errorf("unsupported platform: %s", config.Platform)
 	}
 
@@ -189,7 +230,7 @@ func InstallPluginRuntimeToTenant(
 
 					return db.Update(updateTask, tx)
 				}); err != nil {
-					return log.Errorf("failed to update install task status %s", err.Error())
+					return
 				}
 			}
 
@@ -200,8 +241,72 @@ func InstallPluginRuntimeToTenant(
 			})
 
 			// Update from stream
-			// todo
+			var stream *utils.Stream[plugin_manager.PluginInstallResponse]
+			switch config.Platform {
+			case core.PLATFORM_SERVERLESS:
+				// todo serverless
+				return
+			case core.PLATFORM_LOCAL:
+				stream, err = manager.InstallLocal(pluginUniqueIdntifier)
+			default:
+				updateTaskStatus(func(task *model.TaskInstallation, plugin *model.TaskPluginInstallStatus) {
+					task.Status = model.TaskInstallStatusFailed
+					plugin.Status = model.TaskInstallStatusFailed
+					plugin.Message = "Unsupported platform"
+				})
+				return
+			}
 
+			if err != nil {
+				updateTaskStatus(func(task *model.TaskInstallation, plugin *model.TaskPluginInstallStatus) {
+					task.Status = model.TaskInstallStatusFailed
+					plugin.Status = model.TaskInstallStatusFailed
+					plugin.Message = err.Error()
+				})
+				return
+			}
+
+			for stream.Next() {
+				message, err := stream.Read()
+				if err != nil {
+					updateTaskStatus(func(task *model.TaskInstallation, plugin *model.TaskPluginInstallStatus) {
+						task.Status = model.TaskInstallStatusFailed
+						plugin.Status = model.TaskInstallStatusFailed
+						plugin.Message = err.Error()
+					})
+					return
+				}
+
+				if message.Event == plugin_manager.PluginInstallEventError {
+					updateTaskStatus(func(task *model.TaskInstallation, plugin *model.TaskPluginInstallStatus) {
+						task.Status = model.TaskInstallStatusFailed
+						plugin.Status = model.TaskInstallStatusFailed
+						plugin.Message = message.Data
+					})
+					return
+				}
+
+				if message.Event == plugin_manager.PluginInstallEventDone {
+					if err := done(pluginUniqueIdntifier, declaration, metas[i]); err != nil {
+						updateTaskStatus(func(task *model.TaskInstallation, plugin *model.TaskPluginInstallStatus) {
+							task.Status = model.TaskInstallStatusFailed
+							plugin.Status = model.TaskInstallStatusFailed
+							plugin.Message = "Failed to create plugin, perhaps it's already installed"
+						})
+						return
+					}
+				}
+			}
+
+			updateTaskStatus(func(task *model.TaskInstallation, plugin *model.TaskPluginInstallStatus) {
+				plugin.Status = model.TaskInstallStatusSuccess
+				plugin.Message = "Installed"
+				task.CompletedPlugins++
+
+				if task.CompletedPlugins == task.TotalPlugins {
+					task.Status = model.TaskInstallStatusSuccess
+				}
+			})
 		})
 	}
 
