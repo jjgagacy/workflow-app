@@ -1,6 +1,8 @@
 package plugin_entities
 
 import (
+	"fmt"
+
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/manifest_entites"
 )
 
@@ -78,4 +80,15 @@ type PluginDeclaration struct {
 	Model                   *ModelProviderDeclaration         `json:"model,omitempty"`
 	Tool                    *ToolProviderDeclaration          `json:"tool,omitempty"`
 	AgentStrategy           *AgentStrategyProviderDeclaration `json:"agent_strategy,omitempty"`
+}
+
+func MarshalPluginID(author string, name string, version string) string {
+	if author == "" {
+		return fmt.Sprintf("%s:%s", name, version)
+	}
+	return fmt.Sprintf("%s/%s:%s", author, name, version)
+}
+
+func (p *PluginDeclaration) Identity() string {
+	return MarshalPluginID(p.Author, p.Name, p.Version.String())
 }

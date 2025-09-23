@@ -1,6 +1,9 @@
 package plugin_entities
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"fmt"
 	"time"
 
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_daemon"
@@ -41,16 +44,16 @@ func (p PluginRuntimeStatus) String() string {
 }
 
 type PluginRuntime struct {
-	State     PluginRuntimeState `json:"state"`
-	Config    PluginDeclaration  `json:"config"`
-	onStopped []func()           `json:"-"`
+	State  PluginRuntimeState `json:"state"`
+	Config PluginDeclaration  `json:"config"`
+	onStop []func()           `json:"-"`
 }
 
 type PluginBasicInfo interface {
 	Type() PluginRuntimeType
 	Configuration() *PluginDeclaration
 	Identity() (PluginUniqueIdentifier, error)
-	HashedIdentify() (string, error)
+	HashedIdentity() (string, error)
 	Checksum() (string, error)
 }
 
@@ -69,7 +72,52 @@ type PluginRuntimeInterface interface {
 	Error(string)
 }
 
-type PluginLifetime struct {
+type PluginLifetime interface {
 	PluginBasicInfo
 	PluginRuntimeInterface
+}
+
+// PluginRuntime implement PluginBasicInfo
+
+func (r *PluginRuntime) Type() PluginRuntimeType {
+	return PLUGIN_RUNTIME_TYPE_LOCAL
+}
+
+func (r *PluginRuntime) Configuration() *PluginDeclaration {
+	return &r.Config
+}
+
+func (r *PluginRuntime) Identity() (PluginUniqueIdentifier, error) {
+	return PluginUniqueIdentifier(""), fmt.Errorf("not impl")
+}
+
+func HashedIdentity(identity string) string {
+	hash := sha256.New()
+	hash.Write([]byte(identity))
+	return hex.EncodeToString(hash.Sum(nil))
+}
+
+func (r *PluginRuntime) HashedIdentity() (string, error) {
+	return HashedIdentity(r.Config.Identity()), nil
+}
+
+func (r *PluginRuntime) Checksum() (string, error) {
+	return "", nil
+}
+
+// PluginRuntime implement PluginRuntimeInterface
+func (r *PluginRuntime) Listen(session_id string) *entities.Broadcast[SessionMessage] {
+	panic("")
+}
+
+func (r *PluginRuntime) Write(session_id string, action plugin_daemon.PluginAccessAction, data []byte) {
+}
+
+func (r *PluginRuntime) Log(msg string) {
+}
+
+func (r *PluginRuntime) Warn(msg string) {
+}
+
+func (r *PluginRuntime) Error(msg string) {
 }

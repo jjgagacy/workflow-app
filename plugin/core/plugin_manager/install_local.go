@@ -8,5 +8,17 @@ import (
 func (p *PluginManager) InstallLocal(
 	pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier,
 ) (*utils.Stream[PluginInstallResponse], error) {
-	panic("")
+	runtime, launchedChan, errChan, err := p.launchLocal(pluginUniqueIdentifier)
+	if err != nil {
+		return nil, err
+	}
+
+	response := utils.NewStream[PluginInstallResponse](128)
+	utils.Submit(map[string]string{
+		"module":   "plugin_manager",
+		"function": "InstallLocal",
+	}, func() {
+
+	})
+	return response, nil
 }

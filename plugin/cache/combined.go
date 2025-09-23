@@ -40,6 +40,10 @@ func (c *cache) get(key string) *plugin_entities.PluginDeclaration {
 	item, exists := c.items[key]
 	c.RUnlock()
 
+	if !exists {
+		return nil
+	}
+
 	if time.Since(item.lastAccess) > maxTTL {
 		c.Lock()
 		// Double checking after acquiring write lock
@@ -131,29 +135,31 @@ func CombinedGetPluginDeclaration(
 	var declaration plugin_entities.PluginDeclaration
 	var err error
 	if runtimeType != plugin_entities.PLUGIN_RUNTIME_TYPE_REMOTE {
-		pluginDeclaration, err := db.GetOne[model.PluginDeclaration](
+		pluginDeclaration, dbErr := db.GetOne[model.PluginDeclaration](
 			db.Equal("plugin_unique_identifier", pluginUniqueIdentifier.String()),
 		)
 
-		if err == nil {
+		if dbErr == nil {
 			declaration = pluginDeclaration.Declaration
 		}
+		err = dbErr
 	} else {
 		// todo: fetch plugin from remote
-		plugin, err := db.GetOne[model.Plugin](
+		plugin, dbErr := db.GetOne[model.Plugin](
 			db.Equal("plugin_unique_identifier", pluginUniqueIdentifier.String()),
 			db.Equal("install_type", string(plugin_entities.PLUGIN_RUNTIME_TYPE_REMOTE)),
 		)
 
-		if err == nil {
+		if dbErr == nil {
 			declaration = plugin.RemoteDeclaration
-			err = nil
 		}
+		err = dbErr
 	}
 
 	if err == types.ErrRecordNotFound {
 		return nil, types.ErrPluginNotFound
 	}
+
 	if err != nil {
 		return nil, err
 	}
