@@ -9,6 +9,8 @@ type PluginFullDuplexLifetime interface {
 
 	// Init init the environment before plugin starts
 	Init() error
+	// Stop stop the plugin
+	Stop()
 	// StartPlugin start the plugin
 	StartPlugin() error
 	// Wait wait for the plugin stops
@@ -33,6 +35,10 @@ type PluginFullDuplexLifetime interface {
 	WaitStarted() <-chan bool
 	// WaitStopped
 	WaitStopped() <-chan bool
+	// TriggerStop
+	TriggerStop()
+	// IsStop
+	Stopped() bool
 }
 
 // PluginRuntime implement PluginRuntimeInterface

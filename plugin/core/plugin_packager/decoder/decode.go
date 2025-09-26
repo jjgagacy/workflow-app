@@ -31,9 +31,9 @@ type PluginDecoder interface {
 	// Manifest returns the manifest of the plugin
 	Manifest() (plugin_entities.PluginDeclaration, error)
 	// Assets returns a map of assets
-	Assets() (map[string]string, error)
-	// UniqueIdentify returns the unique identifier of the plugin
-	UniqueIdentify() (plugin_entities.PluginUniqueIdentifier, error)
+	Assets() (map[string][]byte, error)
+	// UniqueIdentity returns the unique identifier of the plugin
+	UniqueIdentity() (plugin_entities.PluginUniqueIdentifier, error)
 	// Checksum returns the checksum of the plugin
 	Checksum() (string, error)
 	// CheckAssetValid check assets valid

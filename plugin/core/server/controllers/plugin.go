@@ -17,13 +17,65 @@ func GetAsset(ctx *gin.Context) {
 
 func UploadPlugin(config *core.Config) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		pkgFileHeader, err := ctx.FormFile("pkg_file")
+		if err != nil {
+			ctx.JSON(http.StatusOK, entities.BadRequestError(err).ToResponse())
+			return
+		}
 
+		tenantId := ctx.Param("tenant_id")
+		if tenantId == "" {
+			ctx.JSON(http.StatusOK, entities.BadRequestError(errors.New("tenant ID required")).ToResponse())
+			return
+		}
+
+		if pkgFileHeader.Size > config.MaxPluginPackageSize {
+			ctx.JSON(http.StatusOK, entities.BadRequestError(errors.New("filesize exceeds the maximum limit")).ToResponse())
+			return
+		}
+
+		verifySignature := ctx.PostForm("verify_signature") == "true"
+
+		pkgFile, err := pkgFileHeader.Open()
+		if err != nil {
+			ctx.JSON(http.StatusOK, entities.BadRequestError(err).ToResponse())
+			return
+		}
+		defer pkgFile.Close()
+
+		ctx.JSON(http.StatusOK, service.UploadPluginPkg(config, ctx, tenantId, pkgFile, verifySignature))
 	}
 }
 
 func UploadBundle(config *core.Config) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		bundleHeader, err := ctx.FormFile("bundle_file")
+		if err != nil {
+			ctx.JSON(http.StatusOK, entities.BadRequestError(err).ToResponse())
+			return
+		}
 
+		tenantId := ctx.Param("tenant_id")
+		if tenantId == "" {
+			ctx.JSON(http.StatusOK, entities.BadRequestError(errors.New("tenant ID required")).ToResponse())
+			return
+		}
+
+		if bundleHeader.Size > config.MaxBundlePackageSize {
+			ctx.JSON(http.StatusOK, entities.BadRequestError(errors.New("filesize exceeds the maximum limit")).ToResponse())
+			return
+		}
+
+		verifySignature := ctx.PostForm("verify_signature") == "true"
+
+		bundleFile, err := bundleHeader.Open()
+		if err != nil {
+			ctx.JSON(http.StatusOK, entities.BadRequestError(err).ToResponse())
+			return
+		}
+		defer bundleFile.Close()
+
+		ctx.JSON(http.StatusOK, service.UploadPluginBundle(config, ctx, bundleFile, verifySignature))
 	}
 }
 

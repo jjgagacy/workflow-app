@@ -145,7 +145,7 @@ func InstallPluginRuntimeToTenant(
 			continue
 		}
 
-		if err != types.ErrRecordNotFound {
+		if err != types.ErrPluginNotFound {
 			return nil, err
 		}
 
@@ -169,10 +169,10 @@ func InstallPluginRuntimeToTenant(
 	tasks := []func(){}
 	for i, pluginUniqueIdentifier := range pluginWaitingInstallations {
 		// copy the variable to avoid race condition
-		pluginUniqueIdntifier := pluginUniqueIdentifier
+		pluginUniqueIdentifier := pluginUniqueIdentifier
 
 		declaration, err := cache.CombinedGetPluginDeclaration(
-			pluginUniqueIdntifier,
+			pluginUniqueIdentifier,
 			runtimeType,
 		)
 
@@ -200,7 +200,7 @@ func InstallPluginRuntimeToTenant(
 					updateTask := &task
 					var pluginStatus *model.TaskPluginInstallStatus
 					for i := range task.Plugins {
-						if task.Plugins[i].PluginUniqueIdentifier == pluginUniqueIdntifier {
+						if task.Plugins[i].PluginUniqueIdentifier == pluginUniqueIdentifier {
 							pluginStatus = &task.Plugins[i]
 							break
 						}
@@ -230,6 +230,7 @@ func InstallPluginRuntimeToTenant(
 
 					return db.Update(updateTask, tx)
 				}); err != nil {
+					utils.Error("failed to update TaskInstallStatus %s", err.Error())
 					return
 				}
 			}
@@ -247,7 +248,7 @@ func InstallPluginRuntimeToTenant(
 				// todo serverless
 				return
 			case core.PLATFORM_LOCAL:
-				stream, err = manager.InstallLocal(pluginUniqueIdntifier)
+				stream, err = manager.InstallLocal(pluginUniqueIdentifier)
 			default:
 				updateTaskStatus(func(task *model.TaskInstallation, plugin *model.TaskPluginInstallStatus) {
 					task.Status = model.TaskInstallStatusFailed
@@ -287,7 +288,7 @@ func InstallPluginRuntimeToTenant(
 				}
 
 				if message.Event == plugin_manager.PluginInstallEventDone {
-					if err := done(pluginUniqueIdntifier, declaration, metas[i]); err != nil {
+					if err := done(pluginUniqueIdentifier, declaration, metas[i]); err != nil {
 						updateTaskStatus(func(task *model.TaskInstallation, plugin *model.TaskPluginInstallStatus) {
 							task.Status = model.TaskInstallStatusFailed
 							plugin.Status = model.TaskInstallStatusFailed
