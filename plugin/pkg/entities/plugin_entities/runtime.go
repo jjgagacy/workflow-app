@@ -72,9 +72,19 @@ type PluginRuntimeInterface interface {
 	Error(string)
 }
 
+type PluginClusterLifeTime interface {
+	Stop()
+	OnStop(func())
+	TriggerStop()
+	Stopped() bool
+	RuntimeState() PluginRuntimeState
+	UpdateScheduleAt(t time.Time)
+}
+
 type PluginLifetime interface {
 	PluginBasicInfo
 	PluginRuntimeInterface
+	PluginClusterLifeTime
 }
 
 // PluginRuntime implement PluginBasicInfo

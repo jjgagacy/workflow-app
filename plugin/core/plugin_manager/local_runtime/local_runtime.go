@@ -29,6 +29,29 @@ type LocalPluginRuntime struct {
 	stdioHolder     *stdioHolder
 }
 
+// OnStop implements plugin_entities.PluginLifetime.
+// Subtle: this method shadows the method (PluginRuntime).OnStop of LocalPluginRuntime.PluginRuntime.
+func (r *LocalPluginRuntime) OnStop(func()) {
+	panic("unimplemented")
+}
+
+// RuntimeState implements plugin_entities.PluginLifetime.
+// Subtle: this method shadows the method (PluginRuntime).RuntimeState of LocalPluginRuntime.PluginRuntime.
+func (r *LocalPluginRuntime) RuntimeState() plugin_entities.PluginRuntimeState {
+	panic("unimplemented")
+}
+
+// TriggerStop implements plugin_entities.PluginLifetime.
+// Subtle: this method shadows the method (PluginRuntime).TriggerStop of LocalPluginRuntime.PluginRuntime.
+func (r *LocalPluginRuntime) TriggerStop() {
+	panic("unimplemented")
+}
+
+// UpdateScheduleAt implements plugin_entities.PluginLifetime.
+func (r *LocalPluginRuntime) UpdateScheduleAt(t time.Time) {
+	panic("unimplemented")
+}
+
 // AddRestarts implements plugin_entities.PluginFullDuplexLifetime.
 // Subtle: this method shadows the method (PluginRuntime).AddRestarts of LocalPluginRuntime.PluginRuntime.
 func (r *LocalPluginRuntime) AddRestarts() {

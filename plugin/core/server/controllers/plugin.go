@@ -3,6 +3,7 @@ package controllers
 import (
 	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jjgagacy/workflow-app/plugin/core"
@@ -75,13 +76,27 @@ func UploadBundle(config *core.Config) gin.HandlerFunc {
 		}
 		defer bundleFile.Close()
 
-		ctx.JSON(http.StatusOK, service.UploadPluginBundle(config, ctx, bundleFile, verifySignature))
+		ctx.JSON(http.StatusOK, service.UploadPluginBundle(config, ctx, tenantId, bundleFile, verifySignature))
 	}
 }
 
 func UpgradePlugin(config *core.Config) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-
+		BindRequest(ctx, func(request struct {
+			TenantID                       string                                 `uri:"tenant_id" validate:"required"`
+			OriginalPluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier `json:"original_plugin_unique_identifier" validate:"required,plugin_unique_identifier"`
+			NewPluginUniqueIdentifier      plugin_entities.PluginUniqueIdentifier `json:"new_plugin_unique_identifier" validate:"required,plugin_unique_identifier"`
+			Source                         string                                 `json:"source" validate:"required"`
+			Meta                           map[string]any                         `json"meta" validate:"omitempty"`
+		}) {
+			ctx.JSON(http.StatusOK, service.UpgradePlugin(
+				config,
+				request.TenantID,
+				request.Meta,
+				request.OriginalPluginUniqueIdentifier,
+				request.NewPluginUniqueIdentifier,
+			))
+		})
 	}
 }
 
@@ -120,50 +135,117 @@ func ReinstallPluginFromIdentifier(config *core.Config) gin.HandlerFunc {
 
 	}
 }
-func DecodePluginFromIdentifier(app *core.Config) gin.HandlerFunc {
+func DecodePluginFromIdentifier(config *core.Config) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-
+		BindRequest(ctx, func(request struct {
+			PluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier `json:"plugin_unique_identifier" validate:"required,plugin_unique_identifier"`
+		}) {
+			ctx.JSON(http.StatusOK, service.DecodePluginFromIdentifier(config, request.PluginUniqueIdentifier))
+		})
 	}
 }
 
 func FetchPluginInstallationTasks(ctx *gin.Context) {
-
+	BindRequest(ctx, func(request struct {
+		TenantID string `uri:"tenant_id" validate:"required"`
+		Page     int    `form:"page" validate:"required,min=1"`
+		PageSize int    `form:"page_size" validate:"required,min=1,max=256"`
+	}) {
+		ctx.JSON(http.StatusOK, service.FetchPluginInstallationTasks(request.TenantID, request.Page, request.PageSize))
+	})
 }
 func FetchPluginInstallationTask(ctx *gin.Context) {
-
+	BindRequest(ctx, func(request struct {
+		TenantID string `uri:"tenant_id" validate:"required"`
+		TaskID   string `uri:"id" validate:"required"`
+	}) {
+		ctx.JSON(http.StatusOK, service.FetchPluginInstallationTask(request.TenantID, request.TaskID))
+	})
 }
 func DeletePluginInstallationTask(ctx *gin.Context) {
-
+	BindRequest(ctx, func(request struct {
+		TenantID string `uri:"tenant_id" validate:"required"`
+		TaskID   string `uri:"id" validate:"required"`
+	}) {
+		ctx.JSON(http.StatusOK, service.DeletePluginInstallationTask(request.TenantID, request.TaskID))
+	})
 }
 
 func DeleteAllPluginInstallationTasks(ctx *gin.Context) {
-
+	BindRequest(ctx, func(request struct {
+		TenantID string `uri:"tenant_id" validate:"required"`
+	}) {
+		ctx.JSON(http.StatusOK, service.DeleteAllPluginInstallationTasks(request.TenantID))
+	})
 }
 
 func DeletePluginInstallationItemFromTask(ctx *gin.Context) {
+	BindRequest(ctx, func(request struct {
+		TenantID   string `uri:"tenant_id" validate:"required"`
+		TaskID     string `uri:"id" validate:"required"`
+		Identifier string `uri:"identifier" validate:"required"`
+	}) {
+		identifierString := strings.TrimLeft(request.Identifier, "/")
+		identifier, err := plugin_entities.NewPluginUniqueIdentifier(identifierString)
+		if err != nil {
+			ctx.JSON(http.StatusOK, entities.BadRequestError(err).ToResponse())
+			return
+		}
 
+		ctx.JSON(http.StatusOK, service.DeletePluginInstallationItemFromTask(request.TenantID, request.TaskID, identifier))
+	})
 }
 
 func FetchPluginManifest(ctx *gin.Context) {
-
+	BindRequest(ctx, func(request struct {
+		TenantId               string                                 `json:"tenant_id" validate:"required"`
+		PluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier `form:"plugin_unique_identifier" validate:"required,plugin_unique_identifier"`
+	}) {
+		ctx.JSON(http.StatusOK, service.FetchPluginManifest(request.PluginUniqueIdentifier))
+	})
 }
 
 func UninstallPlugin(ctx *gin.Context) {
-
+	BindRequest(ctx, func(request struct {
+		TenantId             string `json:"tenant_id" validate:"required"`
+		PluginInstallationID string `json:"plugin_installation_id" validate:"required"`
+	}) {
+		ctx.JSON(http.StatusOK, service.UninstallPlugin(request.TenantId, request.PluginInstallationID))
+	})
 }
 
 func FetchPluginFromIdentifier(ctx *gin.Context) {
-
+	BindRequest(ctx, func(request struct {
+		PluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier `form:"plugin_unique_identifier" validate:"required,plugin_unique_identifier"`
+	}) {
+		ctx.JSON(http.StatusOK, service.FetchPluginFromIdentifier(request.PluginUniqueIdentifier))
+	})
 }
 
 func ListPlugins(ctx *gin.Context) {
-
+	BindRequest(ctx, func(request struct {
+		TenantId string `uri:"tenant_id" validate:"required"`
+		Page     int    `form:"page" validate:"required,min=1"`
+		PageSize int    `form:"page_size" validate:"required,min=1,max=256"`
+	}) {
+		ctx.JSON(http.StatusOK, service.ListPlugins(request.TenantId, request.Page, request.PageSize))
+	})
 }
 
 func BatchFetchPluginInstallationByIDs(ctx *gin.Context) {
-
+	BindRequest(ctx, func(request struct {
+		TenantID  string   `json:"tenant_id" validate:"required"`
+		PluginIDs []string `json:"plugin_ids" validate:"required,max=256"`
+	}) {
+		ctx.JSON(http.StatusOK, service.BatchFetchPluginInstallationByIDs(request.TenantID, request.PluginIDs))
+	})
 }
 
 func FetchMissingPluginInstallations(ctx *gin.Context) {
-
+	BindRequest(ctx, func(request struct {
+		TenantID                string                                   `uri:"tenant_id" validate:"required"`
+		PluginUniqueIdentifiers []plugin_entities.PluginUniqueIdentifier `json:"plugin_unique_identifiers" validate:"required,max=256,dive,plugin_unique_identifier"`
+	}) {
+		ctx.JSON(http.StatusOK, service.FetchMissingPluginInstallations(request.TenantID, request.PluginUniqueIdentifiers))
+	})
 }

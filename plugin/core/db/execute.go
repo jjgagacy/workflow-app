@@ -229,7 +229,7 @@ func Like(field string, value string) GenericQuery {
 	}
 }
 
-func Order(field string, desc bool) GenericQuery {
+func OrderBy(field string, desc bool) GenericQuery {
 	return func(db *gorm.DB) *gorm.DB {
 		if desc {
 			return db.Order(fmt.Sprintf("%s DESC", field))

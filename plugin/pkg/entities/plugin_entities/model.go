@@ -201,7 +201,8 @@ type ModelProviderCredentialSchema struct {
 	CredentialFormSchemas []ModelProviderCredentialFormSchema `json:"credential_form_schema"`
 }
 
-type ModelPosition struct {
+// 模型能力
+type ModelCapabilities struct {
 	LLM           *[]string `json:"llm,omitempty"`
 	TextEmbedding *[]string `json:"text_embedding,omitempty"`
 	Rerank        *[]string `json:"rerank,omitempty"`
@@ -224,7 +225,7 @@ type ModelProviderDeclaration struct {
 	ConfigMethods            *ModelProviderConfigMethod     `json:"config_methods,omitempty" validate:"required,lte=16,dive,model_provider_configuration_method"`
 	ProviderCredentialSchema *ModelProviderCredentialSchema `json:"provider_credential_schema,omitempty"`
 	ModelCredentialSchema    *ModelCredentialSchema         `json:"model_credential_schema,omitempty"`
-	Position                 *ModelPosition                 `json:"position,omitempty"`
+	Capability               *ModelCapabilities             `json:"position,omitempty"`
 	Models                   []ModelDeclaration             `json:"models" validate:"required,dive"`
 	ModelFiles               []string                       `json:"-"`
 	PositionFiles            map[string]string              `json:"-"`

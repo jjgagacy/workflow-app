@@ -1,6 +1,9 @@
 package manifest_entites
 
-import "github.com/go-playground/validator/v10"
+import (
+	"github.com/go-playground/validator/v10"
+	"github.com/jjgagacy/workflow-app/plugin/pkg/validators"
+)
 
 type PluginTag string
 
@@ -47,4 +50,8 @@ var validPluginTags = map[PluginTag]bool{
 func isPluginTag(fl validator.FieldLevel) bool {
 	value := fl.Field().String()
 	return validPluginTags[PluginTag(value)]
+}
+
+func init() {
+	validators.EntitiesValidator.RegisterValidation("is_plugin_tag", isPluginTag)
 }

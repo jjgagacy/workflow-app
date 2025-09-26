@@ -260,6 +260,13 @@ func AtomicUninstallPlugin(
 			}
 		}
 
+		if rPlugin.Refers == 0 {
+			err := db.Delete(&rPlugin, tx)
+			if err != nil {
+				return err
+			}
+		}
+
 		return nil
 	})
 

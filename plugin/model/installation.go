@@ -9,7 +9,7 @@ type PluginInstallation struct {
 	PluginUniqueIdentifier string         `gorm:"index;size:255" json:"plugin_unique_identifier"`
 	RuntimeType            string         `gorm:"size:127" json:"runtime_type"`
 	EndPointSetups         int            `json:"end_point_setups"`
-	EndPointStatus         int            `json:"end_point_status"`
+	EndPointActive         int            `json:"end_point_active"`
 	Source                 string         `gorm:"column:source;size:63" json:"source"`
 	Meta                   map[string]any `gorm:"column:meta;serializer:json" json:"meta"`
 }

@@ -94,6 +94,11 @@ func (app *App) pluginManagementGroup(group *gin.RouterGroup, config *core.Confi
 	group.POST("/tool/check_existence", controllers.CheckToolExistence)
 	group.GET("/agent_strategies", controllers.ListAgentStrategies)
 	group.GET("/agent_strategy", controllers.GetAgentStrategy)
+	group.GET("/install/tasks/:id", controllers.FetchPluginInstallationTask)
+	group.POST("/install/tasks/delete_all", controllers.DeleteAllPluginInstallationTasks)
+	group.POST("/install/task/:id/delete", controllers.DeletePluginInstallationTask)
+	group.POST("/install/tasks/:id/*identifier", controllers.DeletePluginInstallationItemFromTask)
+	group.GET("/install/tasks", controllers.FetchPluginInstallationTasks)
 }
 
 func (app *App) endPointManagementGroup(group *gin.RouterGroup) {

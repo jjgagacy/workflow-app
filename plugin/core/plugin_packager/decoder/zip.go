@@ -61,8 +61,8 @@ func NewZipPluginDecoder(data []byte) (*ZipPluginDecoder, error) {
 	return newZipPluginDecoder(data, nil)
 }
 
-func NewZipPluginDecoderWithConfig(data []byte, thirdPartySignatureVerificationConfig ThirdPartySignatureVerificationConfig) (*ZipPluginDecoder, error) {
-	return newZipPluginDecoder(data, &thirdPartySignatureVerificationConfig)
+func NewZipPluginDecoderWithConfig(data []byte, thirdPartySignatureVerificationConfig *ThirdPartySignatureVerificationConfig) (*ZipPluginDecoder, error) {
+	return newZipPluginDecoder(data, thirdPartySignatureVerificationConfig)
 }
 
 func NewZipPluginDecoderWithLimitSize(data []byte, maxSize int64) (*ZipPluginDecoder, error) {

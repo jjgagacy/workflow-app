@@ -9,6 +9,7 @@ import (
 	"github.com/jjgagacy/workflow-app/plugin/core"
 	"github.com/jjgagacy/workflow-app/plugin/core/db"
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager"
+	"github.com/jjgagacy/workflow-app/plugin/core/plugin_packager/decoder"
 	"github.com/jjgagacy/workflow-app/plugin/model"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
@@ -315,4 +316,242 @@ func InstallPluginRuntimeToTenant(
 	utils.WithMaxRoutine(5, tasks)
 
 	return response, nil
+}
+
+func UpgradePlugin(
+	config *core.Config,
+	tenantId string,
+	source string,
+	meta map[string]any,
+	originalPluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier,
+	newPluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier,
+) *entities.Response {
+	if originalPluginUniqueIdentifier == newPluginUniqueIdentifier {
+		return entities.BadRequestError(errors.New("original and new plugin unique identifier are the same")).ToResponse()
+	}
+
+	if originalPluginUniqueIdentifier.PluginID() != newPluginUniqueIdentifier.PluginID() {
+		return entities.BadRequestError(errors.New("original and new plugin id are different")).ToResponse()
+	}
+
+	installation, err := db.GetOne[model.PluginInstallation](
+		db.Equal("tenant_id", tenantId),
+		db.Equal("plugin_unique_identifier", originalPluginUniqueIdentifier.String()),
+		db.Equal("source", source),
+	)
+
+	if err == types.ErrRecordNotFound {
+		return entities.NotFoundError(errors.New("plugin installation not found for this tenant")).ToResponse()
+	}
+
+	if err != nil {
+		return entities.InternalError(err).ToResponse()
+	}
+
+	response, err := InstallPluginRuntimeToTenant(
+		config,
+		tenantId,
+		[]plugin_entities.PluginUniqueIdentifier{newPluginUniqueIdentifier},
+		source,
+		[]map[string]any{meta},
+		func(
+			pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier,
+			declaration *plugin_entities.PluginDeclaration,
+			meta map[string]any,
+		) error {
+			originalDeclaration, err := cache.CombinedGetPluginDeclaration(
+				originalPluginUniqueIdentifier,
+				plugin_entities.PluginRuntimeType(installation.RuntimeType),
+			)
+			if err != nil {
+				return err
+			}
+
+			newDeclaration, err := cache.CombinedGetPluginDeclaration(
+				newPluginUniqueIdentifier,
+				plugin_entities.PluginRuntimeType(installation.RuntimeType),
+			)
+			if err != nil {
+				return err
+			}
+
+			// Uninstall the original plugin
+			upgradeResponse, err := AtomicUpgradePlugin(
+				tenantId,
+				originalPluginUniqueIdentifier,
+				newPluginUniqueIdentifier,
+				originalDeclaration,
+				newDeclaration,
+				plugin_entities.PluginRuntimeType(installation.RuntimeType),
+				source,
+				meta,
+			)
+			if err != nil {
+				return err
+			}
+
+			if upgradeResponse.OriginalPluginDeleted {
+				manager := plugin_manager.Manager()
+				if string(upgradeResponse.DeletedPlugin.InstallType) == string(plugin_entities.PLUGIN_RUNTIME_TYPE_LOCAL) {
+					err := manager.UninstallFromLocal(
+						plugin_entities.PluginUniqueIdentifier(upgradeResponse.DeletedPlugin.PluginUniqueIdentifier),
+					)
+					if err != nil {
+						return err
+					}
+				}
+			}
+			return nil
+		},
+	)
+
+	if err != nil {
+		return entities.InternalError(err).ToResponse()
+	}
+
+	return entities.NewSuccessResponse(response)
+}
+
+// Decode a plugin from a given identifier, this ensure that the plugin
+// is valid when upload a plugin in
+func DecodePluginFromIdentifier(
+	config *core.Config,
+	pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier,
+) *entities.Response {
+	manager := plugin_manager.Manager()
+	pkgFile, err := manager.GetPackage(pluginUniqueIdentifier)
+	if err != nil {
+		return entities.BadRequestError(err).ToResponse()
+	}
+
+	zipDecoder, err := decoder.NewZipPluginDecoderWithConfig(
+		pkgFile,
+		&decoder.ThirdPartySignatureVerificationConfig{
+			Enabled:        config.ThirdPartySignatureVerificationEnabled,
+			PublicKeyPaths: config.ThirdPartySignatureVerificationPublicKeys,
+		},
+	)
+	if err != nil {
+		return entities.BadRequestError(err).ToResponse()
+	}
+
+	declaration, err := zipDecoder.Manifest()
+	if err != nil {
+		return entities.BadRequestError(err).ToResponse()
+	}
+
+	return entities.NewSuccessResponse(map[string]any{
+		"unique_identifier": pluginUniqueIdentifier,
+		"manifest":          declaration,
+	})
+}
+
+func FetchPluginFromIdentifier(
+	pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier,
+) *entities.Response {
+	_, err := db.GetOne[model.Plugin](
+		db.Equal("plugin_unique_identifier", string(pluginUniqueIdentifier)),
+	)
+	if err == types.ErrRecordNotFound {
+		return entities.NewSuccessResponse(false)
+	}
+
+	return entities.NewSuccessResponse(true)
+}
+
+func UninstallPlugin(
+	tenantId string,
+	pluginInstallationId string,
+) *entities.Response {
+	installation, err := db.GetOne[model.PluginInstallation](
+		db.Equal("tenant_id", tenantId),
+		db.Equal("id", pluginInstallationId),
+	)
+	if err == types.ErrRecordNotFound {
+		return entities.PluginNotFoundError(errors.New("plugin not found")).ToResponse()
+	}
+	if err != nil {
+		return entities.InternalError(err).ToResponse()
+	}
+
+	pluginUniqueIdentifier, err := plugin_entities.NewPluginUniqueIdentifier(installation.PluginUniqueIdentifier)
+	if err != nil {
+		return entities.UniqueIdentifierInvalidError(err).ToResponse()
+	}
+
+	declaration, err := cache.CombinedGetPluginDeclaration(
+		pluginUniqueIdentifier,
+		plugin_entities.PluginRuntimeType(installation.RuntimeType),
+	)
+	if err != nil {
+		return entities.InternalError(err).ToResponse()
+	}
+
+	// Uninstall the plugin
+	uninstallResponse, err := AtomicUninstallPlugin(
+		tenantId,
+		pluginUniqueIdentifier,
+		installation.ID,
+		declaration,
+	)
+	if err != nil {
+		return entities.InternalError(fmt.Errorf("failed to uninstall plugin: %s", err.Error())).ToResponse()
+	}
+
+	if uninstallResponse.PluginDeleted {
+		manager := plugin_manager.Manager()
+		if uninstallResponse.Installation.RuntimeType == string(plugin_entities.PLUGIN_RUNTIME_TYPE_LOCAL) {
+			err = manager.UninstallFromLocal(pluginUniqueIdentifier)
+			if err != nil {
+				return entities.InternalError(fmt.Errorf("failed to uninstall plugin: %s", err.Error())).ToResponse()
+			}
+		}
+	}
+
+	return entities.NewSuccessResponse(true)
+}
+
+func FetchPluginInstallationTasks(
+	tenantId string,
+	page int,
+	pageSize int,
+) *entities.Response {
+	tasks, err := db.GetAll[model.TaskInstallation](
+		db.Equal("tenant_id", tenantId),
+		db.OrderBy("created_at", true),
+		db.Page(page, pageSize),
+	)
+	if err != nil {
+		return entities.InternalError(err).ToResponse()
+	}
+
+	return entities.NewSuccessResponse(tasks)
+}
+
+func FetchPluginInstallationTask(
+	tenantId string,
+	taskId string,
+) *entities.Response {
+	panic("")
+}
+
+func DeleteAllPluginInstallationTasks(
+	tenantId string,
+) *entities.Response {
+	panic("")
+}
+
+func DeletePluginInstallationTask(
+	tenantId string,
+	taskId string,
+) *entities.Response {
+	panic("")
+}
+
+func DeletePluginInstallationItemFromTask(
+	tenantId string,
+	taskId string,
+	pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier,
+) *entities.Response {
+	panic("")
 }

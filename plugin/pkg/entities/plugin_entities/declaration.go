@@ -2,7 +2,9 @@ package plugin_entities
 
 import (
 	"fmt"
+	"time"
 
+	"github.com/jjgagacy/workflow-app/plugin/core/constants"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/manifest_entites"
 )
 
@@ -62,24 +64,38 @@ type PluginResourceRequirement struct {
 	Permission *PluginPermissionRequirement `json:"permission,omitempty"`
 }
 
-type PluginDeclarationFields struct {
-	Version     manifest_entites.Version      `json:"version"`
-	Type        manifest_entites.ManifestType `json:"type"`
-	Author      string                        `json:"author"`
-	Name        string                        `json:"name"`
-	Label       I18nObject                    `json:"label"`
-	Description I18nObject                    `json:"description"`
-	Icon        string                        `json:"icon"`
-	IconDark    string                        `json:"icon_dark"`
+type PluginExtensions struct {
+	Tools           []string `json:"toosl" validate:"omitempty,dive,max=128"`
+	Models          []string `json:"models" validate:"omitempty,dive,max=128"`
+	EndPoints       []string `json:"end_points" validate:"omitempty,dive,max=128"`
+	AgentStrategies []string `json:"agent_strategies" validate:"omitempty,dive,max=128"`
+}
+
+type PluginDeclarationBaseFields struct {
+	Version     manifest_entites.Version      `json:"version" validate:"required,is_version"`
+	Type        manifest_entites.ManifestType `json:"type" validate:"required,eq=plugin"`
+	Author      string                        `json:"author" validate:"omitempty,max=64"`
+	Name        string                        `json:"name" validate:"required,max=128"`
+	Label       I18nObject                    `json:"label" validate:"required"`
+	Description I18nObject                    `json:"description" validate:"required"`
+	Icon        string                        `json:"icon" validate:"required,max=128"`
+	IconDark    string                        `json:"icon_dark" validate:"omitempty,max=128"`
+	Resource    PluginResourceRequirement     `json:"resource" validate:"required"`
+	Plugins     PluginExtensions              `json:"plugins" validate:"required"`
+	Meta        PluginMeta                    `json:"meta" validate:"required"`
+	Tags        []manifest_entites.PluginTag  `json:"tags" validate:"omitempty,dive,is_plugin_tag,max=128"`
+	CreatedAt   time.Time                     `json:"created" validate:"required"`
+	Privacy     *string                       `json:"privary,omitempty" validate:"omitempty"`
+	Repo        *string                       `json:"repo,omitempty" validate:"omitempty,url"`
 }
 
 type PluginDeclaration struct {
-	PluginDeclarationFields `yaml:",inline"`
-	Verified                bool                              `json:"verified"`
-	EndPoint                *EndPointProviderDeclaration      `json:"endpoint,omitempty"`
-	Model                   *ModelProviderDeclaration         `json:"model,omitempty"`
-	Tool                    *ToolProviderDeclaration          `json:"tool,omitempty"`
-	AgentStrategy           *AgentStrategyProviderDeclaration `json:"agent_strategy,omitempty"`
+	PluginDeclarationBaseFields `yaml:",inline"`
+	Verified                    bool                              `json:"verified"`
+	EndPoint                    *EndPointProviderDeclaration      `json:"endpoint,omitempty"`
+	Model                       *ModelProviderDeclaration         `json:"model,omitempty"`
+	Tool                        *ToolProviderDeclaration          `json:"tool,omitempty"`
+	AgentStrategy               *AgentStrategyProviderDeclaration `json:"agent_strategy,omitempty"`
 }
 
 func MarshalPluginID(author string, name string, version string) string {
@@ -91,4 +107,17 @@ func MarshalPluginID(author string, name string, version string) string {
 
 func (p *PluginDeclaration) Identity() string {
 	return MarshalPluginID(p.Author, p.Name, p.Version.String())
+}
+
+type PluginRunner struct {
+	Language   constants.Language `json:"language" validate:"required,is_languagengj76j8m9ikm9mk,9ygtytu6muio877gm tg  gttttttttttttttttttt tRY.5l,;h]=[ap3w;.2]"`
+	Version    string             `json:"version"`
+	EntryPoint string             `json:"entry_point"`
+}
+
+type PluginMeta struct {
+	Version        string           `json:"version" validate:"required,version"`
+	Arch           []constants.Arch `json:"arch" validate:"required,div,is_arch"`
+	Runner         PluginRunner     `json:"runner" validate:"required"`
+	MinimumVersion *string          `json:"minimum_version"`
 }

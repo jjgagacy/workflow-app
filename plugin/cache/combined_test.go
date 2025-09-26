@@ -13,7 +13,7 @@ func TestCacheSetAndGet(t *testing.T) {
 		itemSize: 0,
 	}
 	declaration := &plugin_entities.PluginDeclaration{
-		PluginDeclarationFields: plugin_entities.PluginDeclarationFields{
+		PluginDeclarationBaseFields: plugin_entities.PluginDeclarationBaseFields{
 			Author: "alex",
 			Name:   "xu",
 		},
@@ -47,7 +47,7 @@ func TestCacheConcurrentAccess(t *testing.T) {
 			for j := 0; j < iterations; j++ {
 				key := string(rune(id)) + ":" + string(rune(j))
 				declaration := &plugin_entities.PluginDeclaration{
-					PluginDeclarationFields: plugin_entities.PluginDeclarationFields{
+					PluginDeclarationBaseFields: plugin_entities.PluginDeclarationBaseFields{
 						Author: "alex",
 						Name:   "xu",
 					},

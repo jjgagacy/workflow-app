@@ -7,6 +7,16 @@ const (
 	ErrInternal                = "ErrMsgInternal"
 	ErrUniqueIdentifierInvalid = "ErrMsgUniqueIdentifierInvalid"
 	ErrUnauthorizedInvalid     = "ErrUnauthorizedInvalid"
+	ErrPluginNotFound          = "ErrPluginNotFound"
+)
+
+const (
+	ErrInternalCode          = -500
+	ErrBadRequestCode        = -400
+	ErrNotFoundCode          = -404
+	ErrIdentifierInvalidCode = -403
+	ErrUnauthorizedCode      = -402
+	ErrPluginNotFoundCode    = -401
 )
 
 type PluginError interface {
@@ -22,7 +32,7 @@ func InternalError(err error) PluginError {
 	if pe, ok := err.(PluginError); ok {
 		return pe
 	}
-	return NewErrorWithType(-500, err.Error(), ErrInternal)
+	return NewErrorWithType(ErrInternalCode, err.Error(), ErrInternal)
 }
 
 func BadRequestError(err error) PluginError {
@@ -32,7 +42,7 @@ func BadRequestError(err error) PluginError {
 	if pe, ok := err.(PluginError); ok {
 		return pe
 	}
-	return NewErrorWithType(-400, err.Error(), ErrBadRequest)
+	return NewErrorWithType(ErrBadRequestCode, err.Error(), ErrBadRequest)
 }
 
 func NotFoundError(err error) PluginError {
@@ -42,7 +52,7 @@ func NotFoundError(err error) PluginError {
 	if pe, ok := err.(PluginError); ok {
 		return pe
 	}
-	return NewErrorWithType(-404, err.Error(), ErrNotFound)
+	return NewErrorWithType(ErrNotFoundCode, err.Error(), ErrNotFound)
 }
 
 func UniqueIdentifierInvalidError(err error) PluginError {
@@ -52,7 +62,7 @@ func UniqueIdentifierInvalidError(err error) PluginError {
 	if pe, ok := err.(PluginError); ok {
 		return pe
 	}
-	return NewErrorWithType(-400, err.Error(), ErrUniqueIdentifierInvalid)
+	return NewErrorWithType(ErrIdentifierInvalidCode, err.Error(), ErrUniqueIdentifierInvalid)
 }
 
 func UnauthorizedError(err error) PluginError {
@@ -62,5 +72,15 @@ func UnauthorizedError(err error) PluginError {
 	if pe, ok := err.(PluginError); ok {
 		return pe
 	}
-	return NewErrorWithType(-401, err.Error(), ErrUnauthorizedInvalid)
+	return NewErrorWithType(ErrUnauthorizedCode, err.Error(), ErrUnauthorizedInvalid)
+}
+
+func PluginNotFoundError(err error) PluginError {
+	if err == nil {
+		return nil
+	}
+	if pe, ok := err.(PluginError); ok {
+		return pe
+	}
+	return NewErrorWithType(ErrPluginNotFoundCode, err.Error(), ErrPluginNotFound)
 }
