@@ -61,9 +61,9 @@ type PluginRuntimeInterface interface {
 	PluginBasicInfo
 
 	// Listen listens for messages from the plugin
-	Listen(session_id string) *entities.Broadcast[SessionMessage]
+	Listen(sessionId string) *entities.Broadcast[SessionMessage]
 	// Write writes a message to the plugin
-	Write(session_id string, action plugin_daemon.PluginAccessAction, data []byte)
+	Write(sessionId string, action plugin_daemon.PluginAccessAction, data []byte)
 	// Log adds a log to the plugin runtime
 	Log(string)
 	// Warn adds a warning log to the plugin runtime
@@ -97,10 +97,6 @@ func (r *PluginRuntime) Configuration() *PluginDeclaration {
 	return &r.Config
 }
 
-func (r *PluginRuntime) Identity() (PluginUniqueIdentifier, error) {
-	return PluginUniqueIdentifier(""), fmt.Errorf("not impl")
-}
-
 func HashedIdentity(identity string) string {
 	hash := sha256.New()
 	hash.Write([]byte(identity))
@@ -111,23 +107,26 @@ func (r *PluginRuntime) HashedIdentity() (string, error) {
 	return HashedIdentity(r.Config.Identity()), nil
 }
 
-func (r *PluginRuntime) Checksum() (string, error) {
-	return "", nil
-}
-
-// PluginRuntime implement PluginRuntimeInterface
-func (r *PluginRuntime) Listen(session_id string) *entities.Broadcast[SessionMessage] {
-	panic("")
-}
-
-func (r *PluginRuntime) Write(session_id string, action plugin_daemon.PluginAccessAction, data []byte) {
-}
-
 func (r *PluginRuntime) Log(msg string) {
+	r.State.Logs = append(r.State.Logs, fmt.Sprintf("[Info] %s: %s", time.Now().Format(time.RFC3339), msg))
 }
 
 func (r *PluginRuntime) Warn(msg string) {
+	r.State.Logs = append(r.State.Logs, fmt.Sprintf("[Warn] %s: %s", time.Now().Format(time.RFC3339), msg))
 }
 
 func (r *PluginRuntime) Error(msg string) {
+	r.State.Logs = append(r.State.Logs, fmt.Sprintf("[Error] %s: %s", time.Now().Format(time.RFC3339), msg))
+}
+
+func (r *PluginRuntime) InitState() {
+	r.State = PluginRuntimeState{
+		Restarts:   0,
+		Status:     PLUGIN_RUNTIME_STATUS_PENDING.String(),
+		ActiveAt:   nil,
+		StoppedAt:  nil,
+		Verified:   false,
+		ScheduleAt: nil,
+		Logs:       []string{},
+	}
 }

@@ -86,7 +86,7 @@ func UploadPluginBundle(
 		return entities.BadRequestError(errors.Join(err, errors.New("failed to load bundle manifest"))).ToResponse()
 	}
 
-	manager := plugin_manager.Manager()
+	// manager := plugin_manager.Manager()
 	result := []map[string]any{}
 
 	for _, dependency := range bundle.Dependencies {

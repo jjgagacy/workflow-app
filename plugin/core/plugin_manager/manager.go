@@ -71,7 +71,10 @@ func InitGlobalManager(oss oss.OSS, config *core.Config) *PluginManager {
 func (p *PluginManager) Get(identity plugin_entities.PluginUniqueIdentifier) (plugin_entities.PluginLifetime, error) {
 	if identity.RemoteLike() || p.config.Platform == core.PLATFORM_LOCAL {
 		// check if it's a debugging plugin or a local plugin
-
+		if v, ok := p.m.Load(string(identity)); ok {
+			return v, nil
+		}
+		return nil, errors.New("plugin not found")
 	} else {
 		// otherwise, use serverless runtime instead
 	}

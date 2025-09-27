@@ -12,6 +12,7 @@ var (
 	ErrPluginInstallationExists = errors.New("plugin installation already exists")
 	ErrPluginHasUninstalled     = errors.New("plugin has been uninstalled")
 	ErrPluginNotInstalled       = errors.New("plugin is not installed")
+	ErrPluginNotActive          = errors.New("plugin is not active, does not respond to heartbeat")
 )
 
 var (

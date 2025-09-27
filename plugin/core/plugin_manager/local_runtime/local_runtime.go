@@ -1,9 +1,11 @@
 package local_runtime
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
+	"github.com/jjgagacy/workflow-app/plugin/core/constants"
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager/basic_runtime"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
 )
@@ -18,6 +20,10 @@ type LocalPluginRuntime struct {
 	HttpsProxy string
 	NoProxy    string
 
+	nodeExecutePath    string
+	nodeEnvInitTimeout int
+	nodeExtraArg       string
+
 	waitChanLock  sync.Mutex
 	waitStartChan []chan bool
 	waitStopChan  []chan bool
@@ -29,121 +35,63 @@ type LocalPluginRuntime struct {
 	stdioHolder     *stdioHolder
 }
 
-// OnStop implements plugin_entities.PluginLifetime.
-// Subtle: this method shadows the method (PluginRuntime).OnStop of LocalPluginRuntime.PluginRuntime.
-func (r *LocalPluginRuntime) OnStop(func()) {
-	panic("unimplemented")
-}
-
-// RuntimeState implements plugin_entities.PluginLifetime.
-// Subtle: this method shadows the method (PluginRuntime).RuntimeState of LocalPluginRuntime.PluginRuntime.
 func (r *LocalPluginRuntime) RuntimeState() plugin_entities.PluginRuntimeState {
-	panic("unimplemented")
+	return r.State
 }
 
-// TriggerStop implements plugin_entities.PluginLifetime.
-// Subtle: this method shadows the method (PluginRuntime).TriggerStop of LocalPluginRuntime.PluginRuntime.
-func (r *LocalPluginRuntime) TriggerStop() {
-	panic("unimplemented")
-}
-
-// UpdateScheduleAt implements plugin_entities.PluginLifetime.
 func (r *LocalPluginRuntime) UpdateScheduleAt(t time.Time) {
-	panic("unimplemented")
+	r.State.ScheduleAt = &t
 }
 
-// AddRestarts implements plugin_entities.PluginFullDuplexLifetime.
-// Subtle: this method shadows the method (PluginRuntime).AddRestarts of LocalPluginRuntime.PluginRuntime.
 func (r *LocalPluginRuntime) AddRestarts() {
-	panic("unimplemented")
+	r.State.Restarts++
 }
 
-// Cleanup implements plugin_entities.PluginFullDuplexLifetime.
-func (r *LocalPluginRuntime) Cleanup() {
-	panic("unimplemented")
-}
-
-// Init implements plugin_entities.PluginFullDuplexLifetime.
-// Subtle: this method shadows the method (PluginRuntime).Init of LocalPluginRuntime.PluginRuntime.
 func (r *LocalPluginRuntime) Init() error {
-	panic("unimplemented")
+	var err error
+	if r.Config.Meta.Runner.Language == constants.Node {
+		err = r.InitNode()
+	} else {
+		return fmt.Errorf("unsupported language: %s", r.Config.Meta.Runner.Language)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-// SetActive implements plugin_entities.PluginFullDuplexLifetime.
-// Subtle: this method shadows the method (PluginRuntime).SetActive of LocalPluginRuntime.PluginRuntime.
-func (r *LocalPluginRuntime) SetActive() {
-	panic("unimplemented")
-}
-
-// SetActiveAt implements plugin_entities.PluginFullDuplexLifetime.
-// Subtle: this method shadows the method (PluginRuntime).SetActiveAt of LocalPluginRuntime.PluginRuntime.
-func (r *LocalPluginRuntime) SetActiveAt(t time.Time) {
-	panic("unimplemented")
-}
-
-// SetLaunching implements plugin_entities.PluginFullDuplexLifetime.
-// Subtle: this method shadows the method (PluginRuntime).SetLaunching of LocalPluginRuntime.PluginRuntime.
-func (r *LocalPluginRuntime) SetLaunching() {
-	panic("unimplemented")
-}
-
-// SetPending implements plugin_entities.PluginFullDuplexLifetime.
-// Subtle: this method shadows the method (PluginRuntime).SetPending of LocalPluginRuntime.PluginRuntime.
-func (r *LocalPluginRuntime) SetPending() {
-	panic("unimplemented")
-}
-
-// SetRestarting implements plugin_entities.PluginFullDuplexLifetime.
-// Subtle: this method shadows the method (PluginRuntime).SetRestarting of LocalPluginRuntime.PluginRuntime.
-func (r *LocalPluginRuntime) SetRestarting() {
-	panic("unimplemented")
-}
-
-// SetScheduleAt implements plugin_entities.PluginFullDuplexLifetime.
-// Subtle: this method shadows the method (PluginRuntime).SetScheduleAt of LocalPluginRuntime.PluginRuntime.
-func (r *LocalPluginRuntime) SetScheduleAt(t time.Time) {
-	panic("unimplemented")
-}
-
-// Checksum implements plugin_entities.PluginLifetime.
-func (r *LocalPluginRuntime) Checksum() (string, error) {
-	panic("unimplemented")
-}
-
-// Configuration implements plugin_entities.PluginLifetime.
-// Subtle: this method shadows the method (PluginRuntime).Configuration of LocalPluginRuntime.PluginRuntime.
-func (r *LocalPluginRuntime) Configuration() *plugin_entities.PluginDeclaration {
-	panic("unimplemented")
-}
-
-// Error implements plugin_entities.PluginLifetime.
-// Subtle: this method shadows the method (PluginRuntime).Error of LocalPluginRuntime.PluginRuntime.
-func (r *LocalPluginRuntime) Error(string) {
-	panic("unimplemented")
-}
-
-// HashedIdentity implements plugin_entities.PluginLifetime.
-// Subtle: this method shadows the method (PluginRuntime).HashedIdentity of LocalPluginRuntime.PluginRuntime.
-func (r *LocalPluginRuntime) HashedIdentity() (string, error) {
-	panic("unimplemented")
-}
-
-// Identity implements plugin_entities.PluginLifetime.
-// Subtle: this method shadows the method (PluginRuntime).Identity of LocalPluginRuntime.PluginRuntime.
 func (r *LocalPluginRuntime) Identity() (plugin_entities.PluginUniqueIdentifier, error) {
-	panic("unimplemented")
+	checksum, err := r.Checksum()
+	if err != nil {
+		return "", err
+	}
+	return plugin_entities.NewPluginUniqueIdentifier(fmt.Sprintf("%s@%s", r.Config.Identity(), checksum))
 }
 
-// Log implements plugin_entities.PluginLifetime.
-// Subtle: this method shadows the method (PluginRuntime).Log of LocalPluginRuntime.PluginRuntime.
-func (r *LocalPluginRuntime) Log(string) {
-	panic("unimplemented")
+func (r *LocalPluginRuntime) SetActive() {
+	r.State.Status = plugin_entities.PLUGIN_RUNTIME_STATUS_ACTIVE.String()
 }
 
-// Warn implements plugin_entities.PluginLifetime.
-// Subtle: this method shadows the method (PluginRuntime).Warn of LocalPluginRuntime.PluginRuntime.
-func (r *LocalPluginRuntime) Warn(string) {
-	panic("unimplemented")
+func (r *LocalPluginRuntime) SetActiveAt(t time.Time) {
+	r.State.ActiveAt = &t
+}
+
+func (r *LocalPluginRuntime) SetLaunching() {
+	r.State.Status = plugin_entities.PLUGIN_RUNTIME_STATUS_LAUNCHING.String()
+}
+
+func (r *LocalPluginRuntime) SetPending() {
+	r.State.Status = plugin_entities.PLUGIN_RUNTIME_STATUS_PENDING.String()
+}
+
+func (r *LocalPluginRuntime) SetRestarting() {
+	r.State.Status = plugin_entities.PLUGIN_RUNTIME_STATUS_RESTARTING.String()
+}
+
+func (r *LocalPluginRuntime) SetScheduleAt(t time.Time) {
+	r.State.ScheduleAt = &t
 }
 
 type LocalPluginRuntimeConfig struct {

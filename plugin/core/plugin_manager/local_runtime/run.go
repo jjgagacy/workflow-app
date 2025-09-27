@@ -2,15 +2,23 @@ package local_runtime
 
 import (
 	"errors"
+	"fmt"
+	"os"
 	"os/exec"
+	"sync"
 
+	"github.com/jjgagacy/workflow-app/plugin/core/constants"
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_daemon"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
+	"github.com/jjgagacy/workflow-app/plugin/utils"
 )
 
 func (r *LocalPluginRuntime) gc() {
-	panic("")
+	if r.waitChan != nil {
+		close(r.waitChan)
+		r.waitChan = nil
+	}
 }
 
 func (r *LocalPluginRuntime) Type() plugin_entities.PluginRuntimeType {
@@ -18,11 +26,150 @@ func (r *LocalPluginRuntime) Type() plugin_entities.PluginRuntimeType {
 }
 
 func (r *LocalPluginRuntime) getCmd() (*exec.Cmd, error) {
-	panic("")
+	if r.Config.Meta.Runner.Language == constants.Node {
+		cmd := exec.Command(r.nodeExecutePath, r.Config.Meta.Runner.EntryPoint)
+		cmd.Dir = r.State.WorkingPath
+		cmd.Env = cmd.Environ()
+		if r.HttpsProxy != "" {
+			cmd.Env = append(cmd.Env, fmt.Sprintf("HTTPS_PROXY=%s", r.HttpsProxy))
+		}
+		if r.HttpProxy != "" {
+			cmd.Env = append(cmd.Env, fmt.Sprintf("HTTP_PROXY=%s", r.HttpProxy))
+		}
+		if r.NoProxy != "" {
+			cmd.Env = append(cmd.Env, fmt.Sprintf("NO_PROXY=%s", r.NoProxy))
+		}
+		return cmd, nil
+	}
+
+	return nil, fmt.Errorf("unsupported language: %s", r.Config.Meta.Runner.Language)
 }
 
 func (r *LocalPluginRuntime) StartPlugin() error {
-	panic("")
+	defer utils.Info("plugin %s stopped", r.Config.Identity())
+
+	if r.isNotFirstStart {
+		r.SetRestarting()
+	} else {
+		r.SetLaunching()
+		r.isNotFirstStart = true
+	}
+
+	r.waitChan = make(chan bool)
+
+	cmd, err := r.getCmd()
+	if err != nil {
+		return err
+	}
+
+	cmd.Dir = r.State.WorkingPath
+	cmd.Env = append(cmd.Environ(), "INSTALL_METHOD=local", "PATH="+os.Getenv("PATH"))
+
+	// get stdin
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		return fmt.Errorf("get stdin pipe failed: %s", err.Error())
+	}
+	defer stdin.Close()
+
+	// get stdout
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return fmt.Errorf("get stdout pipe failed: %s", err.Error())
+	}
+	defer stdout.Close()
+
+	// get stderr
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		return fmt.Errorf("get stderr pipe failed: %s", err.Error())
+	}
+	defer stderr.Close()
+
+	// start command
+	if err := cmd.Start(); err != nil {
+		return fmt.Errorf("start plugin failed: %s", err.Error())
+	}
+
+	// stdio
+	r.stdioHolder = newStdioHolder(r.Config.Identity(), stdin, stdout, stderr, &StdioHolderConfig{
+		StdoutBufferSize:    r.stdoutBufferSize,
+		StdoutMaxBufferSize: r.stdoutMaxBufferSize,
+	})
+	defer r.stdioHolder.Stop()
+
+	defer func() {
+		// wait for plugin to exit
+		originalErr := cmd.Wait()
+		if originalErr != nil {
+			var err error
+			if r.stdioHolder != nil {
+				stdioErr := r.stdioHolder.Error()
+				if stdioErr != nil {
+					err = errors.Join(originalErr, stdioErr)
+				} else {
+					err = originalErr
+				}
+			} else {
+				err = originalErr
+			}
+			if err != nil {
+				utils.Error("plugin %s exited with error: %s", r.Config.Identity(), err.Error())
+			} else {
+				utils.Error("plugin %s exited with unknown error", r.Config.Identity())
+			}
+		}
+
+		r.gc()
+	}()
+
+	// ensure the plugin process is killed after the plugin exit
+	defer cmd.Process.Kill()
+
+	utils.Info("plugin %s started", r.Config.Identity())
+
+	wg := sync.WaitGroup{}
+	wg.Add(2)
+
+	// listen to the plugin stdout
+	utils.Submit(map[string]string{
+		"module":   "plugin_manager",
+		"type":     "local",
+		"function": "StartStdout",
+	}, func() {
+		defer wg.Done()
+		r.stdioHolder.StartStdout(func() {})
+	})
+
+	// listen to the plugin stderr
+	utils.Submit(map[string]string{
+		"module":   "plugin_manager",
+		"type":     "local",
+		"function": "StartStderr",
+	}, func() {
+		wg.Done()
+		r.stdioHolder.StartStderr()
+	})
+
+	// send started event
+	r.waitChanLock.Lock()
+	for _, c := range r.waitStartChan {
+		select {
+		case c <- true:
+		default:
+		}
+	}
+	r.waitChanLock.Unlock()
+
+	// wait for plugin to exit
+	err = r.stdioHolder.Wait()
+	if err != nil {
+		return errors.Join(err, r.stdioHolder.Error())
+	}
+
+	wg.Wait()
+	// plugin has exited
+	return nil
 }
 
 // Wait returns a channel that will be closed when the plugin stops
@@ -56,7 +203,7 @@ func (r *LocalPluginRuntime) Stop() {
 	r.PluginRuntime.Stop()
 
 	if r.stdioHolder != nil {
-		//
+		r.stdioHolder.Stop()
 	}
 }
 

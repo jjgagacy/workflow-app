@@ -13,7 +13,7 @@ type PluginDecoder interface {
 	// Walk tranverse the plugin files
 	Walk(fn func(filename string, dir string) error) error
 	// ReadFile reads the entire contents of a file
-	Readfile(filename string) ([]byte, error)
+	ReadFile(filename string) ([]byte, error)
 	// Readdir reads the contents of a directory
 	ReadDir(dirname string) ([]string, error)
 	// Close releases the resources by the decoder

@@ -39,6 +39,7 @@ func UnmarshalJsonBytes[T any](data []byte) (T, error) {
 		return result, nil
 	}
 
+	// validate
 	if err := validators.EntitiesValidator.Struct(&result); err != nil {
 		return result, err
 	}

@@ -246,9 +246,10 @@ func InstallPluginRuntimeToTenant(
 			var stream *utils.Stream[plugin_manager.PluginInstallResponse]
 			switch config.Platform {
 			case core.PLATFORM_SERVERLESS:
-				// todo serverless
+				// todo: isntall serverless
 				return
 			case core.PLATFORM_LOCAL:
+				// install local plugin
 				stream, err = manager.InstallLocal(pluginUniqueIdentifier)
 			default:
 				updateTaskStatus(func(task *model.TaskInstallation, plugin *model.TaskPluginInstallStatus) {
@@ -532,20 +533,45 @@ func FetchPluginInstallationTask(
 	tenantId string,
 	taskId string,
 ) *entities.Response {
-	panic("")
+	task, err := db.GetOne[model.TaskInstallation](
+		db.Equal("id", taskId),
+		db.Equal("tenant_id", tenantId),
+	)
+	if err != nil {
+		return entities.InternalError(err).ToResponse()
+	}
+
+	return entities.NewSuccessResponse(task)
 }
 
 func DeleteAllPluginInstallationTasks(
 	tenantId string,
 ) *entities.Response {
-	panic("")
+	err := db.DeleteBy(
+		model.TaskInstallation{
+			TenantID: tenantId,
+		},
+	)
+	if err != nil {
+		return entities.InternalError(err).ToResponse()
+	}
+
+	return entities.NewSuccessResponse(true)
 }
 
 func DeletePluginInstallationTask(
 	tenantId string,
 	taskId string,
 ) *entities.Response {
-	panic("")
+	err := db.DeleteBy(model.TaskInstallation{
+		Model:    model.Model{ID: taskId},
+		TenantID: tenantId,
+	})
+	if err != nil {
+		return entities.InternalError(err).ToResponse()
+	}
+
+	return entities.NewSuccessResponse(true)
 }
 
 func DeletePluginInstallationItemFromTask(
@@ -553,5 +579,45 @@ func DeletePluginInstallationItemFromTask(
 	taskId string,
 	pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier,
 ) *entities.Response {
-	panic("")
+	err := db.WithTransaction(func(tx *gorm.DB) error {
+		taskInstallation, err := db.GetOne[model.TaskInstallation](
+			db.WithTransactionContext(tx),
+			db.Equal("id", taskId),
+			db.Equal("tenant_id", tenantId),
+			db.WLock(),
+		)
+
+		if err != nil {
+			return err
+		}
+
+		plugins := []model.TaskPluginInstallStatus{}
+		for _, plugin := range taskInstallation.Plugins {
+			if plugin.PluginUniqueIdentifier != pluginUniqueIdentifier {
+				plugins = append(plugins, plugin)
+			}
+		}
+
+		success := 0
+		for _, plugin := range plugins {
+			if plugin.Status == model.TaskInstallStatusSuccess {
+				success++
+			}
+		}
+
+		if len(plugins) == success {
+			err = db.Delete(&taskInstallation, tx)
+		} else {
+			taskInstallation.Plugins = plugins
+			err = db.Update(&taskInstallation, tx)
+		}
+
+		return err
+	})
+
+	if err != nil {
+		return entities.InternalError(err).ToResponse()
+	}
+
+	return entities.NewSuccessResponse(true)
 }

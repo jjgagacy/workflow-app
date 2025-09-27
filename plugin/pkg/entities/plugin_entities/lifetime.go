@@ -56,17 +56,6 @@ func (r *PluginRuntime) Init() error {
 	return nil
 }
 
-func (r *PluginRuntime) StartPlugin() error {
-	return nil
-}
-
-func (r *PluginRuntime) Wait() (<-chan bool, error) {
-	return nil, nil
-}
-
-func (r *PluginRuntime) Cleanup() {
-}
-
 func (r *PluginRuntime) SetActive() {
 	r.State.Status = string(PLUGIN_RUNTIME_STATUS_ACTIVE)
 }
@@ -95,14 +84,6 @@ func (r *PluginRuntime) AddRestarts() {
 	r.State.Restarts++
 }
 
-func (r *PluginRuntime) WaitStarted() <-chan bool {
-	return nil
-}
-
-func (r *PluginRuntime) WaitStopped() <-chan bool {
-	return nil
-}
-
 func (r *PluginRuntime) Stop() {
 	r.State.Status = string(PLUGIN_RUNTIME_STATUS_STOPPED)
 }
@@ -123,6 +104,10 @@ func (r *PluginRuntime) RuntimeState() PluginRuntimeState {
 
 func (r *PluginRuntime) UpdateScheduledAt(t time.Time) {
 	r.State.ScheduleAt = &t
+}
+
+func (r *PluginRuntime) Stopped() bool {
+	return r.State.Status == string(PLUGIN_RUNTIME_STATUS_STOPPED)
 }
 
 func NewPluginRuntime(config PluginDeclaration) *PluginRuntime {
