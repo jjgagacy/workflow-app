@@ -115,11 +115,15 @@ func (p *PluginManager) launchLocal(
 	}
 
 	localPluginRuntime := local_runtime.NewLocalPluginRuntime(local_runtime.LocalPluginRuntimeConfig{
-		HttpProxy:           p.config.HttpProxy,
-		HttpsProxy:          p.config.HttpsProxy,
-		NoProxy:             p.config.NoProxy,
-		StdoutBufferSize:    p.config.PluginStdioBufferSize,
-		StdoutMaxBufferSize: p.config.PluginStdioMaxBufferSize,
+		HttpProxy:              p.config.HttpProxy,
+		HttpsProxy:             p.config.HttpsProxy,
+		NoProxy:                p.config.NoProxy,
+		StdoutBufferSize:       p.config.PluginStdioBufferSize,
+		StdoutMaxBufferSize:    p.config.PluginStdioMaxBufferSize,
+		PythonInterpreterPath:  p.config.PythonInterpreterPath,
+		UvPath:                 p.config.UvPath,
+		PythonEnvInitTimeout:   p.config.PythonEnvInitTimeout,
+		PythonCompileExtraArgs: p.config.PythonCompileExtraArgs,
 	})
 	localPluginRuntime.PluginRuntime = plugin.runtime
 	localPluginRuntime.BasicChecksum = basic_runtime.BasicChecksum{

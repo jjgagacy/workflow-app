@@ -36,6 +36,7 @@ func TestConfigValidate(t *testing.T) {
 		// 超时和并发配置
 		PluginMaxExecutionTimeout:      30000,
 		PluginLocalLaunchingConcurrent: 10,
+		PythonEnvInitTimeout:           120,
 
 		// 平台和协程池配置
 		Platform:        PLATFORM_LOCAL,
@@ -304,6 +305,9 @@ func TestConfig_ValidatorTags(t *testing.T) {
 		MaxBundlePackageSize:                500,
 		PluginPackageCachePath:              "/tmp/cache",
 		PluginWorkingPath:                   "/tmp/plugins",
+		PythonEnvInitTimeout:                120,
+		InvocationConnectionIdleTimeout:     50,
+		DBTimeZone:                          "Asia/Shanghai",
 	}
 
 	tests := []struct {

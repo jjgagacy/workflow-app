@@ -121,3 +121,20 @@ type PluginMeta struct {
 	Runner         PluginRunner     `json:"runner" validate:"required"`
 	MinimumVersion *string          `json:"minimum_version"`
 }
+
+func (p *PluginDeclaration) FillInDefaultValues() {
+	if p.Tool != nil {
+		if len(p.Tool.Identity.Tags) == 0 {
+			p.Tool.Identity.Tags = p.Tags
+		}
+	}
+	if p.Model != nil {
+		if p.Model.Description == nil {
+			descriptionCopy := p.Description
+			p.Model.Description = &descriptionCopy
+		}
+	}
+	if p.Tags == nil {
+		p.Tags = []manifest_entites.PluginTag{}
+	}
+}

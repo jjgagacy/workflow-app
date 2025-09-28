@@ -8,13 +8,15 @@ import (
 type Language string
 
 const (
-	Node Language = "node"
-	Go   Language = "go"
+	Node   Language = "node"
+	Go     Language = "go"
+	Python Language = "python"
 )
 
 var validLanguages = map[Language]bool{
-	Node: true,
-	Go:   true,
+	Node:   true,
+	Go:     true,
+	Python: true,
 }
 
 func isLanguage(fl validator.FieldLevel) bool {

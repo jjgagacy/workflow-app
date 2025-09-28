@@ -76,10 +76,10 @@ func (p *PluginManager) Get(identity plugin_entities.PluginUniqueIdentifier) (pl
 		}
 		return nil, errors.New("plugin not found")
 	} else {
-		// otherwise, use serverless runtime instead
+		// todo: otherwise, use serverless runtime instead
 	}
 
-	panic("not implemented")
+	return nil, errors.New("unsupported platform")
 }
 
 func (p *PluginManager) Launch(config *core.Config) {

@@ -24,6 +24,18 @@ type LocalPluginRuntime struct {
 	nodeEnvInitTimeout int
 	nodeExtraArg       string
 
+	pythonInterpreterPath  string
+	pythonEnvInitTimeout   int
+	pythonCompileExtraArgs string
+
+	defaultPythonInterpreterPath string
+	uvPath                       string
+
+	pipMirrorUrl    string
+	pipPreferBinary bool
+	pipVerbose      bool
+	pipExtraArgs    string
+
 	waitChanLock  sync.Mutex
 	waitStartChan []chan bool
 	waitStopChan  []chan bool
@@ -51,6 +63,8 @@ func (r *LocalPluginRuntime) Init() error {
 	var err error
 	if r.Config.Meta.Runner.Language == constants.Node {
 		err = r.InitNode()
+	} else if r.Config.Meta.Runner.Language == constants.Python {
+		err = r.InitPython()
 	} else {
 		return fmt.Errorf("unsupported language: %s", r.Config.Meta.Runner.Language)
 	}
@@ -100,14 +114,23 @@ type LocalPluginRuntimeConfig struct {
 	NoProxy             string
 	StdoutBufferSize    int
 	StdoutMaxBufferSize int
+
+	PythonInterpreterPath  string
+	UvPath                 string
+	PythonEnvInitTimeout   int
+	PythonCompileExtraArgs string
 }
 
 func NewLocalPluginRuntime(config LocalPluginRuntimeConfig) *LocalPluginRuntime {
 	return &LocalPluginRuntime{
-		HttpProxy:           config.HttpProxy,
-		HttpsProxy:          config.HttpsProxy,
-		NoProxy:             config.NoProxy,
-		stdoutBufferSize:    config.StdoutBufferSize,
-		stdoutMaxBufferSize: config.StdoutMaxBufferSize,
+		defaultPythonInterpreterPath: config.PythonInterpreterPath,
+		uvPath:                       config.UvPath,
+		pythonEnvInitTimeout:         config.PythonEnvInitTimeout,
+		pythonCompileExtraArgs:       config.PythonCompileExtraArgs,
+		HttpProxy:                    config.HttpProxy,
+		HttpsProxy:                   config.HttpsProxy,
+		NoProxy:                      config.NoProxy,
+		stdoutBufferSize:             config.StdoutBufferSize,
+		stdoutMaxBufferSize:          config.StdoutMaxBufferSize,
 	}
 }

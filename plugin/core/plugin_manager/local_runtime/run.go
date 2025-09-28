@@ -207,14 +207,22 @@ func (r *LocalPluginRuntime) Stop() {
 	}
 }
 
-func (r *LocalPluginRuntime) Stopped() bool {
-	panic("")
-}
-
 func (r *LocalPluginRuntime) Listen(sessionId string) *entities.Broadcast[plugin_entities.SessionMessage] {
-	panic("")
+	listener := entities.NewBroadcast[plugin_entities.SessionMessage]()
+	listener.OnClose(func() {
+		r.stdioHolder.removeEventListener(sessionId)
+	})
+	r.stdioHolder.setEventListener(sessionId, func(b []byte) {
+		data, err := utils.UnmarshalJsonBytes[plugin_entities.SessionMessage](b)
+		if err != nil {
+			utils.Error("unmarshal json failed: %s, failed to parse session message", err.Error())
+			return
+		}
+		listener.Send(data)
+	})
+	return listener
 }
 
 func (r *LocalPluginRuntime) Write(sessionId string, action plugin_daemon.PluginAccessAction, data []byte) {
-	panic("")
+	r.stdioHolder.write(append(data, '\n'))
 }

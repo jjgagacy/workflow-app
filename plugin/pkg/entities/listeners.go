@@ -9,3 +9,33 @@ type Broadcast[T any] struct {
 }
 
 type BytesIOListener = Broadcast[[]byte]
+
+func NewBroadcast[T any]() *Broadcast[T] {
+	return &Broadcast[T]{
+		mu: &sync.RWMutex{},
+	}
+}
+
+func (b *Broadcast[T]) Listen(f func(T)) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	b.listener = append(b.listener, f)
+}
+
+func (b *Broadcast[T]) OnClose(f func()) {
+	b.onClose = f
+}
+
+func (b *Broadcast[T]) Close() {
+	if b.onClose != nil {
+		b.onClose()
+	}
+}
+
+func (b *Broadcast[T]) Send(data T) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	for _, listener := range b.listener {
+		listener(data)
+	}
+}

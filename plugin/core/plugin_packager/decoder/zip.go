@@ -7,9 +7,14 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"os"
+	"path"
+	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
+	"github.com/jjgagacy/workflow-app/plugin/utils"
 )
 
 type ZipPluginDecoder struct {
@@ -17,11 +22,11 @@ type ZipPluginDecoder struct {
 	PluginDecoderHelper
 
 	reader *zip.Reader
-	err    error
 
 	sig        string
 	createTime int64
 
+	verification                          *Verification
 	thirdPartySignatureVerificationConfig *ThirdPartySignatureVerificationConfig
 }
 
@@ -41,12 +46,15 @@ func newZipPluginDecoder(
 
 	decoder := &ZipPluginDecoder{
 		reader:                                reader,
-		err:                                   err,
 		thirdPartySignatureVerificationConfig: thirdPartySignatureVerificationConfig,
 	}
 
 	err = decoder.Open()
 	if err != nil {
+		return nil, err
+	}
+
+	if err = decoder.decode(); err != nil {
 		return nil, err
 	}
 
@@ -84,16 +92,27 @@ func NewZipPluginDecoderWithLimitSize(data []byte, maxSize int64) (*ZipPluginDec
 }
 
 func (z *ZipPluginDecoder) Stat(filename string) (fs.FileInfo, error) {
-	panic("not impl")
+	file, err := z.reader.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	return file.Stat()
 }
 
 func (z *ZipPluginDecoder) Open() error {
-
-	panic("not impl")
+	return nil
 }
 
 func (z *ZipPluginDecoder) Walk(fn func(filename string, dir string) error) error {
-	panic("not impl")
+	for _, file := range z.reader.File {
+		dir, filename := path.Split(file.Name)
+		if err := fn(filename, dir); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (z *ZipPluginDecoder) Close() error {
@@ -101,11 +120,32 @@ func (z *ZipPluginDecoder) Close() error {
 }
 
 func (z *ZipPluginDecoder) ReadFile(filename string) ([]byte, error) {
-	panic("not impl")
+	file, err := z.reader.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	data := new(bytes.Buffer)
+	_, err = data.ReadFrom(file)
+	if err != nil {
+		return nil, err
+	}
+
+	return data.Bytes(), nil
 }
 
+// ReadDir reads file list with dirname prefix
 func (z *ZipPluginDecoder) ReadDir(dirname string) ([]string, error) {
-	panic("not impl")
+	files := make([]string, 0)
+	dirNameWithSlash := strings.TrimSuffix(dirname, "/") + "/"
+
+	for _, file := range z.reader.File {
+		if strings.HasPrefix(file.Name, dirNameWithSlash) {
+			files = append(files, file.Name)
+		}
+	}
+	return files, nil
 }
 
 func (z *ZipPluginDecoder) FileReader(filename string) (io.ReadCloser, error) {
@@ -113,42 +153,105 @@ func (z *ZipPluginDecoder) FileReader(filename string) (io.ReadCloser, error) {
 }
 
 func (z *ZipPluginDecoder) decode() error {
-	panic("not impl")
+	// 从ZIP注释解析签名信息
+	comment, err := utils.UnmarshalJson[struct {
+		Signature string `json:"signature"`
+		Time      int64  `json:"time"`
+	}](z.reader.Comment)
+
+	if err != nil {
+		return err
+	}
+
+	var verification *Verification
+
+	signature := comment.Signature
+	time := comment.Time
+
+	// 读取验证文件
+	verifyData, err := z.ReadFile(VERIFICATION_FILE)
+	if err != nil {
+		if !errors.Is(err, os.ErrNotExist) {
+			return err
+		}
+
+		verification = nil
+	} else {
+		verificationData, err := utils.UnmarshalJsonBytes[Verification](verifyData)
+		if err != nil {
+			return err
+		}
+
+		verification = &verificationData
+	}
+
+	z.sig = signature
+	z.createTime = time
+	z.verification = verification
+
+	return nil
 }
 
 func (z *ZipPluginDecoder) Signature() (string, error) {
-	panic("not impl")
+	if z.sig != "" {
+		return z.sig, nil
+	}
+
+	return "", nil
 }
 
 func (z *ZipPluginDecoder) CreateTime() (int64, error) {
-	panic("not impl")
+	return z.createTime, nil
 }
 
 func (z *ZipPluginDecoder) Manifest() (plugin_entities.PluginDeclaration, error) {
-	panic("not impl")
+	return z.PluginDecoderHelper.Manifest(z)
 }
 
 func (z *ZipPluginDecoder) Assets() (map[string][]byte, error) {
-
-	panic("not impl")
+	return z.PluginDecoderHelper.Assets(z, "/")
 }
 
 func (z *ZipPluginDecoder) Checksum() (string, error) {
-	panic("not impl")
+	return z.PluginDecoderHelper.Checksum(z)
 }
 
 func (z *ZipPluginDecoder) UniqueIdentity() (plugin_entities.PluginUniqueIdentifier, error) {
-	panic("not impl")
+	return z.PluginDecoderHelper.UniqueIdentity(z)
 }
 
 func (z *ZipPluginDecoder) ExtractTo(dst string) error {
-	panic("not impl")
+	if err := z.Walk(func(filename, dir string) error {
+		workingPath := path.Join(dst, dir)
+		// check directory exists
+		if err := os.MkdirAll(workingPath, 0755); err != nil {
+			return err
+		}
+
+		bytes, err := z.ReadFile(filepath.Join(dir, filename))
+		if err != nil {
+			return err
+		}
+
+		writeFile := filepath.Join(workingPath, filename)
+		// copy file
+		if err := os.WriteFile(writeFile, bytes, 0644); err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		os.RemoveAll(dst)
+		return errors.Join(err, fmt.Errorf("copy plugin to working plugin error: %v", err))
+	}
+
+	return nil
 }
 
 func (z *ZipPluginDecoder) CheckAssetValid() error {
-	panic("not impl")
+	return z.PluginDecoderHelper.CheckAssetsValid(z)
 }
 
 func (z *ZipPluginDecoder) Verified() bool {
-	panic("not impl")
+	return z.PluginDecoderHelper.verified(z)
 }

@@ -116,55 +116,71 @@ func (d *FSPluginDecoder) ReadFile(filename string) ([]byte, error) {
 }
 
 func (d *FSPluginDecoder) ReadDir(dirname string) ([]string, error) {
-	panic("")
+	var files []string
+	err := filepath.WalkDir(filepath.Join(d.root, dirname), func(path string, info fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			relPath, err := filepath.Rel(d.root, path)
+			if err != nil {
+				return err
+			}
+			files = append(files, relPath)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return files, nil
 }
 
 func (d *FSPluginDecoder) Close() error {
-	panic("")
+	return nil
 }
 
 func (d *FSPluginDecoder) Stat(filename string) (fs.FileInfo, error) {
-
-	panic("")
+	return os.Stat(filepath.Join(d.root, filename))
 }
 
 func (d *FSPluginDecoder) FileReader(filename string) (io.ReadCloser, error) {
-	panic("")
+	return os.Open(filepath.Join(d.root, filename))
 }
 
 func (d *FSPluginDecoder) Signature() (string, error) {
-	panic("")
+	return "", nil
 }
 
 func (d *FSPluginDecoder) Verified() bool {
-	panic("")
+	return true
 }
 
 func (d *FSPluginDecoder) CreateTime() (int64, error) {
-	panic("")
+	return 0, nil
 }
 
 func (d *FSPluginDecoder) Manifest() (plugin_entities.PluginDeclaration, error) {
 	return d.PluginDecoderHelper.Manifest(d)
 }
 
-func (d *FSPluginDecoder) Assets() (map[string]string, error) {
-	panic("")
+func (d *FSPluginDecoder) Assets() (map[string][]byte, error) {
+	return d.PluginDecoderHelper.Assets(d, string(filepath.Separator))
 }
 
-func (d *FSPluginDecoder) UniqueIdentify() (plugin_entities.PluginUniqueIdentifier, error) {
-	panic("")
+func (d *FSPluginDecoder) UniqueIdentity() (plugin_entities.PluginUniqueIdentifier, error) {
+	return d.PluginDecoderHelper.UniqueIdentity(d)
 }
 
 func (d *FSPluginDecoder) Checksum() (string, error) {
-	panic("")
+	return d.PluginDecoderHelper.Checksum(d)
 }
 
 func (d *FSPluginDecoder) CheckAssetValid() error {
-
-	panic("")
+	return d.PluginDecoderHelper.CheckAssetsValid(d)
 }
 
 func (d *FSPluginDecoder) validateSignature(signature string) bool {
-	panic("")
+	// todo
+	return true
 }

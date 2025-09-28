@@ -112,6 +112,15 @@ type Config struct {
 	InvocationWriteTimeout int64 `envconfig:"BACKWARDS_INVOCATION_WRITE_TIMEOUT" default:"5000"`
 	// invocation read timeout in milliseconds
 	InvocationReadTimeout int64 `envconfig:"BACKWARDS_INVOCATION_READ_TIMEOUT" default:"240000"`
+
+	PythonInterpreterPath  string `envconfig:"PYTHON_INTERPRETER_PATH"`
+	UvPath                 string `envconfig:"UV_PATH"  default:""`
+	PythonEnvInitTimeout   int    `envconfig:"PYTHON_ENV_INIT_TIMEOUT" validate:"required"`
+	PythonCompileExtraArgs string `envconfig:"PYTHON_COMPILE_EXTRA_ARGS"`
+	PipMirrorUrl           string `envconfig:"PIP_MIRROR_URL"`
+	PipPreferBinary        *bool  `envconfig:"PIP_PREFER_BINARY"`
+	PipVerbose             *bool  `envconfig:"PIP_VERBOSE"`
+	PipExtraArgs           string `envconfig:"PIP_EXTRA_ARGS"`
 }
 
 func (c *Config) Validate() error {
