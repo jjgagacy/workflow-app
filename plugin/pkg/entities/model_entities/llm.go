@@ -59,7 +59,7 @@ var validPromptMessageContentTypes = map[PromptMessageContentType]bool{
 }
 
 type PromptMessageContent struct {
-	Type         PromptMessageContentType `json:"type"`
+	Type         PromptMessageContentType `json:"type" validate:"required,prompt_message_content_type"`
 	Base64Data   string                   `json:"base64_data"`
 	URL          string                   `json:"url"`
 	Data         string                   `json:"data"`
@@ -137,6 +137,18 @@ type LLMResultChunkDelta struct {
 	Message      PromptMessage `json:"message" validate:"required"`
 	Usage        *LLMUsage     `json:"usage" validate:"omitempty"`
 	FinishReason *string       `json:"finish_reason" validate:"omitempty"`
+}
+
+type LLMStructuredOutput struct {
+	StructuredOutput map[string]any `json:"structured_output" validate:"omitempty"`
+}
+
+type LLMResultChunkWithStructuredOutput struct {
+	Model             LLMModel            `json:"model" validate:"required"`
+	SystemFingerprint string              `json:"system_fingerprint" validate:"omitempty"`
+	Delta             LLMResultChunkDelta `json:"delta" validate:"omitempty"`
+
+	LLMStructuredOutput
 }
 
 type LLMUsage struct {

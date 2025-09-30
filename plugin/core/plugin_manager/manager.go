@@ -86,7 +86,7 @@ func (p *PluginManager) Launch(config *core.Config) {
 	invocation, err := invocation.NewInvocationDaemon(
 		invocation.InvocationDaemonPayload{
 			BaseUrl:      config.InnerApiUrl,
-			Key:          config.InnerApiKey,
+			ApiKey:       config.InnerApiKey,
 			WriteTimeout: config.InvocationWriteTimeout,
 			ReadTimeout:  config.InvocationReadTimeout,
 		},
@@ -174,4 +174,8 @@ func (p *PluginManager) GetPackage(
 		return nil, err
 	}
 	return pkgFile, nil
+}
+
+func (p *PluginManager) BackwardsInvocation() invocation.BackwardsInvocation {
+	return p.backwardsInvocation
 }

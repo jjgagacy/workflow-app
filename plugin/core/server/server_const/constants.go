@@ -1,4 +1,4 @@
-package server
+package server_const
 
 const (
 	X_PLUGIN_ID     = "X-Plugin-ID"

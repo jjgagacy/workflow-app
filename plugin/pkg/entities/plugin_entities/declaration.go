@@ -67,7 +67,7 @@ type PluginResourceRequirement struct {
 type PluginExtensions struct {
 	Tools           []string `json:"tools" validate:"omitempty,dive,max=128"`
 	Models          []string `json:"models" validate:"omitempty,dive,max=128"`
-	EndPoints       []string `json:"end_points" validate:"omitempty,dive,max=128"`
+	EndPoints       []string `json:"endpoints" validate:"omitempty,dive,max=128"`
 	AgentStrategies []string `json:"agent_strategies" validate:"omitempty,dive,max=128"`
 }
 

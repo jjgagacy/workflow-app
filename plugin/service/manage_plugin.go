@@ -105,8 +105,8 @@ func ListPlugins(tenantId string, page int, pageSize int) *entities.Response {
 		PluginID               string                             `json:"plugin_id"`
 		TenantID               string                             `json:"tenant_id"`
 		PluginUniqueIdentifier string                             `json:"plugin_unique_identifier"`
-		EndPointActive         int                                `json:"end_point_active"`
-		EndPointSetups         int                                `json:"end_point_setups"`
+		EndPointActive         int                                `json:"endpoint_active"`
+		EndPointSetups         int                                `json:"endpoint_setups"`
 		InstallationID         string                             `json:"installation_id"`
 		Declaration            *plugin_entities.PluginDeclaration `json:"declaration"`
 		RuntimeType            plugin_entities.PluginRuntimeType  `json:"runtime_type"`
