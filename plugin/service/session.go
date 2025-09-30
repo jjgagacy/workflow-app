@@ -3,7 +3,7 @@ package service
 import (
 	"errors"
 
-	"github.com/jjgagacy/workflow-app/plugin/core/plugin_daemon"
+	"github.com/jjgagacy/workflow-app/plugin/core/plugin_daemon/access_types"
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager"
 	"github.com/jjgagacy/workflow-app/plugin/core/session_manager"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
@@ -11,8 +11,8 @@ import (
 
 func createSession[T any](
 	r *plugin_entities.InvokePluginRequest[T],
-	accessType plugin_daemon.PluginAccessType,
-	accessAction plugin_daemon.PluginAccessAction,
+	accessType access_types.PluginAccessType,
+	accessAction access_types.PluginAccessAction,
 ) (*session_manager.Session, error) {
 	manager := plugin_manager.Manager()
 	if manager == nil {

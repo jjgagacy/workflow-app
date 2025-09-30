@@ -8,6 +8,7 @@ const (
 	ErrUniqueIdentifierInvalid = "ErrMsgUniqueIdentifierInvalid"
 	ErrUnauthorizedInvalid     = "ErrUnauthorizedInvalid"
 	ErrPluginNotFound          = "ErrPluginNotFound"
+	ErrInvokePlugin            = "ErrInvokePlugin"
 )
 
 const (
@@ -17,6 +18,7 @@ const (
 	ErrIdentifierInvalidCode = -403
 	ErrUnauthorizedCode      = -402
 	ErrPluginNotFoundCode    = -401
+	ErrInvokePluginCode      = -501
 )
 
 type PluginError interface {
@@ -83,4 +85,14 @@ func PluginNotFoundError(err error) PluginError {
 		return pe
 	}
 	return NewErrorWithType(ErrPluginNotFoundCode, err.Error(), ErrPluginNotFound)
+}
+
+func InvokePluginError(err error) PluginError {
+	if err == nil {
+		return nil
+	}
+	if pe, ok := err.(PluginError); ok {
+		return pe
+	}
+	return NewErrorWithType(ErrInvokePluginCode, err.Error(), ErrInvokePlugin)
 }

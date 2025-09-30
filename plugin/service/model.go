@@ -2,8 +2,13 @@ package service
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/jjgagacy/workflow-app/plugin/core/plugin_daemon"
+	"github.com/jjgagacy/workflow-app/plugin/core/plugin_daemon/access_types"
+	"github.com/jjgagacy/workflow-app/plugin/core/session_manager"
+	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/model_entities"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/requests"
+	"github.com/jjgagacy/workflow-app/plugin/utils"
 )
 
 func InvokeLLM(
@@ -11,7 +16,16 @@ func InvokeLLM(
 	req *plugin_entities.InvokePluginRequest[requests.RequestInvokeLLM],
 	maxTimeout int,
 ) {
-
+	baseSSEWithSession(
+		func(session *session_manager.Session) (*utils.Stream[model_entities.LLMResultChunk], error) {
+			return plugin_daemon.InvokeLLM(session, &req.Data)
+		},
+		access_types.PLUGIN_ACCESS_TYPE_MODEL,
+		access_types.PLUGIN_ACCESS_ACTION_INVOKE_LLM,
+		req,
+		ctx,
+		maxTimeout,
+	)
 }
 
 func InvokeLLMNumTokens(

@@ -1,4 +1,4 @@
-package plugin_daemon
+package access_types
 
 type PluginAccessType string
 

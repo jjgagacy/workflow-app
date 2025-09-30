@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jjgagacy/workflow-app/plugin/core/plugin_daemon"
+	"github.com/jjgagacy/workflow-app/plugin/core/plugin_daemon/access_types"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities"
 )
 
@@ -63,7 +63,7 @@ type PluginRuntimeInterface interface {
 	// Listen listens for messages from the plugin
 	Listen(sessionId string) *entities.Broadcast[SessionMessage]
 	// Write writes a message to the plugin
-	Write(sessionId string, action plugin_daemon.PluginAccessAction, data []byte)
+	Write(sessionId string, action access_types.PluginAccessAction, data []byte)
 	// Log adds a log to the plugin runtime
 	Log(string)
 	// Warn adds a warning log to the plugin runtime

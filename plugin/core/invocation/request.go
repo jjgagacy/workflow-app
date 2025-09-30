@@ -46,5 +46,61 @@ func Request[T any](i *RequestBackwardsInvocation, method string, path string, o
 func StreamResponse[T any](i *RequestBackwardsInvocation, method string, path string, options ...http_requests.HttpOptions) (
 	*utils.Stream[T], error,
 ) {
+	options = append(options,
+		http_requests.HttpHeader(map[string]string{
+			"X-Api-Key": i.ApiKey,
+		}),
+		http_requests.HttpWriteTimeout(i.writeTimeout),
+		http_requests.HttpReadTimeout(i.readTimeout),
+		http_requests.HttpUsingLengthPrefixed(false), // todo true
+	)
 
+	response, err := http_requests.RequestAndParseStream[BackwardsInvocationResponse[T]](
+		i.client,
+		i.ApiBaseUrl.JoinPath(path).String(),
+		method,
+		options...,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	streamResponse := utils.NewStream[T](1024)
+	streamResponse.OnClose(func() {
+		response.Close()
+	})
+
+	utils.Submit(map[string]string{
+		"module":   "invocation",
+		"function": "StreamResponse",
+	}, func() {
+		defer streamResponse.Close()
+
+		for response.Next() {
+			t, err := response.Read()
+			if err != nil {
+				streamResponse.WriteError(err)
+				break
+			}
+			if t.Error != "" {
+				streamResponse.WriteError(fmt.Errorf("request failed: %s", t.Error))
+				break
+			}
+			if t.Data == nil {
+				streamResponse.WriteError(fmt.Errorf("data is nil"))
+				break
+			}
+			// skip validation for map[string]any
+			if reflect.TypeOf(*t.Data).Kind() != reflect.Map {
+				if err := validators.EntitiesValidator.Struct(t.Data); err != nil {
+					streamResponse.WriteError(fmt.Errorf("validate request failed: %s", err.Error()))
+					break
+				}
+			}
+
+			streamResponse.Write(*t.Data)
+		}
+	})
+
+	return streamResponse, nil
 }
