@@ -26,7 +26,7 @@ func baseSSEService[R any](
 	doneClosed := new(int32)
 	closed := new(int32)
 
-	writeData := func(data interface{}) {
+	writeData := func(data any) {
 		if atomic.LoadInt32(closed) == 1 {
 			return
 		}

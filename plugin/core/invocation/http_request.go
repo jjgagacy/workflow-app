@@ -7,6 +7,7 @@ import (
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/model_entities"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/tool_entities"
 	"github.com/jjgagacy/workflow-app/plugin/utils"
+	"github.com/jjgagacy/workflow-app/plugin/utils/http_requests"
 )
 
 type RequestBackwardsInvocation struct {
@@ -39,7 +40,7 @@ func (r *RequestBackwardsInvocation) InvokeEncrypt(payload *InvokeEncryptRequest
 
 // InvokeLLM implements BackwardsInvocation.
 func (r *RequestBackwardsInvocation) InvokeLLM(payload *InvokeLLMRequest) (*utils.Stream[model_entities.LLMResultChunk], error) {
-	panic("unimplemented")
+	return StreamResponse[model_entities.LLMResultChunk](r, "POST", "invoke/llm", http_requests.HttpPayloadJson(payload))
 }
 
 // InvokeLLMWithStructuredOutput implements BackwardsInvocation.

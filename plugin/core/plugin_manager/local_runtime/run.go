@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/jjgagacy/workflow-app/plugin/core/constants"
-	"github.com/jjgagacy/workflow-app/plugin/core/plugin_daemon"
+	"github.com/jjgagacy/workflow-app/plugin/core/plugin_daemon/access_types"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
 	"github.com/jjgagacy/workflow-app/plugin/utils"
@@ -223,6 +223,6 @@ func (r *LocalPluginRuntime) Listen(sessionId string) *entities.Broadcast[plugin
 	return listener
 }
 
-func (r *LocalPluginRuntime) Write(sessionId string, action plugin_daemon.PluginAccessAction, data []byte) {
+func (r *LocalPluginRuntime) Write(sessionId string, action access_types.PluginAccessAction, data []byte) {
 	r.stdioHolder.write(append(data, '\n'))
 }

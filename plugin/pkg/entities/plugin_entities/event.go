@@ -3,7 +3,6 @@ package plugin_entities
 import (
 	"encoding/json"
 
-	"github.com/google/martian/v3/log"
 	"github.com/jjgagacy/workflow-app/plugin/utils"
 )
 
@@ -82,7 +81,7 @@ func ParsePluginUniversalEvent(
 	case PLUGIN_EVENT_LOG:
 		logEvent, err := utils.UnmarshalJsonBytes[PluginLogEvent](event.Data)
 		if err != nil {
-			log.Error("unmarshal json failed: %s", err.Error())
+			utils.Error("unmarshal json failed: %s", err.Error())
 			return
 		}
 		infoHandler(logEvent.Message)
