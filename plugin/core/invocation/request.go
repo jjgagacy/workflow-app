@@ -10,7 +10,7 @@ import (
 )
 
 // Request sends a request to inner api and validate the response
-func Request[T any](i *RequestBackwardsInvocation, method string, path string, options ...http_requests.HttpOptions) (*T, error) {
+func Request[T any](i *RequestBackwardsInvocation, method string, path string, options ...http_requests.HttpOption) (*T, error) {
 	options = append(options,
 		http_requests.HttpHeader(map[string]string{
 			"X-Api-Key": i.ApiKey,
@@ -43,7 +43,7 @@ func Request[T any](i *RequestBackwardsInvocation, method string, path string, o
 	return req.Data, nil
 }
 
-func StreamResponse[T any](i *RequestBackwardsInvocation, method string, path string, options ...http_requests.HttpOptions) (
+func StreamResponse[T any](i *RequestBackwardsInvocation, method string, path string, options ...http_requests.HttpOption) (
 	*utils.Stream[T], error,
 ) {
 	options = append(options,

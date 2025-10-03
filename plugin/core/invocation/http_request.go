@@ -38,7 +38,6 @@ func (r *RequestBackwardsInvocation) InvokeEncrypt(payload *InvokeEncryptRequest
 	panic("unimplemented")
 }
 
-// InvokeLLM implements BackwardsInvocation.
 func (r *RequestBackwardsInvocation) InvokeLLM(payload *InvokeLLMRequest) (*utils.Stream[model_entities.LLMResultChunk], error) {
 	return StreamResponse[model_entities.LLMResultChunk](r, "POST", "invoke/llm", http_requests.HttpPayloadJson(payload))
 }

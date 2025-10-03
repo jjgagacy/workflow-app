@@ -117,7 +117,7 @@ func (app *App) pluginAssetGroup(group *gin.RouterGroup) {
 
 func (app *App) setupDispatchGroup(group *gin.RouterGroup, config *core.Config) {
 	group.POST("/tool/invoke", controllers.InvokeTool(config))
-	group.POST("/tool/validate_credentials", controllers.ValidateModelCredentials(config))
+	group.POST("/tool/validate_credentials", controllers.ValidateToolCredentials(config))
 	group.POST("/tool/get_runtime_parameters", controllers.GetToolRuntimeParameters(config))
 	group.POST("/llm/invoke", controllers.InvokeLLM(config))
 	group.POST("/llm/num_tokens", controllers.GetLLMNumTokens(config))

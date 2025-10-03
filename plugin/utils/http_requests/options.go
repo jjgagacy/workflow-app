@@ -4,7 +4,7 @@ import "io"
 
 type HttpOptionType string
 
-type HttpOptions struct {
+type HttpOption struct {
 	Type  HttpOptionType
 	Value interface{}
 }
@@ -25,32 +25,36 @@ const (
 	HTTP_OPTION_TYPE_USING_LENGTH_PREFIX                    HttpOptionType = "usingLengthPrefix"
 )
 
-func HttpWriteTimeout(timeout int64) HttpOptions {
-	return HttpOptions{HTTP_OPTION_TYPE_WRITE_TIMEOUT, timeout}
+func HttpWriteTimeout(timeout int64) HttpOption {
+	return HttpOption{HTTP_OPTION_TYPE_WRITE_TIMEOUT, timeout}
 }
 
-func HttpReadTimeout(timeout int64) HttpOptions {
-	return HttpOptions{HTTP_OPTION_TYPE_READ_TIMEOUT, timeout}
+func HttpReadTimeout(timeout int64) HttpOption {
+	return HttpOption{HTTP_OPTION_TYPE_READ_TIMEOUT, timeout}
 }
 
-func HttpHeader(header map[string]string) HttpOptions {
-	return HttpOptions{HTTP_OPTION_TYPE_HEADER, header}
+func HttpHeader(header map[string]string) HttpOption {
+	return HttpOption{HTTP_OPTION_TYPE_HEADER, header}
 }
 
-func HttpParams(params map[string]string) HttpOptions {
-	return HttpOptions{HTTP_OPTION_TYPE_PARAMS, params}
+func HttpParams(params map[string]string) HttpOption {
+	return HttpOption{HTTP_OPTION_TYPE_PARAMS, params}
 }
 
-func httpPayload(payload map[string]string) HttpOptions {
-	return HttpOptions{HTTP_OPTION_TYPE_PAYLOAD, payload}
+func HttpPayload(payload map[string]string) HttpOption {
+	return HttpOption{HTTP_OPTION_TYPE_PAYLOAD, payload}
 }
 
-func httpPayloadReader(payload interface{}) HttpOptions {
-	return HttpOptions{HTTP_OPTION_TYPE_PAYLOAD_READER, payload}
+func HttpPayloadText(payload string) HttpOption {
+	return HttpOption{HTTP_OPTION_TYPE_PAYLOAD_TEXT, payload}
 }
 
-func HttpPayloadJson(payload interface{}) HttpOptions {
-	return HttpOptions{HTTP_OPTION_TYPE_PAYLOAD_JSON, payload}
+func HttpPayloadReader(payload any) HttpOption {
+	return HttpOption{HTTP_OPTION_TYPE_PAYLOAD_READER, payload}
+}
+
+func HttpPayloadJson(payload any) HttpOption {
+	return HttpOption{HTTP_OPTION_TYPE_PAYLOAD_JSON, payload}
 }
 
 type HttpPayloadMultipartFile struct {
@@ -58,8 +62,8 @@ type HttpPayloadMultipartFile struct {
 	Reader   io.Reader
 }
 
-func HttpPayloadMultipart(payload map[string]string, files map[string]HttpPayloadMultipartFile) HttpOptions {
-	return HttpOptions{HTTP_OPTION_TYPE_PAYLOAD_MULTIPART, map[string]interface{}{
+func HttpPayloadMultipart(payload map[string]string, files map[string]HttpPayloadMultipartFile) HttpOption {
+	return HttpOption{HTTP_OPTION_TYPE_PAYLOAD_MULTIPART, map[string]any{
 		"payload": payload,
 		"files":   files,
 	}}
@@ -84,6 +88,6 @@ func HttpPayloadMultipart(payload map[string]string, files map[string]HttpPayloa
 //	| 4 bytes total   | Variable | Variable |
 //
 // with the above format, we can achieve a better performance, avoid unexpected memory growth
-func HttpUsingLengthPrefixed(using bool) HttpOptions {
-	return HttpOptions{HTTP_OPTION_TYPE_USING_LENGTH_PREFIX, using}
+func HttpUsingLengthPrefixed(using bool) HttpOption {
+	return HttpOption{HTTP_OPTION_TYPE_USING_LENGTH_PREFIX, using}
 }

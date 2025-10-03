@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func buildHttpRequest(method string, url string, options ...HttpOptions) (*http.Request, error) {
+func buildHttpRequest(method string, url string, options ...HttpOption) (*http.Request, error) {
 	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
 		return nil, err
@@ -38,8 +38,8 @@ func buildHttpRequest(method string, url string, options ...HttpOptions) (*http.
 			writer := multipart.NewWriter(buffer)
 
 			files := option.Value.(map[string]any)["files"].(map[string]HttpPayloadMultipartFile)
-			for filename, file := range files {
-				part, err := writer.CreateFormFile(filename, file.Filename)
+			for fieldname, file := range files {
+				part, err := writer.CreateFormFile(fieldname, file.Filename)
 				if err != nil {
 					writer.Close()
 					return nil, err
@@ -85,7 +85,7 @@ func buildHttpRequest(method string, url string, options ...HttpOptions) (*http.
 	return req, nil
 }
 
-func Request(client *http.Client, url string, method string, options ...HttpOptions) (*http.Response, error) {
+func Request(client *http.Client, url string, method string, options ...HttpOption) (*http.Response, error) {
 	req, err := buildHttpRequest(method, url, options...)
 	if err != nil {
 		return nil, err

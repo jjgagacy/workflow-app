@@ -92,6 +92,7 @@ func UpgradePlugin(config *core.Config) gin.HandlerFunc {
 			ctx.JSON(http.StatusOK, service.UpgradePlugin(
 				config,
 				request.TenantID,
+				request.Source,
 				request.Meta,
 				request.OriginalPluginUniqueIdentifier,
 				request.NewPluginUniqueIdentifier,

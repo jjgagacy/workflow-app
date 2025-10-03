@@ -1,16 +1,23 @@
 package utils
 
 import (
+	"context"
+	"fmt"
+	"log"
+	"runtime/debug"
+	"runtime/pprof"
 	"sync"
 	"time"
 
 	"github.com/getsentry/sentry-go"
+	"github.com/jjgagacy/workflow-app/plugin/utils/local_sentry"
 	"github.com/panjf2000/ants/v2"
 )
 
 var (
-	pool *ants.Pool
-	pl   sync.Mutex
+	pool        *ants.Pool
+	pl          sync.Mutex
+	LocalSentry *local_sentry.LocalSentry
 )
 
 type PoolStatus struct {
@@ -36,7 +43,9 @@ func InitPool(size int, sentryOption ...sentry.ClientOptions) {
 	pool, _ = ants.NewPool(size, ants.WithNonblocking(false))
 
 	if len(sentryOption) > 0 {
-		// todo use sentry
+		if err := sentry.Init(sentryOption[0]); err != nil {
+			Error("init sentry failed: %v", err)
+		}
 	}
 }
 
@@ -54,7 +63,24 @@ func Submit(labels map[string]string, f func()) {
 				label = append(label, k, v)
 			}
 		}
-		f()
+		pprof.Do(context.Background(), pprof.Labels(label...), func(ctx context.Context) {
+			if LocalSentry != nil {
+				defer func() {
+					if r := recover(); r != nil {
+						err := fmt.Errorf("panic: %v", r)
+						LocalSentry.CatpureException(err, map[string]any{
+							"labels": label,
+							"stack":  string(debug.Stack()),
+						})
+						log.Printf("Recovered from panic in task: %v", r)
+						panic(r)
+					}
+				}()
+			} else {
+				defer sentry.Recover()
+			}
+			f()
+		})
 	})
 }
 

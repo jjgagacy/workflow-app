@@ -1,10 +1,15 @@
 package utils
 
 import (
+	"io"
+	"log"
+	"os"
+	"strings"
 	"sync"
 	"testing"
 	"time"
 
+	"github.com/jjgagacy/workflow-app/plugin/utils/local_sentry"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -172,7 +177,80 @@ func TestPoolIntegration(t *testing.T) {
 		WithMaxRoutineBlocking(3, limitedTasks)
 		duration := time.Since(start)
 
-		// 30ms (10 tasks / 3 concurrenty * 10ms each)
+		// 30ms (10 tasks / 3 concurrency * 10ms each)
 		assert.GreaterOrEqual(t, duration, 30*time.Millisecond)
+	})
+}
+
+func setupTest() {
+	InitPool(10)
+
+	LocalSentry = nil
+}
+
+func cleanupTest() {
+	if pool != nil {
+		pool.Release()
+		pool = nil
+	}
+	os.Remove("test_sentry.log")
+}
+
+func setupLogging() *os.File {
+	file, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	multi := io.MultiWriter(os.Stderr, file)
+	log.SetOutput(multi)
+	return file
+}
+
+func TestSubmitLocalSentry(t *testing.T) {
+	setupTest()
+	defer cleanupTest()
+
+	file := setupLogging()
+	defer func() {
+		file.Close()
+		os.Remove("app.log")
+	}()
+
+	t.Run("PanicWithLocalSentry", func(t *testing.T) {
+		ls, err := local_sentry.NewLocalSentry("test_sentry.log")
+		if err != nil {
+			t.Fatalf("Failed to create LocalSentry: %v", err)
+		}
+		defer ls.Close()
+		LocalSentry = ls
+
+		panicMessage := "test panic in task"
+		panicOccurred := false
+
+		defer func() {
+			if r := recover(); r != nil {
+				panicOccurred = true
+			}
+		}()
+
+		Submit(map[string]string{"test": "panic"}, func() {
+			panic(panicMessage)
+		})
+
+		time.Sleep(200 * time.Millisecond)
+
+		content, err := os.ReadFile("test_sentry.log")
+		if err != nil {
+			t.Fatalf("Failed to read log file: %v", err)
+		}
+
+		if !strings.Contains(string(content), panicMessage) {
+			t.Error("Panic should be captured by LocalSentry")
+		}
+
+		if panicOccurred {
+			t.Error("Panic should be recovered inside Submit function")
+		}
 	})
 }

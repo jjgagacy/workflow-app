@@ -6,6 +6,8 @@ import (
 
 	"github.com/jjgagacy/workflow-app/plugin/core/constants"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/manifest_entites"
+	"github.com/jjgagacy/workflow-app/plugin/pkg/validators"
+	"github.com/jjgagacy/workflow-app/plugin/utils"
 )
 
 type PluginCategory string
@@ -137,4 +139,18 @@ func (p *PluginDeclaration) FillInDefaultValues() {
 	if p.Tags == nil {
 		p.Tags = []manifest_entites.PluginTag{}
 	}
+}
+
+func UnmarshalPluginDeclarationFromYaml(b []byte) (*PluginDeclaration, error) {
+	obj, err := utils.UnmarshalYamlBytes[PluginDeclaration](b)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := validators.EntitiesValidator.Struct(obj); err != nil {
+		return nil, err
+	}
+
+	obj.FillInDefaultValues()
+	return &obj, nil
 }

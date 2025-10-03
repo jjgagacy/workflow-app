@@ -29,6 +29,17 @@ func GenericInvokePlugin[T any, R any](
 	listener.Listen(func(chunk plugin_entities.SessionMessage) {
 		switch chunk.Type {
 		case plugin_entities.SESSION_MESSAGE_TYPE_STREAM:
+			data, err := utils.UnmarshalJsonBytes[R](chunk.Data)
+			if err != nil {
+				response.WriteError(errors.New(utils.MarshalJson(map[string]string{
+					"error_type": "unmarshal error",
+					"message":    fmt.Sprintf("unmarshal json failed: %s", err.Error()),
+				})))
+				response.Close()
+				return
+			} else {
+				response.WriteBlocking(data)
+			}
 		case plugin_entities.SESSION_MESSAGE_TYPE_INVOKE:
 			if runtime.Type() == plugin_entities.PLUGIN_RUNTIME_TYPE_SERVERLESS {
 				// todo
@@ -48,7 +59,20 @@ func GenericInvokePlugin[T any, R any](
 				return
 			}
 		case plugin_entities.SESSION_MESSAGE_TYPE_END:
+			response.Close()
 		case plugin_entities.SESSION_MESSAGE_TYPE_ERROR:
+			e, err := utils.UnmarshalJsonBytes[plugin_entities.ErrorResponse](chunk.Data)
+			if err != nil {
+				break
+			}
+			response.WriteError(errors.New(e.Error()))
+			response.Close()
+		default:
+			response.WriteError(errors.New(utils.MarshalJson(map[string]string{
+				"error_type": "unknown stream message type",
+				"message":    "unknown stream message type" + string(chunk.Type),
+			})))
+			response.Close()
 		}
 	})
 

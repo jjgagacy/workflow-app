@@ -22,13 +22,13 @@ func InvokeLLM(config *core.Config) gin.HandlerFunc {
 }
 
 func GetLLMNumTokens(config *core.Config) gin.HandlerFunc {
-	type request = plugin_entities.InvokePluginRequest[requests.RequestInvokeLLMNumTokens]
+	type request = plugin_entities.InvokePluginRequest[requests.RequestGetLLMNumTokens]
 
 	return func(ctx *gin.Context) {
 		BindPluginDispatchRequest(
 			ctx,
 			func(req request) {
-				service.InvokeLLMNumTokens(ctx, &req, config.PluginMaxExecutionTimeout)
+				service.GetLLMNumTokens(ctx, &req, config.PluginMaxExecutionTimeout)
 			},
 		)
 	}

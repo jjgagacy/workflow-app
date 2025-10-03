@@ -106,6 +106,16 @@ type Config struct {
 	// log settings
 	HealthApiLogEnabled *bool `envconfig:"HEALTH_API_LOG_ENABLED"`
 
+	SentryEnabled          bool    `envconfig:"SENTRY_ENABLED"`
+	SentryDSN              string  `envconfig:"SENTRY_DSN"`
+	SentryAttachStacktrace bool    `envconfig:"SENTRY_ATTACH_STACKTRACE"`
+	SentryTracingEnabled   bool    `envconfig:"SENTRY_TRACING_ENABLED"`
+	SentryTracesSampleRate float64 `envconfig:"SENTRY_TRACES_SAMPLE_RATE"`
+	SentrySampleRate       float64 `envconfig:"SENTRY_SAMPLE_RATE"`
+	SentryUseLocal         bool    `envconfig:"SENTRY_USE_LOCAL"`
+
+	LogingLocalPath string `envconfig:"LOGGING_LOCAL_PATH"`
+
 	InvocationConnectionIdleTimeout int `envconfig:"INVOCATION_CONNECTION_IDLE_TIMEOUT" validate:"required"`
 
 	// invocation write timeout in milliseconds

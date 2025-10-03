@@ -12,13 +12,13 @@ import (
 	"github.com/jjgagacy/workflow-app/plugin/utils/parser"
 )
 
-func parseJsonBody(resp *http.Response, ret interface{}) error {
+func parseJsonBody(resp *http.Response, ret any) error {
 	defer resp.Body.Close()
 	jsonDecoder := json.NewDecoder(resp.Body)
 	return jsonDecoder.Decode(ret)
 }
 
-func RequestAndParse[T any](client *http.Client, url string, method string, options ...HttpOptions) (*T, error) {
+func RequestAndParse[T any](client *http.Client, url string, method string, options ...HttpOption) (*T, error) {
 	var ret T
 
 	if _, ok := any(ret).(map[string]any); ok {
@@ -30,7 +30,7 @@ func RequestAndParse[T any](client *http.Client, url string, method string, opti
 		return nil, err
 	}
 
-	readTimeout := int64(60000)
+	readTimeout := int64(60000) // 60 seconds
 	for _, option := range options {
 		if option.Type == HTTP_OPTION_TYPE_READ_TIMEOUT {
 			readTimeout = option.Value.(int64)
@@ -49,7 +49,7 @@ func RequestAndParse[T any](client *http.Client, url string, method string, opti
 	return &ret, nil
 }
 
-func RequestAndParseStream[T any](client *http.Client, url string, method string, options ...HttpOptions) (
+func RequestAndParseStream[T any](client *http.Client, url string, method string, options ...HttpOption) (
 	*utils.Stream[T], error,
 ) {
 	resp, err := Request(client, url, method, options...)

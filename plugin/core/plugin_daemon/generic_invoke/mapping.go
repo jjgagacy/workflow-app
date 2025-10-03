@@ -17,6 +17,7 @@ func getBasicPluginAccessMap(
 		"action":  accessAction,
 	}
 }
+
 func GetInvokePluginMap(
 	session *session_manager.Session,
 	request any,

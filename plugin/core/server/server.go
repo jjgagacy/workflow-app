@@ -28,6 +28,12 @@ func initOSS(config *core.Config) oss.OSS {
 }
 
 func (app *App) Run(config *core.Config) {
+	// logging
+	app.setupLogging(config)
+	app.setupLocalSentry(config)
+	defer app.closeLogging()
+	// setup pool
+	app.setupPool(config)
 	// init database
 	db.Init(config)
 

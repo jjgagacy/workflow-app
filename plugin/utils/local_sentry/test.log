@@ -1,0 +1,13 @@
+=== ERROR EVENT ===
+{
+ "level": "error",
+ "message": "database connection failed",
+ "time": "2025-10-03T08:44:32.852307+08:00",
+ "extra": {
+  "attempts": 3,
+  "operation": "user_login",
+  "user_id": 12345
+ },
+ "stacktrace": "goroutine 7 [running]:\ngithub.com/jjgagacy/workflow-app/plugin/utils/local_sentry.(*LocalSentry).CatpureException(0xc000054090, {0xe576b38, 0xc0000262a0}, {0xc00007cf30, 0x1, 0xe595112?})\n\t/Users/mac/Documents/codes/workflow-app/plugin/utils/local_sentry/local.go:49 +0x6d\ngithub.com/jjgagacy/workflow-app/plugin/utils/local_sentry.TestLocalSentryBasic(0xc000003a40)\n\t/Users/mac/Documents/codes/workflow-app/plugin/utils/local_sentry/local_test.go:45 +0x225\ntesting.tRunner(0xc000003a40, 0xe574c00)\n\t/Users/mac/Documents/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.1.darwin-amd64/src/testing/testing.go:1934 +0xea\ncreated by testing.(*T).Run in goroutine 1\n\t/Users/mac/Documents/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.1.darwin-amd64/src/testing/testing.go:1997 +0x465\n"
+}
+
