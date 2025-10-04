@@ -2,17 +2,26 @@ package service
 
 import (
 	"bytes"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
+	"sync/atomic"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jjgagacy/workflow-app/plugin/core/invocation"
+	"github.com/jjgagacy/workflow-app/plugin/core/plugin_daemon"
+	"github.com/jjgagacy/workflow-app/plugin/core/plugin_daemon/access_types"
+	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager"
+	"github.com/jjgagacy/workflow-app/plugin/core/session_manager"
 	"github.com/jjgagacy/workflow-app/plugin/model"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/endpoint_entities"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
+	"github.com/jjgagacy/workflow-app/plugin/pkg/requests"
+	"github.com/jjgagacy/workflow-app/plugin/utils"
 )
 
 func copyRequest(req *http.Request, hookId string, path string) (*bytes.Buffer, error) {
@@ -85,7 +94,113 @@ func EndPoint(ctx *gin.Context, endPoint *model.EndPoint, pluginInstallation *mo
 		return
 	}
 
-	// fetch plugin
+	manager := plugin_manager.Manager()
+	runtime, err := manager.Get(identifier)
+	if err != nil {
+		ctx.JSON(404, entities.PluginNotFoundError(errors.New("plugin not found")).ToResponse)
+		return
+	}
 
-	fmt.Printf("%v %v\n", buffer.String(), identifier)
+	// fetch endpoint declaration
+	endPointDeclaration := runtime.Configuration().EndPoint
+	if endPointDeclaration == nil {
+		ctx.JSON(404, entities.PluginNotFoundError(errors.New("plugin not found")).ToResponse)
+		return
+	}
+
+	// decrypt settings
+	decryptSettings, err := manager.BackwardsInvocation().InvokeEncrypt(
+		&invocation.InvokeEncryptRequest{
+			BaseInvokeRequest: invocation.BaseInvokeRequest{
+				TenantID: endPoint.TenantID,
+				UserID:   "",
+				Type:     invocation.INVOKE_TYPE_ENCRYPT,
+			},
+			InvokeEncryptSchema: invocation.InvokeEncryptSchema{
+				Opt:       invocation.ENCRYPT_OPT_DECRYPT,
+				Namespace: invocation.ENCRYPT_NAMESPACE_ENDPOINT,
+				Identity:  endPoint.ID,
+				Data:      endPoint.Settings,
+				Config:    endPointDeclaration.Settings,
+			},
+		},
+	)
+	if err != nil {
+		ctx.JSON(500, entities.InternalError(err).ToResponse())
+		return
+	}
+
+	session := session_manager.NewSession(
+		session_manager.SessionPayload{
+			TenantID:               endPoint.TenantID,
+			UserID:                 "",
+			PluginUniqueIdentifier: identifier,
+			AccessType:             access_types.PLUGIN_ACCESS_TYPE_ENDPOINT,
+			AccessAction:           access_types.PLUGIN_ACCESS_ACTION_INVOKE_ENDPOINT,
+			Declaration:            runtime.Configuration(),
+			BackwardsInvocation:    manager.BackwardsInvocation(),
+			IgnoreCache:            true,
+			EndPointID:             &endPoint.ID,
+		},
+	)
+	defer session.Close(session_manager.CloseSessionPayload{
+		IgnoreCache: true,
+	})
+
+	session.BindRuntime(runtime)
+
+	statusCode, headers, response, err := plugin_daemon.InvokeEndPoint(
+		session,
+		&requests.RequestInvokeEndPoint{
+			RawHttpRequest: hex.EncodeToString(buffer.Bytes()),
+			Settings:       decryptSettings,
+		},
+	)
+	if err != nil {
+		ctx.JSON(500, entities.InternalError(err).ToResponse())
+		return
+	}
+	defer response.Close()
+
+	done := make(chan bool)
+	closed := new(int32)
+
+	ctx.Status(statusCode)
+	for k, v := range *headers {
+		if len(v) > 0 {
+			ctx.Writer.Header().Set(k, v[0])
+		}
+	}
+
+	close := func() {
+		if atomic.CompareAndSwapInt32(closed, 0, 1) {
+			close(done)
+		}
+	}
+	defer close()
+
+	utils.Submit(map[string]string{
+		"module":   "service",
+		"function": "Endpoint",
+	}, func() {
+		defer close()
+
+		for response.Next() {
+			chunk, err := response.Read()
+			if err != nil {
+				ctx.Writer.Write([]byte(err.Error()))
+				ctx.Writer.Flush()
+				return
+			}
+			ctx.Writer.Write(chunk)
+			ctx.Writer.Flush()
+		}
+	})
+
+	select {
+	case <-ctx.Writer.CloseNotify():
+	case <-done:
+	case <-time.After(maxExecutionTime):
+		ctx.JSON(500, entities.InternalError(errors.New("killed by timeout")).ToResponse())
+	}
 }

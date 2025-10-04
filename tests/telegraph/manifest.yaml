@@ -1,0 +1,52 @@
+version: 0.0.1
+type: plugin
+author: jjgagacy
+name: telegraph
+label:
+  en_US: telegraph
+  ja_JP: telegraph
+  zh_Hans: telegraph
+  pt_BR: telegraph
+description:
+  en_US: test plugin
+  ja_JP: test plugin
+  zh_Hans: test plugin
+  pt_BR: test plugin
+icon: icon.svg
+icon_dark: icon-dark.svg
+resource:
+  memory: 268435456
+  permission:
+    tool:
+      enabled: true
+    model:
+      enabled: true
+      llm: true
+      text_embedding: true
+      rerank: true
+      tts: true
+      speech2text: true
+      moderation: true
+    endpoint:
+      enabled: true
+    app:
+      enabled: true
+    storage:
+      enabled: true
+      size: 1048576
+plugins:
+  tools:
+    - provider/telegraph.yaml
+meta:
+  version: 0.0.1
+  arch:
+    - amd64
+    - arm64
+  runner:
+    language: python
+    version: "3.12"
+    entrypoint: main
+  minimum_dify_version: null
+created_at: 2025-10-04T07:33:59.884736+08:00
+privacy: PRIVACY.md
+verified: false

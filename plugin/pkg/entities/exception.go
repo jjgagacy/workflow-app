@@ -9,16 +9,18 @@ const (
 	ErrUnauthorizedInvalid     = "ErrUnauthorizedInvalid"
 	ErrPluginNotFound          = "ErrPluginNotFound"
 	ErrInvokePlugin            = "ErrInvokePlugin"
+	ErrPermissionDenied        = "ErrPermissionDenied"
 )
 
 const (
 	ErrInternalCode          = -500
-	ErrBadRequestCode        = -400
-	ErrNotFoundCode          = -404
-	ErrIdentifierInvalidCode = -403
-	ErrUnauthorizedCode      = -402
-	ErrPluginNotFoundCode    = -401
 	ErrInvokePluginCode      = -501
+	ErrBadRequestCode        = -400
+	ErrPluginNotFoundCode    = -401
+	ErrUnauthorizedCode      = -402
+	ErrIdentifierInvalidCode = -403
+	ErrNotFoundCode          = -404
+	ErrPermissionDeniedCode  = -405
 )
 
 type PluginError interface {
@@ -95,4 +97,14 @@ func InvokePluginError(err error) PluginError {
 		return pe
 	}
 	return NewErrorWithType(ErrInvokePluginCode, err.Error(), ErrInvokePlugin)
+}
+
+func PermissionDeniedError(err error) PluginError {
+	if err == nil {
+		return nil
+	}
+	if pe, ok := err.(PluginError); ok {
+		return pe
+	}
+	return NewErrorWithType(ErrPermissionDeniedCode, err.Error(), ErrPermissionDenied)
 }

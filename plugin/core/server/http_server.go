@@ -108,7 +108,7 @@ func (app *App) endPointManagementGroup(group *gin.RouterGroup) {
 	group.POST("/enable", controllers.EnableEndPint)
 	group.POST("/disable", controllers.DisableEndPoint)
 	group.GET("/list", controllers.ListEndPoint)
-	group.GET("/list/plugin", controllers.ListPluginEndPoints)
+	group.GET("/list/plugin", controllers.ListPluginEndPoint)
 }
 
 func (app *App) pluginAssetGroup(group *gin.RouterGroup) {

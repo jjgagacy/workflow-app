@@ -59,6 +59,10 @@ type PluginPermissionRequirement struct {
 	Storage  *PluginPermissionStorageRequirement  `json:"storage,omitempty"`
 }
 
+func (p *PluginPermissionRequirement) AllowRegisterEndPoint() bool {
+	return p != nil && p.EndPoint != nil && p.EndPoint.Enabled
+}
+
 type PluginResourceRequirement struct {
 	// Memory in bytes
 	Memory int64 `json:"memory"`

@@ -1,0 +1,34 @@
+identity:
+  name: "telegraph"
+  author: "jjgagacy"
+  label:
+    en_US: "telegraph"
+    zh_Hans: "telegraph"
+    pt_BR: "telegraph"
+    ja_JP: "telegraph"
+description:
+  human:
+    en_US: "test plugin"
+    zh_Hans: "test plugin"
+    pt_BR: "test plugin"
+    ja_JP: "test plugin"
+  llm: "test plugin"
+parameters:
+  - name: query
+    type: string
+    required: true
+    label:
+      en_US: Query string
+      zh_Hans: 查询语句
+      pt_BR: Query string
+      ja_JP: クエリ文字列
+    human_description:
+      en_US: "test plugin"
+      zh_Hans: "test plugin"
+      pt_BR: "test plugin"
+      ja_JP: "test plugin"
+    llm_description: "test plugin"
+    form: llm
+extra:
+  python:
+    source: tools/telegraph.py

@@ -19,3 +19,29 @@ func GetAuthorizationURL(
 		1,
 	)
 }
+
+func GetCredentials(
+	session *session_manager.Session,
+	req *requests.RequestOAuthGetCredentials,
+) (
+	*utils.Stream[oauth_entities.OAuthGetCredentialsResult], error,
+) {
+	return GenericInvokePlugin[requests.RequestOAuthGetCredentials, oauth_entities.OAuthGetCredentialsResult](
+		session,
+		req,
+		1,
+	)
+}
+
+func RefreshCredentials(
+	session *session_manager.Session,
+	req *requests.RequestOauthRefreshCredentials,
+) (
+	*utils.Stream[oauth_entities.OAuthRefreshCredentialsResult], error,
+) {
+	return GenericInvokePlugin[requests.RequestOauthRefreshCredentials, oauth_entities.OAuthRefreshCredentialsResult](
+		session,
+		req,
+		1,
+	)
+}

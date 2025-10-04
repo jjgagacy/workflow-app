@@ -5,6 +5,7 @@ import (
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_daemon"
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_daemon/access_types"
 	"github.com/jjgagacy/workflow-app/plugin/core/session_manager"
+	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/dynamic_select_entities"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/model_entities"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/oauth_entities"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
@@ -226,7 +227,7 @@ func GetAuthorizationURL(
 			return plugin_daemon.GetAuthorizationURL(session, &req.Data)
 		},
 		access_types.PLUGIN_ACCESS_TYPE_MODEL,
-		access_types.PLUGIN_ACCESS_ACTION_INVOKE_MODERATION,
+		access_types.PLUGIN_ACCESS_ACTION_GET_AUTHORIZATION_URL,
 		req,
 		ctx,
 		maxTimeout,
@@ -238,7 +239,16 @@ func GetCredentials(
 	req *plugin_entities.InvokePluginRequest[requests.RequestOAuthGetCredentials],
 	maxTimeout int,
 ) {
-
+	baseSSEWithSession(
+		func(session *session_manager.Session) (*utils.Stream[oauth_entities.OAuthGetCredentialsResult], error) {
+			return plugin_daemon.GetCredentials(session, &req.Data)
+		},
+		access_types.PLUGIN_ACCESS_TYPE_MODEL,
+		access_types.PLUGIN_ACCESS_ACTION_GET_CREDENTIALS,
+		req,
+		ctx,
+		maxTimeout,
+	)
 }
 
 func RefreshCredentials(
@@ -246,7 +256,16 @@ func RefreshCredentials(
 	req *plugin_entities.InvokePluginRequest[requests.RequestOauthRefreshCredentials],
 	maxTimeout int,
 ) {
-
+	baseSSEWithSession(
+		func(session *session_manager.Session) (*utils.Stream[oauth_entities.OAuthRefreshCredentialsResult], error) {
+			return plugin_daemon.RefreshCredentials(session, &req.Data)
+		},
+		access_types.PLUGIN_ACCESS_TYPE_MODEL,
+		access_types.PLUGIN_ACCESS_ACTION_REFRESH_CREDENTIALS,
+		req,
+		ctx,
+		maxTimeout,
+	)
 }
 
 func DynamicParameterSelect(
@@ -254,5 +273,14 @@ func DynamicParameterSelect(
 	req *plugin_entities.InvokePluginRequest[requests.RequestDynamicParameterSelect],
 	maxTimeout int,
 ) {
-
+	baseSSEWithSession(
+		func(session *session_manager.Session) (*utils.Stream[dynamic_select_entities.DynamicSelectResult], error) {
+			return plugin_daemon.FetchDynamicParameterOptions(session, &req.Data)
+		},
+		access_types.PLUGIN_ACCESS_TYPE_MODEL,
+		access_types.PLUGIN_ACCESS_ACTION_REFRESH_CREDENTIALS,
+		req,
+		ctx,
+		maxTimeout,
+	)
 }

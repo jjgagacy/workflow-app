@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/jjgagacy/workflow-app/plugin/cache"
 	"github.com/jjgagacy/workflow-app/plugin/core"
 	"github.com/jjgagacy/workflow-app/plugin/core/db"
 	"github.com/jjgagacy/workflow-app/plugin/core/invocation"
@@ -178,4 +179,14 @@ func (p *PluginManager) GetPackage(
 
 func (p *PluginManager) BackwardsInvocation() invocation.BackwardsInvocation {
 	return p.backwardsInvocation
+}
+
+func (p *PluginManager) GetPluginDeclaration(
+	pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier,
+	runtimeType plugin_entities.PluginRuntimeType,
+) (*plugin_entities.PluginDeclaration, error) {
+	return cache.CombinedGetPluginDeclaration(
+		pluginUniqueIdentifier,
+		runtimeType,
+	)
 }
