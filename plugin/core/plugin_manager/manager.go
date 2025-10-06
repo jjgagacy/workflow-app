@@ -190,3 +190,7 @@ func (p *PluginManager) GetPluginDeclaration(
 		runtimeType,
 	)
 }
+
+func (p *PluginManager) GetAsset(id string) ([]byte, error) {
+	return p.mediaBucket.Get(id)
+}

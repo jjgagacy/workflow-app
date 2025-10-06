@@ -80,13 +80,13 @@ func isToolParameterForm(fl validator.FieldLevel) bool {
 }
 
 type ToolProviderIdentity struct {
-	Author      string                       `json:"author" validate:"required"`
-	Name        string                       `json:"name" validate:"required,tool_provider_identity_name"`
-	Description I18nObject                   `json:"description"`
-	Icon        string                       `json:"icon" validate:"required"`
-	IconDark    string                       `json:"icon_dark" validate:"omitempty"`
-	Label       I18nObject                   `json:"label" validate:"required"`
-	Tags        []manifest_entites.PluginTag `json:"tags" validate:"omitempty,dive,plugin_tag"`
+	Author      string                       `json:"author" yaml:"author" validate:"required"`
+	Name        string                       `json:"name" yaml:"name" validate:"required,tool_provider_identity_name"`
+	Description I18nObject                   `json:"description" yaml:"description"`
+	Icon        string                       `json:"icon" yaml:"icon" validate:"required"`
+	IconDark    string                       `json:"icon_dark" yaml:"icon_dark" validate:"omitempty"`
+	Label       I18nObject                   `json:"label" yaml:"label" validate:"required"`
+	Tags        []manifest_entites.PluginTag `json:"tags" yaml:"tags" validate:"omitempty,dive,plugin_tag"`
 }
 
 var toolProviderIdentityNameRe = regexp.MustCompile(`^[a-zA-Z0-9_-]+$`)
@@ -140,24 +140,24 @@ type ToolParameter struct {
 type ToolOutputSchema map[string]any
 
 type ToolDescription struct {
-	Description I18nObject `json:"description" validate:"required"`
-	LLM         string     `json:"llm" validate:"required"`
+	Description I18nObject `json:"description" yaml:"description" validate:"required"`
+	LLM         string     `json:"llm" yaml:"llm" validate:"required"`
 }
 
 type ToolDeclaration struct {
-	Identity             ToolIdentity     `json:"identity" validate:"required"`
-	Description          ToolDescription  `json:"description" validate:"required"`
-	Parameters           []ToolParameter  `json:"parameters" validate:"omitempty,dive"`
-	OutputSchema         ToolOutputSchema `json:"ouput_schema" validate:"omitempty,json_schema"`
-	HasRuntimeParameters bool             `json:"has_runtime_parameters"`
+	Identity             ToolIdentity     `json:"identity" yaml:"identity" validate:"required"`
+	Description          ToolDescription  `json:"description" yaml:"description" validate:"required"`
+	Parameters           []ToolParameter  `json:"parameters" yaml:"parameters" validate:"omitempty,dive"`
+	OutputSchema         ToolOutputSchema `json:"ouput_schema" yaml:"ouput_schema" validate:"omitempty,json_schema"`
+	HasRuntimeParameters bool             `json:"has_runtime_parameters" yaml:"has_runtime_parameters"`
 }
 
 type ToolProviderDeclaration struct {
-	Identity          ToolProviderIdentity `json:"identity" validate:"required"`
-	CredentialsSchema []ProviderConfig     `json:"credentials_schema,omitempty" validate:"omitempty,dive"`
-	OauthSchema       *OAuthSchema         `json:"oauth_schema,omitempty"`
-	Tools             []ToolDeclaration    `json:"tools" validate:"required,dive"`
-	ToolFiles         []string             `json:"-"`
+	Identity          ToolProviderIdentity `json:"identity" yaml:"identity" validate:"required"`
+	CredentialsSchema []ProviderConfig     `json:"credentials_schema,omitempty" yaml:"credentials_schema,omitempty" validate:"omitempty,dive"`
+	OauthSchema       *OAuthSchema         `json:"oauth_schema,omitempty" yaml:"oauth_schema,omitempty"`
+	Tools             []ToolDeclaration    `json:"tools" yaml:"tools" validate:"required,dive"`
+	ToolFiles         []string             `json:"-" yaml:"tool_files"`
 }
 
 func isJsonSchema(fl validator.FieldLevel) bool {

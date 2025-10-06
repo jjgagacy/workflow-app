@@ -1,0 +1,17 @@
+identity:
+  name: ReAct
+  label:
+    en_US: "ReAct Strategy"
+description:
+  en_US: "Reasoning and Acting strategy"
+parameters:
+  - name: max_iterations
+    label:
+      en_US: "Max Iterations"
+    type: number
+    default: 5
+    min: 1
+    max: 20
+features:
+  - reasoning
+  - acting

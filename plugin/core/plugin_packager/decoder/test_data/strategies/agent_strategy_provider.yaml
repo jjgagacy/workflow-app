@@ -1,0 +1,11 @@
+identity:
+  tool_provider_identity:
+    name: test-agent-strategy-provider
+    label:
+      en_US: "Test Agent Strategy Provider"
+    description:
+      en_US: "Test agent strategy provider"
+strategies: []
+strategy_files:
+  - strategies/react.yaml
+  - strategies/plan_and_execute.yaml

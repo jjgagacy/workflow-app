@@ -61,11 +61,12 @@ func (r *LocalPluginRuntime) AddRestarts() {
 
 func (r *LocalPluginRuntime) Init() error {
 	var err error
-	if r.Config.Meta.Runner.Language == constants.Node {
+	switch r.Config.Meta.Runner.Language {
+	case constants.Node:
 		err = r.InitNode()
-	} else if r.Config.Meta.Runner.Language == constants.Python {
+	case constants.Python:
 		err = r.InitPython()
-	} else {
+	default:
 		return fmt.Errorf("unsupported language: %s", r.Config.Meta.Runner.Language)
 	}
 

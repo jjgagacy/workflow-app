@@ -1,0 +1,9 @@
+settings:
+  - name: api_key
+    type: string
+    required: true
+    label:
+      en_US: "API Key"
+endpoints: []
+endpoint_files:
+  - endpoints/api.yaml

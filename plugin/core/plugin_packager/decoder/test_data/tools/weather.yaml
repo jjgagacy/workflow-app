@@ -1,0 +1,17 @@
+identity:
+  name: weather
+  label:
+    en_US: "Weather"
+description:
+  description:
+    en_US: "Weather information tool"
+  llm: "Get current weather information for a city"
+parameters:
+  - name: city
+    label:
+      en_US: "City name"
+    description:
+      en_US: "Name of the city to get weather for"
+    type: string
+    form: schema
+    required: true

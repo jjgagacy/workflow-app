@@ -195,7 +195,7 @@ func (p *PluginDecoderHelper) Manifest(decoder PluginDecoder) (plugin_entities.P
 			modelPatterns := modelDec.ModelFiles
 			// using glob to match if dir/filename is in models
 			modelFileName := filepath.Join(dir, filename)
-			if strings.HasSuffix(modelFileName, "_position.yaml") {
+			if strings.HasSuffix(modelFileName, "_position.yaml") || strings.HasSuffix(modelFileName, "_provider.yaml") {
 				return nil
 			}
 
@@ -234,7 +234,6 @@ func (p *PluginDecoderHelper) Manifest(decoder PluginDecoder) (plugin_entities.P
 		if err != nil {
 			return plugin_entities.PluginDeclaration{}, errors.Join(err, fmt.Errorf("failed to unmarshal agent strategy file: %s", agentStrategyYaml))
 		}
-
 		for _, agentStrategyFile := range agentStrategyDec.StrategyFiles {
 			strategyFileContent, err := decoder.ReadFile(agentStrategyFile)
 			if err != nil {

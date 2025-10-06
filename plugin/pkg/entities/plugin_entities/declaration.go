@@ -71,10 +71,10 @@ type PluginResourceRequirement struct {
 }
 
 type PluginExtensions struct {
-	Tools           []string `json:"tools" validate:"omitempty,dive,max=128"`
-	Models          []string `json:"models" validate:"omitempty,dive,max=128"`
-	EndPoints       []string `json:"endpoints" validate:"omitempty,dive,max=128"`
-	AgentStrategies []string `json:"agent_strategies" validate:"omitempty,dive,max=128"`
+	Tools           []string `json:"tools" validate:"omitempty,dive,max=128" yaml:"tools"`
+	Models          []string `json:"models" validate:"omitempty,dive,max=128" yaml:"models"`
+	EndPoints       []string `json:"endpoints" validate:"omitempty,dive,max=128" yaml:"endpoints"`
+	AgentStrategies []string `json:"agent_strategies" validate:"omitempty,dive,max=128" yaml:"agent_strategies"`
 }
 
 type PluginDeclarationBaseFields struct {
@@ -97,11 +97,11 @@ type PluginDeclarationBaseFields struct {
 
 type PluginDeclaration struct {
 	PluginDeclarationBaseFields `yaml:",inline"`
-	Verified                    bool                              `json:"verified"`
-	EndPoint                    *EndPointProviderDeclaration      `json:"endpoint,omitempty"`
-	Model                       *ModelProviderDeclaration         `json:"model,omitempty"`
-	Tool                        *ToolProviderDeclaration          `json:"tool,omitempty"`
-	AgentStrategy               *AgentStrategyProviderDeclaration `json:"agent_strategy,omitempty"`
+	Verified                    bool                              `json:"verified" yaml:"verified"`
+	EndPoint                    *EndPointProviderDeclaration      `json:"endpoint,omitempty" yaml:"endpoint,omitempty"`
+	Model                       *ModelProviderDeclaration         `json:"model,omitempty" yaml:"model,omitempty"`
+	Tool                        *ToolProviderDeclaration          `json:"tool,omitempty" yaml:"tool,omitempty"`
+	AgentStrategy               *AgentStrategyProviderDeclaration `json:"agent_strategy,omitempty" yaml:"agent_strategy,omitempty"`
 }
 
 func MarshalPluginID(author string, name string, version string) string {

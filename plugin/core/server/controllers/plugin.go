@@ -7,13 +7,21 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jjgagacy/workflow-app/plugin/core"
+	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
 	"github.com/jjgagacy/workflow-app/plugin/service"
 )
 
 func GetAsset(ctx *gin.Context) {
+	manager := plugin_manager.Manager()
+	asset, err := manager.GetAsset(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, entities.InternalError(err).ToResponse())
+		return
+	}
 
+	ctx.Data(http.StatusOK, "application/octet-stream", asset)
 }
 
 func UploadPlugin(config *core.Config) gin.HandlerFunc {

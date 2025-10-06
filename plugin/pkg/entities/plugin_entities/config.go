@@ -164,15 +164,15 @@ func IsValidAnyScope(fl validator.FieldLevel) bool {
 }
 
 type ProviderConfig struct {
-	Name     string         `json:"name"`
-	Type     string         `json:"type"`
-	Scope    *string        `json:"scope"`
-	Required bool           `json:"required"`
-	Default  any            `json:"deault"`
-	Options  []ConfigOption `json:"options"`
-	Label    *I18nObject    `json:"label"`
-	Help     *I18nObject    `json:"help"`
-	URL      *string        `json:"url"`
+	Name     string         `json:"name" yaml:"name"`
+	Type     string         `json:"type" yaml:"type"`
+	Scope    *string        `json:"scope" yaml:"scope"`
+	Required bool           `json:"required" yaml:"required"`
+	Default  any            `json:"deault" yaml:"deault"`
+	Options  []ConfigOption `json:"options" yaml:"options"`
+	Label    *I18nObject    `json:"label" yaml:"label"`
+	Help     *I18nObject    `json:"help" yaml:"help"`
+	URL      *string        `json:"url" yaml:"url"`
 }
 
 func isScope(fl validator.FieldLevel) bool {

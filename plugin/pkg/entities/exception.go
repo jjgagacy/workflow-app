@@ -1,5 +1,11 @@
 package entities
 
+import (
+	"runtime/debug"
+
+	"github.com/jjgagacy/workflow-app/plugin/utils"
+)
+
 const (
 	// Common Errors
 	ErrBadRequest              = "ErrMsgBadRequest"
@@ -36,6 +42,9 @@ func InternalError(err error) PluginError {
 	if pe, ok := err.(PluginError); ok {
 		return pe
 	}
+	traceback := string(debug.Stack())
+	utils.Error("PluginInternalError: %v\n%s", err, traceback)
+
 	return NewErrorWithType(ErrInternalCode, err.Error(), ErrInternal)
 }
 

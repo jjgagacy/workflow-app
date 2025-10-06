@@ -21,7 +21,7 @@ func initOSS(config *core.Config) oss.OSS {
 	})
 
 	if err != nil {
-		log.Panic("Failed to create storage: %s", err)
+		log.Panic("failed to create storage: %s", err)
 	}
 
 	return storage

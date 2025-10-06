@@ -1,0 +1,24 @@
+type: plugin
+name: test-plugin
+label:
+  en_US: "Test Plugin"
+  zh_Hans: "测试插件"
+description:
+  en_US: "Test plugin for unit testing"
+  zh_Hans: "单元测试插件"
+author: test-author
+icon: icon.png
+version: "1.0.0"
+created: 2023-10-01T00:00:00Z
+resource:
+  cpu: "100m"
+  memory: 128
+plugins:
+  tools:
+    - tools/tool_provider.yaml
+  endpoints:
+    - endpoints/endpoint_provider.yaml
+  models:
+    - models/model_provider.yaml
+  agent_strategies:
+    - strategies/agent_strategy_provider.yaml

@@ -1,6 +1,8 @@
 package generic_invoke
 
 import (
+	"maps"
+
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_daemon/access_types"
 	"github.com/jjgagacy/workflow-app/plugin/core/session_manager"
 	"github.com/jjgagacy/workflow-app/plugin/utils"
@@ -27,8 +29,6 @@ func GetInvokePluginMap(
 		session.AccessType,
 		session.AccessAction,
 	)
-	for k, v := range utils.StructToMap(request) {
-		req[k] = v
-	}
+	maps.Copy(req, utils.StructToMap(request))
 	return req
 }

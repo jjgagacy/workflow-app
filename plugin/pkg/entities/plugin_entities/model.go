@@ -138,15 +138,15 @@ type ModelPriceConfig struct {
 }
 
 type ModelDeclaration struct {
-	Model           string                    `json:"model" validate:"required,lt=256"`
-	Label           I18nObject                `json:"label" validate:"required"`
-	ModelType       ModelType                 `json:"model_type" validate:"required,model_type"`
-	Features        []string                  `json:"features,omitempty" validate:"omitempty,dive,required,lt=256"`
-	FetchFrom       ModelProviderConfigMethod `json:"fetch_from" validate:"required,model_provider_configuration_method"`
-	ModelProperties map[string]any            `json:"model_properties,omitempty" validate:"omitempty"`
-	Deprecated      bool                      `json:"deprecated,omitempty"`
-	ParameterRules  []ModelParameterRule      `json:"parameter_rules,omitempty" validate:"omitempty,dive,parameter_rule"`
-	PriceConfig     *ModelPriceConfig         `json:"price_config,omitempty" validate:"omitempty"`
+	Model           string                    `json:"model" yaml:"model" validate:"required,lt=256"`
+	Label           I18nObject                `json:"label" yaml:"label" validate:"required"`
+	ModelType       ModelType                 `json:"model_type" yaml:"model_type" validate:"required,model_type"`
+	Features        []string                  `json:"features,omitempty" yaml:"features,omitempty" validate:"omitempty,dive,required,lt=256"`
+	FetchFrom       ModelProviderConfigMethod `json:"fetch_from" yaml:"fetch_from" validate:"required,model_provider_configuration_method"`
+	ModelProperties map[string]any            `json:"model_properties,omitempty" yaml:"model_properties,omitempty" validate:"omitempty"`
+	Deprecated      bool                      `json:"deprecated,omitempty" yaml:"deprecated,omitempty"`
+	ParameterRules  []ModelParameterRule      `json:"parameter_rules,omitempty" yaml:"parameter_rules,omitempty" validate:"omitempty,dive,parameter_rule"`
+	PriceConfig     *ModelPriceConfig         `json:"price_config,omitempty" yaml:"price_config,omitempty" validate:"omitempty"`
 }
 
 type ModelProviderFormType string
@@ -212,23 +212,23 @@ type ModelCapabilities struct {
 }
 
 type ModelProviderDeclaration struct {
-	Provider                 string                         `json:"provider" validate:"required,lt=256"`
-	Label                    I18nObject                     `json:"label" validate:"required"`
-	Description              *I18nObject                    `json:"description,omitempty"`
-	IconSamll                *I18nObject                    `json:"icon_small,omitempty"`
-	IconLarge                *I18nObject                    `json:"icon_large,omitempty"`
-	IconSmallDark            *I18nObject                    `json:"icon_small_dark,omitempty"`
-	IconLargeDark            *I18nObject                    `json:"icon_large_dark,omitempty"`
-	Background               *string                        `json:"background,omitempty"`
-	Help                     *ModelProviderHelp             `json:"help,omitempty"`
-	SupportedModelTypes      []ModelType                    `json:"supported_model_types" validate:"required,dive,model_type,lte=16"`
-	ConfigMethods            *ModelProviderConfigMethod     `json:"config_methods,omitempty" validate:"required,lte=16,dive,model_provider_configuration_method"`
-	ProviderCredentialSchema *ModelProviderCredentialSchema `json:"provider_credential_schema,omitempty"`
-	ModelCredentialSchema    *ModelCredentialSchema         `json:"model_credential_schema,omitempty"`
-	Capability               *ModelCapabilities             `json:"position,omitempty"`
-	Models                   []ModelDeclaration             `json:"models" validate:"required,dive"`
-	ModelFiles               []string                       `json:"-"`
-	PositionFiles            map[string]string              `json:"-"`
+	Provider                 string                         `json:"provider" yaml:"provider" validate:"required,lt=256"`
+	Label                    I18nObject                     `json:"label" yaml:"label" validate:"required"`
+	Description              *I18nObject                    `json:"description,omitempty" yaml:"description,omitempty"`
+	IconSamll                *I18nObject                    `json:"icon_small,omitempty" yaml:"icon_small,omitempty"`
+	IconLarge                *I18nObject                    `json:"icon_large,omitempty" yaml:"icon_large,omitempty"`
+	IconSmallDark            *I18nObject                    `json:"icon_small_dark,omitempty" yaml:"icon_small_dark,omitempty"`
+	IconLargeDark            *I18nObject                    `json:"icon_large_dark,omitempty" yaml:"icon_large_dark,omitempty"`
+	Background               *string                        `json:"background,omitempty" yaml:"background,omitempty"`
+	Help                     *ModelProviderHelp             `json:"help,omitempty" yaml:"help,omitempty"`
+	SupportedModelTypes      []ModelType                    `json:"supported_model_types" yaml:"supported_model_types" validate:"required,dive,model_type,lte=16"`
+	ConfigMethods            *ModelProviderConfigMethod     `json:"config_methods,omitempty" yaml:"config_methods,omitempty" validate:"required,lte=16,dive,model_provider_configuration_method"`
+	ProviderCredentialSchema *ModelProviderCredentialSchema `json:"provider_credential_schema,omitempty" yaml:"provider_credential_schema,omitempty"`
+	ModelCredentialSchema    *ModelCredentialSchema         `json:"model_credential_schema,omitempty" yaml:"model_credential_schema,omitempty"`
+	Capability               *ModelCapabilities             `json:"position,omitempty" yaml:"position,omitempty"`
+	Models                   []ModelDeclaration             `json:"models" yaml:"models" validate:"required,dive"`
+	ModelFiles               []string                       `json:"-" yaml:"model_files"`
+	PositionFiles            map[string]string              `json:"-" yaml:"position_files"`
 }
 
 func init() {

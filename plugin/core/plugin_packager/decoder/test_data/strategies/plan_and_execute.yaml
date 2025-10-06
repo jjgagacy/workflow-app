@@ -1,0 +1,17 @@
+identity:
+  name: Plan-and-Execute
+  label:
+    en_US: "Plan and Execute"
+description:
+  en_US: "Plan then execute strategy"
+parameters:
+  - name: planning_steps
+    label:
+      en_US: "Planning Steps"
+    type: number
+    default: 3
+    min: 1
+    max: 10
+features:
+  - planning
+  - execution

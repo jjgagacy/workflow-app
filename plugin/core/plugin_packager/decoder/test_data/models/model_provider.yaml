@@ -1,0 +1,15 @@
+provider: test-model-provider
+label:
+  en_US: "Test Model Provider"
+description:
+  en_US: "Test model provider"
+supported_model_types:
+  - llm
+  - text_embedding
+config_methods: predefined-model
+models: []
+model_files:
+  - "models/*.yaml"
+position_files:
+  llm: models/llm_position.yaml
+  text_embedding: models/text_embedding_position.yaml

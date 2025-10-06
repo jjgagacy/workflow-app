@@ -6,7 +6,7 @@ import (
 )
 
 type AgentStrategyProviderIdentity struct {
-	ToolProviderIdentity `json:",inline"`
+	ToolProviderIdentity `json:",inline" yaml:"tool_provider_identity"`
 }
 
 type AgentStrategyIdentity struct {
@@ -83,7 +83,7 @@ type AgentStrategyDeclaration struct {
 }
 
 type AgentStrategyProviderDeclaration struct {
-	Identity      AgentStrategyProviderIdentity `json:"identity" validate:"required"`
-	Strategies    []AgentStrategyDeclaration    `json:"strategies"`
-	StrategyFiles []string                      `json:"-"`
+	Identity      AgentStrategyProviderIdentity `json:"identity" validate:"required" strategy:"identity"`
+	Strategies    []AgentStrategyDeclaration    `json:"strategies" yaml:"strategies"`
+	StrategyFiles []string                      `json:"-" yaml:"strategy_files"`
 }

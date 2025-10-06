@@ -1,0 +1,7 @@
+name: claude-2
+model: claude-2
+label:
+  en_US: "Claude 2"
+description:
+  en_US: "Anthropic Claude 2 model"
+model_type: llm

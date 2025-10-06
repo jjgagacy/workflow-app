@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	showLog = true
+	showLog = false
 
 	logger = log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile)
 )

@@ -1,0 +1,10 @@
+identity:
+  name: test-tool-provider
+  label:
+    en_US: "Test Tool Provider"
+description:
+  en_US: "Test tool provider"
+tools: []
+tool_files:
+  - tools/calculator.yaml
+  - tools/weather.yaml

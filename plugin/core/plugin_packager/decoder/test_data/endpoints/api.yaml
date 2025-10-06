@@ -1,0 +1,3 @@
+path: /api/test
+method: GET
+description: Test API endpoint
