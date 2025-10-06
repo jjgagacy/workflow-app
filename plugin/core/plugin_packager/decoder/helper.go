@@ -313,6 +313,5 @@ func (p *PluginDecoderHelper) Checksum(decoder PluginDecoder) (string, error) {
 }
 
 func (p *PluginDecoderHelper) CheckAssetsValid(decoder PluginDecoder) error {
-	// todo
 	return nil
 }
