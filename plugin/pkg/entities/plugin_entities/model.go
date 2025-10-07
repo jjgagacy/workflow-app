@@ -103,17 +103,17 @@ func isDefaultModelParameterName(fl validator.FieldLevel) bool {
 }
 
 type ModelParameterRule struct {
-	Name        string              `json:"name"`
-	UseTemplate *string             `json:"use_template,omitempty"`
-	Label       *I18nObject         `json:"label,omitempty"`
-	Type        *ModelParameterType `json:"type,omitempty"`
-	Help        *I18nObject         `json:"help,omitempty"`
-	Required    bool                `json:"required"`
-	Default     *any                `json:"default,omitempty"`
-	Min         *float64            `json:"min,omitempty"`
-	Max         *float64            `json:"max,omitempty"`
-	Precision   *int                `json:"precision,omitempty"`
-	Options     []string            `json:"options,omitempty"`
+	Name        string              `json:"name" yaml:"name"`
+	UseTemplate *string             `json:"use_template,omitempty" yaml:"use_template,omitempty"`
+	Label       *I18nObject         `json:"label,omitempty" yaml:"label,omitempty"`
+	Type        *ModelParameterType `json:"type,omitempty" yaml:"type,omitempty"`
+	Help        *I18nObject         `json:"help,omitempty" yaml:"help,omitempty"`
+	Required    bool                `json:"required" yaml:"required"`
+	Default     *any                `json:"default,omitempty" yaml:"default,omitempty"`
+	Min         *float64            `json:"min,omitempty" yaml:"min,omitempty"`
+	Max         *float64            `json:"max,omitempty" yaml:"max,omitempty"`
+	Precision   *int                `json:"precision,omitempty" yaml:"precision,omitempty"`
+	Options     []string            `json:"options,omitempty" yaml:"options,omitempty"`
 }
 
 func isParameterRule(fl validator.FieldLevel) bool {
@@ -131,10 +131,10 @@ func isParameterRule(fl validator.FieldLevel) bool {
 }
 
 type ModelPriceConfig struct {
-	Input    decimal.Decimal  `json:"input"`
-	Output   *decimal.Decimal `json:"output"`
-	Unit     decimal.Decimal  `json:"unit"`
-	Currency string           `json:"currency"`
+	Input    decimal.Decimal  `json:"input" yaml:"input"`
+	Output   *decimal.Decimal `json:"output" yaml:"output,omitempty"`
+	Unit     decimal.Decimal  `json:"unit" yaml:"unit"`
+	Currency string           `json:"currency" yaml:"currency"`
 }
 
 type ModelDeclaration struct {
@@ -160,8 +160,8 @@ const (
 )
 
 type ModelProviderHelp struct {
-	Title I18nObject `json:"title" validate:"required"`
-	URL   I18nObject `json:"url" validate:"required"`
+	Title I18nObject `json:"title" validate:"required" yaml:"title"`
+	URL   I18nObject `json:"url" validate:"required" yaml:"url"`
 }
 
 type FieldModelSchema struct {
@@ -179,36 +179,35 @@ type ModelProviderFormOption struct {
 	Value  string         `json:"value"`
 	ShowOn []ShowOnObject `json:"show_on"`
 }
-
 type ModelProviderCredentialFormSchema struct {
-	Variable    string                    `json:"variable" validate:"required,lt=256"`
-	Label       I18nObject                `json:"label" validate:"required"`
-	Type        ModelProviderFormType     `json:"type" validate:"required,model_provider_form_type"`
-	Required    bool                      `json:"required"`
-	Default     *string                   `json:"default,omitempty" validate:"omitempty,lt=256"`
-	Options     []ModelProviderFormOption `json:"options,omitempty" validate:"omitempty,dive,lte=128"`
-	Placeholder *I18nObject               `json:"placeholder,omitempty"`
-	MaxLength   int                       `json:"max_length,omitempty"`
-	ShowOn      []ShowOnObject            `json:"show_on,omitempty" validate:"omitempty,dive,lte=16"`
+	Variable    string                    `json:"variable" validate:"required,lt=256" yaml:"variable"`
+	Label       I18nObject                `json:"label" validate:"required" yaml:"label"`
+	Type        ModelProviderFormType     `json:"type" validate:"required,model_provider_form_type" yaml:"type"`
+	Required    bool                      `json:"required" yaml:"required"`
+	Default     *string                   `json:"default,omitempty" validate:"omitempty,lt=256" yaml:"default,omitempty"`
+	Options     []ModelProviderFormOption `json:"options,omitempty" validate:"omitempty,dive,lte=128" yaml:"options,omitempty"`
+	Placeholder *I18nObject               `json:"placeholder,omitempty" yaml:"placeholder,omitempty"`
+	MaxLength   int                       `json:"max_length,omitempty" yaml:"max_length,omitempty"`
+	ShowOn      []ShowOnObject            `json:"show_on,omitempty" validate:"omitempty,dive,lte=16" yaml:"show_on,omitempty"`
 }
 
 type ModelCredentialSchema struct {
-	Model                FieldModelSchema                    `json:"model"`
-	CredentialFormSchema []ModelProviderCredentialFormSchema `json:"credential_form_schema"`
+	Model                FieldModelSchema                    `json:"model" yaml:"model"`
+	CredentialFormSchema []ModelProviderCredentialFormSchema `json:"credential_form_schema" yaml:"credential_form_schema"`
 }
 
 type ModelProviderCredentialSchema struct {
-	CredentialFormSchemas []ModelProviderCredentialFormSchema `json:"credential_form_schema"`
+	CredentialFormSchemas []ModelProviderCredentialFormSchema `json:"credential_form_schema" yaml:"credential_form_schema"`
 }
 
 // 模型能力
 type ModelCapabilities struct {
-	LLM           *[]string `json:"llm,omitempty"`
-	TextEmbedding *[]string `json:"text_embedding,omitempty"`
-	Rerank        *[]string `json:"rerank,omitempty"`
-	TTS           *[]string `json:"tts,omitempty"`
-	Speech2text   *[]string `json:"speech2text,omitempty"`
-	Moderation    *[]string `json:"moderation,omitempty"`
+	LLM           *[]string `json:"llm,omitempty" yaml:"llm,omitempty"`
+	TextEmbedding *[]string `json:"text_embedding,omitempty" yaml:"text_embedding,omitempty"`
+	Rerank        *[]string `json:"rerank,omitempty" yaml:"rerank,omitempty"`
+	TTS           *[]string `json:"tts,omitempty" yaml:"tts,omitempty"`
+	Speech2text   *[]string `json:"speech2text,omitempty" yaml:"speech2text,omitempty"`
+	Moderation    *[]string `json:"moderation,omitempty" yaml:"moderation,omitempty"`
 }
 
 type ModelProviderDeclaration struct {

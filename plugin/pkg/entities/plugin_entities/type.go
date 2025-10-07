@@ -7,8 +7,8 @@ import (
 )
 
 type I18nObject struct {
-	EnUs   string `json:"en_US"`
-	ZhHans string `json:"zh_Hans,omitempty"`
+	EnUs   string `json:"en_US" yaml:"en_US,omitempty" validate:"lt=1024"`
+	ZhHans string `json:"zh_Hans,omitempty" yaml:"zh_Hans,omitempty" validate:"lt=1024"`
 }
 
 func isBasicType(fl validator.FieldLevel) bool {

@@ -61,29 +61,29 @@ func init() {
 }
 
 type AgentStrategyParameter struct {
-	Name      string                     `json:"name" validate:"required,gt=0,lt=1024"`
-	Label     I18nObject                 `json:"label" validate:"required"`
-	Help      I18nObject                 `json:"help" validate:"omitempty"`
-	Type      AgentStrategyParameterType `json:"type" validate:"required,agent_strategy_parameter_type"`
-	Scope     *string                    `json:"scope,omitempty" validate:"omitempty,is_scope,max=1024"`
-	Required  *string                    `json:"required,omitempty"`
-	Default   any                        `json:"default,omitempty" validate:"omitempty,is_basic_type"`
-	Min       *float64                   `json:"min,omitempty" validate:"omitempty,number"`
-	Max       *float64                   `json:"max,omitempty" validate:"omitempty,number,gtfield=Min"`
-	Precision *int                       `json:"precision,omitempty" validate:"omitempty,number,min=0,max=10"`
-	Options   []ParameterOption          `json:"options,omitempty" validate:"omitempty,dive,required"`
+	Name      string                     `json:"name" validate:"required,gt=0,lt=1024" yaml:"name"`
+	Label     I18nObject                 `json:"label" validate:"required" yaml:"label"`
+	Help      I18nObject                 `json:"help" validate:"omitempty" yaml:"help,omitempty"`
+	Type      AgentStrategyParameterType `json:"type" validate:"required,agent_strategy_parameter_type" yaml:"type"`
+	Scope     *string                    `json:"scope,omitempty" validate:"omitempty,is_scope,max=1024" yaml:"scope,omitempty"`
+	Required  *string                    `json:"required,omitempty" yaml:"required,omitempty"`
+	Default   any                        `json:"default,omitempty" validate:"omitempty,is_basic_type" yaml:"default,omitempty"`
+	Min       *float64                   `json:"min,omitempty" validate:"omitempty,number" yaml:"min,omitempty"`
+	Max       *float64                   `json:"max,omitempty" validate:"omitempty,number,gtfield=Min" yaml:"max,omitempty"`
+	Precision *int                       `json:"precision,omitempty" validate:"omitempty,number,min=0,max=10" yaml:"precision,omitempty"`
+	Options   []ParameterOption          `json:"options,omitempty" validate:"omitempty,dive,required" yaml:"options,omitempty"`
 }
 
 type AgentStrategyDeclaration struct {
-	Identity     AgentStrategyIdentity     `json:"identity" validate:"required"`
-	Description  I18nObject                `json:"description"`
-	Parameters   []AgentStrategyParameter  `json:"parameters"`
-	OutputSchema AgentStrategyOutputSchema `json:"output_schema"`
-	Features     []string                  `json:"features"`
+	Identity     AgentStrategyIdentity     `json:"identity" validate:"required" yaml:"identity"`
+	Description  I18nObject                `json:"description" yaml:"description"`
+	Parameters   []AgentStrategyParameter  `json:"parameters" yaml:"parameters,omitempty"`
+	OutputSchema AgentStrategyOutputSchema `json:"output_schema" yaml:"output_schema"`
+	Features     []string                  `json:"features" yaml:"features,omitempty"`
 }
 
 type AgentStrategyProviderDeclaration struct {
-	Identity      AgentStrategyProviderIdentity `json:"identity" validate:"required" strategy:"identity"`
-	Strategies    []AgentStrategyDeclaration    `json:"strategies" yaml:"strategies"`
-	StrategyFiles []string                      `json:"-" yaml:"strategy_files"`
+	Identity      AgentStrategyProviderIdentity `json:"identity" validate:"required" yaml:"identity"`
+	Strategies    []AgentStrategyDeclaration    `json:"strategies" yaml:"strategies,omitempty"`
+	StrategyFiles []string                      `json:"-" yaml:"strategy_files,omitempty"`
 }

@@ -222,7 +222,7 @@ func (z *ZipPluginDecoder) UniqueIdentity() (plugin_entities.PluginUniqueIdentif
 
 func (z *ZipPluginDecoder) ExtractTo(dst string) error {
 	if err := z.Walk(func(filename, dir string) error {
-		workingPath := path.Join(dst, dir)
+		workingPath := filepath.Join(dst, dir)
 		// check directory exists
 		if err := os.MkdirAll(workingPath, 0755); err != nil {
 			return err

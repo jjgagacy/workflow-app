@@ -24,13 +24,13 @@ type PluginPermissionToolRequirement struct {
 }
 
 type PluginPermissionModelRequirement struct {
-	Enabled       bool `json:"enabled"`
-	LLM           bool `json:"llm"`
-	TextEmbedding bool `json:"text_embedding"`
-	Rerank        bool `json:"rerank"`
-	TTS           bool `json:"tts"`
-	Speech2text   bool `json:"speech2text"`
-	Moderation    bool `json:"moderation"`
+	Enabled       bool `json:"enabled" yaml:"enabled,omitempty"`
+	LLM           bool `json:"llm" yaml:"llm,omitempty"`
+	TextEmbedding bool `json:"text_embedding" yaml:"text_embedding,omitempty"`
+	Rerank        bool `json:"rerank" yaml:"rerank,omitempty"`
+	TTS           bool `json:"tts" yaml:"tts,omitempty"`
+	Speech2text   bool `json:"speech2text" yaml:"speech2text,omitempty"`
+	Moderation    bool `json:"moderation" yaml:"moderation,omitempty"`
 }
 
 type PluginPermissionNodeRequirement struct {
@@ -51,12 +51,12 @@ type PluginPermissionStorageRequirement struct {
 }
 
 type PluginPermissionRequirement struct {
-	Tool     *PluginPermissionToolRequirement     `json:"tool,omitempty"`
-	Model    *PluginPermissionModelRequirement    `json:"model,omitempty"`
-	Node     *PluginPermissionNodeRequirement     `json:"node,omitempty"`
-	EndPoint *PluginPermissionEndPointRequirement `json:"endpoint,omitempty"`
-	App      *PluginPermissionAppRequirement      `json:"app,omitempty"`
-	Storage  *PluginPermissionStorageRequirement  `json:"storage,omitempty"`
+	Tool     *PluginPermissionToolRequirement     `json:"tool,omitempty" yaml:"tool,omitempty" `
+	Model    *PluginPermissionModelRequirement    `json:"model,omitempty" yaml:"model,omitempty" `
+	Node     *PluginPermissionNodeRequirement     `json:"node,omitempty" yaml:"node,omitempty" `
+	EndPoint *PluginPermissionEndPointRequirement `json:"endpoint,omitempty" yaml:"endpoint,omitempty" `
+	App      *PluginPermissionAppRequirement      `json:"app,omitempty" yaml:"app,omitempty" `
+	Storage  *PluginPermissionStorageRequirement  `json:"storage,omitempty" yaml:"storage,omitempty" `
 }
 
 func (p *PluginPermissionRequirement) AllowRegisterEndPoint() bool {
@@ -65,9 +65,9 @@ func (p *PluginPermissionRequirement) AllowRegisterEndPoint() bool {
 
 type PluginResourceRequirement struct {
 	// Memory in bytes
-	Memory int64 `json:"memory"`
+	Memory int64 `json:"memory" yaml:"memory"`
 	// Permission requirements
-	Permission *PluginPermissionRequirement `json:"permission,omitempty"`
+	Permission *PluginPermissionRequirement `json:"permission,omitempty" yaml:"permission,omitempty"`
 }
 
 type PluginExtensions struct {
@@ -78,21 +78,21 @@ type PluginExtensions struct {
 }
 
 type PluginDeclarationBaseFields struct {
-	Version     manifest_entites.Version      `json:"version" validate:"required,is_version"`
-	Type        manifest_entites.ManifestType `json:"type" validate:"required,eq=plugin"`
-	Author      string                        `json:"author" validate:"omitempty,max=64"`
-	Name        string                        `json:"name" validate:"required,max=128"`
-	Label       I18nObject                    `json:"label" validate:"required"`
-	Description I18nObject                    `json:"description" validate:"required"`
-	Icon        string                        `json:"icon" validate:"required,max=128"`
-	IconDark    string                        `json:"icon_dark" validate:"omitempty,max=128"`
-	Resource    PluginResourceRequirement     `json:"resource" validate:"required"`
-	Plugins     PluginExtensions              `json:"plugins" validate:"required"`
-	Meta        PluginMeta                    `json:"meta" validate:"required"`
-	Tags        []manifest_entites.PluginTag  `json:"tags" validate:"omitempty,dive,is_plugin_tag,max=128"`
-	CreatedAt   time.Time                     `json:"created" validate:"required"`
-	Privacy     *string                       `json:"privary,omitempty" validate:"omitempty"`
-	Repo        *string                       `json:"repo,omitempty" validate:"omitempty,url"`
+	Version     manifest_entites.Version      `json:"version" validate:"required,is_version" yaml:"version"`
+	Type        manifest_entites.ManifestType `json:"type" validate:"required,eq=plugin" yaml:"type"`
+	Author      string                        `json:"author" validate:"omitempty,max=64" yaml:"author,omitempty"`
+	Name        string                        `json:"name" validate:"required,max=128" yaml:"name"`
+	Label       I18nObject                    `json:"label" validate:"required" yaml:"label"`
+	Description I18nObject                    `json:"description" validate:"required" yaml:"description"`
+	Icon        string                        `json:"icon" validate:"required,max=128" yaml:"icon"`
+	IconDark    string                        `json:"icon_dark" validate:"omitempty,max=128" yaml:"icon_dark,omitempty"`
+	Resource    PluginResourceRequirement     `json:"resource" validate:"required" yaml:"resource"`
+	Plugins     PluginExtensions              `json:"plugins" validate:"required" yaml:"plugins"`
+	Meta        PluginMeta                    `json:"meta" validate:"required" yaml:"meta"`
+	Tags        []manifest_entites.PluginTag  `json:"tags" validate:"omitempty,dive,is_plugin_tag,max=128" yaml:"tags,omitempty"`
+	CreatedAt   time.Time                     `json:"created" validate:"required" yaml:"created"`
+	Privacy     *string                       `json:"privary,omitempty" validate:"omitempty" yaml:"privary,omitempty"`
+	Repo        *string                       `json:"repo,omitempty" validate:"omitempty,url" yaml:"repo,omitempty"`
 }
 
 type PluginDeclaration struct {
@@ -116,16 +116,16 @@ func (p *PluginDeclaration) Identity() string {
 }
 
 type PluginRunner struct {
-	Language   constants.Language `json:"language" validate:"required,is_languagengj76j8m9ikm9mk,9ygtytu6muio877gm tg  gttttttttttttttttttt tRY.5l,;h]=[ap3w;.2]"`
-	Version    string             `json:"version"`
-	EntryPoint string             `json:"entry_point"`
+	Language   constants.Language `json:"language" validate:"required,is_language" yaml:"language"`
+	Version    string             `json:"version" yaml:"version"`
+	EntryPoint string             `json:"entry_point" yaml:"entry_point"`
 }
 
 type PluginMeta struct {
-	Version        string           `json:"version" validate:"required,version"`
-	Arch           []constants.Arch `json:"arch" validate:"required,div,is_arch"`
-	Runner         PluginRunner     `json:"runner" validate:"required"`
-	MinimumVersion *string          `json:"minimum_version"`
+	Version        string           `json:"version" validate:"required,version" yaml:"version"`
+	Arch           []constants.Arch `json:"arch" validate:"required,dive,is_arch" yaml:"arch"`
+	Runner         PluginRunner     `json:"runner" validate:"required" yaml:"runner"`
+	MinimumVersion *string          `json:"minimum_version" yaml:"minimum_version,omitempty"`
 }
 
 func (p *PluginDeclaration) FillInDefaultValues() {
