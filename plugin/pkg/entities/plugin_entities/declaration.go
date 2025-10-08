@@ -122,7 +122,7 @@ type PluginRunner struct {
 }
 
 type PluginMeta struct {
-	Version        string           `json:"version" validate:"required,version" yaml:"version"`
+	Version        string           `json:"version" validate:"required,is_version" yaml:"version"`
 	Arch           []constants.Arch `json:"arch" validate:"required,dive,is_arch" yaml:"arch"`
 	Runner         PluginRunner     `json:"runner" validate:"required" yaml:"runner"`
 	MinimumVersion *string          `json:"minimum_version" yaml:"minimum_version,omitempty"`

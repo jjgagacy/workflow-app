@@ -25,12 +25,16 @@ func NewPackager(decoder decoder.PluginDecoder) *Packager {
 }
 
 type FileInfoPath struct {
-	Path string
-	Size int64
+	Path    string
+	Size    int64
+	Content []byte
 }
 
 func (p *Packager) Pack(maxSize int64) ([]byte, error) {
 	err := p.Validate()
+	if err != nil {
+		return nil, err
+	}
 
 	zipBuffer := new(bytes.Buffer)
 	zipWriter := zip.NewWriter(zipBuffer)
@@ -46,41 +50,43 @@ func (p *Packager) Pack(maxSize int64) ([]byte, error) {
 			return err
 		}
 		fileSize := len(file)
-		files = append(files, FileInfoPath{Path: fullPath, Size: int64(fileSize)})
+		files = append(files, FileInfoPath{Path: fullPath, Size: int64(fileSize), Content: file})
 		totalSize += int64(fileSize)
-		if totalSize > maxSize {
-			sort.Slice(files, func(i, j int) bool {
-				return files[i].Size > files[j].Size
-			})
-			fileTopInfo := ""
-			top := 5
-			if len(files) < 5 {
-				top = len(files)
-			}
-			for i := 0; i < top; i++ {
-				fileTopInfo += fmt.Sprintf("%d. name: %s, size: %d bytes\n", i+1, files[i].Path, files[i].Size)
-			}
-			errMsg := fmt.Sprintf("Plugin package size is too large. Please ensure the uncompressed size is less than %d bytes.\nPackaged file info:\n%s", maxSize, fileTopInfo)
-			return errors.New(errMsg)
-		}
-
-		fullPath = strings.ReplaceAll(fullPath, "\\", "/")
-
-		zipFile, err := zipWriter.Create(fullPath)
-		if err != nil {
-			return err
-		}
-
-		_, err = zipFile.Write(file)
-		if err != nil {
-			return err
-		}
 
 		return nil
 	})
 
 	if err != nil {
 		return nil, err
+	}
+
+	if totalSize > maxSize {
+		sort.Slice(files, func(i, j int) bool {
+			return files[i].Size > files[j].Size
+		})
+		fileTopInfo := ""
+		top := 5
+		if len(files) < 5 {
+			top = len(files)
+		}
+		for i := 0; i < top; i++ {
+			fileTopInfo += fmt.Sprintf("%d. name: %s, size: %d bytes\n", i+1, files[i].Path, files[i].Size)
+		}
+		errMsg := fmt.Sprintf("Plugin package size is too large. Please ensure the uncompressed size is less than %d bytes.\nPackaged file info:\n%s", maxSize, fileTopInfo)
+		return nil, errors.New(errMsg)
+	}
+
+	for _, fileInfo := range files {
+		fullPath := strings.ReplaceAll(fileInfo.Path, "\\", "/")
+		zipFile, err := zipWriter.Create(fullPath)
+		if err != nil {
+			return nil, err
+		}
+
+		_, err = zipFile.Write(fileInfo.Content)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	err = zipWriter.Close()

@@ -313,5 +313,15 @@ func (p *PluginDecoderHelper) Checksum(decoder PluginDecoder) (string, error) {
 }
 
 func (p *PluginDecoderHelper) CheckAssetsValid(decoder PluginDecoder) error {
+	_, err := decoder.Manifest()
+	if err != nil {
+		return errors.Join(err, fmt.Errorf("failed to get manifest"))
+	}
+
+	_, err = decoder.Assets()
+	if err != nil {
+		return errors.Join(err, fmt.Errorf("failed to get assets"))
+	}
+
 	return nil
 }

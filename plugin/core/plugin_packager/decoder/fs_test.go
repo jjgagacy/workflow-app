@@ -40,6 +40,15 @@ plugins:
     - models/model_provider.yaml
   agent_strategies:
     - strategies/agent_strategy_provider.yaml
+meta:
+  version: 0.0.1
+  arch:
+    - "amd64"
+    - "arm64"
+  runner:
+    language: "python"
+    version: "3.12"
+    entrypoint: "main"
 `,
 		// 工具相关文件
 		"tools/tool_provider.yaml": `identity:
