@@ -90,7 +90,7 @@ func RequestAndParseStream[T any](client *http.Client, url string, method string
 				return err
 			} else {
 				utils.Warn("stream data not match for %s, got %s", url, string(data))
-				return nil
+				return fmt.Errorf("tream data not match for %s, got %s", url, string(data))
 			}
 		}
 
@@ -108,7 +108,7 @@ func RequestAndParseStream[T any](client *http.Client, url string, method string
 		if usingLengthPrefixed {
 			// todo
 		} else {
-			err = parser.LineBasedChunking(resp.Body, 1024*1024*30, func(data []byte) error {
+			err = parser.LineBasedChunking(resp.Body, 1024*1024*30, func(data []byte) error { // 30MB limit
 				if len(data) == 0 {
 					return nil
 				}

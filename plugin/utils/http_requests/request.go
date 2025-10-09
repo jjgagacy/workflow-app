@@ -32,7 +32,9 @@ func buildHttpRequest(method string, url string, options ...HttpOption) (*http.R
 			for k, v := range option.Value.(map[string]string) {
 				q.Add(k, v)
 			}
-			req.Body = io.NopCloser(strings.NewReader(q.Encode()))
+			encoded := q.Encode()
+			req.Body = io.NopCloser(strings.NewReader(encoded))
+			req.ContentLength = int64(len(encoded))
 		case HTTP_OPTION_TYPE_PAYLOAD_MULTIPART:
 			buffer := new(bytes.Buffer)
 			writer := multipart.NewWriter(buffer)

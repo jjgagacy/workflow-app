@@ -4,6 +4,7 @@ import (
 	"errors"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/gammazero/deque"
 )
@@ -216,4 +217,10 @@ func (s *Stream[T]) Async(f func(T)) error {
 	}
 
 	return nil
+}
+
+func (s *Stream[T]) WaitClosed() {
+	for !s.IsClosed() {
+		time.Sleep(10 * time.Millisecond)
+	}
 }

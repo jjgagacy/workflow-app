@@ -69,6 +69,10 @@ func HttpPayloadMultipart(payload map[string]string, files map[string]HttpPayloa
 	}}
 }
 
+func HttpDirectReferer() HttpOption {
+	return HttpOption{Type: HTTP_OPTION_TYPE_DIRECT_REFERER}
+}
+
 // For standard SSE protocol, response are split by \n\n
 // Which leads a bad performance when decoding, we need a larger chunk to store temporary data
 // This option is used to enable length-prefixed mode, which is faster but less memory-friendly
