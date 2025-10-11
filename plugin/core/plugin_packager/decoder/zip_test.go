@@ -39,8 +39,9 @@ func createTestData(t *testing.T) map[string][]byte {
 func createTestZipPlugin(t *testing.T) []byte {
 	var buf bytes.Buffer
 	zipWriter := zip.NewWriter(&buf)
+	testData := createTestData(t)
 
-	for file, contents := range createTestData(t) {
+	for file, contents := range testData {
 		writer, err := zipWriter.Create(file)
 		require.NoError(t, err)
 		_, err = writer.Write(contents)

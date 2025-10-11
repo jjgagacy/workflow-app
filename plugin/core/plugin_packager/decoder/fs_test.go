@@ -1,6 +1,7 @@
 package decoder
 
 import (
+	"io"
 	"os"
 	"path/filepath"
 	"testing"
@@ -231,6 +232,11 @@ features:
 		}
 	}
 
+	err := copyDir("test_plugin_code", "test_data")
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	return dir
 }
 
@@ -304,5 +310,46 @@ func TestPluginDecoderHelperManifest(t *testing.T) {
 		require.NotNil(t, manifest.AgentStrategy)
 		assert.Equal(t, "test-agent-strategy-provider", manifest.AgentStrategy.Identity.Name)
 		assert.Len(t, manifest.AgentStrategy.Strategies, 2)
+	})
+}
+
+func copyFile(src, dst string) error {
+	srcFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+
+	dstFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer dstFile.Close()
+
+	_, err = io.Copy(dstFile, srcFile)
+	return err
+}
+
+func copyDir(src, dst string) error {
+	return filepath.WalkDir(src, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		// 计算相对路径
+		relPath, err := filepath.Rel(src, path)
+		if err != nil {
+			return err
+		}
+		dstPath := filepath.Join(dst, relPath)
+
+		if d.IsDir() {
+			info, err := d.Info()
+			if err != nil {
+				return err
+			}
+			return os.MkdirAll(dstPath, info.Mode())
+		} else {
+			return copyFile(path, dstPath)
+		}
 	})
 }

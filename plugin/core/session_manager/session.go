@@ -37,7 +37,7 @@ type Session struct {
 }
 
 func sessionKey(id string) string {
-	return fmt.Sprintf("session_key:%d", id)
+	return fmt.Sprintf("session_key:%s", id)
 }
 
 type SessionPayload struct {

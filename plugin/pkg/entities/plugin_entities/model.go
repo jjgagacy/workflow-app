@@ -214,7 +214,7 @@ type ModelProviderDeclaration struct {
 	Provider                 string                         `json:"provider" yaml:"provider" validate:"required,lt=256"`
 	Label                    I18nObject                     `json:"label" yaml:"label" validate:"required"`
 	Description              *I18nObject                    `json:"description,omitempty" yaml:"description,omitempty"`
-	IconSamll                *I18nObject                    `json:"icon_small,omitempty" yaml:"icon_small,omitempty"`
+	IconSmall                *I18nObject                    `json:"icon_small,omitempty" yaml:"icon_small,omitempty"`
 	IconLarge                *I18nObject                    `json:"icon_large,omitempty" yaml:"icon_large,omitempty"`
 	IconSmallDark            *I18nObject                    `json:"icon_small_dark,omitempty" yaml:"icon_small_dark,omitempty"`
 	IconLargeDark            *I18nObject                    `json:"icon_large_dark,omitempty" yaml:"icon_large_dark,omitempty"`

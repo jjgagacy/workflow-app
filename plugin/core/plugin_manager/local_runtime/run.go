@@ -26,8 +26,23 @@ func (r *LocalPluginRuntime) Type() plugin_entities.PluginRuntimeType {
 }
 
 func (r *LocalPluginRuntime) getCmd() (*exec.Cmd, error) {
-	if r.Config.Meta.Runner.Language == constants.Node {
+	switch r.Config.Meta.Runner.Language {
+	case constants.Node:
 		cmd := exec.Command(r.nodeExecutePath, r.Config.Meta.Runner.EntryPoint)
+		cmd.Dir = r.State.WorkingPath
+		cmd.Env = cmd.Environ()
+		if r.HttpsProxy != "" {
+			cmd.Env = append(cmd.Env, fmt.Sprintf("HTTPS_PROXY=%s", r.HttpsProxy))
+		}
+		if r.HttpProxy != "" {
+			cmd.Env = append(cmd.Env, fmt.Sprintf("HTTP_PROXY=%s", r.HttpProxy))
+		}
+		if r.NoProxy != "" {
+			cmd.Env = append(cmd.Env, fmt.Sprintf("NO_PROXY=%s", r.NoProxy))
+		}
+		return cmd, nil
+	case constants.Python:
+		cmd := exec.Command(r.pythonInterpreterPath, "-m", r.Config.Meta.Runner.EntryPoint)
 		cmd.Dir = r.State.WorkingPath
 		cmd.Env = cmd.Environ()
 		if r.HttpsProxy != "" {

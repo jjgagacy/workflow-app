@@ -14,7 +14,6 @@ type LocalStorage struct {
 	root string
 }
 
-// Save implements oss.OSS.
 func (l *LocalStorage) Save(key string, data []byte) error {
 	path := filepath.Join(l.root, key)
 	d := filepath.Dir(path)
@@ -24,14 +23,12 @@ func (l *LocalStorage) Save(key string, data []byte) error {
 	return os.WriteFile(path, data, 0o644)
 }
 
-// Delete implements oss.OSS.
 func (l *LocalStorage) Delete(key string) error {
 	path := filepath.Join(l.root, key)
 
 	return os.RemoveAll(path)
 }
 
-// Exists implements oss.OSS.
 func (l *LocalStorage) Exists(key string) (bool, error) {
 	path := filepath.Join(l.root, key)
 
@@ -45,7 +42,13 @@ func (l *LocalStorage) Exists(key string) (bool, error) {
 	return true, err
 }
 
-// List implements oss.OSS.
+// List retrieves all file and directory paths under the specified prefix directory.
+// It returns a list of OSSPath objects represents the file system structure.
+//
+// Notes:
+//   - The returned paths are relative to the prefix and don't include the root directory
+//   - Both files and directories are included in the results.
+//   - The function perform a recursive walk of the directory tree.
 func (l *LocalStorage) List(prefix string) ([]oss.OSSPath, error) {
 	paths := make([]oss.OSSPath, 0)
 	exists, err := l.Exists(prefix)
@@ -82,13 +85,11 @@ func (l *LocalStorage) List(prefix string) ([]oss.OSSPath, error) {
 	return paths, nil
 }
 
-// Load implements oss.OSS.
 func (l *LocalStorage) Load(key string) ([]byte, error) {
 	path := filepath.Join(l.root, key)
 	return os.ReadFile(path)
 }
 
-// State implements oss.OSS.
 func (l *LocalStorage) State(key string) (oss.OSSState, error) {
 	path := filepath.Join(l.root, key)
 
@@ -100,7 +101,6 @@ func (l *LocalStorage) State(key string) (oss.OSSState, error) {
 	return oss.OSSState{Size: info.Size(), LastModified: info.ModTime()}, nil
 }
 
-// Type implements oss.OSS.
 func (l *LocalStorage) Type() string {
 	return oss.OSS_TYPE_LOCAL
 }

@@ -51,18 +51,21 @@ type InvokeLLMRequest struct {
 type InvokeLLMWithStructuredOutputRequest struct {
 	BaseInvokeRequest
 	InvokeLLMSchema
+
 	requests.BaseRequestInvokeModel
 	StructuredOutputSchema map[string]any `json:"structured_output_schema" validate:"required"`
 }
 
 type InvokeTextEmbeddingRequest struct {
 	BaseInvokeRequest
-	requests.BaseRequestInvokeModel
+
 	requests.InvokeTextEmbeddingSchema
+	requests.BaseRequestInvokeModel
 }
 
 type InvokeRerankRequest struct {
 	BaseInvokeRequest
+
 	requests.BaseRequestInvokeModel
 	requests.InvokeRerankSchema
 }
@@ -71,6 +74,7 @@ type InvokeTTSRequest struct {
 	UserID string     `json:"user_id"`
 	Type   InvokeType `json:"type"`
 	requests.BaseRequestInvokeModel
+
 	requests.InvokeTTSSchema
 }
 

@@ -33,8 +33,8 @@ func (b *Broadcast[T]) Close() {
 }
 
 func (b *Broadcast[T]) Send(data T) {
-	b.mu.Lock()
-	defer b.mu.Unlock()
+	b.mu.RLock()
+	defer b.mu.RUnlock()
 	for _, listener := range b.listener {
 		listener(data)
 	}

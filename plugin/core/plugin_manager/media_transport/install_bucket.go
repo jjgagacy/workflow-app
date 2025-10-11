@@ -6,6 +6,7 @@ import (
 
 	"github.com/jjgagacy/workflow-app/plugin/oss"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
+	"github.com/jjgagacy/workflow-app/plugin/utils"
 )
 
 type InstalledBucket struct {
@@ -55,7 +56,7 @@ func (b *InstalledBucket) List() ([]plugin_entities.PluginUniqueIdentifier, erro
 			strings.TrimPrefix(path.Path, b.installedPath),
 		)
 		if err != nil {
-			// log
+			utils.Error("failed to create PluginUniqueIdentifier from the path %s: %v", path.Path, err)
 			continue
 		}
 		identifiers = append(identifiers, identifier)

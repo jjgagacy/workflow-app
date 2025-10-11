@@ -16,7 +16,13 @@ func (r *MediaTransport) RemapAssets(
 	declaration *plugin_entities.PluginDeclaration,
 	assets map[string][]byte,
 ) error {
-	panic("not impl")
+	assetsIds, err := r.mediaManager.RemapAssets(declaration, assets)
+	if err != nil {
+		return err
+	}
+
+	r.assetIds = assetsIds
+	return nil
 }
 
 func NewMediaTransport(mediaManager *media_transport.MediaBucket) MediaTransport {

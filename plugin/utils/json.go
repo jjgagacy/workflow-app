@@ -34,14 +34,22 @@ func UnmarshalJsonBytes[T any](data []byte) (T, error) {
 		return result, nil
 	}
 
-	// skip string
-	if typ.Kind() == reflect.String {
+	kind := typ.Kind()
+	// 跳过验证的类型：map、string、基本类型、指针、切片等
+	switch kind {
+	case reflect.Map, reflect.String, reflect.Bool,
+		reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
+		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
+		reflect.Float32, reflect.Float64, reflect.Complex64, reflect.Complex128,
+		reflect.Slice, reflect.Array, reflect.Pointer, reflect.Interface:
 		return result, nil
 	}
 
 	// validate
-	if err := validators.EntitiesValidator.Struct(&result); err != nil {
-		return result, err
+	if kind == reflect.Struct {
+		if err := validators.EntitiesValidator.Struct(&result); err != nil {
+			return result, err
+		}
 	}
 
 	return result, nil
@@ -49,6 +57,9 @@ func UnmarshalJsonBytes[T any](data []byte) (T, error) {
 
 func UnmarshalJsonBytesToMap(data []byte) (map[string]any, error) {
 	result := map[string]any{}
-	err := json.Unmarshal(data, result)
+	err := json.Unmarshal(data, &result)
+	if err != nil {
+		return nil, err
+	}
 	return result, err
 }

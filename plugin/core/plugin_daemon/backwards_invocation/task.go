@@ -13,40 +13,40 @@ import (
 var (
 	dispatchMapping = map[invocation.InvokeType]func(handle *BackwardsInvocation){
 		invocation.INVOKE_TYPE_TOOL: func(handle *BackwardsInvocation) {
-
+			genericDispatchTask(handle, executeInvocationToolTask)
 		},
 		invocation.INVOKE_TYPE_LLM: func(handle *BackwardsInvocation) {
 			genericDispatchTask(handle, executeInvocationLLMTask)
 		},
 		invocation.INVOKE_TYPE_TEXT_EMBEDDING: func(handle *BackwardsInvocation) {
-
+			genericDispatchTask(handle, executeInvocationTextEmbeddingTask)
 		},
 		invocation.INVOKE_TYPE_RERANK: func(handle *BackwardsInvocation) {
-
+			genericDispatchTask(handle, executeInvocationRerankTask)
 		},
 		invocation.INVOKE_TYPE_TTS: func(handle *BackwardsInvocation) {
-
+			genericDispatchTask(handle, executeInvocationTTSTask)
 		},
 		invocation.INVOKE_TYPE_SPEECH2TEXT: func(handle *BackwardsInvocation) {
-
+			genericDispatchTask(handle, executeInvocationSpeech2TextTask)
 		},
 		invocation.INVOKE_TYPE_MODERATION: func(handle *BackwardsInvocation) {
-
+			genericDispatchTask(handle, executeInvocationModerationTask)
 		},
 		invocation.INVOKE_TYPE_APP: func(handle *BackwardsInvocation) {
-
+			genericDispatchTask(handle, executeInvocationAppTask)
 		},
 		invocation.INVOKE_TYPE_STORAGE: func(handle *BackwardsInvocation) {
-
+			genericDispatchTask(handle, executeInvocationStorageTask)
 		},
 		invocation.INVOKE_TYPE_UPLOAD_FILE: func(handle *BackwardsInvocation) {
-
+			genericDispatchTask(handle, executeInvocationUploadFileTask)
 		},
 		invocation.INVOKE_TYPE_FETCH_APP: func(handle *BackwardsInvocation) {
-
+			genericDispatchTask(handle, executeInvocationFetchAppTask)
 		},
 		invocation.INVOKE_TYPE_LLM_STRUCTURED_OUTPUT: func(handle *BackwardsInvocation) {
-
+			genericDispatchTask(handle, executeInvocationLLMStructuredOutputTask)
 		},
 	}
 )
@@ -128,12 +128,12 @@ func prepareInvocationArgs(
 
 func dispatchInvocationTask(handle *BackwardsInvocation) {
 	requestData := handle.RequestData()
-	tenatnId, err := handle.TenantID()
+	tenantId, err := handle.TenantID()
 	if err != nil {
 		handle.WriteError(fmt.Errorf("get tenant id failed: %s", err.Error()))
 		return
 	}
-	requestData["tenant_id"] = tenatnId
+	requestData["tenant_id"] = tenantId
 	userId, err := handle.UserID()
 	if err != nil {
 		handle.WriteError(fmt.Errorf("get user id failed: %s", err.Error()))
@@ -181,9 +181,228 @@ func executeInvocationLLMTask(
 	for response.Next() {
 		value, err := response.Read()
 		if err != nil {
-			handle.WriteError(fmt.Errorf("read llm model faild: %s", err.Error()))
+			handle.WriteError(fmt.Errorf("read llm model failed: %s", err.Error()))
 			return
 		}
 		handle.WriteResponse("stream", value)
 	}
+}
+
+func executeInvocationToolTask(
+	handle *BackwardsInvocation,
+	request *invocation.InvokeToolRequest,
+) {
+	response, err := handle.backwardsInvocation.InvokeTool(request)
+	if err != nil {
+		handle.WriteError(fmt.Errorf("invoke tool model failed: %s", err.Error()))
+		return
+	}
+
+	for response.Next() {
+		value, err := response.Read()
+		if err != nil {
+			handle.WriteError(fmt.Errorf("read tool failed: %s", err.Error()))
+			return
+		}
+		handle.WriteResponse("stream", value)
+	}
+}
+
+func executeInvocationLLMStructuredOutputTask(
+	handle *BackwardsInvocation,
+	request *invocation.InvokeLLMWithStructuredOutputRequest,
+) {
+	response, err := handle.backwardsInvocation.InvokeLLMWithStructuredOutput(request)
+	if err != nil {
+		handle.WriteError(fmt.Errorf("invoke llm with structured output model failed: %s", err.Error()))
+		return
+	}
+
+	for response.Next() {
+		value, err := response.Read()
+		if err != nil {
+			handle.WriteError(fmt.Errorf("read llm with structured output model failed: %s", err.Error()))
+			return
+		}
+		handle.WriteResponse("stream", value)
+	}
+}
+
+func executeInvocationTextEmbeddingTask(
+	handle *BackwardsInvocation,
+	request *invocation.InvokeTextEmbeddingRequest,
+) {
+	response, err := handle.backwardsInvocation.InvokeTextEmbedding(request)
+	if err != nil {
+		handle.WriteError(fmt.Errorf("invoke text-embedding model failed: %s", err.Error()))
+		return
+	}
+
+	handle.WriteResponse("struct", response)
+}
+
+func executeInvocationRerankTask(
+	handle *BackwardsInvocation,
+	request *invocation.InvokeRerankRequest,
+) {
+	response, err := handle.backwardsInvocation.InvokeRerank(request)
+	if err != nil {
+		handle.WriteError(fmt.Errorf("invoke rerank model failed: %s", err.Error()))
+		return
+	}
+
+	handle.WriteResponse("struct", response)
+}
+
+func executeInvocationTTSTask(
+	handle *BackwardsInvocation,
+	request *invocation.InvokeTTSRequest,
+) {
+	response, err := handle.backwardsInvocation.InvokeTTS(request)
+	if err != nil {
+		handle.WriteError(fmt.Errorf("invoke tts model failed: %s", err.Error()))
+		return
+	}
+
+	for response.Next() {
+		value, err := response.Read()
+		if err != nil {
+			handle.WriteError(fmt.Errorf("read tts model failed: %s", err.Error()))
+			return
+		}
+
+		handle.WriteResponse("stream", value)
+	}
+}
+
+func executeInvocationSpeech2TextTask(
+	handle *BackwardsInvocation,
+	request *invocation.InvokeSpeech2TextRequest,
+) {
+	response, err := handle.backwardsInvocation.InvokeSpeech2Text(request)
+	if err != nil {
+		handle.WriteError(fmt.Errorf("invoke speech2text model failed: %s", err.Error()))
+		return
+	}
+
+	handle.WriteResponse("struct", response)
+}
+
+func executeInvocationModerationTask(
+	handle *BackwardsInvocation,
+	request *invocation.InvokeModerationRequest,
+) {
+	response, err := handle.backwardsInvocation.InvokeModeration(request)
+	if err != nil {
+		handle.WriteError(fmt.Errorf("invoke moderation model failed: %s", err.Error()))
+		return
+	}
+
+	handle.WriteResponse("struct", response)
+}
+
+func executeInvocationAppTask(
+	handle *BackwardsInvocation,
+	request *invocation.InvokeAppRequest,
+) {
+	response, err := handle.backwardsInvocation.InvokeApp(request)
+	if err != nil {
+		handle.WriteError(fmt.Errorf("invoke app failed: %s", err.Error()))
+		return
+	}
+
+	userId, err := handle.UserID()
+	if err != nil {
+		handle.WriteError(fmt.Errorf("get user id failed: %s", err.Error()))
+		return
+	}
+
+	request.UserID = userId
+
+	for response.Next() {
+		value, err := response.Read()
+		if err != nil {
+			handle.WriteError(fmt.Errorf("read app failed: %s", err.Error()))
+			return
+		}
+
+		handle.WriteResponse("stream", value)
+	}
+}
+
+func executeInvocationParameterExtractor(
+	handle *BackwardsInvocation,
+	request *invocation.InvokeParameterExtractorRequest,
+) {
+	response, err := handle.backwardsInvocation.InvokeParameterExtractor(request)
+	if err != nil {
+		handle.WriteError(fmt.Errorf("invoke parameter extractor failed: %s", err.Error()))
+		return
+	}
+
+	handle.WriteResponse("struct", response)
+}
+
+func executeInvocationQuestionClassifier(
+	handle *BackwardsInvocation,
+	request *invocation.InvokeQuestionClassifierRequest,
+) {
+	response, err := handle.backwardsInvocation.InvokeQuestionClassifier(request)
+	if err != nil {
+		handle.WriteError(fmt.Errorf("invoke question classifier failed: %s", err.Error()))
+		return
+	}
+
+	handle.WriteResponse("struct", response)
+}
+
+func executeInvocationStorageTask(
+	handle *BackwardsInvocation,
+	request *invocation.InvokeStorageRequest,
+) {
+	if handle.session == nil {
+		handle.WriteError(fmt.Errorf("session not found"))
+		return
+	}
+
+	// todo
+}
+
+func executeInvocationSystemSummaryTask(
+	handle *BackwardsInvocation,
+	request *invocation.InvokeSummaryRequest,
+) {
+	response, err := handle.backwardsInvocation.InvokeSummary(request)
+	if err != nil {
+		handle.WriteError(fmt.Errorf("invoke summary failed: %s", err.Error()))
+		return
+	}
+
+	handle.WriteResponse("struct", response)
+}
+
+func executeInvocationUploadFileTask(
+	handle *BackwardsInvocation,
+	request *invocation.UploadFileRequest,
+) {
+	response, err := handle.backwardsInvocation.UploadFile(request)
+	if err != nil {
+		handle.WriteError(fmt.Errorf("upload file failed: %s", err.Error()))
+		return
+	}
+
+	handle.WriteResponse("struct", response)
+}
+
+func executeInvocationFetchAppTask(
+	handle *BackwardsInvocation,
+	request *invocation.FetchAppRequest,
+) {
+	response, err := handle.backwardsInvocation.FetchApp(request)
+	if err != nil {
+		handle.WriteError(fmt.Errorf("fetch app failed: %s", err.Error()))
+		return
+	}
+
+	handle.WriteResponse("struct", response)
 }
