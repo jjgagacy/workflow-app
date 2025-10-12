@@ -55,7 +55,7 @@ func (m *Map[K, V]) Delete(key K) {
 }
 
 func (m *Map[K, V]) Range(f func(key K, value V) bool) {
-	m.store.Range(func(key, value interface{}) bool {
+	m.store.Range(func(key, value any) bool {
 		return f(key.(K), value.(V))
 	})
 }
@@ -99,7 +99,7 @@ func (m *Map[K, V]) Clear() {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	m.store.Range(func(key, value interface{}) bool {
+	m.store.Range(func(key, value any) bool {
 		m.store.Delete(key)
 		return true
 	})

@@ -191,7 +191,7 @@ func TestMapRange(t *testing.T) {
 }
 
 func TestMapClear(t *testing.T) {
-	m := &Map[string, interface{}]{}
+	m := &Map[string, any]{}
 
 	m.Store("a", 1)
 	m.Store("b", "hello")
@@ -235,7 +235,7 @@ func TestMapConcurrent(t *testing.T) {
 	var wg sync.WaitGroup
 
 	// Concurrent writers
-	for i := 0; i < 100; i++ {
+	for i := range 100 {
 		wg.Add(1)
 		go func(n int) {
 			defer wg.Done()
@@ -244,19 +244,17 @@ func TestMapConcurrent(t *testing.T) {
 	}
 
 	// Concurrent readers
-	for i := 0; i < 50; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for j := 0; j < 10; j++ {
+	for range 50 {
+		wg.Go(func() {
+			for j := range 10 {
 				m.Load(j)
 				m.Exists(j)
 			}
-		}()
+		})
 	}
 
 	// Concurrent Deletes
-	for i := 0; i < 30; i++ {
+	for i := range 30 {
 		wg.Add(1)
 		go func(n int) {
 			defer wg.Done()

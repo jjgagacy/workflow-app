@@ -70,6 +70,7 @@ func (r *LocalPluginRuntime) StartPlugin() error {
 		r.isNotFirstStart = true
 	}
 
+	// reset waitChan
 	r.waitChan = make(chan bool)
 
 	cmd, err := r.getCmd()
