@@ -7,18 +7,14 @@ import { I18nObject } from "./model-runtime.class";
  */
 export class ProviderModel {
     model: string;
-
+    modelProperties: { [key in ModelPropertyKey]?: any };
     label: I18nObject;
-
     modelType: ModelType;
 
     @IsOptional()
     features?: ModelFeature[];
-
     fetchFrom: FetchFrom;
 
-    modelProperties: { [key in ModelPropertyKey]?: any };
-    
     @IsOptional()
     deprecated?: boolean = false;
 
@@ -26,4 +22,3 @@ export class ProviderModel {
         return this.features?.includes(ModelFeature.STRUCTURED_OUTPUT) ?? false;
     }
 }
-

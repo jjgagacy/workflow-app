@@ -1,4 +1,4 @@
-import { TextEmbeddingUsage } from "src/model_runtime/classes/embedding/embedding-usage.class"
+import { TextEmbeddingUsage } from "@/model_runtime/classes/embedding/embedding-usage.class"
 
 describe('EmbeddingUsage', () => {
     describe('emptyUsage', () => {
@@ -6,10 +6,10 @@ describe('EmbeddingUsage', () => {
             const usage = TextEmbeddingUsage.emptyUsage();
 
             expect(usage.tokens).toBe(0);
-            expect(usage.total_tokens).toBe(0);
-            expect(usage.unit_price).toBe(0);
-            expect(usage.price_per_unit).toBe(0);
-            expect(usage.total_price).toBe(0);
+            expect(usage.totalTokens).toBe(0);
+            expect(usage.unitPrice).toBe(0);
+            expect(usage.pricePerUnit).toBe(0);
+            expect(usage.totalPrice).toBe(0);
             expect(usage.currency).toBe('USD');
             expect(usage.latency).toBe(0);
         });
@@ -30,10 +30,10 @@ describe('EmbeddingUsage', () => {
             const usage = TextEmbeddingUsage.fromMetadata(metadata);
 
             expect(usage.tokens).toBe(1500);
-            expect(usage.total_tokens).toBe(1500);
-            expect(usage.unit_price).toBe(0.000001);
-            expect(usage.price_per_unit).toBe(1000);
-            expect(usage.total_price).toBe(0.0015);
+            expect(usage.totalTokens).toBe(1500);
+            expect(usage.unitPrice).toBe(0.000001);
+            expect(usage.pricePerUnit).toBe(1000);
+            expect(usage.totalPrice).toBe(0.0015);
             expect(usage.currency).toBe('CNY');
             expect(usage.latency).toBe(0.5);
         });
@@ -43,9 +43,9 @@ describe('EmbeddingUsage', () => {
             const usage = TextEmbeddingUsage.fromMetadata(metadata);
 
             expect(usage.tokens).toBe(1500);
-            expect(usage.total_tokens).toBe(0);
-            expect(usage.unit_price).toBe(0);
-            expect(usage.total_price).toBe(0);
+            expect(usage.totalTokens).toBe(0);
+            expect(usage.unitPrice).toBe(0);
+            expect(usage.totalPrice).toBe(0);
             expect(usage.currency).toBe("USD");
             expect(usage.latency).toBe(0);
         });
@@ -74,10 +74,10 @@ describe('EmbeddingUsage', () => {
             });
             const result = usage1.plus(usage2);
             expect(result.tokens).toBe(1500);
-            expect(result.total_tokens).toBe(1500);
-            expect(result.unit_price).toBe(0.000001); // Should use other's unit_price
-            expect(result.price_per_unit).toBe(1000); // Should use other's price_unit
-            expect(result.total_price).toBe(0.0015);
+            expect(result.totalTokens).toBe(1500);
+            expect(result.unitPrice).toBe(0.000001); // Should use other's unit_price
+            expect(result.pricePerUnit).toBe(1000); // Should use other's price_unit
+            expect(result.totalPrice).toBe(0.0015);
             expect(result.currency).toBe("USD"); // Should use other's currency
             expect(result.latency).toBe(0.5);
         });

@@ -1,10 +1,11 @@
 import { format } from "path";
-import { ImagePromptMessageContent, TextPromptMessageContent } from "src/prompt/classes/message-types.class";
-import { AssistantPromptMessage } from "src/prompt/classes/messages/assistant-message.class";
-import { UserPromptMessage } from "src/prompt/classes/messages/user-message.class";
-import { PromptMessage } from "src/prompt/classes/prompt-message.class";
-import { PromptMessageContentType, PromptMessageRole } from "src/prompt/enums/prompt-message.enum";
-import { PromptMessageRoleUtil } from "src/prompt/utils/message.util";
+import { ImagePromptMessageContent, TextPromptMessageContent } from "@/prompt/classes/message-types.class";
+import { AssistantPromptMessage, AssistantPromptMessageToolCall, AssistantPromptMessageToolCallFunction } from "@/prompt/classes/messages/assistant-message.class";
+import { UserPromptMessage } from "@/prompt/classes/messages/user-message.class";
+import { PromptMessage } from "@/prompt/classes/prompt-message.class";
+import { PromptMessageContentType, PromptMessageRole } from "@/prompt/enums/prompt-message.enum";
+import { PromptMessageRoleUtil } from "@/prompt/utils/message.util";
+import { plainToClass } from "class-transformer";
 
 describe("PromptMessage (e2e)", () => {
     let promptMessage: PromptMessage;
@@ -27,7 +28,6 @@ describe("PromptMessage (e2e)", () => {
     });
 
     describe('PromptMessage tool call function', () => {
-
         it('should return text content unchanged', () => {
             const textContent = new TextPromptMessageContent();
             textContent.data = "hello, world";
@@ -37,17 +37,18 @@ describe("PromptMessage (e2e)", () => {
 
         it('should handle AssistantPromptMessage isEmpty method', () => {
             // 创建工具调用消息
-            const toolCallFunction = new AssistantPromptMessage.ToolCallFunction();
+            const toolCallFunction = new AssistantPromptMessageToolCallFunction();
             toolCallFunction.name = "get_weather";
             toolCallFunction.arguments = '{"city": "New York"}';
 
-            const toolCall = new AssistantPromptMessage.ToolCall();
+            const toolCall = new AssistantPromptMessageToolCall();
             toolCall.id = "call_123";
             toolCall.type = "function";
             toolCall.function = toolCallFunction;
 
             const assistantMessage = new AssistantPromptMessage();
             assistantMessage.tool_calls = [toolCall];
+            assistantMessage.content = "test";
 
             expect(assistantMessage.isEmpty()).toBe(false);
         });
@@ -257,6 +258,203 @@ describe("PromptMessage (e2e)", () => {
 
             promptMessage.content = PromptMessage.validateContent(content);
             expect(promptMessage.getTextContent()).toBe('hello');
+        });
+    });
+
+    describe('JSON Parsing Tests', () => {
+        it('should correctly parse complete JSON with tool calls', () => {
+            // Mock API response JSON data
+            const mockApiResponse = {
+                role: 'assistant',
+                content: 'I will call tools to get weather information',
+                tool_calls: [
+                    {
+                        id: 'call_abc123',
+                        type: 'function',
+                        function: {
+                            name: 'get_weather',
+                            arguments: '{"city": "Beijing", "unit": "celsius"}'
+                        }
+                    },
+                    {
+                        id: 'call_def456',
+                        type: 'function',
+                        function: {
+                            name: 'get_time',
+                            arguments: '{"timezone": "Asia/Shanghai"}'
+                        }
+                    }
+                ]
+            }
+
+            // Transform using class-transformer
+            const message = plainToClass(AssistantPromptMessage, mockApiResponse)
+            // Verify basic properties
+            expect(message.role).toBe(PromptMessageRole.ASSISTANT);
+            expect(message.content).toBe('I will call tools to get weather information');
+
+            // Verity tool_calls array
+            expect(message.tool_calls).toHaveLength(2)
+            expect(message.tool_calls[0]).toBeInstanceOf(AssistantPromptMessageToolCall);
+            expect(message.tool_calls[1]).toBeInstanceOf(AssistantPromptMessageToolCall);
+
+            // Verify tool_call
+            expect(message.tool_calls[0].id).toBe("call_abc123");
+            expect(message.tool_calls[0].type).toBe("function");
+            expect(message.tool_calls[0].function).toBeInstanceOf(AssistantPromptMessageToolCallFunction)
+            expect(message.tool_calls[0].function.name).toBe('get_weather');
+            expect(message.tool_calls[0].function.arguments).toBe('{"city": "Beijing", "unit": "celsius"}');
+
+            // Verify second tool_call
+            expect(message.tool_calls[1].id).toBe('call_def456');
+            expect(message.tool_calls[1].function.name).toBe('get_time');
+            expect(message.tool_calls[1].function.arguments).toBe('{"timezone": "Asia/Shanghai"}');
+        });
+
+        it('should correctly parse JSON without tool_calls', () => {
+            const simpleResponse = {
+                role: 'assistant',
+                content: 'This is a simple response',
+                tool_calls: []
+            };
+
+            const message = plainToClass(AssistantPromptMessage, simpleResponse);
+
+            expect(message.role).toBe(PromptMessageRole.ASSISTANT);
+            expect(message.content).toBe('This is a simple response');
+            expect(message.tool_calls).toHaveLength(0);
+            expect(message.isEmpty()).toBe(false); // Because there is content
+        });
+
+        it('should correctly parse JSON with only tool_calls and no content', () => {
+            const toolCallOnlyResponse = {
+                role: 'assistant',
+                content: null,
+                tool_calls: [
+                    {
+                        id: 'call_xyz789',
+                        type: 'function',
+                        function: {
+                            name: 'search_data',
+                            arguments: '{"query": "test"}'
+                        }
+                    }
+                ]
+            };
+
+            const message = plainToClass(AssistantPromptMessage, toolCallOnlyResponse);
+
+            expect(message.role).toBe(PromptMessageRole.ASSISTANT);
+            expect(message.content).toBeNull();
+            expect(message.tool_calls).toHaveLength(1);
+            expect(message.isEmpty()).toBe(false); // Because there are tool_calls
+        });
+
+        it('should correctly handle empty JSON', () => {
+            const emptyResponse = {
+                role: 'assistant',
+                content: '',
+                tool_calls: []
+            };
+
+            const message = plainToClass(AssistantPromptMessage, emptyResponse);
+
+            expect(message.role).toBe(PromptMessageRole.ASSISTANT);
+            expect(message.content).toBe('');
+            expect(message.tool_calls).toHaveLength(0);
+            expect(message.isEmpty()).toBe(true); // Empty content and no tool_calls
+        });
+
+        it('should handle complex function arguments JSON', () => {
+            const complexResponse = {
+                role: 'assistant',
+                content: 'Processing complex parameters',
+                tool_calls: [
+                    {
+                        id: 'call_complex_001',
+                        type: 'function',
+                        function: {
+                            name: 'create_report',
+                            arguments: JSON.stringify({
+                                title: 'Monthly Report',
+                                data: [1, 2, 3, 4, 5],
+                                metadata: {
+                                    author: 'AI Assistant',
+                                    created_at: '2024-01-01',
+                                    tags: ['monthly', 'analysis']
+                                }
+                            })
+                        }
+                    }
+                ]
+            };
+
+            const message = plainToClass(AssistantPromptMessage, complexResponse);
+
+            expect(message.tool_calls[0].function.arguments).toBe(complexResponse.tool_calls[0].function.arguments);
+
+            // Verify arguments can be parsed as JSON
+            const parsedArgs = JSON.parse(message.tool_calls[0].function.arguments);
+            expect(parsedArgs.title).toBe('Monthly Report');
+            expect(parsedArgs.data).toEqual([1, 2, 3, 4, 5]);
+            expect(parsedArgs.metadata.author).toBe('AI Assistant');
+        });
+    })
+
+    describe('Edge Case Tests', () => {
+        it('should handle missing optional properties', () => {
+            const minimalResponse = {
+                role: 'assistant'
+                // content and tool_calls are missing
+            };
+
+            const message = plainToClass(AssistantPromptMessage, minimalResponse);
+
+            expect(message.role).toBe(PromptMessageRole.ASSISTANT);
+            expect(message.content).toBeUndefined();
+            expect(message.tool_calls).toEqual([]); // Should use default value
+        });
+
+        it('should handle undefined and null values in tool_calls', () => {
+            const responseWithNulls = {
+                role: 'assistant',
+                content: 'Test content',
+                tool_calls: [
+                    null,
+                    {
+                        id: 'call_valid_001',
+                        type: 'function',
+                        function: {
+                            name: 'valid_function',
+                            arguments: '{}'
+                        }
+                    },
+                    undefined
+                ].filter(Boolean) // Remove null/undefined
+            };
+
+            const message = plainToClass(AssistantPromptMessage, responseWithNulls);
+
+            expect(message.tool_calls).toHaveLength(1);
+            expect(message.tool_calls[0].id).toBe('call_valid_001');
+        });
+
+        it('should preserve method functionality after transformation', () => {
+            const responseWithContent = {
+                role: 'assistant',
+                content: 'Hello World',
+                tool_calls: []
+            };
+
+            const message = plainToClass(AssistantPromptMessage, responseWithContent);
+
+            // Verify that class methods work correctly
+            expect(message.isEmpty()).toBe(false);
+            expect(message.role).toBe(PromptMessageRole.ASSISTANT);
+
+            // Test modifying properties
+            message.content = 'Updated content';
+            expect(message.content).toBe('Updated content');
         });
     });
 });

@@ -1,4 +1,4 @@
-import { InvokeAuthorizationError, InvokeBadRequestError, InvokeConnectionError, InvokeRateLimitError, InvokeServiceUnavailableError } from "./invoke-connection.error";
+import { InvokeAuthorizationError, InvokeBadRequestError, InvokeConnectionError, InvokeRateLimitError, InvokeServiceUnavailableError } from "./invoke-error.type";
 
 /**
  * 所有LLM异常的基类
@@ -21,7 +21,7 @@ export class InvokeError extends Error {
 }
 
 // 所有异常类型
-export type InvokeException = 
+export type InvokeException =
     | InvokeError
     | InvokeAuthorizationError
     | InvokeBadRequestError

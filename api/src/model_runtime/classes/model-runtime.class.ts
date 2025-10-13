@@ -6,28 +6,22 @@ export class I18nObject {
 
 export class PriceConfig {
     input: number;
-
     @IsOptional()
     ouput?: number;
-
     unit: number;
-
     currency: string;
 }
 
 export class PriceInfo {
     unit_price: number;
-
     unit: number;
-
-    total_amount: number;
-
+    totalAmount: number;
     currency: string;
 
     constructor(init?: Partial<PriceInfo>) {
         this.unit_price = 0;
         this.unit = 1;
-        this.total_amount = 0;
+        this.totalAmount = 0;
         this.currency = 'USD';
 
         if (init) {

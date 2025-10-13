@@ -2,21 +2,21 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
 import { resolve } from "path";
-import { AccountService } from "src/account/account.service";
-import { AccountEntity } from "src/account/entities/account.entity";
-import configuration from "src/config/configuration";
-import { RoleEntity } from "src/account/entities/role.entity";
-import { dbConfig } from "src/config/database.config";
+import { AccountEntity } from "@/account/entities/account.entity";
+import configuration from "@/config/configuration";
+import { RoleEntity } from "@/account/entities/role.entity";
+import { dbConfig } from "@/config/database.config";
 import { DataSource, QueryRunner } from "typeorm";
-import { RoleService } from "src/account/role.service";
-import { CoreModule } from "src/core/core.module";
-import { MenuEntity } from "src/account/entities/menu.entity";
-import { MenuRoleEntity } from "src/account/entities/menu-role.entity";
-import { ModulePermEntity } from "src/account/entities/module-perm.entity";
-import { ModuleEntity } from "src/account/entities/module.entity";
-import { DepEntity } from "src/account/entities/dep.entity";
-import { PermEntity } from "src/account/entities/perm.entity";
-import { AccountRoleService } from "src/account/account-role.service";
+import { RoleService } from "@/account/role.service";
+import { CoreModule } from "@/core/core.module";
+import { MenuEntity } from "@/account/entities/menu.entity";
+import { MenuRoleEntity } from "@/account/entities/menu-role.entity";
+import { ModulePermEntity } from "@/account/entities/module-perm.entity";
+import { ModuleEntity } from "@/account/entities/module.entity";
+import { DepEntity } from "@/account/entities/dep.entity";
+import { PermEntity } from "@/account/entities/perm.entity";
+import { AccountRoleService } from "@/account/account-role.service";
+import { AccountService } from "@/account/account.service";
 
 describe("Account Service (e2e)", () => {
     let accountService: AccountService;
@@ -128,7 +128,7 @@ describe("Account Service (e2e)", () => {
         await roleRepository.save(role);
         await roleRepository.save(role2);
 
-        console.log('Role created: ', role.id, role2.id );
+        console.log('Role created: ', role.id, role2.id);
 
         const accountData = {
             username: 'alex test',
@@ -164,7 +164,7 @@ describe("Account Service (e2e)", () => {
         expect(accounts.total).toBeDefined();
         console.log("Accounts fetched successfully", accounts.data);
     });
-   
+
     it("should get account roles", async () => {
         const roleRepository = queryRunner.manager.getRepository(RoleEntity);
         const role2 = new RoleEntity();

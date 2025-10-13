@@ -2,6 +2,7 @@ import { IsOptional } from "class-validator";
 import { PromptMessageRole } from "../enums/prompt-message.enum";
 import { CONTENT_TYPE_MAPPING, MultiModelPromptMessageContent, PromptMessageContentUnionTypes, TextPromptMessageContent } from "./message-types.class";
 import { PromptMessageContent } from "./abstract.class";
+import { safeForOf } from "@/common/utils/for-of";
 
 export class PromptMessageTool {
     name: string;
@@ -47,7 +48,7 @@ export abstract class PromptMessage {
     static validateContent(content: any): any {
         if (Array.isArray(content)) {
             const prompts: PromptMessageContentUnionTypes[] = [];
-            for (const prompt of content) {
+            safeForOf(content, function (prompt: any) {
                 let validatedPrompt: PromptMessageContentUnionTypes;
 
                 if (prompt instanceof PromptMessageContent) {
@@ -64,7 +65,7 @@ export abstract class PromptMessage {
                     throw new Error(`Invalid prompt message: ${prompt}`);
                 }
                 prompts.push(validatedPrompt);
-            }
+            })
             return prompts;
         }
         return content;
@@ -79,12 +80,12 @@ export abstract class PromptMessage {
         if (Array.isArray(this.content)) {
             return this.content.map(item => {
                 if (typeof item === 'object' && item !== null) {
-                    return {...item};
+                    return { ...item };
                 }
                 return item;
             });
         }
-        
+
         return this.content;
     }
 

@@ -10,7 +10,7 @@
  * notEmpty(undefined) => false
  * notEmpty(null) => false (注意：null也会返回false)
  */
-function notEmpty(str: any) {
+export function notEmpty(str: any) {
   return str !== undefined && str !== '';
 }
 
@@ -27,7 +27,7 @@ function notEmpty(str: any) {
  * validId("1") => false
  * validId(undefined) => false
  */
-function validId(id: any) {
+export function validId(id: any) {
   return id !== undefined && typeof id === 'number' && id > 0;
 }
 
@@ -44,8 +44,6 @@ function validId(id: any) {
  * validNumber("123") => false
  * validNumber(undefined) => false
  */
-function validNumber(intVal: any) {
+export function validNumber(intVal: any) {
   return intVal !== undefined && typeof intVal === 'number';
 }
-
-export { notEmpty, validId, validNumber };

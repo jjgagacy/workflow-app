@@ -1,4 +1,4 @@
-import { PromptMessageRole } from "src/prompt/enums/prompt-message.enum";
+import { PromptMessageRole } from "@/prompt/enums/prompt-message.enum";
 import { PromptMessage } from "../prompt-message.class";
 
 export class SystemPromptMessage extends PromptMessage {

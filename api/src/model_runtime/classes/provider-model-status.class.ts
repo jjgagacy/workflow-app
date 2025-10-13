@@ -1,6 +1,7 @@
 import { IsOptional } from "class-validator";
 import { ModelStatus } from "../enums/model-status.enum";
 import { ProviderModel } from "./provider-model.class";
+import { SimpleProvider } from "./provider.class";
 
 export class ProviderModelStatus extends ProviderModel {
     status: ModelStatus;
@@ -25,5 +26,8 @@ export class ProviderModelStatus extends ProviderModel {
             throw new Error(errorMessages[this.status]);
         }
     }
+}
 
+export class ModelWithProvider extends ProviderModelStatus {
+    provider: SimpleProvider;
 }

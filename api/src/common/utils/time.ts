@@ -32,7 +32,7 @@ function padTime(timeString: string): string {
  * @example
  * formatDate(new Date()) => "2023-05-15 14:30:00"
  */
-function formatDate(date: Date) {
+export function formatDate(date: Date) {
   return (
     [
       date.getFullYear(),
@@ -73,7 +73,7 @@ function dateValid(dateString: string): boolean {
  * parseDate("2023-05-15") => Date对象
  * parseDate("invalid-date") => null
  */
-function parseDate(dateString: string): Date | null {
+export function parseDate(dateString: string): Date | null {
   if (dateValid(dateString)) {
     return new Date(dateString);
   }
@@ -88,7 +88,7 @@ function parseDate(dateString: string): Date | null {
  * parseDateTime("2023-05-15T14:30:00Z") => Date对象
  * parseDateTime("invalid-datetime") => null
  */
-function parseDateTime(dateTimeString: string): Date | null {
+export function parseDateTime(dateTimeString: string): Date | null {
   if (dateTimeValid(dateTimeString)) {
     return new Date(dateTimeString);
   }
@@ -144,11 +144,9 @@ function timeValid(timeString: string): boolean {
   );
 }
 
-function parseTime(timeString: string): Date | null {
+export function parseTime(timeString: string): Date | null {
   if (timeValid(timeString)) {
     return new Date(timeString);
   }
   return null;
 }
-
-export { formatDate, parseTime, parseDateTime, parseDate };
