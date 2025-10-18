@@ -1,15 +1,15 @@
 import { Args, Mutation, Resolver } from "@nestjs/graphql";
-import { RoleService } from "src/account/role.service";
+import { RoleService } from "@/account/role.service";
 import { RoleResponse } from "../types/role-response.type";
-import { CurrentUser } from "src/common/decorators/current-user";
+import { CurrentUser } from "@/common/decorators/current-user";
 import { RoleInput } from "../args/role.input.args";
 import { UseGuards } from "@nestjs/common";
-import { GqlAuthGuard } from "src/common/guards/gql-auth.guard";
+import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
 export class CreateRoleResolver {
-    constructor(private readonly roleService: RoleService) {}
+    constructor(private readonly roleService: RoleService) { }
 
     @Mutation(() => RoleResponse)
     async createRole(@Args('input') input: RoleInput, @CurrentUser() user): Promise<RoleResponse> {

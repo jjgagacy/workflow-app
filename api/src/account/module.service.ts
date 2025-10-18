@@ -4,7 +4,7 @@ import { ModuleEntity } from "./entities/module.entity";
 import { FindManyOptions, FindOptionsWhere, Not, QueryRunner, Repository } from "typeorm";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
-import { errorObject } from "src/common/types/errors/error";
+import { errorObject } from "@/common/types/errors/error";
 import { QueryModuleDto } from "./module/dto/query-module.dto";
 import { ModulePermEntity } from "./entities/module-perm.entity";
 import { CreateModuleDto } from "./module/dto/create-module.dto";
@@ -15,7 +15,7 @@ export class ModuleService {
     constructor(
         @InjectRepository(ModuleEntity)
         private readonly moduleRepository: Repository<ModuleEntity>
-    ) {}
+    ) { }
 
     async getById(id: number): Promise<ModuleEntity | null> {
         return await this.moduleRepository.findOneBy({ id });
@@ -94,7 +94,7 @@ export class ModuleService {
         );
     }
 
-    async query(queryParams: Partial<QueryModuleDto> | GetModuleListArgs): Promise<{ data: ModuleEntity[]; total: number}> {
+    async query(queryParams: Partial<QueryModuleDto> | GetModuleListArgs): Promise<{ data: ModuleEntity[]; total: number }> {
         const dto = new QueryModuleDto();
 
         if (queryParams instanceof QueryModuleDto) {
@@ -135,7 +135,7 @@ export class ModuleService {
      * @returns 
      */
     async getModulePerms(id: number | string): Promise<ModulePermEntity[] | null> {
-        const where = typeof(id) === 'number' ? { id } : { key: id};
+        const where = typeof (id) === 'number' ? { id } : { key: id };
         const module = await this.moduleRepository.findOne({
             where,
             relations: { perms: true },

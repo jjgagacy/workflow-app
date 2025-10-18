@@ -1,5 +1,5 @@
-import { QueryDto } from "src/common/database/dto/query.dto";
-import { notEmpty, validId, validNumber } from "src/common/utils/strings";
+import { QueryDto } from "@/common/database/dto/query.dto";
+import { notEmpty, validId, validNumber } from "@/common/utils/strings";
 
 export class QueryAccountDto extends QueryDto {
   id?: number;
@@ -14,7 +14,7 @@ export class QueryAccountDto extends QueryDto {
 
   setQueryArgs(args?: GetAccountListArgs) {
     if (!args) return;
-    
+
     const {
       id,
       username,

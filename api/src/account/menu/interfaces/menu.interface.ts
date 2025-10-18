@@ -1,7 +1,7 @@
-import { ModulePermInterface } from "src/account/interfaces/module-perm.interface";
-import { ScopeInterface } from "src/account/interfaces/scope.interface";
-import { ModuleInterface } from "src/account/module/interfaces/module.interface";
-import { RoleInterface } from "src/account/role/interfaces/role.interface";
+import { ModulePermInterface } from "@/account/interfaces/module-perm.interface";
+import { ScopeInterface } from "@/account/interfaces/scope.interface";
+import { ModuleInterface } from "@/account/module/interfaces/module.interface";
+import { RoleInterface } from "@/account/role/interfaces/role.interface";
 
 export interface MenuInterface {
   id?: number;

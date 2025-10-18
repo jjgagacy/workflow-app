@@ -1,4 +1,4 @@
-import { ModulePermInterface } from "src/account/interfaces/module-perm.interface";
+import { ModulePermInterface } from "@/account/interfaces/module-perm.interface";
 
 export class ModuleInterface {
   id: number;

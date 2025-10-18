@@ -1,4 +1,4 @@
-import { QueryDto } from "src/common/database/dto/query.dto";
+import { QueryDto } from "@/common/database/dto/query.dto";
 
 export class QueryPermDto extends QueryDto {
   key?: string;

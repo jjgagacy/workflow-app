@@ -1,17 +1,17 @@
 import { Args, Mutation, Resolver } from "@nestjs/graphql";
-import { MenuService } from "src/account/menu.service";
+import { MenuService } from "@/account/menu.service";
 import { MenuResponse } from "../types/menu-response.type";
 import { MenuInput } from "../types/menu-input.type";
 import { BadRequestException } from "@nestjs/common";
-import { errorObject } from "src/common/types/errors/error";
-import { validId } from "src/common/utils/strings";
-import { GqlAuthGuard } from "src/common/guards/gql-auth.guard";
+import { errorObject } from "@/common/types/errors/error";
+import { validId } from "@/common/utils/strings";
+import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { UseGuards } from "@nestjs/common";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
 export class UpdateMenuResolver {
-    constructor(private readonly menuService: MenuService) {}
+    constructor(private readonly menuService: MenuService) { }
 
     @Mutation(() => MenuResponse)
     async updateMenu(@Args('input') input: MenuInput): Promise<MenuResponse> {

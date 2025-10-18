@@ -1,5 +1,5 @@
-import { RoleInterface } from 'src/account/role/interfaces/role.interface';
-import { CreatedUpdatedInterface } from 'src/common/types/interfaces/created-updated.interface';
+import { RoleInterface } from '@/account/role/interfaces/role.interface';
+import { CreatedUpdatedInterface } from '@/common/types/interfaces/created-updated.interface';
 
 export interface AccountInterface extends CreatedUpdatedInterface {
   id: number;

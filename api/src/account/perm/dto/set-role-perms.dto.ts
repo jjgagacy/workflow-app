@@ -1,6 +1,4 @@
 import { IsEmpty, IsNotEmpty } from 'class-validator';
-import { BadRequestException } from '@nestjs/common';
-import { errorObject } from 'src/common/types/errors/error';
 
 export class MenuItem {
   @IsNotEmpty()

@@ -1,5 +1,5 @@
-import { MenuInterface } from "src/account/menu/interfaces/menu.interface";
-import { CreatedUpdatedInterface } from "src/common/types/interfaces/created-updated.interface";
+import { MenuInterface } from "@/account/menu/interfaces/menu.interface";
+import { CreatedUpdatedInterface } from "@/common/types/interfaces/created-updated.interface";
 
 export interface RoleInterface extends CreatedUpdatedInterface {
   id?: number;

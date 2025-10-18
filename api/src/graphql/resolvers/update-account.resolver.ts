@@ -1,19 +1,19 @@
 import { Args, Int, Mutation, Resolver } from "@nestjs/graphql";
-import { AccountService } from "src/account/account.service";
+import { AccountService } from "@/account/account.service";
 import { AccountResponse } from "../types/account-response.type";
 import { AccountInput } from "../types/account-input.type";
-import { CurrentUser } from "src/common/decorators/current-user";
-import { UpdateAccountDto } from "src/account/account/dto/update-account.dto";
+import { CurrentUser } from "@/common/decorators/current-user";
+import { UpdateAccountDto } from "@/account/account/dto/update-account.dto";
 import { BadRequestException } from "@nestjs/common";
-import { errorObject } from "src/common/types/errors/error";
+import { errorObject } from "@/common/types/errors/error";
 import * as bcrypt from 'bcrypt';
-import { GqlAuthGuard } from "src/common/guards/gql-auth.guard";
+import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { UseGuards } from "@nestjs/common";
 
 @UseGuards(GqlAuthGuard)
 @Resolver()
 export class UpdateAccountResolver {
-    constructor(private readonly accountService: AccountService) {}
+    constructor(private readonly accountService: AccountService) { }
 
     @Mutation(() => AccountResponse)
     async updateAccount(@Args('input') input: AccountInput, @CurrentUser() user: any): Promise<AccountResponse> {
@@ -33,8 +33,8 @@ export class UpdateAccountResolver {
     }
 
     @Mutation(() => Boolean)
-    async updateAccountPassword(@CurrentUser() user: any, 
-        @Args('password', { nullable: false }) password: string, 
+    async updateAccountPassword(@CurrentUser() user: any,
+        @Args('password', { nullable: false }) password: string,
         @Args('newPassword', { nullable: false }) newPassword: string) {
         // 1. 验证输入参数
         if (!password?.trim()) throw new BadRequestException(errorObject('当前密码不能为空'));
@@ -69,7 +69,7 @@ export class UpdateAccountResolver {
     }
 
     @Mutation(() => Boolean)
-    async toggleAccountStatus(@CurrentUser() user: any, @Args({ name: 'id', type: () => Int}) id: number): Promise<Boolean> {
+    async toggleAccountStatus(@CurrentUser() user: any, @Args({ name: 'id', type: () => Int }) id: number): Promise<Boolean> {
         const dto: UpdateAccountDto = {
             id: id,
             updatedBy: user.name

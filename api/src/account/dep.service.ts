@@ -4,10 +4,10 @@ import { EntityManager, FindManyOptions, FindOptionsWhere, In, Not, QueryRunner,
 import { InjectRepository } from "@nestjs/typeorm";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
-import { errorObject } from "src/common/types/errors/error";
+import { errorObject } from "@/common/types/errors/error";
 import { QueryDepDto } from "./dep/dto/query-dep.dto";
 import { DepInterface } from "./interfaces/dep.interface";
-import { AccountService } from "src/account/account.service";
+import { AccountService } from "@/account/account.service";
 import { CreateDepDto } from "./dep/dto/create-dep.dto";
 import { UpdateDepDto } from "./dep/dto/update-dep.dto";
 
@@ -17,7 +17,7 @@ export class DepService {
         @InjectRepository(DepEntity)
         private readonly depRepository: Repository<DepEntity>,
         private readonly accountService: AccountService
-    ) {}
+    ) { }
 
     async getByKey(key: string): Promise<DepEntity | null> {
         return await this.depRepository.findOneBy({ key });
@@ -140,14 +140,14 @@ export class DepService {
             const missingIds = ids.filter(id =>
                 !existingDeps.some(dep => dep.id === id)
             );
-            throw new BadRequestException(errorObject("以下ID不存在", { key:  missingIds.join(',') }));
+            throw new BadRequestException(errorObject("以下ID不存在", { key: missingIds.join(',') }));
         }
 
         await repository.manager.transaction(
             async (manager) => {
                 // 并行处理所有部门
                 await Promise.all(
-                    existingDeps.map(dep => 
+                    existingDeps.map(dep =>
                         this.deleteDepAndChildTree(dep.key, manager)
                     )
                 )

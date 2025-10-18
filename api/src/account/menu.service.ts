@@ -4,7 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { FindManyOptions, FindOptionsWhere, In, Not, Repository } from "typeorm";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
-import { errorObject } from "src/common/types/errors/error";
+import { errorObject } from "@/common/types/errors/error";
 import { ModuleEntity } from "./entities/module.entity";
 import { QueryMenuDto } from "./menu/dto/query-menu.dto";
 import { MenuRoleService } from "./menu-role.service";
@@ -24,7 +24,7 @@ export class MenuService {
         private readonly moduleRepository: Repository<ModuleEntity>,
         private readonly menuRoleService: MenuRoleService,
         private readonly moduleService: ModuleService
-    ) {}
+    ) { }
 
     /**
      * 根据菜单id获取详情
@@ -32,7 +32,7 @@ export class MenuService {
      * @returns 
      */
     async getById(id: number): Promise<MenuEntity | null> {
-        return this.menuRepository.findOne({ where: { id }, relations: { module: true }})
+        return this.menuRepository.findOne({ where: { id }, relations: { module: true } })
     }
 
     /**
@@ -133,7 +133,7 @@ export class MenuService {
             });
 
             if (existingSameName) {
-                throw new BadRequestException(errorObject("相同父菜单下名称", { key: newParent, key2: newName}));
+                throw new BadRequestException(errorObject("相同父菜单下名称", { key: newParent, key2: newName }));
             }
         }
 
@@ -219,7 +219,7 @@ export class MenuService {
      * @param dto - 查询DTO
      * @returns 包含数据和总数的对象
      */
-    async query(queryParams: Partial<QueryMenuDto> | GetMenuArgs): Promise<{data: MenuEntity[];total: number}> {
+    async query(queryParams: Partial<QueryMenuDto> | GetMenuArgs): Promise<{ data: MenuEntity[]; total: number }> {
         const dto = new QueryMenuDto();
         if (queryParams instanceof QueryMenuDto) {
             Object.assign(dto, queryParams);
@@ -284,7 +284,7 @@ export class MenuService {
         const menuRoleResults = await Promise.all(menuRolesPromises);
 
         // 4. 更新菜单角色信息
-        menuRoleResults.forEach(({ menuKey, roles}) => {
+        menuRoleResults.forEach(({ menuKey, roles }) => {
             if (!menuKey) return;
             const menuNode = menuMap.get(menuKey);
             if (menuNode && roles) {

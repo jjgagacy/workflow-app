@@ -1,5 +1,5 @@
 import { BadRequestException } from "@nestjs/common";
-import { PAGE_LIMIT_MAX } from "src/config/constants";
+import { PAGE_LIMIT_MAX } from "@/config/constants";
 
 export class QueryDto {
     page?: number;

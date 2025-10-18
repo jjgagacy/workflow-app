@@ -5,7 +5,7 @@ import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, Repository } from 
 import { CreatePermDto } from "./perm/dto/create-perm.dto";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
-import { errorObject } from "src/common/types/errors/error";
+import { errorObject } from "@/common/types/errors/error";
 import { QueryPermDto } from "./perm/dto/query-perm.dto";
 import { UpdatePermDto } from "./perm/dto/update-perm.dto";
 
@@ -14,7 +14,7 @@ export class PermService {
     constructor(
         @InjectRepository(PermEntity)
         private readonly permRepository: Repository<PermEntity>
-    ) {}
+    ) { }
 
     /**
      * 获取权限等级
@@ -98,7 +98,7 @@ export class PermService {
      * @param dto - 查询DTO
      * @returns 包含数据和总数的对象
      */
-    async query(dto: QueryPermDto): Promise<{data: PermEntity[];total: number}> {
+    async query(dto: QueryPermDto): Promise<{ data: PermEntity[]; total: number }> {
         const where: FindOptionsWhere<PermEntity> = {
             ...(dto.key && { key: dto.key }),
             ...(dto.name && { name: dto.name }),

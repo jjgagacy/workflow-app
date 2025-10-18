@@ -1,16 +1,16 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { AccountService } from "src/account/account.service";
-import { errorObject } from "src/common/types/errors/error";
+import { AccountService } from "@/account/account.service";
+import { errorObject } from "@/common/types/errors/error";
 import * as bcypt from 'bcrypt';
-import { LoginResponse } from "src/graphql/types/login-response.type";
-import { JWT_CONSTANTS } from "src/config/constants";
+import { LoginResponse } from "@/graphql/types/login-response.type";
+import { JWT_CONSTANTS } from "@/config/constants";
 
 @Injectable()
 export class AuthService {
     constructor(private readonly jwtService: JwtService,
         private readonly accountService: AccountService
-    ) {}
+    ) { }
 
     async validateUser(name: string, password: string): Promise<any> {
         const account = await this.accountService.getByUserName(name, true);

@@ -1,16 +1,14 @@
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { AccountService } from "src/account/account.service";
+import { AccountService } from "@/account/account.service";
 import { AccountList } from "../types/account-list.type";
 import { GetAccountArgs } from "../args/get-account.args";
 import { Account } from "../types/account.type";
-import { formatDate } from "src/common/utils/time";
-import { AccountEntity } from "src/account/entities/account.entity";
-import { validNumber } from "src/common/utils/strings";
+import { formatDate } from "@/common/utils/time";
+import { AccountEntity } from "@/account/entities/account.entity";
+import { validNumber } from "@/common/utils/strings";
 import { BadRequestException } from "@nestjs/common";
-import { LoginResponse } from "../types/login-response.type";
-import { LoginInput } from "../types/login-input.type";
-import { AuthService } from "src/auth/auth.service";
-import { GqlAuthGuard } from "src/common/guards/gql-auth.guard";
+import { AuthService } from "@/auth/auth.service";
+import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { UseGuards } from "@nestjs/common";
 
 @UseGuards(GqlAuthGuard)
@@ -18,7 +16,7 @@ import { UseGuards } from "@nestjs/common";
 export class AccountResolver {
     constructor(private readonly accountService: AccountService,
         private readonly authService: AuthService
-    ) {}
+    ) { }
 
     @Query(() => AccountList)
     async accounts(@Args() args: GetAccountArgs): Promise<AccountList> {

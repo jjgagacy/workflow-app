@@ -59,7 +59,6 @@ import { FooService } from './foo/foo.service';
 import { JwtStrategy } from './auth/strategies/jwt.strategy';
 import { LocalStrategy } from './auth/strategies/local.strategy';
 import { AuthModule } from './auth/auth.module';
-import { AuthMiddleware } from './common/middleware/auth.middleware';
 import { LoginResolver } from './graphql/resolvers/login.resolver';
 import { AgentModule } from './agent/agent.module';
 import { ModelRuntimeModule } from './model_runtime/model_runtime.module';
@@ -68,7 +67,16 @@ import { PromptModule } from './prompt/prompt.module';
 import { RagModule } from './rag/rag.module';
 import { ToolModule } from './tool/tool.module';
 import { WorkflowModule } from './workflow/workflow.module';
-import { AppModule } from './app/app.module';
+import { TenantEntity } from './account/entities/tenant.entity';
+import { TenantAccountEntity } from './account/entities/tenant-account.entity';
+import { ProviderEntity } from './account/entities/provider.entity';
+import { ProviderModelEntity } from './account/entities/provider-model.entity';
+import { TenantDefaultModelEntity } from './account/entities/tenant-default-model.entity';
+import { TenantPreferredProviderEntity } from './account/entities/tenant-preferred-provider.entity';
+import { ProviderModelSettingEntity } from './account/entities/provider-model-setting.entity';
+import { OperationLogsEntity } from './account/entities/operation-log.entity';
+import { AccountIntegrateEntity } from './account/entities/account-integrate.entity';
+import { UserEntity } from './account/entities/user.entity';
 
 @Module({
   imports: [
@@ -116,7 +124,17 @@ import { AppModule } from './app/app.module';
       PermEntity,
       ModulePermEntity,
       MenuRoleEntity,
-      AccountEntity
+      AccountEntity,
+      TenantEntity,
+      TenantAccountEntity,
+      ProviderEntity,
+      ProviderModelEntity,
+      TenantDefaultModelEntity,
+      TenantPreferredProviderEntity,
+      ProviderModelSettingEntity,
+      OperationLogsEntity,
+      AccountIntegrateEntity,
+      UserEntity,
     ]),
     FooModule,
     AccountModule,
@@ -136,8 +154,8 @@ import { AppModule } from './app/app.module';
     JwtStrategy,
     JwtService,
     FooService,
-    AppService, 
-    ConfigService, 
+    AppService,
+    ConfigService,
     DepService,
     MenuService,
     AccountRoleService,

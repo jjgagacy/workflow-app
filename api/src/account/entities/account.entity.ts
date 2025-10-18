@@ -1,6 +1,6 @@
-import { Operate } from "src/common/database/entities/fields/operate";
-import { DepEntity } from "src/account/entities/dep.entity";
-import { RoleEntity } from "src/account/entities/role.entity";
+import { Operate } from "@/common/database/entities/fields/operate";
+import { DepEntity } from "@/account/entities/dep.entity";
+import { RoleEntity } from "@/account/entities/role.entity";
 import { BaseEntity, Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'account' })
@@ -38,6 +38,30 @@ export class AccountEntity extends BaseEntity {
     })
     mobile: string;
 
+    @Column({
+        nullable: false,
+        default: '',
+    })
+    avatar: string;
+
+    @Column({
+        nullable: false,
+        default: '',
+    })
+    prefer_language: string;
+
+    @Column({
+        nullable: false,
+        default: '',
+    })
+    theme: string;
+
+    @Column({
+        nullable: false,
+        default: '',
+    })
+    timezone: string;
+
     // 0开启 1关闭
     @Column({
         nullable: false,
@@ -52,7 +76,7 @@ export class AccountEntity extends BaseEntity {
     })
     lastIp: string;
 
-    @Column(() => Operate, { prefix: false})
+    @Column(() => Operate, { prefix: false })
     operate: Operate;
 
     @ManyToMany(() => RoleEntity, {

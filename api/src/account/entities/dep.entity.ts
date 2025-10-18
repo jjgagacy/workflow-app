@@ -1,6 +1,6 @@
-import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({ name: 'dep'})
+@Entity({ name: 'dep' })
 export class DepEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
@@ -11,13 +11,13 @@ export class DepEntity extends BaseEntity {
     @Column({ nullable: false })
     name: string;
 
-    @Column({ nullable: false})
+    @Column({ nullable: false })
     parent: string;
 
-    @Column({ nullable: false})
+    @Column({ nullable: false })
     remarks: string;
 
     // 负责人
-    @Column({ nullable: false})
+    @Column({ nullable: false })
     managerId: number;
 }

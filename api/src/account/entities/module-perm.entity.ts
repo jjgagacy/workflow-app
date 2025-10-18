@@ -24,8 +24,8 @@ export class ModulePermEntity extends BaseEntity {
         default: 0,
     })
     restrictLevel: number;
-    
-    // 不能 relations { module: true } ?
+
+    // 不能 relations { module: true }
     @ManyToOne(() => ModuleEntity, module => module.perms, {
         cascade: true,
         onDelete: 'CASCADE',

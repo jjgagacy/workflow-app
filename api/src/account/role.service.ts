@@ -8,7 +8,7 @@ import { ModulePermEntity } from "./entities/module-perm.entity";
 import { CreateRoleDto } from "./role/dto/create-role.dto";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
-import { errorObject } from "src/common/types/errors/error";
+import { errorObject } from "@/common/types/errors/error";
 import { QueryRoleDto } from "./role/dto/query-role.dto";
 import { MenuItem, SetRolePermsDto } from "./perm/dto/set-role-perms.dto";
 import { RolePermsInterface } from "./perm/interfaces/role-perms.interface";
@@ -24,7 +24,7 @@ export class RoleService {
         private readonly menuRepository: Repository<MenuEntity>,
         @InjectRepository(ModulePermEntity)
         private readonly modulePermRepository: Repository<ModulePermEntity>,
-    ) {}
+    ) { }
 
     async resolveRoles(roleIds?: number[]): Promise<RoleEntity[] | undefined> {
         if (!roleIds?.length) return undefined;
@@ -105,7 +105,7 @@ export class RoleService {
                 errorObject('请提供更新人id', { key: dto.id, key2: dto.key }),
             );
         }
-        const where = dto.id ? { id : dto.id } : { key : dto.key };
+        const where = dto.id ? { id: dto.id } : { key: dto.key };
         const role = await this.roleRepository.findOneBy(where);
         if (!role) {
             throw new BadRequestException(
@@ -256,7 +256,7 @@ export class RoleService {
                 const menu = await this.menuRepository.findOneBy({ key: menuItem.key });
                 if (!menu) {
                     throw new BadRequestException(
-                        errorObject('菜单不存在', { key: menuItem.key}),
+                        errorObject('菜单不存在', { key: menuItem.key }),
                     );
                 }
 

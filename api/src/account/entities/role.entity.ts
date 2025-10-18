@@ -1,6 +1,6 @@
-import { Operate } from "src/common/database/entities/fields/operate";
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { MenuRoleEntity } from "./menu-role.entity";
+import { Operate } from "@/common/database/entities/fields/operate";
 
 @Entity({ name: 'role' })
 export class RoleEntity extends BaseEntity {

@@ -1,5 +1,5 @@
-import { QueryDto } from "src/common/database/dto/query.dto";
-import { notEmpty, validNumber } from "src/common/utils/strings";
+import { QueryDto } from "@/common/database/dto/query.dto";
+import { notEmpty, validNumber } from "@/common/utils/strings";
 
 export class QueryMenuDto extends QueryDto {
   name?: string;
@@ -17,7 +17,7 @@ export class QueryMenuDto extends QueryDto {
       parent,
       status
     } = args;
-    
+
     Object.assign(this, {
       ...(notEmpty(args.key) && { key }),
       ...(notEmpty(args.name) && { name }),

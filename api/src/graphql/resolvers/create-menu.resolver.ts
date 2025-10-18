@@ -1,14 +1,14 @@
 import { Args, Mutation, Resolver } from "@nestjs/graphql";
-import { MenuService } from "src/account/menu.service";
+import { MenuService } from "@/account/menu.service";
 import { MenuResponse } from "../types/menu-response.type";
 import { MenuInput } from "../types/menu-input.type";
 import { BadRequestException } from "@nestjs/common";
-import { errorObject } from "src/common/types/errors/error";
-import { validId } from "src/common/utils/strings";
+import { errorObject } from "@/common/types/errors/error";
+import { validId } from "@/common/utils/strings";
 
 @Resolver()
 export class CreateMenuResolver {
-    constructor(private readonly menuService: MenuService) {}
+    constructor(private readonly menuService: MenuService) { }
 
     @Mutation(() => MenuResponse)
     async createMenu(@Args('input') input: MenuInput): Promise<MenuResponse> {

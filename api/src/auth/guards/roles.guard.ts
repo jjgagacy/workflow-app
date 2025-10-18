@@ -1,16 +1,16 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { GqlExecutionContext } from "@nestjs/graphql";
-import { AccountRoleService } from "src/account/account-role.service";
-import { ROLES_KEY } from "src/common/decorators/roles.decorations";
-import { Role } from "src/common/types/enums/role.enum";
+import { AccountRoleService } from "@/account/account-role.service";
+import { ROLES_KEY } from "@/common/decorators/roles.decorations";
+import { Role } from "@/common/types/enums/role.enum";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
     constructor(
         private reflector: Reflector,
         private readonly accountRoleService: AccountRoleService,
-    ) {}
+    ) { }
 
     async canActivate(context: ExecutionContext) {
         const ctx = GqlExecutionContext.create(context);

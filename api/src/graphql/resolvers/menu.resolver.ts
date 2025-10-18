@@ -1,12 +1,12 @@
 import { Args, Int, Query, Resolver } from "@nestjs/graphql";
-import { MenuService } from "src/account/menu.service";
+import { MenuService } from "@/account/menu.service";
 import { Menu } from "../types/menu.type";
 import { GetMenuArgs } from "../args/get-menu.args";
-import { GqlAuthGuard } from "src/common/guards/gql-auth.guard";
+import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { BadRequestException, UseGuards } from "@nestjs/common";
-import { errorObject } from "src/common/types/errors/error";
-import { ModuleService } from "src/account/module.service";
-import { ModulePermInterface } from "src/account/interfaces/module-perm.interface";
+import { errorObject } from "@/common/types/errors/error";
+import { ModuleService } from "@/account/module.service";
+import { ModulePermInterface } from "@/account/interfaces/module-perm.interface";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
@@ -14,7 +14,7 @@ export class MenuResolver {
     constructor(
         private readonly menuService: MenuService,
         private readonly moduleService: ModuleService
-    ) {}
+    ) { }
 
     @Query(() => [Menu])
     async menus(@Args() args: GetMenuArgs): Promise<Menu[]> {
@@ -37,7 +37,7 @@ export class MenuResolver {
     }
 
     @Query(() => Menu)
-    async menuInfo(@Args({ name: 'id', type: () => Int}) id: number): Promise<Menu> {
+    async menuInfo(@Args({ name: 'id', type: () => Int }) id: number): Promise<Menu> {
         const menu = await this.menuService.getById(id);
         if (!menu) {
             throw new BadRequestException(errorObject('参数key错误', { id }));

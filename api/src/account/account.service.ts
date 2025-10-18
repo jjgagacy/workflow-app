@@ -4,10 +4,10 @@ import { AccountEntity } from "./entities/account.entity";
 import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, Like, Repository } from "typeorm";
 import { CreateAccountDto } from "./account/dto/create-account.dto";
 import { validate } from "class-validator";
-import { errorObject } from "src/common/types/errors/error";
+import { errorObject } from "@/common/types/errors/error";
 import * as bcrypt from 'bcrypt';
-import { PASSWORD_SALT } from "src/config/constants";
-import { RoleService } from "src/account/role.service";
+import { PASSWORD_SALT } from "@/config/constants";
+import { RoleService } from "@/account/role.service";
 import { plainToInstance } from "class-transformer";
 import { UpdateAccountDto } from "./account/dto/update-account.dto";
 import { QueryAccountDto } from "./account/dto/query-account.dto";
@@ -15,10 +15,10 @@ import { QueryAccountDto } from "./account/dto/query-account.dto";
 @Injectable()
 export class AccountService {
     constructor(
-        @InjectRepository(AccountEntity) 
+        @InjectRepository(AccountEntity)
         private readonly accountRepository: Repository<AccountEntity>,
         private readonly roleService: RoleService,
-    ) {}
+    ) { }
 
     async getByUserName(username: string, roles: boolean = false): Promise<AccountEntity | null> {
         return await this.accountRepository.findOne({
@@ -54,7 +54,7 @@ export class AccountService {
             operate: this.mapOperateFields(dto),
             roles: await this.roleService.resolveRoles(dto.roles)
         });
-       
+
         await this.accountRepository.save(accountEntity);
         return accountEntity;
     }
@@ -86,7 +86,7 @@ export class AccountService {
                 );
             }
         }
-        
+
         const updatedFields = {
             ...this.mapBaseFields(dto),
             operate: this.mapOperateFields(dto),
@@ -102,7 +102,7 @@ export class AccountService {
                 await this.accountRepository.save(account);
             }
         }
-        
+
         return this.accountRepository.findOneBy({ id: account.id });
     }
 
@@ -172,7 +172,7 @@ export class AccountService {
             ...(dto.relations && { relations: dto.relations }),
             ...(dto.paginate && { skip: dto.skip || 0, take: dto.limit || 10 })
         };
-  
+
         // 执行查询
         if (dto.paginate) {
             const [data, total] = await this.accountRepository.findAndCount(options);

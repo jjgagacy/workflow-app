@@ -1,18 +1,18 @@
 import { Args, Query, Resolver } from "@nestjs/graphql";
-import { RoleService } from "src/account/role.service";
+import { RoleService } from "@/account/role.service";
 import { RoleList } from "../types/role-list.type";
 import { GetRoleArgs } from "../args/get-role.args";
 import { Role } from "../types/role.type";
-import { RoleEntity } from "src/account/entities/role.entity";
-import { formatDate } from "src/common/utils/time";
-import { validNumber } from "src/common/utils/strings";
-import { GqlAuthGuard } from "src/common/guards/gql-auth.guard";
+import { RoleEntity } from "@/account/entities/role.entity";
+import { formatDate } from "@/common/utils/time";
+import { validNumber } from "@/common/utils/strings";
+import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { UseGuards } from "@nestjs/common";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
 export class RoleResolver {
-    constructor(private readonly roleService: RoleService) {}
+    constructor(private readonly roleService: RoleService) { }
 
     @Query((returns) => RoleList)
     async roles(@Args() args: GetRoleArgs): Promise<RoleList> {
@@ -22,7 +22,7 @@ export class RoleResolver {
             name: args.name,
             parent: args.parent,
             order: { id: 'DESC' },
-            ...(args.hasMenus && ({ relations: { menus: true }}))
+            ...(args.hasMenus && ({ relations: { menus: true } }))
         });
         const roleList: Role[] = data.map(this.transformRoleToGraphqlType);
 

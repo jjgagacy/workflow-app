@@ -1,5 +1,5 @@
-import { QueryDto } from "src/common/database/dto/query.dto";
-import { notEmpty, validNumber } from "src/common/utils/strings";
+import { QueryDto } from "@/common/database/dto/query.dto";
+import { notEmpty, validNumber } from "@/common/utils/strings";
 
 export class QueryModuleDto extends QueryDto {
   key?: string;

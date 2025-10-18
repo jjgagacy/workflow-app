@@ -1,19 +1,19 @@
 import { Args, Query, Resolver } from "@nestjs/graphql";
-import { DepService } from "src/account/dep.service";
+import { DepService } from "@/account/dep.service";
 import { Dep } from "../types/dep.type";
 import { GetDepArgs } from "../args/get-dep.args";
-import { GqlAuthGuard } from "src/common/guards/gql-auth.guard";
+import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { BadRequestException, UseGuards } from "@nestjs/common";
-import { AccountService } from "src/account/account.service";
-import { AccountEntity } from "src/account/entities/account.entity";
-import { errorObject } from "src/common/types/errors/error";
+import { AccountService } from "@/account/account.service";
+import { AccountEntity } from "@/account/entities/account.entity";
+import { errorObject } from "@/common/types/errors/error";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
 export class DepResolver {
     constructor(private readonly depService: DepService,
         private readonly accountService: AccountService
-    ) {}
+    ) { }
 
     @Query(() => [Dep])
     async deps(@Args() args: GetDepArgs): Promise<Dep[]> {

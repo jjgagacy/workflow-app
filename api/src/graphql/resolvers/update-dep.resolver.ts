@@ -1,14 +1,14 @@
 import { Args, Mutation, Resolver } from "@nestjs/graphql";
-import { DepService } from "src/account/dep.service";
+import { DepService } from "@/account/dep.service";
 import { DepResponse } from "../types/dep-response.type";
 import { DepInput } from "../args/dep-input.args";
-import { GqlAuthGuard } from "src/common/guards/gql-auth.guard";
+import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { UseGuards } from "@nestjs/common";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
 export class UpdateDepResolver {
-    constructor(private readonly depService: DepService) {}
+    constructor(private readonly depService: DepService) { }
 
     @Mutation(() => DepResponse)
     async updateDep(@Args('input') input: DepInput): Promise<DepResponse> {

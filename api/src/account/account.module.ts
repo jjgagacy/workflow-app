@@ -19,7 +19,7 @@ import { ModulePermService } from './module-perm.service';
 import { PermService } from './perm.service';
 import { RoleService } from './role.service';
 import { ModulePermManageService } from './module-perm-manage.service';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from '@/auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 
 @Global()
@@ -68,4 +68,4 @@ import { JwtService } from '@nestjs/jwt';
         JwtService,
     ]
 })
-export class AccountModule {}
+export class AccountModule { }

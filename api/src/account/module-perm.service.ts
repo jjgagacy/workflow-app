@@ -6,7 +6,7 @@ import { ModulePermEntity } from "./entities/module-perm.entity";
 import { PermEntity } from "./entities/perm.entity";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
-import { errorObject } from "src/common/types/errors/error";
+import { errorObject } from "@/common/types/errors/error";
 import { CreateModulePermDto } from "./perm/dto/create-module-perm.dto";
 import { UpdateModulePermDto } from "./perm/dto/update-module-perm.dto";
 
@@ -26,7 +26,7 @@ export class ModulePermService {
      * @returns 
      */
     async getModulePermission(moduleId: number | string, permKey: string): Promise<ModulePermEntity | null> {
-        const moduleWhere = typeof(moduleId) === 'number' ? { id : moduleId } : { key : moduleId };
+        const moduleWhere = typeof (moduleId) === 'number' ? { id: moduleId } : { key: moduleId };
         const modulePerm = await this.modulePermRepository.findOne({
             where: { module: moduleWhere, key: permKey },
         });
@@ -39,7 +39,7 @@ export class ModulePermService {
      * @returns 
      */
     async getModulePermissions(id: number | string): Promise<ModulePermEntity[] | null> {
-        const where = typeof(id) === 'number' ? { id } : { key: id };
+        const where = typeof (id) === 'number' ? { id } : { key: id };
         const moduleWithPerms = await this.moduleRepository.findOne({
             relations: { perms: true },
             where,
@@ -65,7 +65,7 @@ export class ModulePermService {
      * @param module 
      * @param perms 
      */
-    async appendModulePermissions(module: ModuleEntity,perms: ModulePermEntity[]): Promise<void> {
+    async appendModulePermissions(module: ModuleEntity, perms: ModulePermEntity[]): Promise<void> {
         const currentPerms = module.perms ?? await this.getModulePermissions(module.id);
         await this.setModulePermissions(module, [...currentPerms, ...perms]);
     }
@@ -109,9 +109,9 @@ export class ModulePermService {
      * @returns 
      */
     async getPermission(key: string, moduleId: number | string): Promise<ModulePermEntity | null> {
-        const moduleWhere = typeof moduleId === 'number' ? { id : moduleId } : { key: moduleId };
+        const moduleWhere = typeof moduleId === 'number' ? { id: moduleId } : { key: moduleId };
         return this.modulePermRepository.findOne({
-            where: { key, ...{ module: moduleWhere} },
+            where: { key, ...{ module: moduleWhere } },
         });
     }
 
@@ -130,11 +130,11 @@ export class ModulePermService {
         });
     }
 
-     /**
-      * 创建权限
-      * @param dto 
-      * @returns 
-      */
+    /**
+     * 创建权限
+     * @param dto 
+     * @returns 
+     */
     async createPermission(dto: CreateModulePermDto): Promise<ModulePermEntity> {
         const validateObj = plainToInstance(CreateModulePermDto, dto);
         const errors = await validate(validateObj);

@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { errorObject } from "src/common/types/errors/error";
+import { errorObject } from "@/common/types/errors/error";
 import { ModuleEntity } from "./entities/module.entity";
 import { ModulePermEntity } from "./entities/module-perm.entity";
 import { ModuleService } from "./module.service";
@@ -12,7 +12,7 @@ export class ModulePermManageService {
     constructor(
         private readonly moduleService: ModuleService,
         private readonly modulePermService: ModulePermService,
-    ) {}
+    ) { }
 
     /**
      * 创建权限

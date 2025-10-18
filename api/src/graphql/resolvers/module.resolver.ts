@@ -1,11 +1,11 @@
 import { Args, Query, Resolver } from "@nestjs/graphql";
 import { ModuleList } from "../types/module-list.type";
 import { GetModuleArgs } from "../args/get-module.args";
-import { ModuleService } from "src/account/module.service";
+import { ModuleService } from "@/account/module.service";
 import { Module } from "../types/module.type";
-import { ModuleEntity } from "src/account/entities/module.entity";
-import { validNumber } from "src/common/utils/strings";
-import { GqlAuthGuard } from "src/common/guards/gql-auth.guard";
+import { ModuleEntity } from "@/account/entities/module.entity";
+import { validNumber } from "@/common/utils/strings";
+import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { UseGuards } from "@nestjs/common";
 
 @Resolver()
@@ -13,7 +13,7 @@ import { UseGuards } from "@nestjs/common";
 export class ModuleResolver {
     constructor(
         private readonly moduleService: ModuleService
-    ) {}
+    ) { }
 
     @Query((returns) => ModuleList)
     async modules(@Args() args: GetModuleArgs): Promise<ModuleList> {
@@ -30,11 +30,13 @@ export class ModuleResolver {
         // 3. 返回分页结果
         return {
             data: modules,
-            ...(validNumber(args.page) && validNumber(args.limit) && { pageInfo: {
-                page: args.page ?? 0,
-                pageSize: args.limit ?? 0,
-                total: total ?? 0
-            }})
+            ...(validNumber(args.page) && validNumber(args.limit) && {
+                pageInfo: {
+                    page: args.page ?? 0,
+                    pageSize: args.limit ?? 0,
+                    total: total ?? 0
+                }
+            })
         } as ModuleList;
     }
 

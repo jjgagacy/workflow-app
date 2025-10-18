@@ -3,18 +3,18 @@ import { MenuEntity } from "./entities/menu.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { RoleEntity } from "./entities/role.entity";
-import { errorObject } from "src/common/types/errors/error";
+import { errorObject } from "@/common/types/errors/error";
 
 @Injectable()
 export class MenuRoleService {
     constructor(
         @InjectRepository(MenuEntity)
         private readonly menuRepository: Repository<MenuEntity>,
-    ) {}
+    ) { }
 
     async getMenuRoles(menuId: number): Promise<RoleEntity[] | null> {
         const menu = await this.menuRepository.findOne({
-            relations: { roles: { role: true }},
+            relations: { roles: { role: true } },
             where: { id: menuId }
         });
         if (!menu) return null;

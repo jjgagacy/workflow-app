@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Role } from './role.type';
-import { PageInfo } from 'src/common/graphql/types/page-info.type';
+import { PageInfo } from '@/common/graphql/types/page-info.type';
 
 @ObjectType('RoleList')
 export class RoleList {
