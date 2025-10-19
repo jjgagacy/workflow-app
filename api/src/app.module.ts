@@ -79,6 +79,8 @@ import { AccountIntegrateEntity } from './account/entities/account-integrate.ent
 import { UserEntity } from './account/entities/user.entity';
 import { MonieModule } from './monie/monie.module';
 import { GlobalLogger } from './logger/logger.service';
+import { WinstonLogger } from './logger/winston.service';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
@@ -116,7 +118,7 @@ import { GlobalLogger } from './logger/logger.service';
         // logging: process.env.NODE_ENV !== 'production',
         // logger: 'advanced-console',
       }),
-      inject: [ConfigService]
+      inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([
       DepEntity,
@@ -149,6 +151,7 @@ import { GlobalLogger } from './logger/logger.service';
     WorkflowModule,
     MonieModule,
     AppModule,
+    LoggerModule,
   ],
   controllers: [AppController],
   providers: [
@@ -194,6 +197,7 @@ import { GlobalLogger } from './logger/logger.service';
     UpdateRoleResolver,
     LoginResolver,
     GlobalLogger,
+    WinstonLogger,
   ],
 })
 export class AppModule implements NestModule {

@@ -1,5 +1,6 @@
-import { ConsoleLogger, Injectable, LoggerService } from "@nestjs/common";
+import { ConsoleLogger, Injectable, LoggerService, Optional } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { WinstonLogger } from "./winston.service";
 
 export type LogLevels = 'error' | 'warn' | 'log' | 'debug' | 'verbose';
 export interface LogContext {
@@ -13,10 +14,11 @@ export class GlobalLogger extends ConsoleLogger implements LoggerService {
 
     constructor(
         private readonly configService: ConfigService,
-        context?: string,
+        private readonly winstonLogger: WinstonLogger,
+        @Optional() context?: string,
     ) {
         super()
-        this.setContext(context || '')
+        this.setContext(context || 'GlobalLogger')
         this.isProduction = this.configService.get('NODE_ENV') === 'production';
         this.logLevels = this.getLogLevels();
     }
@@ -40,6 +42,9 @@ export class GlobalLogger extends ConsoleLogger implements LoggerService {
 
         const logData = this.formatLogData('INFO', message, context)
         super.log(logData.message, logData.context);
+
+        const meta = this.createMetaData(context);
+        this.winstonLogger.info(logData.message, meta);
     }
 
     error(message: string, context?: string | LogContext, trace?: string) {
@@ -47,6 +52,9 @@ export class GlobalLogger extends ConsoleLogger implements LoggerService {
 
         const logData = this.formatLogData('ERROR', message, context);
         super.error(logData.message, trace, logData.context);
+
+        const meta = this.createMetaData(context, trace);
+        this.winstonLogger.error(message, meta);
     }
 
     warn(message: string, context?: string | LogContext) {
@@ -54,6 +62,9 @@ export class GlobalLogger extends ConsoleLogger implements LoggerService {
 
         const logData = this.formatLogData('WARN', message, context);
         super.warn(logData.message, logData.context);
+
+        const meta = this.createMetaData(context);
+        this.winstonLogger.warn(message, meta);
     }
 
     debug(message: string, context?: string | LogContext) {
@@ -61,6 +72,9 @@ export class GlobalLogger extends ConsoleLogger implements LoggerService {
 
         const logData = this.formatLogData('DEBUG', message, context);
         super.debug(logData.message, logData.context);
+
+        const meta = this.createMetaData(context);
+        this.winstonLogger.debug(message, meta);
     }
 
     verbose(message: string, context?: string | LogContext) {
@@ -68,6 +82,9 @@ export class GlobalLogger extends ConsoleLogger implements LoggerService {
 
         const logData = this.formatLogData('VERBOSE', message, context);
         super.verbose(logData.message, logData.context);
+
+        const meta = this.createMetaData(context);
+        this.winstonLogger.verbose(message, meta);
     }
 
     business(operation: string, data: LogContext, context?: string) {
@@ -92,6 +109,7 @@ export class GlobalLogger extends ConsoleLogger implements LoggerService {
         };
 
         this.log(message, logContext);
+        this.winstonLogger.info(message, logContext);
     }
 
     audit(action: string, user: string, details: LogContext, context?: string) {
@@ -106,6 +124,7 @@ export class GlobalLogger extends ConsoleLogger implements LoggerService {
         };
 
         this.log(message, logContext);
+        this.winstonLogger.info(message, logContext);
     }
 
     security(event: string, details: LogContext, context?: string) {
@@ -121,6 +140,7 @@ export class GlobalLogger extends ConsoleLogger implements LoggerService {
         };
 
         this.warn(message, logContext);
+        this.winstonLogger.info(message, logContext);
     }
 
     database(operation: string, collection: string, duration?: number, context?: string | LogContext) {
@@ -134,6 +154,7 @@ export class GlobalLogger extends ConsoleLogger implements LoggerService {
         };
 
         this.debug(message, logContext);
+        this.winstonLogger.info(message, logContext);
     }
 
     apiRequest(method: string, url: string, statusCode: number, duration: number, context?: string) {
@@ -149,6 +170,7 @@ export class GlobalLogger extends ConsoleLogger implements LoggerService {
         };
 
         this.log(message, logContext);
+        this.winstonLogger.info(message, logContext);
     }
 
     private shouldLog(level: LogLevels): boolean {
@@ -160,7 +182,8 @@ export class GlobalLogger extends ConsoleLogger implements LoggerService {
 
         if (typeof context === 'object') {
             return {
-                message: `[${level}] ${message}`,
+                level,
+                message,
                 context: JSON.stringify({
                     timestamp,
                     level,
@@ -169,10 +192,24 @@ export class GlobalLogger extends ConsoleLogger implements LoggerService {
             }
         } else {
             return {
-                message: `[${level}] ${message}`,
+                level,
+                message,
                 context: context || this.context,
             }
         }
+    }
+
+    private createMetaData(context?: string | LogContext, trace?: string): LogContext {
+        const meta: LogContext = {};
+        if (typeof context === 'string') {
+            meta.context = context;
+        } else {
+            Object.assign(meta, context);
+        }
+        if (trace) {
+            meta.trace = trace;
+        }
+        return meta;
     }
 
 }
