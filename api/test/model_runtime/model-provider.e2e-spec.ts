@@ -1,8 +1,8 @@
 import { ModelWithProvider } from "@/model_runtime/classes/model-with-provider.class";
-import { Provider } from "@/model_runtime/classes/provider.class";
+import { Provider } from "@/ai/model_runtime/classes/provider.class";
 import { SimpleProvider } from "@/model_runtime/classes/simple-provider.class";
-import { ModelType } from "@/model_runtime/enums/model-runtime.enum";
-import { ModelStatus } from "@/model_runtime/enums/model-status.enum";
+import { ModelType } from "@/ai/model_runtime/enums/model-runtime.enum";
+import { ModelStatus } from "@/ai/model_runtime/enums/model-status.enum";
 
 describe("ModelProvider (e2e)", () => {
 

@@ -1,8 +1,8 @@
-import { AssistantPromptMessage } from "@/prompt/classes/messages/assistant-message.class";
 import { LLMUsage } from "./llm-usage.class";
-import { PromptMessage } from "@/prompt/classes/prompt-message.class";
 import { IsOptional } from "class-validator";
 import { PriceInfo } from "../model-runtime.class";
+import { PromptMessage } from "@/ai/prompt/classes/prompt-message.class";
+import { AssistantPromptMessage } from "@/ai/prompt/classes/messages/assistant-message.class";
 
 /**
  * LLM 调用结果类

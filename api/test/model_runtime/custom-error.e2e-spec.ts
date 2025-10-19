@@ -1,5 +1,5 @@
-import { InvokeAuthorizationError, InvokeBadRequestError, InvokeConnectionError, InvokeRateLimitError, InvokeServiceUnavailableError } from "@/model_runtime/classes/errors/invoke-error.type";
-import { InvokeError } from "@/model_runtime/classes/errors/invoke.error";
+import { InvokeAuthorizationError, InvokeBadRequestError, InvokeConnectionError, InvokeRateLimitError, InvokeServiceUnavailableError } from "@/ai/model_runtime/classes/errors/invoke-error.type";
+import { InvokeError } from "@/ai/model_runtime/classes/errors/invoke.error";
 
 describe("ModelRuntime custome error", () => {
     describe('InvokeError', () => {

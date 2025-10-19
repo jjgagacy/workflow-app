@@ -3,6 +3,8 @@ import { AppModule } from './app.module';
 import { resolve } from 'path';
 import { TrimPipe } from './common/pipes/trim.pipe';
 import { BadExceptionFilter } from './common/filters/bad-exception.filter';
+import { GlobalLogger } from './logger/logger.service';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   process.env.APP_ROOT = resolve(__dirname, '..');
@@ -10,6 +12,8 @@ async function bootstrap() {
   app.useGlobalPipes(new TrimPipe());
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new BadExceptionFilter(httpAdapter));
+  const configService = app.get(ConfigService);
+  app.useLogger(new GlobalLogger(configService, 'APP'))
   // 启用 CORS
   app.enableCors({
     origin: true, // 或指定前端地址如 'http://localhost:3000'

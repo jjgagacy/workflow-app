@@ -1,4 +1,4 @@
-import { TextEmbeddingUsage } from "@/model_runtime/classes/embedding/embedding-usage.class"
+import { TextEmbeddingUsage } from "@/ai/model_runtime/classes/embedding/embedding-usage.class"
 
 describe('EmbeddingUsage', () => {
     describe('emptyUsage', () => {

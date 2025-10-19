@@ -1,7 +1,7 @@
 import 'reflect-metadata';
-import { PromptMessageRole } from "@/prompt/enums/prompt-message.enum";
 import { PromptMessage } from "../prompt-message.class";
 import { Type } from "class-transformer";
+import { PromptMessageRole } from '../../enums/prompt-message.enum';
 
 export class AssistantPromptMessageToolCallFunction {
     name: string;

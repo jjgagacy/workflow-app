@@ -60,13 +60,13 @@ import { JwtStrategy } from './auth/strategies/jwt.strategy';
 import { LocalStrategy } from './auth/strategies/local.strategy';
 import { AuthModule } from './auth/auth.module';
 import { LoginResolver } from './graphql/resolvers/login.resolver';
-import { AgentModule } from './agent/agent.module';
-import { ModelRuntimeModule } from './model_runtime/model_runtime.module';
-import { McpModule } from './mcp/mcp.module';
-import { PromptModule } from './prompt/prompt.module';
-import { RagModule } from './rag/rag.module';
-import { ToolModule } from './tool/tool.module';
-import { WorkflowModule } from './workflow/workflow.module';
+import { AgentModule } from './ai/agent/agent.module';
+import { ModelRuntimeModule } from './ai/model_runtime/model_runtime.module';
+import { McpModule } from './ai/mcp/mcp.module';
+import { PromptModule } from './ai/prompt/prompt.module';
+import { RagModule } from './ai/rag/rag.module';
+import { ToolModule } from './ai/tool/tool.module';
+import { WorkflowModule } from './ai/workflow/workflow.module';
 import { TenantEntity } from './account/entities/tenant.entity';
 import { TenantAccountEntity } from './account/entities/tenant-account.entity';
 import { ProviderEntity } from './account/entities/provider.entity';
@@ -77,6 +77,8 @@ import { ProviderModelSettingEntity } from './account/entities/provider-model-se
 import { OperationLogsEntity } from './account/entities/operation-log.entity';
 import { AccountIntegrateEntity } from './account/entities/account-integrate.entity';
 import { UserEntity } from './account/entities/user.entity';
+import { MonieModule } from './monie/monie.module';
+import { GlobalLogger } from './logger/logger.service';
 
 @Module({
   imports: [
@@ -145,7 +147,8 @@ import { UserEntity } from './account/entities/user.entity';
     RagModule,
     ToolModule,
     WorkflowModule,
-    AppModule
+    MonieModule,
+    AppModule,
   ],
   controllers: [AppController],
   providers: [
@@ -190,6 +193,7 @@ import { UserEntity } from './account/entities/user.entity';
     UpdatePermResolver,
     UpdateRoleResolver,
     LoginResolver,
+    GlobalLogger,
   ],
 })
 export class AppModule implements NestModule {

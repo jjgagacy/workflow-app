@@ -1,6 +1,6 @@
 // src/modules/model-runtime/entities/__tests__/llm-usage.spec.ts
 
-import { LLMUsage } from "@/model_runtime/classes/llm/llm-usage.class";
+import { LLMUsage } from "@/ai/model_runtime/classes/llm/llm-usage.class";
 
 describe('LLMUsage', () => {
   describe('constructor', () => {

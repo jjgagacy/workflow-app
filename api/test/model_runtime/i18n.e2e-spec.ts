@@ -1,4 +1,4 @@
-import { I18nObject } from "@/model_runtime/classes/model-runtime.class"
+import { I18nObject } from "@/ai/model_runtime/classes/model-runtime.class"
 
 describe('I18nObject Basic Functionality', () => {
     it('should create I18nObject with multiple language translations', () => {

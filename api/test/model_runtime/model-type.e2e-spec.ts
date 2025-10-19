@@ -1,5 +1,5 @@
-import { ModelType } from "@/model_runtime/enums/model-runtime.enum";
-import { ModelTypeUtil } from "@/model_runtime/utils/model-type.util";
+import { ModelType } from "@/ai/model_runtime/enums/model-runtime.enum";
+import { ModelTypeUtil } from "@/ai/model_runtime/utils/model-type.util";
 
 describe("ModelType (e2e)", () => {
 
