@@ -1,6 +1,6 @@
-import { Operate } from "@/common/database/entities/fields/operate";
 import { DepEntity } from "@/account/entities/dep.entity";
 import { RoleEntity } from "@/account/entities/role.entity";
+import { Operate } from "@/common/database/entities/fields/operate";
 import { BaseEntity, Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'account' })

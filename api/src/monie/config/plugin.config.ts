@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { defaultConfigValues } from "../constants/default-config-value";
+import { DefaultConfigValues } from "../constants/default-config-value";
 import { getSafeNumber } from "../helpers/safe-number";
 
 @Injectable()
@@ -21,7 +21,7 @@ export class PluginConfig {
     }
 
     pluginMaxPackageSize(): number {
-        const maxBytes = this.configService.get<number>('PLUGIN_MAX_PACKAGE_SIZE', defaultConfigValues.PLUGIN_MAX_PACKAGE_SIZE);
-        return getSafeNumber(maxBytes, defaultConfigValues.PLUGIN_MAX_PACKAGE_SIZE);
+        const maxBytes = this.configService.get<number>('PLUGIN_MAX_PACKAGE_SIZE', DefaultConfigValues.PLUGIN_MAX_PACKAGE_SIZE);
+        return getSafeNumber(maxBytes, DefaultConfigValues.PLUGIN_MAX_PACKAGE_SIZE);
     }
 }

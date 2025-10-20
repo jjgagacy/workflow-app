@@ -1,13 +1,11 @@
 import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, HttpException, HttpStatus } from "@nestjs/common";
-import { AbstractHttpAdapter, HttpAdapterHost } from "@nestjs/core";
+import { HttpAdapterHost } from "@nestjs/core";
 import { Response } from 'express';
-import { GqlArgumentsHost, GqlContextType } from '@nestjs/graphql';
+import { GqlArgumentsHost, GqlContextType, GqlExceptionFilter } from '@nestjs/graphql';
 import { GraphQLError } from 'graphql';
 
 @Catch(BadRequestException)
 export class BadExceptionFilter implements ExceptionFilter {
-    constructor(private readonly httpAdapter: AbstractHttpAdapter) {}
-
     catch(exception: BadRequestException, host: ArgumentsHost) {
         // In certain situations `httpAdapter` might not be available in the
         // constructor method, thus we should resolve it here.

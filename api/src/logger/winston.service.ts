@@ -62,7 +62,7 @@ export class WinstonLogger {
 
         // register custom colors with winston
         winston.addColors(customLevels.colors);
-        const isProduction = this.configService.get<string>('NODE_ENV') !== 'production';
+        const isProduction = this.configService.get<string>('NODE_ENV') === 'production';
 
         this.logger = winston.createLogger({
             level: this.monieConfig.winstonLogLevel(),
@@ -112,7 +112,7 @@ export class WinstonLogger {
             ]
         });
 
-        if (isProduction) {
+        if (!isProduction) {
             this.logger.add(
                 new winston.transports.Console()
             )

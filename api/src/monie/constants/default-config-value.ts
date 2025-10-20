@@ -1,4 +1,4 @@
-export const defaultConfigValues = {
+export const DefaultConfigValues = {
     CODE_EXECUTION_CONNECT_TIMEOUT: 10.0,
     CODE_EXECUTION_READ_TIMEOUT: 60.0,
     CODE_EXECUTION_WRITE_TIMEOUT: 60.0,

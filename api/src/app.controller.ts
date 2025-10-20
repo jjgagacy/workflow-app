@@ -4,6 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { MonieConfig } from './monie/monie.config';
 import { GlobalLogger, LogLevels } from './logger/logger.service';
 import { WinstonLogger } from './logger/winston.service';
+import { I18n, I18nContext } from 'nestjs-i18n';
+import { I18nTranslations } from './generated/i18n.generated';
 
 @Controller()
 export class AppController {
@@ -15,22 +17,11 @@ export class AppController {
   ) { }
 
   @Get()
-  getHello(): string {
-    console.log(this.monieConfig.redisHost())
+  async getHello(@I18n() i18n: I18nContext<I18nTranslations>) {
+    // console.log(this.monieConfig.redisHost())
     // this.logger.error("123");
     // this.winstonLogger.info('abc', { id: 1, name: 'foo' });
-    return this.appService.getHello();
-  }
-
-  getLogLevels(level: string): LogLevels[] {
-    const levels: Record<string, LogLevels[]> = {
-      error: ['error'],
-      warn: ['error', 'warn'],
-      info: ['error', 'warn', 'log'],
-      debug: ['error', 'warn', 'log', 'debug'],
-      verbose: ['error', 'warn', 'log', 'debug', 'verbose'],
-    };
-
-    return levels[level] || levels['info'];
+    // return this.appService.getHello();
+    return await i18n.t("hello.HELLO");
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { defaultConfigValues } from "../constants/default-config-value";
+import { DefaultConfigValues } from "../constants/default-config-value";
 import { getSafeNumber } from "../helpers/safe-number";
 import { toBoolean } from "../helpers/to-boolean";
 
@@ -16,13 +16,13 @@ export class SecurityConfig {
     }
 
     resetPasswordTokenExpiryMinutes(): number {
-        const min = this.configService.get<number>('RESET_PASSWORD_TOKEN_EXPIRY_MINUTES', defaultConfigValues.RESET_PASSWORD_TOKEN_EXPIRY_MINUTES);
-        return getSafeNumber(min, defaultConfigValues.RESET_PASSWORD_TOKEN_EXPIRY_MINUTES);
+        const min = this.configService.get<number>('RESET_PASSWORD_TOKEN_EXPIRY_MINUTES', DefaultConfigValues.RESET_PASSWORD_TOKEN_EXPIRY_MINUTES);
+        return getSafeNumber(min, DefaultConfigValues.RESET_PASSWORD_TOKEN_EXPIRY_MINUTES);
     }
 
     changeEmailTokenExpiryMinutes(): number {
-        const min = this.configService.get<number>('CHANGE_EMAIL_TOKEN_EXPIRY_MINUTES', defaultConfigValues.CHANGE_EMAIL_TOKEN_EXPIRY_MINUTES);
-        return getSafeNumber(min, defaultConfigValues.CHANGE_EMAIL_TOKEN_EXPIRY_MINUTES);
+        const min = this.configService.get<number>('CHANGE_EMAIL_TOKEN_EXPIRY_MINUTES', DefaultConfigValues.CHANGE_EMAIL_TOKEN_EXPIRY_MINUTES);
+        return getSafeNumber(min, DefaultConfigValues.CHANGE_EMAIL_TOKEN_EXPIRY_MINUTES);
     }
 
     loginCheckDisabled(): boolean {
@@ -36,6 +36,4 @@ export class SecurityConfig {
     adminApiKey(): string | undefined {
         return this.configService.get<string>('ADMIN_API_KEY');
     }
-
-
 }

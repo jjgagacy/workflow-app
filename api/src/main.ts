@@ -7,16 +7,17 @@ import { GlobalLogger } from './logger/logger.service';
 import { ConfigService } from '@nestjs/config';
 import { WinstonLogger } from './logger/winston.service';
 import { MonieConfig } from './monie/monie.config';
+import { GraphQLExceptionFilter } from './common/filters/graphql-exception.filter';
 
 async function bootstrap() {
   process.env.APP_ROOT = resolve(__dirname, '..');
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new TrimPipe());
-  const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new BadExceptionFilter(httpAdapter));
+  const httpAdapter = app.get(HttpAdapterHost);
   const configService = app.get(ConfigService);
   const monieConfig = app.get(MonieConfig)
   const logger = new WinstonLogger(configService, monieConfig);
+  app.useGlobalFilters(new GraphQLExceptionFilter(app.get(GlobalLogger)));
   app.useLogger(new GlobalLogger(configService, logger, monieConfig, 'MONIE'))
   // 启用 CORS
   app.enableCors({
@@ -44,5 +45,6 @@ async function bootstrap() {
   logger.alert(`Application is running on: ${appUrl}`);
   logger.crit(`Application is running on: ${appUrl}`);
   logger.notice(`Application is running on: ${appUrl}`);
+  console.log(`Application is running on: ${appUrl}`);
 }
 bootstrap();

@@ -81,6 +81,8 @@ import { MonieModule } from './monie/monie.module';
 import { GlobalLogger } from './logger/logger.service';
 import { WinstonLogger } from './logger/winston.service';
 import { LoggerModule } from './logger/logger.module';
+import { I18nModule, AcceptLanguageResolver, QueryResolver, HeaderResolver } from 'nestjs-i18n';
+
 
 @Module({
   imports: [
@@ -97,6 +99,11 @@ import { LoggerModule } from './logger/logger.module';
       playground: process.env.NODE_ENV !== 'production',
       introspection: process.env.NODE_ENV !== 'production',
       graphiql: true,
+      formatError: (formattedError, error) => {
+        //console.log('Original error:', error);
+        //console.log('Formatted error:', formattedError);
+        return formattedError;
+      }
     }),
     ConfigModule.forRoot({
       envFilePath: resolve(process.cwd(), `.env.${process.env.NODE_ENV || 'dev'}`),
@@ -115,9 +122,42 @@ import { LoggerModule } from './logger/logger.module';
         synchronize: process.env.NODE_ENV !== 'production', // development only
         autoLoadEntities: true,
         namingStrategy: new SnakeNamingStrategy(),
+        poolSize: configService.get<number>('POSTGRES_POOL_SIZE', 10), // 连接池大小
+        extra: {
+          connectionLimit: configService.get<number>('POSTGRES_CONNECTION_LIMIT', 10), // 连接限制
+          acquireTimeout: configService.get<number>('POSTGRES_ACQUIRE_TIMEOUT', 30000), // 获取连接超时时间30s(毫秒milliseconds)
+          timeout: configService.get<number>('POSTGRES_TIMEOUT', 30000),           // 查询超时 30 秒
+          connectTimeout: configService.get<number>('POSTGRES_CONNECT_TIMEOUT', 10000),    // 连接建立超时 10 秒
+          charset: configService.get<string>('POSTGRES_CHARSET', 'utf8mb4'),
+          timezone: configService.get<string>('POSTGRES_TIMEZONE', '+08:00'),
+        },
+        retryAttempts: configService.get<number>('POSTGRES_RETRY_ATTEMPTS', 10),        // 重试次数
+        retryDelay: configService.get<number>('POSTGRES_RETRY_DELAY', 3000),        // 重试延迟(毫秒)
         // logging: process.env.NODE_ENV !== 'production',
         // logger: 'advanced-console',
       }),
+      inject: [ConfigService],
+    }),
+    I18nModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        fallbackLanguage: configService.getOrThrow('FALLBACK_LANGUAGE'),
+        fallbacks: {
+          'zh': 'zh-Hans',
+          'zh-*': 'zh-Hans',
+          'zh-CN': 'zh-Hans',
+          'zh-TW': 'zh-Hans',
+        },
+        loaderOptions: {
+          path: join(__dirname, '/i18n/'),
+          watch: true,
+        },
+        typesOutputPath: join(__dirname, '../src/generated/i18n.generated.ts'),
+      }),
+      resolvers: [
+        { use: QueryResolver, options: ['lang'] },
+        AcceptLanguageResolver,
+        new HeaderResolver(['x-lang']),
+      ],
       inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([

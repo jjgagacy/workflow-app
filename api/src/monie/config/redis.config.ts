@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { toBoolean } from "../helpers/to-boolean";
-import { defaultConfigValues } from "../constants/default-config-value";
+import { DefaultConfigValues } from "../constants/default-config-value";
 
 @Injectable()
 export class RedisConfig {
@@ -9,11 +9,11 @@ export class RedisConfig {
     ) { }
 
     redisHost(): string {
-        return this.configService.get<string>('REDIS_HOST', defaultConfigValues.REDIS_HOST);
+        return this.configService.get<string>('REDIS_HOST', DefaultConfigValues.REDIS_HOST);
     }
 
     redisPort(): number {
-        const port = this.configService.get<number>('REDIS_PORT', defaultConfigValues.REDIS_PORT);
+        const port = this.configService.get<number>('REDIS_PORT', DefaultConfigValues.REDIS_PORT);
         return Number(port);
     }
 
@@ -31,11 +31,11 @@ export class RedisConfig {
     }
 
     redisUseSsl(): boolean {
-        return toBoolean(this.configService.get<boolean>('REDIS_USE_SSL', defaultConfigValues.REDIS_USE_SSL));
+        return toBoolean(this.configService.get<boolean>('REDIS_USE_SSL', DefaultConfigValues.REDIS_USE_SSL));
     }
 
     redisUseCluster(): boolean {
-        return toBoolean(this.configService.get<boolean>('REDIS_USE_CLUSTER', defaultConfigValues.REDIS_USE_CLUSTER));
+        return toBoolean(this.configService.get<boolean>('REDIS_USE_CLUSTER', DefaultConfigValues.REDIS_USE_CLUSTER));
     }
 
     redisClusters(): string | undefined {
@@ -47,11 +47,11 @@ export class RedisConfig {
     }
 
     redisSerializationProtocol(): number {
-        const version = this.configService.get<number>('REDIS_SERIALIZATION_PROTOCOL', defaultConfigValues.REDIS_SERIALIZATION_PROTOCOL);
+        const version = this.configService.get<number>('REDIS_SERIALIZATION_PROTOCOL', DefaultConfigValues.REDIS_SERIALIZATION_PROTOCOL);
         return Number(version);
     }
 
     redisEnableClientSideCache(): boolean {
-        return toBoolean(this.configService.get('REDIS_ENABLE_CLIENT_SIDE_CACHE', defaultConfigValues.REDIS_ENABLE_CLIENT_SIDE_CACHE))
+        return toBoolean(this.configService.get('REDIS_ENABLE_CLIENT_SIDE_CACHE', DefaultConfigValues.REDIS_ENABLE_CLIENT_SIDE_CACHE))
     }
 }

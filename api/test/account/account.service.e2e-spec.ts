@@ -128,7 +128,7 @@ describe("Account Service (e2e)", () => {
         await roleRepository.save(role);
         await roleRepository.save(role2);
 
-        console.log('Role created: ', role.id, role2.id);
+        // console.log('Role created: ', role.id, role2.id);
 
         const accountData = {
             username: 'alex test',
@@ -148,7 +148,7 @@ describe("Account Service (e2e)", () => {
         expect(account).toBeDefined();
         expect(account.username).toBe('alex test');
         expect(account.roles.length).toBe(2);
-        console.log("Account created successfully", account.id);
+        // console.log("Account created successfully", account.id);
     });
 
     it("should get a list of accounts", async () => {
@@ -162,7 +162,7 @@ describe("Account Service (e2e)", () => {
         });
         expect(accounts.data).toBeDefined();
         expect(accounts.total).toBeDefined();
-        console.log("Accounts fetched successfully", accounts.data);
+        // console.log("Accounts fetched successfully", accounts.data);
     });
 
     it("should get account roles", async () => {
@@ -199,7 +199,7 @@ describe("Account Service (e2e)", () => {
 
         const roles = await accountRoleService.getRoles(account);
         expect(roles.length).toBe(1);
-        console.log("get account roles", roles);
+        // console.log("get account roles", roles);
     });
 
     it('should assign account roles', async () => {
@@ -236,7 +236,7 @@ describe("Account Service (e2e)", () => {
         const assignRole = await accountRoleService.assignRoles(account.id, [role2.id]);
         expect(assignRole).toBeTruthy();
 
-        console.log("account assign roles", assignRole);
+        // console.log("account assign roles", assignRole);
 
         const role = new RoleEntity();
         role.name = 'admin test';
@@ -260,8 +260,6 @@ describe("Account Service (e2e)", () => {
         });
         expect(accountNew).toBeDefined();
         expect(accountNew?.roles.length).toBe(2);
-
-        console.log("account append roles", accountNew);
-
+        // console.log("account append roles", accountNew);
     });
 });

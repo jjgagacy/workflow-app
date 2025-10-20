@@ -1,9 +1,10 @@
-import { Module } from "@nestjs/common";
+import { Global, Module } from "@nestjs/common";
 import { MonieConfig } from "./monie.config";
-import { FeatureService } from "./feature.service";
+import { SystemService } from "./system.service";
 
+@Global()
 @Module({
-    providers: [MonieConfig, FeatureService],
-    exports: [MonieConfig, FeatureService],
+    providers: [MonieConfig, SystemService],
+    exports: [MonieConfig, SystemService],
 })
 export class MonieModule { } 

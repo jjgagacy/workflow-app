@@ -1,10 +1,10 @@
 import { format } from "path";
-import { ImagePromptMessageContent, TextPromptMessageContent } from "@/prompt/classes/message-types.class";
-import { AssistantPromptMessage, AssistantPromptMessageToolCall, AssistantPromptMessageToolCallFunction } from "@/prompt/classes/messages/assistant-message.class";
-import { UserPromptMessage } from "@/prompt/classes/messages/user-message.class";
-import { PromptMessage } from "@/prompt/classes/prompt-message.class";
-import { PromptMessageContentType, PromptMessageRole } from "@/prompt/enums/prompt-message.enum";
-import { PromptMessageRoleUtil } from "@/prompt/utils/message.util";
+import { ImagePromptMessageContent, TextPromptMessageContent } from "@/ai/prompt/classes/message-types.class";
+import { AssistantPromptMessage, AssistantPromptMessageToolCall, AssistantPromptMessageToolCallFunction } from "@/ai/prompt/classes/messages/assistant-message.class";
+import { UserPromptMessage } from "@/ai/prompt/classes/messages/user-message.class";
+import { PromptMessage } from "@/ai/prompt/classes/prompt-message.class";
+import { PromptMessageContentType, PromptMessageRole } from "@/ai/prompt/enums/prompt-message.enum";
+import { PromptMessageRoleUtil } from "@/ai/prompt/utils/message.util";
 import { plainToClass } from "class-transformer";
 
 describe("PromptMessage (e2e)", () => {

@@ -21,6 +21,8 @@ import { RoleService } from './role.service';
 import { ModulePermManageService } from './module-perm-manage.service';
 import { AuthService } from '@/auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { MonieConfig } from '@/monie/monie.config';
+import { SystemService } from '@/monie/system.service';
 
 @Global()
 @Module({
@@ -51,6 +53,8 @@ import { JwtService } from '@nestjs/jwt';
         ModulePermManageService,
         AuthService,
         JwtService,
+        MonieConfig,
+        SystemService,
     ],
     exports: [
         AccountService,

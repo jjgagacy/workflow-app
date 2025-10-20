@@ -2,7 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
-import { AppModule } from 'src/app.module';
+import { AppModule } from '@/app.module';
+import { GraphQLExceptionFilter } from '@/common/filters/graphql-exception.filter';
+import { GlobalLogger } from '@/logger/logger.service';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication<App>;
@@ -13,6 +15,7 @@ describe('AppController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalFilters(new GraphQLExceptionFilter(app.get(GlobalLogger)));
     await app.init();
   });
 
@@ -23,24 +26,29 @@ describe('AppController (e2e)', () => {
   it('/ (account auth)', async () => {
     const query = `
         mutation {
-      		login(input: {username: "alex", password:"123456"}) {
+      		login(input: {username: "admin", password:"123456"}) {
         		access_token
           }
       }
     `;
-      const response = await request(app.getHttpServer())
-          .post('/graphql')
-          .send({ query });
+    const response = await request(app.getHttpServer())
+      .post('/graphql')
+      .send({ query });
 
-      // 打印完整响应（调试用）
-    //   console.log(JSON.stringify(response.body, null, 2));
+    // 打印完整响应（调试用）
+    // console.log('statusCode', response.status);
+    // console.log(JSON.stringify(response.body, null, 2));
 
-      if (response.body.errors) {
-          console.error('GraphQL Errors:', response.body.errors);
-        //   throw new Error(JSON.stringify(response.body.errors));
-      }
+    if (response.body.errors) {
+      console.error('GraphQL Errors:', response.body.errors);
+    }
 
-      expect(response.status).toBe(200);
-      expect(response.body.data.login).toHaveProperty('access_token');
+    expect(response.status).toBe(200);
+    expect(response.body.data.login).toHaveProperty('access_token');
+  });
+
+  afterEach(async () => {
+    // 关闭 NestJS 应用
+    await app.close();
   });
 });

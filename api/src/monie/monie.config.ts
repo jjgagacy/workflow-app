@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { EnterpriseConfig } from "./config/enterprise.config";
 import { applyMixins } from "@/common/utils/mixins";
-import { DeploymentConfig } from "./config/deplyment.config";
+import { DeploymentConfig } from "./config/deployment.config";
 import { RedisConfig } from "./config/redis.config";
 import { AccountConfig } from "./config/account.config";
 import { AppExecutionConfig } from "./config/app-execution.config";
@@ -15,6 +15,7 @@ import { LoggingConfig } from "./config/logging.config";
 import { PluginConfig } from "./config/plugin.config";
 import { SecurityConfig } from "./config/security.config";
 import { BillingConfig } from "./config/billing.config";
+import { LoginConfig } from "./config/login.config";
 
 @Injectable()
 export class MonieConfig {
@@ -36,6 +37,7 @@ export interface MonieConfig extends
     HttpRequestConfig,
     InnerApiConfig,
     LoggingConfig,
+    LoginConfig,
     PluginConfig,
     RedisConfig,
     SecurityConfig { }
@@ -52,6 +54,7 @@ applyMixins(MonieConfig, [
     HttpRequestConfig,
     InnerApiConfig,
     LoggingConfig,
+    LoginConfig,
     PluginConfig,
     RedisConfig,
     SecurityConfig

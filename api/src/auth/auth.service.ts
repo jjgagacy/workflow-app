@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { AccountService } from "@/account/account.service";
 import { errorObject } from "@/common/types/errors/error";
 import * as bcypt from 'bcrypt';
 import { LoginResponse } from "@/graphql/types/login-response.type";
 import { JWT_CONSTANTS } from "@/config/constants";
+import { Http } from "winston/lib/winston/transports";
 
 @Injectable()
 export class AuthService {
@@ -22,7 +23,7 @@ export class AuthService {
             const { password, ...rest } = account;
             return rest;
         }
-        return null;
+        throw new BadRequestException(errorObject('密码错误', { key: name }));
     }
 
     async login(user: any): Promise<LoginResponse> {

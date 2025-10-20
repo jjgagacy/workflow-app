@@ -19,10 +19,10 @@ describe('EmbeddingUsage', () => {
         it('should create usage from metadata with provided values', () => {
             const metadata = {
                 tokens: 1500,
-                total_tokens: 1500,
-                unit_price: 0.000001,
-                price_per_unit: 1000,
-                total_price: 0.0015,
+                totalTokens: 1500,
+                unitPrice: 0.000001,
+                pricePerUnit: 1000,
+                totalPrice: 0.0015,
                 currency: 'CNY',
                 latency: 0.5
             };
@@ -56,19 +56,19 @@ describe('EmbeddingUsage', () => {
         it('should add two usage instances correctly', () => {
             const usage1 = TextEmbeddingUsage.fromMetadata({
                 tokens: 1000,
-                total_tokens: 1000,
-                unit_price: 0.000001,
-                price_per_unit: 1000,
-                total_price: 0.001,
+                totalTokens: 1000,
+                unitPrice: 0.000001,
+                pricePerUnit: 1000,
+                totalPrice: 0.001,
                 currency: "USD",
                 latency: 0.3
             });
             const usage2 = TextEmbeddingUsage.fromMetadata({
                 tokens: 500,
-                total_tokens: 500,
-                unit_price: 0.000001,
-                price_per_unit: 1000,
-                total_price: 0.0005,
+                totalTokens: 500,
+                unitPrice: 0.000001,
+                pricePerUnit: 1000,
+                totalPrice: 0.0005,
                 currency: "USD",
                 latency: 0.2
             });
