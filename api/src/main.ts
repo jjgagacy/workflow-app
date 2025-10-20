@@ -6,6 +6,7 @@ import { BadExceptionFilter } from './common/filters/bad-exception.filter';
 import { GlobalLogger } from './logger/logger.service';
 import { ConfigService } from '@nestjs/config';
 import { WinstonLogger } from './logger/winston.service';
+import { MonieConfig } from './monie/monie.config';
 
 async function bootstrap() {
   process.env.APP_ROOT = resolve(__dirname, '..');
@@ -14,8 +15,9 @@ async function bootstrap() {
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new BadExceptionFilter(httpAdapter));
   const configService = app.get(ConfigService);
-  const logger = new WinstonLogger(configService);
-  app.useLogger(new GlobalLogger(configService, logger, 'MONIE'))
+  const monieConfig = app.get(MonieConfig)
+  const logger = new WinstonLogger(configService, monieConfig);
+  app.useLogger(new GlobalLogger(configService, logger, monieConfig, 'MONIE'))
   // 启用 CORS
   app.enableCors({
     origin: true, // 或指定前端地址如 'http://localhost:3000'

@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { toBoolean } from "../helpers/to-boolean";
+import { defaultConfigValues } from "../constants/default-config-value";
 
 @Injectable()
 export class RedisConfig {
@@ -8,11 +9,11 @@ export class RedisConfig {
     ) { }
 
     redisHost(): string {
-        return this.configService.get<string>('REDIS_HOST', 'localhost');
+        return this.configService.get<string>('REDIS_HOST', defaultConfigValues.REDIS_HOST);
     }
 
     redisPort(): number {
-        const port = this.configService.get<number>('REDIS_PORT', 6379);
+        const port = this.configService.get<number>('REDIS_PORT', defaultConfigValues.REDIS_PORT);
         return Number(port);
     }
 
@@ -30,11 +31,11 @@ export class RedisConfig {
     }
 
     redisUseSsl(): boolean {
-        return toBoolean(this.configService.get<boolean>('REDIS_USE_SSL', false));
+        return toBoolean(this.configService.get<boolean>('REDIS_USE_SSL', defaultConfigValues.REDIS_USE_SSL));
     }
 
     redisUseCluster(): boolean {
-        return toBoolean(this.configService.get<boolean>('REDIS_USE_CLUSTER', false));
+        return toBoolean(this.configService.get<boolean>('REDIS_USE_CLUSTER', defaultConfigValues.REDIS_USE_CLUSTER));
     }
 
     redisClusters(): string | undefined {
@@ -46,11 +47,11 @@ export class RedisConfig {
     }
 
     redisSerializationProtocol(): number {
-        const version = this.configService.get<number>('REDIS_SERIALIZATION_PROTOCOL', 3);
+        const version = this.configService.get<number>('REDIS_SERIALIZATION_PROTOCOL', defaultConfigValues.REDIS_SERIALIZATION_PROTOCOL);
         return Number(version);
     }
 
     redisEnableClientSideCache(): boolean {
-        return toBoolean(this.configService.get('REDIS_ENABLE_CLIENT_SIDE_CACHE', false))
+        return toBoolean(this.configService.get('REDIS_ENABLE_CLIENT_SIDE_CACHE', defaultConfigValues.REDIS_ENABLE_CLIENT_SIDE_CACHE))
     }
 }

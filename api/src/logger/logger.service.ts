@@ -1,6 +1,7 @@
 import { ConsoleLogger, Injectable, LoggerService, Optional } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { WinstonLogger } from "./winston.service";
+import { MonieConfig } from "@/monie/monie.config";
 
 export type LogLevels = 'error' | 'warn' | 'log' | 'debug' | 'verbose';
 export interface LogContext {
@@ -15,6 +16,7 @@ export class GlobalLogger extends ConsoleLogger implements LoggerService {
     constructor(
         private readonly configService: ConfigService,
         private readonly winstonLogger: WinstonLogger,
+        private readonly monieConfig: MonieConfig,
         @Optional() context?: string,
     ) {
         super()

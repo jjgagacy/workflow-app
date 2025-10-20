@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import 'winston-daily-rotate-file';
+import { MonieConfig } from '@/monie/monie.config';
 
 const customLevels = {
     levels: {
@@ -47,10 +48,13 @@ export class WinstonLogger {
     private readonly logger: winston.Logger;
 
     constructor(
-        private readonly configService: ConfigService
+        private readonly configService: ConfigService,
+        private readonly monieConfig: MonieConfig,
     ) {
         const rootDir = process.cwd();
-        const logDir = path.join(rootDir, 'public', this.configService.get<string>('WINSTON_LOG_DIR', 'logs'))
+        const filename = this.monieConfig.winstonFileName();
+        const rotateFilename = this.monieConfig.winstonRotateFileName();
+        const logDir = path.join(rootDir, 'public', this.configService.get<string>('WINSTON_LOG_DIR', this.monieConfig.winstonLogDir()))
 
         if (!fs.existsSync(logDir)) {
             fs.mkdirSync(logDir, { recursive: true });
@@ -61,7 +65,7 @@ export class WinstonLogger {
         const isProduction = this.configService.get<string>('NODE_ENV') !== 'production';
 
         this.logger = winston.createLogger({
-            level: this.configService.get<string>('WINSTON_LOG_LEVEL', 'notice'),
+            level: this.monieConfig.winstonLogLevel(),
             levels: customLevels.levels,
             format: winston.format.combine(
                 winston.format.timestamp(),
@@ -86,24 +90,25 @@ export class WinstonLogger {
                 }),
             ),
             transports: [
-                new winston.transports.File({
-                    level: 'data',
-                    filename: 'application.log',
-                    dirname: logDir,
-                    format: winston.format.uncolorize(),
-                }),
                 ...(isProduction ? [
                     new winston.transports.DailyRotateFile({
-                        level: 'info', // 生产环境建议使用 info 而不是 data
-                        filename: 'application-%DATE%.log',
+                        level: this.monieConfig.winstonLogLevel(), // 生产环境建议使用 info 而不是 data
+                        filename: rotateFilename != '' ? rotateFilename : filename,
                         dirname: logDir,
                         format: winston.format.uncolorize(),
-                        zippedArchive: true,
-                        datePattern: 'YYYY-MM-DD',
-                        maxFiles: '20d',
-                        maxSize: '30m',
+                        zippedArchive: this.monieConfig.winstonZippedArchive(),
+                        datePattern: this.monieConfig.winstonDatePattern(),
+                        maxFiles: this.monieConfig.winstonMaxFiles(),
+                        maxSize: this.monieConfig.winstonMaxSize(),
                     })
-                ] : []),
+                ] : [
+                    new winston.transports.File({
+                        level: this.monieConfig.winstonLogLevel(),
+                        filename: filename,
+                        dirname: logDir,
+                        format: winston.format.uncolorize(),
+                    })
+                ]),
             ]
         });
 
