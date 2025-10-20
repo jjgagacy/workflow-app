@@ -6,11 +6,9 @@ import { Path } from "nestjs-i18n";
 /* prettier-ignore */
 export type I18nTranslations = {
     "account": {
-        "HELLO": string;
-        "PRODUCT": {
-            "NEW": string;
-        };
-        "Foo": string;
+        "PASSWORD_INVALID": string;
+    };
+    "auth": {
         "PASSWORD_INVALID": string;
     };
     "hello": {

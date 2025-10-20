@@ -27,7 +27,7 @@ export class AuthService {
             const { password, ...rest } = account;
             return rest;
         }
-        throw new BadRequestException(errorObject(this.i18n.t('account.PASSWORD_INVALID'), { key: name }));
+        throw new BadRequestException(errorObject(this.i18n.t('auth.PASSWORD_INVALID'), { key: name }));
     }
 
     async login(user: any): Promise<LoginResponse> {

@@ -81,9 +81,7 @@ import { MonieModule } from './monie/monie.module';
 import { GlobalLogger } from './logger/logger.service';
 import { WinstonLogger } from './logger/winston.service';
 import { LoggerModule } from './logger/logger.module';
-import { I18nModule, AcceptLanguageResolver, QueryResolver, HeaderResolver } from 'nestjs-i18n';
 import { I18nGlobalModule } from './i18n-global/i18n-global.module';
-
 
 @Module({
   imports: [

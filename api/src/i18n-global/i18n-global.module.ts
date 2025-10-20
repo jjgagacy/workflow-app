@@ -16,10 +16,10 @@ import { join } from 'path';
                     'zh-TW': 'zh-Hans',
                 },
                 loaderOptions: {
-                    path: join(__dirname, '/../i18n/'),
+                    path: join(process.cwd(), 'src/i18n/'),
                     watch: true,
                 },
-                typesOutputPath: join(__dirname, '/../../src/generated/i18n.generated.ts'),
+                typesOutputPath: join(process.cwd(), 'src/generated/i18n.generated.ts'),
             }),
             resolvers: [
                 { use: QueryResolver, options: ['lang'] },
