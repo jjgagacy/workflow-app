@@ -3,5 +3,6 @@
     "PRODUCT": {
         "NEW": "New Product: {name}"
     },
-    "Foo": "foo"
+    "Foo": "foo",
+    "PASSWORD_INVALID": "password invalid"
 }

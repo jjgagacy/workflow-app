@@ -11,6 +11,7 @@ export type I18nTranslations = {
             "NEW": string;
         };
         "Foo": string;
+        "PASSWORD_INVALID": string;
     };
     "hello": {
         "HELLO": string;

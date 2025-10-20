@@ -6,11 +6,15 @@ import * as bcypt from 'bcrypt';
 import { LoginResponse } from "@/graphql/types/login-response.type";
 import { JWT_CONSTANTS } from "@/config/constants";
 import { Http } from "winston/lib/winston/transports";
+import { I18n, I18nContext, I18nService } from "nestjs-i18n";
+import { I18nTranslations } from "@/generated/i18n.generated";
 
 @Injectable()
 export class AuthService {
     constructor(private readonly jwtService: JwtService,
-        private readonly accountService: AccountService
+        private readonly accountService: AccountService,
+        @I18n()
+        private readonly i18n: I18nService<I18nTranslations>
     ) { }
 
     async validateUser(name: string, password: string): Promise<any> {
@@ -23,7 +27,7 @@ export class AuthService {
             const { password, ...rest } = account;
             return rest;
         }
-        throw new BadRequestException(errorObject('密码错误', { key: name }));
+        throw new BadRequestException(errorObject(this.i18n.t('account.PASSWORD_INVALID'), { key: name }));
     }
 
     async login(user: any): Promise<LoginResponse> {

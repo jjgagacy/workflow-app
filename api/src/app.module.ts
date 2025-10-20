@@ -82,6 +82,7 @@ import { GlobalLogger } from './logger/logger.service';
 import { WinstonLogger } from './logger/winston.service';
 import { LoggerModule } from './logger/logger.module';
 import { I18nModule, AcceptLanguageResolver, QueryResolver, HeaderResolver } from 'nestjs-i18n';
+import { I18nGlobalModule } from './i18n-global/i18n-global.module';
 
 
 @Module({
@@ -138,28 +139,6 @@ import { I18nModule, AcceptLanguageResolver, QueryResolver, HeaderResolver } fro
       }),
       inject: [ConfigService],
     }),
-    I18nModule.forRootAsync({
-      useFactory: (configService: ConfigService) => ({
-        fallbackLanguage: configService.getOrThrow('FALLBACK_LANGUAGE'),
-        fallbacks: {
-          'zh': 'zh-Hans',
-          'zh-*': 'zh-Hans',
-          'zh-CN': 'zh-Hans',
-          'zh-TW': 'zh-Hans',
-        },
-        loaderOptions: {
-          path: join(__dirname, '/i18n/'),
-          watch: true,
-        },
-        typesOutputPath: join(__dirname, '../src/generated/i18n.generated.ts'),
-      }),
-      resolvers: [
-        { use: QueryResolver, options: ['lang'] },
-        AcceptLanguageResolver,
-        new HeaderResolver(['x-lang']),
-      ],
-      inject: [ConfigService],
-    }),
     TypeOrmModule.forFeature([
       DepEntity,
       RoleEntity,
@@ -192,6 +171,7 @@ import { I18nModule, AcceptLanguageResolver, QueryResolver, HeaderResolver } fro
     MonieModule,
     AppModule,
     LoggerModule,
+    I18nGlobalModule,
   ],
   controllers: [AppController],
   providers: [

@@ -67,8 +67,8 @@ import { SystemService } from '@/monie/system.service';
         ModulePermService,
         PermService,
         RoleService,
-        ModulePermManageService,
         AuthService,
+        ModulePermManageService,
         JwtService,
     ]
 })
