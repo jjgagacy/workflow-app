@@ -1,16 +1,18 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { AccountEntity } from "./entities/account.entity";
 import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, Like, Repository } from "typeorm";
 import { CreateAccountDto } from "./account/dto/create-account.dto";
-import { validate } from "class-validator";
-import { errorObject } from "@/common/types/errors/error";
 import * as bcrypt from 'bcrypt';
 import { PASSWORD_SALT } from "@/config/constants";
 import { RoleService } from "@/account/role.service";
 import { plainToInstance } from "class-transformer";
 import { UpdateAccountDto } from "./account/dto/update-account.dto";
 import { QueryAccountDto } from "./account/dto/query-account.dto";
+import { throwIfDtoValidateFail } from "@/common/utils/validation";
+import { I18nService } from "nestjs-i18n";
+import { BadRequestGraphQLException, InvalidInputGraphQLException } from "@/common/exceptions";
+import { I18nTranslations } from "@/generated/i18n.generated";
 
 @Injectable()
 export class AccountService {
@@ -18,6 +20,7 @@ export class AccountService {
         @InjectRepository(AccountEntity)
         private readonly accountRepository: Repository<AccountEntity>,
         private readonly roleService: RoleService,
+        private readonly i18n: I18nService<I18nTranslations>,
     ) { }
 
     async getByUserName(username: string, roles: boolean = false): Promise<AccountEntity | null> {
@@ -36,17 +39,12 @@ export class AccountService {
 
     async create(dto: CreateAccountDto): Promise<AccountEntity> {
         const validateObj = plainToInstance(CreateAccountDto, dto);
-        const errors = await validate(validateObj);
-        if (errors.length > 0) {
-            throw new BadRequestException(
-                errorObject('DTO验证失败', { key: errors.toString() }),
-            );
-        }
+        const errors = await this.i18n.validate(validateObj);
+        throwIfDtoValidateFail(errors);
+
         const existingAccount = await this.getByUserName(dto.username);
         if (existingAccount) {
-            throw new BadRequestException(
-                errorObject('用户已存在', { key: dto.username }),
-            );
+            throw new BadRequestGraphQLException(this.i18n.t('account.ACCOUNT_EXIST', { args: { name: dto.username } }));
         }
         const accountEntity = this.accountRepository.create({
             ...this.mapBaseFields(dto),
@@ -61,29 +59,19 @@ export class AccountService {
 
     async update(dto: UpdateAccountDto): Promise<AccountEntity | null> {
         const validateObj = plainToInstance(UpdateAccountDto, dto);
-        const errors = await validate(validateObj);
-        if (errors.length > 0) {
-            throw new BadRequestException(
-                errorObject('DTO验证失败', { key: errors.toString() }),
-            );
-        }
+        const errors = await this.i18n.validate(validateObj);
+        throwIfDtoValidateFail(errors);
         if (dto.id === undefined) {
-            throw new BadRequestException(
-                errorObject('缺少id', { key: 'id' }),
-            );
+            throw new InvalidInputGraphQLException(this.i18n.t('system.INVALID_PARAM', { args: { name: 'id', value: dto.id } }));
         }
         const account = await this.getById(dto.id);
         if (!account) {
-            throw new BadRequestException(
-                errorObject('用户不存在', { key: dto.id }),
-            );
+            throw new InvalidInputGraphQLException(this.i18n.t('account.ACCOUNT_ID_NOT_EXISTS'));
         }
         if (dto.username && dto.username !== account.username) {
             const accountWithSameUsername = await this.getByUserName(dto.username);
             if (accountWithSameUsername) {
-                throw new BadRequestException(
-                    errorObject('用户名已存在', { key: dto.username }),
-                );
+                throw new BadRequestGraphQLException(this.i18n.t('account.ACCOUNT_EXIST', { args: { name: dto.username } }))
             }
         }
 
@@ -109,9 +97,7 @@ export class AccountService {
     async delete(id: number): Promise<void> {
         const existingAccount = await this.getById(id);
         if (!existingAccount) {
-            throw new BadRequestException(
-                errorObject('用户不存在', { key: id }),
-            );
+            throw new InvalidInputGraphQLException(this.i18n.t('account.ACCOUNT_ID_NOT_EXISTS'));
         }
         await this.accountRepository.delete(id);
     }
@@ -186,15 +172,11 @@ export class AccountService {
     async toggleStatus(dto: UpdateAccountDto): Promise<void> {
         const accountId = dto.id;
         if (!accountId) {
-            throw new BadRequestException(
-                errorObject('参数错误', { key: accountId }),
-            );
+            throw new InvalidInputGraphQLException(this.i18n.t('system.INVALID_PARAM', { args: { name: 'id', alue: dto.id } }))
         }
         const existingAccount = await this.getById(accountId);
         if (!existingAccount) {
-            throw new BadRequestException(
-                errorObject('用户不存在', { key: accountId }),
-            );
+            throw new InvalidInputGraphQLException(this.i18n.t('account.ACCOUNT_ID_NOT_EXISTS'));
         }
         const newStatus = existingAccount.status === 1 ? 0 : 1;
         const updateFields = {

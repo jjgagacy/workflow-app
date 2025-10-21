@@ -4,6 +4,7 @@ import { GqlContextType, GqlExceptionFilter } from "@nestjs/graphql";
 import { GraphQLException } from "../exceptions/graphql.exception";
 import { GraphqlErrorCodes } from "../constants/graphql-error-codes";
 import { Response } from 'express';
+import { getErrorDetails } from "../utils/error";
 
 @Catch()
 export class GraphQLExceptionFilter implements GqlExceptionFilter {
@@ -12,7 +13,12 @@ export class GraphQLExceptionFilter implements GqlExceptionFilter {
     ) { }
 
     catch(exception: any, host: ArgumentsHost) {
-        this.logger.log("GraphQLExceptionFilter", exception);
+        if (exception instanceof Error) {
+            this.logger.error('GraphQLExceptionFilter', getErrorDetails(exception));
+        } else {
+            // todo 其他类型的错误
+            this.logger.log("GraphQLExceptionFilter", exception);
+        }
         const contextType = host.getType<GqlContextType>();
 
         if (contextType === "graphql") {

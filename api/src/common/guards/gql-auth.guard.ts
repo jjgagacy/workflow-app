@@ -2,14 +2,13 @@ import { ExecutionContext, Injectable, SetMetadata } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { GqlExecutionContext } from "@nestjs/graphql";
 import { AuthGuard } from "@nestjs/passport";
-import { Observable } from "rxjs";
 
 export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 
 @Injectable()
 export class GqlAuthGuard extends AuthGuard('jwt') {
-    constructor(private readonly reflector: Reflector) { 
+    constructor(private readonly reflector: Reflector) {
         super();
     }
 

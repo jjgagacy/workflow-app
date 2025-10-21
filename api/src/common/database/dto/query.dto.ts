@@ -1,5 +1,6 @@
 import { BadRequestException } from "@nestjs/common";
 import { PAGE_LIMIT_MAX } from "@/config/constants";
+import { BadRequestGraphQLException } from "@/common/exceptions";
 
 export class QueryDto {
     page?: number;
@@ -15,7 +16,7 @@ export class QueryDto {
 
     checkLimitAndThrow() {
         if (this.limit !== undefined && this.limit > PAGE_LIMIT_MAX) {
-            throw new BadRequestException('Requested page size exceeds maximum allowed limit of ' + PAGE_LIMIT_MAX);
+            throw new BadRequestGraphQLException(`The number of entries per page cannot exceed ${PAGE_LIMIT_MAX}.`);
         }
     }
 }

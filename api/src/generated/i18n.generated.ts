@@ -7,12 +7,59 @@ import { Path } from "nestjs-i18n";
 export type I18nTranslations = {
     "account": {
         "PASSWORD_INVALID": string;
+        "PASSWORD_NOT_EMPTY": string;
+        "PASSWORD_NEW_NOT_EMPTY": string;
+        "PASSWORD_FORMAT_INVALID": string;
+        "PASSWORD_UPDATE_FAILED": string;
+        "ACCOUNT_NOT_EXIST": string;
+        "ACCOUNT_EXIST": string;
+        "ACCOUNT_ID_NOT_EXISTS": string;
     };
     "auth": {
         "PASSWORD_INVALID": string;
     };
     "hello": {
         "HELLO": string;
+    };
+    "system": {
+        "DTO_VALIDATION_ERROR": string;
+        "MENU_EXISTS": string;
+        "MENU_KEY_EXISTS": string;
+        "MENU_NOT_EXIST": string;
+        "MENU_ROLE_SCOPE_NOT_EMPTY": string;
+        "MENU_UPDATE_FAILED": string;
+        "MODULE_NOT_EXIST": string;
+        "MODULE_EXIST": string;
+        "MODULE_KEY_NOT_EMPTY": string;
+        "PERM_KEY_EXISTS": string;
+        "PERM_KEY_NOT_EXISTS": string;
+        "PERM_NOT_EXIST": string;
+        "PERM_KEY_NOT_EMPTY": string;
+        "PERM_LEVEL_KEY_EXISTS": string;
+        "PERM_LEVEL_NOT_EXIST": string;
+        "ROLE_KEY_EXISTS": string;
+        "ROLE_NAME_EXISTS": string;
+        "ROLE_ID_NOT_EXIST": string;
+        "ROLE_NOT_EXIST": string;
+        "ROLE_EXISTS": string;
+        "ROLE_NOT_FOUND": string;
+        "ROLE_CEATE_FAILED": string;
+        "INVALID_PARAM": string;
+        "EMPTY_PARAM": string;
+        "CHILD_DUPLICATE": string;
+        "DEP_KEY_NOT_EXIST": string;
+        "DEP_NOT_EXIST": string;
+        "DEP_EXISTS": string;
+        "ID_NOT_EXIST": string;
+        "KEY_DUPLICATE": string;
+        "PAGE_SIZE_LIMIT": string;
+        "CREATE_FAILED_ID_INVALID": string;
+        "UPDATE_FAILED": string;
+        "DELETE_FAILED": string;
+    };
+    "validation": {
+        "NOT_EMPTY": string;
+        "INVALID_EMAIL": string;
     };
 };
 /* prettier-ignore */

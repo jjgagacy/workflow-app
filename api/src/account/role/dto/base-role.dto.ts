@@ -1,7 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
 
 export abstract class BaseRoleDto {
-  @IsNotEmpty({ message: "角色Key不能为空" })
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   key: string;
   parent: string;
   status?: number;

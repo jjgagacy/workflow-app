@@ -1,20 +1,23 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ModuleEntity } from "./entities/module.entity";
 import { FindManyOptions, FindOptionsWhere, Not, QueryRunner, Repository } from "typeorm";
 import { plainToInstance } from "class-transformer";
-import { validate } from "class-validator";
-import { errorObject } from "@/common/types/errors/error";
 import { QueryModuleDto } from "./module/dto/query-module.dto";
 import { ModulePermEntity } from "./entities/module-perm.entity";
 import { CreateModuleDto } from "./module/dto/create-module.dto";
 import { UpdateModuleDto } from "./module/dto/update-module.dto";
+import { I18nService } from "nestjs-i18n";
+import { I18nTranslations } from "@/generated/i18n.generated";
+import { throwIfDtoValidateFail } from "@/common/utils/validation";
+import { BadRequestGraphQLException } from "@/common/exceptions";
 
 @Injectable()
 export class ModuleService {
     constructor(
         @InjectRepository(ModuleEntity)
-        private readonly moduleRepository: Repository<ModuleEntity>
+        private readonly moduleRepository: Repository<ModuleEntity>,
+        private readonly i18n: I18nService<I18nTranslations>,
     ) { }
 
     async getById(id: number): Promise<ModuleEntity | null> {
@@ -27,17 +30,12 @@ export class ModuleService {
 
     async create(dto: CreateModuleDto): Promise<ModuleEntity> {
         const validateObj = plainToInstance(CreateModuleDto, dto);
-        const errors = await validate(validateObj);
-        if (errors.length > 0) {
-            throw new BadRequestException(
-                errorObject('DTO验证失败', { key: errors.toString() }),
-            );
-        }
+        const errors = await this.i18n.validate(validateObj);
+        throwIfDtoValidateFail(errors);
+
         const existingModule = await this.getByKey(dto.key);
         if (existingModule) {
-            throw new BadRequestException(
-                errorObject('key不能重复', { key: dto.key }),
-            );
+            throw new BadRequestGraphQLException(this.i18n.t('system.KEY_DUPLICATE', { args: { key: dto.key } }));
         }
         const moduleEntity = this.moduleRepository.create({
             key: dto.key,
@@ -49,26 +47,19 @@ export class ModuleService {
 
     async update(dto: UpdateModuleDto): Promise<ModuleEntity> {
         const validateObj = plainToInstance(UpdateModuleDto, dto);
-        const errors = await validate(validateObj);
-        if (errors.length > 0) {
-            throw new BadRequestException(
-                errorObject('DTO验证失败', { key: errors.toString() }),
-            );
-        }
+        const errors = await this.i18n.validate(validateObj);
+        throwIfDtoValidateFail(errors);
+
         const module = await this.getById(dto.id);
         if (!module) {
-            throw new BadRequestException(
-                errorObject('module不存在', { key: dto.id })
-            );
+            throw new BadRequestGraphQLException(this.i18n.t('system.MODULE_NOT_EXIST', { args: { name: dto.id } }));
         }
         const existingKeyModule = await this.moduleRepository.findOneBy({
             key: dto.key,
             id: Not(dto.id)
         });
         if (existingKeyModule) {
-            throw new BadRequestException(
-                errorObject('moduleKey已存在', { key: dto.key })
-            );
+            throw new BadRequestGraphQLException(this.i18n.t('system.KEY_DUPLICATE', { args: { key: dto.key } }));
         }
 
         Object.assign(module, {
@@ -84,7 +75,7 @@ export class ModuleService {
             : this.moduleRepository;
 
         if (!ids || ids.length === 0) {
-            throw new BadRequestException(errorObject('必须提供有效的ID数组'));
+            throw new BadRequestGraphQLException(this.i18n.t('system.ID_NOT_EXIST', { args: { id: '' } }));
         }
 
         await repository.manager.transaction(

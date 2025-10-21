@@ -1,10 +1,8 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { MenuEntity } from "./entities/menu.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindManyOptions, FindOptionsWhere, In, Not, Repository } from "typeorm";
 import { plainToInstance } from "class-transformer";
-import { validate } from "class-validator";
-import { errorObject } from "@/common/types/errors/error";
 import { ModuleEntity } from "./entities/module.entity";
 import { QueryMenuDto } from "./menu/dto/query-menu.dto";
 import { MenuRoleService } from "./menu-role.service";
@@ -14,6 +12,10 @@ import { ModuleService } from "./module.service";
 import { CreateMenuDto } from "./menu/dto/create-menu.dto";
 import { UpdateMenuDto } from "./menu/dto/update-menu.dto";
 import { MenuInterface } from "./menu/interfaces/menu.interface";
+import { I18nService } from "nestjs-i18n";
+import { I18nTranslations } from "@/generated/i18n.generated";
+import { throwIfDtoValidateFail } from "@/common/utils/validation";
+import { BadRequestGraphQLException } from "@/common/exceptions";
 
 @Injectable()
 export class MenuService {
@@ -23,7 +25,8 @@ export class MenuService {
         @InjectRepository(ModuleEntity)
         private readonly moduleRepository: Repository<ModuleEntity>,
         private readonly menuRoleService: MenuRoleService,
-        private readonly moduleService: ModuleService
+        private readonly moduleService: ModuleService,
+        private readonly i18n: I18nService<I18nTranslations>,
     ) { }
 
     /**
@@ -52,12 +55,8 @@ export class MenuService {
      */
     async create(dto: CreateMenuDto): Promise<MenuEntity | null> {
         const validateObj = plainToInstance(CreateMenuDto, dto);
-        const errors = await validate(validateObj);
-        if (errors.length > 0) {
-            throw new BadRequestException(
-                errorObject('DTO验证错误', { details: errors.toString() }),
-            );
-        }
+        const errors = await this.i18n.validate(validateObj);
+        throwIfDtoValidateFail(errors);
 
         // 并行检查key和name唯一性
         const [existingByKey, existingByName] = await Promise.all([
@@ -69,18 +68,18 @@ export class MenuService {
         ]);
 
         if (existingByKey) {
-            throw new BadRequestException(errorObject(`菜单key已存在`, { key: dto.key }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.MENU_KEY_EXISTS', { args: { key: dto.key } }));
         }
 
         if (existingByName) {
-            throw new BadRequestException(errorObject("相同父菜单下名称已存在", { key: dto.name }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.CHILD_DUPLICATE', { args: { name: dto.name } }));
         }
 
         let module: ModuleEntity | null = null;
         if (dto.moduleId) {
             module = await this.moduleRepository.findOneBy({ id: dto.moduleId });
             if (!module) {
-                throw new BadRequestException(errorObject("模块不存在", { key: dto.moduleId }));
+                throw new BadRequestGraphQLException(this.i18n.t('system.ID_NOT_EXIST', { args: { id: dto.moduleId } }));
             }
         }
 
@@ -109,16 +108,12 @@ export class MenuService {
      */
     async update(dto: UpdateMenuDto): Promise<MenuEntity> {
         const validateObj = plainToInstance(UpdateMenuDto, dto);
-        const errors = await validate(validateObj);
-        if (errors.length > 0) {
-            throw new BadRequestException(
-                errorObject('DTO验证错误', { key: errors.toString() }),
-            );
-        }
+        const errors = await this.i18n.validate(validateObj);
+        throwIfDtoValidateFail(errors);
 
         const menu = await this.menuRepository.findOne({ where: { key: dto.key }, relations: { module: true } });
         if (!menu) {
-            throw new BadRequestException(errorObject(`菜单不存在`, { key: dto.key }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.MENU_NOT_EXIST', { args: { key: dto.key } }));
         }
 
         // 3. 如果要修改parent或name，检查同级菜单名称唯一性
@@ -133,7 +128,7 @@ export class MenuService {
             });
 
             if (existingSameName) {
-                throw new BadRequestException(errorObject("相同父菜单下名称", { key: newParent, key2: newName }));
+                throw new BadRequestGraphQLException(this.i18n.t('system.CHILD_DUPLICATE', { args: { name: newName } }));
             }
         }
 
@@ -163,7 +158,7 @@ export class MenuService {
     async deleteById(id: number): Promise<void> {
         const menu = await this.menuRepository.findOneBy({ id });
         if (!menu) {
-            throw new BadRequestException(errorObject(`菜单ID不存在`, { key: id }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.ID_NOT_EXIST', { args: { id } }));
         }
 
         await this.deleteMenuAndChildren(menu.key);
@@ -178,7 +173,7 @@ export class MenuService {
     async deleteByKey(key: string, parent: string): Promise<void> {
         const menu = await this.menuRepository.findOneBy({ key, parent });
         if (!menu) {
-            throw new BadRequestException(errorObject(`菜单Key不存在`, { key }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.MENU_NOT_EXIST', { args: { key } }));
         }
 
         await this.deleteMenuAndChildren(menu.key);

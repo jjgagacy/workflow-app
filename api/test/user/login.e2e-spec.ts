@@ -26,7 +26,7 @@ describe('AppController (e2e)', () => {
   it('/ (account auth)', async () => {
     const query = `
         mutation {
-      		login(input: {username: "admin", password:"123456"}) {
+      		login(input: {username: "admin", password:"abc12345"}) {
         		access_token
           }
       }

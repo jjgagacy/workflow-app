@@ -4,11 +4,11 @@ import { IsNotEmpty } from 'class-validator';
  * Menu dto
  */
 export abstract class BaseMenuDto {
-  @IsNotEmpty({ message: "菜单Key不能为空" })
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   key: string;
   parent: string;
 
-  @IsNotEmpty({ message: "菜单名称不能为空" })
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   name: string;
 
   icon?: string;

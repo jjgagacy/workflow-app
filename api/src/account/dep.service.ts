@@ -1,22 +1,25 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { DepEntity } from "./entities/dep.entity";
 import { EntityManager, FindManyOptions, FindOptionsWhere, In, Not, QueryRunner, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { plainToInstance } from "class-transformer";
-import { validate } from "class-validator";
-import { errorObject } from "@/common/types/errors/error";
 import { QueryDepDto } from "./dep/dto/query-dep.dto";
 import { DepInterface } from "./interfaces/dep.interface";
 import { AccountService } from "@/account/account.service";
 import { CreateDepDto } from "./dep/dto/create-dep.dto";
 import { UpdateDepDto } from "./dep/dto/update-dep.dto";
+import { I18nService } from "nestjs-i18n";
+import { I18nTranslations } from "@/generated/i18n.generated";
+import { throwIfDtoValidateFail } from "@/common/utils/validation";
+import { BadRequestGraphQLException, InvalidInputGraphQLException } from "@/common/exceptions";
 
 @Injectable()
 export class DepService {
     constructor(
         @InjectRepository(DepEntity)
         private readonly depRepository: Repository<DepEntity>,
-        private readonly accountService: AccountService
+        private readonly accountService: AccountService,
+        private readonly i18n: I18nService<I18nTranslations>,
     ) { }
 
     async getByKey(key: string): Promise<DepEntity | null> {
@@ -33,18 +36,15 @@ export class DepService {
 
     async create(dto: CreateDepDto): Promise<DepEntity> {
         const validateObj = plainToInstance(CreateDepDto, dto);
-        const errors = await validate(validateObj);
-        if (errors.length > 0) {
-            throw new BadRequestException(errorObject("DTO验证失败", { key: errors.toString }));
-        }
+        const errors = await this.i18n.validate(validateObj);
+        throwIfDtoValidateFail(errors);
+
         const [existingByKey] = await Promise.all([
             this.depRepository.findOneBy({ key: dto.key }),
             this.validateNameUnique(dto),
         ]);
         if (existingByKey) {
-            throw new BadRequestException(
-                errorObject('key不能重复', { key: dto.key }),
-            );
+            throw new BadRequestGraphQLException(this.i18n.t('system.ROLE_KEY_EXISTS', { args: { key: dto.key } }));
         }
         const newDep = this.depRepository.create({
             key: dto.key,
@@ -71,19 +71,17 @@ export class DepService {
 
         const existing = await this.depRepository.findOneBy(where);
         if (existing) {
-            throw new BadRequestException(errorObject(`同parent下name已存在`, { key: dto.name, key2: dto.name }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.CHILD_DUPLICATE', { args: { name: dto.name } }));
         }
     }
 
     async update(dto: UpdateDepDto): Promise<DepEntity | null> {
         const validateObj = plainToInstance(UpdateDepDto, dto);
-        const errors = await validate(validateObj);
-        if (errors.length > 0) {
-            throw new BadRequestException(errorObject('DTO验证失败', { key: errors.toString() }));
-        }
+        const errors = await this.i18n.validate(validateObj);
+        throwIfDtoValidateFail(errors);
         const dep = await this.depRepository.findOneBy({ key: dto.key });
         if (!dep) {
-            throw new BadRequestException(errorObject('部门key不存在', { key: dto.key }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.DEP_KEY_NOT_EXIST', { args: { key: dto.key } }));
         }
         if (dto.parent && dto.name) {
             await this.validateNameUnique(dto, dto.key);
@@ -128,7 +126,7 @@ export class DepService {
             : this.depRepository;
 
         if (!ids || ids.length === 0) {
-            throw new BadRequestException(errorObject('必须提供有效的ID数组'));
+            throw new InvalidInputGraphQLException(this.i18n.t('system.INVALID_PARAM', { args: { name: 'ids', value: '[]' } }));
         }
 
         const existingDeps = await repository.find({
@@ -140,7 +138,7 @@ export class DepService {
             const missingIds = ids.filter(id =>
                 !existingDeps.some(dep => dep.id === id)
             );
-            throw new BadRequestException(errorObject("以下ID不存在", { key: missingIds.join(',') }));
+            throw new InvalidInputGraphQLException(this.i18n.t('system.ID_NOT_EXIST', { args: { id: missingIds.join(',') } }));
         }
 
         await repository.manager.transaction(

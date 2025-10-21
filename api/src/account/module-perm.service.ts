@@ -1,14 +1,16 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ModuleEntity } from "./entities/module.entity";
 import { Repository } from "typeorm";
 import { ModulePermEntity } from "./entities/module-perm.entity";
 import { PermEntity } from "./entities/perm.entity";
 import { plainToInstance } from "class-transformer";
-import { validate } from "class-validator";
-import { errorObject } from "@/common/types/errors/error";
 import { CreateModulePermDto } from "./perm/dto/create-module-perm.dto";
 import { UpdateModulePermDto } from "./perm/dto/update-module-perm.dto";
+import { I18nService } from "nestjs-i18n";
+import { I18nTranslations } from "@/generated/i18n.generated";
+import { throwIfDtoValidateFail } from "@/common/utils/validation";
+import { BadRequestGraphQLException } from "@/common/exceptions";
 
 @Injectable()
 export class ModulePermService {
@@ -16,7 +18,8 @@ export class ModulePermService {
         @InjectRepository(ModuleEntity)
         private readonly moduleRepository: Repository<ModuleEntity>,
         @InjectRepository(ModulePermEntity)
-        private readonly modulePermRepository: Repository<ModulePermEntity>
+        private readonly modulePermRepository: Repository<ModulePermEntity>,
+        private readonly i18n: I18nService<I18nTranslations>,
     ) { }
 
     /**
@@ -137,20 +140,16 @@ export class ModulePermService {
      */
     async createPermission(dto: CreateModulePermDto): Promise<ModulePermEntity> {
         const validateObj = plainToInstance(CreateModulePermDto, dto);
-        const errors = await validate(validateObj);
-        if (errors.length > 0) {
-            throw new BadRequestException(
-                errorObject('DTO验证错误', { details: errors.toString() })
-            );
-        }
+        const errors = await this.i18n.validate(validateObj);
+        throwIfDtoValidateFail(errors);
 
         if (await this.getPermission(dto.key, dto.moduleId)) {
-            throw new BadRequestException(errorObject(`权限key已存在`, { key: dto.key }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.PERM_KEY_EXISTS', { args: { key: dto.key } }));
         }
 
         const module = await this.moduleRepository.findOneBy({ id: dto.moduleId });
         if (!module) {
-            throw new BadRequestException(errorObject(`模块已存在`, { key: dto.moduleId }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.MODULE_EXIST', { args: { name: dto.moduleId } }));
         }
 
         return this.modulePermRepository.save(
@@ -170,16 +169,12 @@ export class ModulePermService {
      */
     async updatePermission(dto: UpdateModulePermDto): Promise<ModulePermEntity> {
         const validateObj = plainToInstance(UpdateModulePermDto, dto);
-        const errors = await validate(validateObj);
-        if (errors.length > 0) {
-            throw new BadRequestException(
-                errorObject('DTO验证错误', { key: errors.toString() })
-            );
-        }
+        const errors = await this.i18n.validate(validateObj);
+        throwIfDtoValidateFail(errors);
 
         const permission = await this.getPermission(dto.key, dto.module);
         if (!permission) {
-            throw new BadRequestException(errorObject(`权限不存在`, { key: dto.key }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.PERM_KEY_NOT_EXISTS', { args: { key: dto.key } }));
         }
 
         return this.modulePermRepository.save({
@@ -195,7 +190,7 @@ export class ModulePermService {
     async deletePermission(key: string, module: number | string): Promise<void> {
         const permission = await this.getPermission(key, module);
         if (!permission) {
-            throw new BadRequestException(errorObject(`权限不存在`, { key }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.PERM_KEY_NOT_EXISTS', { args: { key } }));
         }
         await this.modulePermRepository.remove(permission);
     }

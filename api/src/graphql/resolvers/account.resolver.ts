@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Query, Resolver } from "@nestjs/graphql";
 import { AccountService } from "@/account/account.service";
 import { AccountList } from "../types/account-list.type";
 import { GetAccountArgs } from "../args/get-account.args";
@@ -6,10 +6,10 @@ import { Account } from "../types/account.type";
 import { formatDate } from "@/common/utils/time";
 import { AccountEntity } from "@/account/entities/account.entity";
 import { validNumber } from "@/common/utils/strings";
-import { BadRequestException } from "@nestjs/common";
 import { AuthService } from "@/auth/auth.service";
 import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { UseGuards } from "@nestjs/common";
+import { BadRequestGraphQLException } from "@/common/exceptions";
 
 @UseGuards(GqlAuthGuard)
 @Resolver()
@@ -52,6 +52,6 @@ export class AccountResolver {
 
     @Query(() => Account)
     async accountInfo(): Promise<Account> {
-        throw new BadRequestException;
+        throw new BadRequestGraphQLException('Not implemented yet');
     }
 }

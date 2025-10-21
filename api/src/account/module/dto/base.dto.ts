@@ -1,8 +1,8 @@
 import { IsNotEmpty } from 'class-validator';
 
 export abstract class BaseModuleDto {
-  @IsNotEmpty({ message: "模块Key不能为空" })
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   key: string;
-  @IsNotEmpty({ message: "菜单名称不能为空" })
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   name: string;
 }

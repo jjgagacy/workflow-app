@@ -1,19 +1,22 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { PermEntity } from "./entities/perm.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, Repository } from "typeorm";
 import { CreatePermDto } from "./perm/dto/create-perm.dto";
 import { plainToInstance } from "class-transformer";
-import { validate } from "class-validator";
-import { errorObject } from "@/common/types/errors/error";
 import { QueryPermDto } from "./perm/dto/query-perm.dto";
 import { UpdatePermDto } from "./perm/dto/update-perm.dto";
+import { I18nService } from "nestjs-i18n";
+import { I18nTranslations } from "@/generated/i18n.generated";
+import { throwIfDtoValidateFail } from "@/common/utils/validation";
+import { BadRequestGraphQLException } from "@/common/exceptions";
 
 @Injectable()
 export class PermService {
     constructor(
         @InjectRepository(PermEntity)
-        private readonly permRepository: Repository<PermEntity>
+        private readonly permRepository: Repository<PermEntity>,
+        private readonly i18n: I18nService<I18nTranslations>,
     ) { }
 
     /**
@@ -33,15 +36,11 @@ export class PermService {
      */
     async create(dto: CreatePermDto): Promise<PermEntity> {
         const validateObj = plainToInstance(CreatePermDto, dto);
-        const errors = await validate(validateObj);
-        if (errors.length > 0) {
-            throw new BadRequestException(
-                errorObject('DTO验证错误', { key: errors.toString() }),
-            );
-        }
+        const errors = await this.i18n.validate(validateObj);
+        throwIfDtoValidateFail(errors);
 
         if (await this.getByKey(dto.key)) {
-            throw new BadRequestException(errorObject(`权限等级key已存在`, { key: dto.key }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.PERM_LEVEL_KEY_EXISTS', { args: { key: dto.key } }));
         }
 
         return this.permRepository.save(
@@ -61,16 +60,12 @@ export class PermService {
      */
     async update(dto: UpdatePermDto): Promise<PermEntity> {
         const validateObj = plainToInstance(UpdatePermDto, dto);
-        const errors = await validate(validateObj);
-        if (errors.length > 0) {
-            throw new BadRequestException(
-                errorObject('DTO验证错误', { details: errors.toString() }),
-            );
-        }
+        const errors = await this.i18n.validate(validateObj);
+        throwIfDtoValidateFail(errors);
 
         const permLevel = await this.getByKey(dto.key);
         if (!permLevel) {
-            throw new BadRequestException(errorObject(`权限等级不存在`, { key: dto.key }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.PERM_KEY_NOT_EXISTS', { args: { key: dto.key } }));
         }
 
         return this.permRepository.save({
@@ -88,7 +83,7 @@ export class PermService {
     async delete(key: string): Promise<void> {
         const permLevel = await this.getByKey(key);
         if (!permLevel) {
-            throw new BadRequestException(errorObject(`权限等级不存在`, { key }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.PERM_KEY_NOT_EXISTS', { args: { key } }));
         }
         await this.permRepository.remove(permLevel);
     }

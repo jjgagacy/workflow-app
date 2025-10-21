@@ -1,24 +1,25 @@
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { resolve } from 'path';
 import { TrimPipe } from './common/pipes/trim.pipe';
-import { BadExceptionFilter } from './common/filters/bad-exception.filter';
 import { GlobalLogger } from './logger/logger.service';
 import { ConfigService } from '@nestjs/config';
 import { WinstonLogger } from './logger/winston.service';
 import { MonieConfig } from './monie/monie.config';
 import { GraphQLExceptionFilter } from './common/filters/graphql-exception.filter';
+import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 
 async function bootstrap() {
   process.env.APP_ROOT = resolve(__dirname, '..');
+  // create app
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new TrimPipe());
-  const httpAdapter = app.get(HttpAdapterHost);
-  const configService = app.get(ConfigService);
-  const monieConfig = app.get(MonieConfig)
-  const logger = new WinstonLogger(configService, monieConfig);
+  // app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new I18nValidationPipe());
+  app.useGlobalFilters(new I18nValidationExceptionFilter({ detailedErrors: false }));
   app.useGlobalFilters(new GraphQLExceptionFilter(app.get(GlobalLogger)));
-  app.useLogger(new GlobalLogger(configService, logger, monieConfig, 'MONIE'))
+  const logger = new WinstonLogger(app.get(ConfigService), app.get(MonieConfig));
+  app.useLogger(new GlobalLogger(app.get(ConfigService), logger, app.get(MonieConfig), 'MONIE'))
   // 启用 CORS
   app.enableCors({
     origin: true, // 或指定前端地址如 'http://localhost:3000'
@@ -26,6 +27,7 @@ async function bootstrap() {
     allowHeaders: 'Content-Type, Accept, Authorization',
     credentials: true, // 如果需要发送 cookies/认证信息
   });
+  // start app
   await app.listen(process.env.PORT ?? 3001);
   const appUrl = await app.getUrl();
   // cli and npm levels
@@ -45,6 +47,7 @@ async function bootstrap() {
   logger.alert(`Application is running on: ${appUrl}`);
   logger.crit(`Application is running on: ${appUrl}`);
   logger.notice(`Application is running on: ${appUrl}`);
+  // console log
   console.log(`Application is running on: ${appUrl}`);
 }
 bootstrap();

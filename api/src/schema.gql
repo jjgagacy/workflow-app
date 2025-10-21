@@ -64,6 +64,7 @@ input LoginInput {
 
 type LoginResponse {
   access_token: String
+  expiresIn: Float!
   isSuper: Boolean
   name: String
   roles: [String!]
@@ -169,6 +170,7 @@ input PermInput {
 type Query {
   accountInfo: Account!
   accounts(email: String, id: Int, limit: Int, mobile: String, page: Int, realName: String, roleId: Int, username: String): AccountList!
+  currentUser: UserInfoResponse!
   depInfo(key: String!): Dep!
   deps(key: String, name: String, parent: String): [Dep!]!
   hello: String!
@@ -233,4 +235,9 @@ type Route {
 type Scope {
   key: String!
   name: String!
+}
+
+type UserInfoResponse {
+  id: Float
+  name: String
 }

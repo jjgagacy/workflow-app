@@ -1,15 +1,18 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { MenuEntity } from "./entities/menu.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { RoleEntity } from "./entities/role.entity";
-import { errorObject } from "@/common/types/errors/error";
+import { I18nService } from "nestjs-i18n";
+import { I18nTranslations } from "@/generated/i18n.generated";
+import { InvalidInputGraphQLException } from "@/common/exceptions";
 
 @Injectable()
 export class MenuRoleService {
     constructor(
         @InjectRepository(MenuEntity)
         private readonly menuRepository: Repository<MenuEntity>,
+        private readonly i18n: I18nService<I18nTranslations>,
     ) { }
 
     async getMenuRoles(menuId: number): Promise<RoleEntity[] | null> {
@@ -27,7 +30,7 @@ export class MenuRoleService {
             relations: { roles: true }
         });
         if (!menu) {
-            throw new BadRequestException(errorObject("菜单ID不存在", { key: menuId }));
+            throw new InvalidInputGraphQLException(this.i18n.t('system.ID_NOT_EXIST', { args: { id: menuId } }));
         }
         menu.roles = [];
         await this.menuRepository.save(menu);

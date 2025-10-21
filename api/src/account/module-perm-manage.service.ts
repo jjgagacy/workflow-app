@@ -1,17 +1,20 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
-import { errorObject } from "@/common/types/errors/error";
+import { Injectable } from "@nestjs/common";
 import { ModuleEntity } from "./entities/module.entity";
 import { ModulePermEntity } from "./entities/module-perm.entity";
 import { ModuleService } from "./module.service";
 import { ModulePermService } from "./module-perm.service";
 import { CreateModulePermDto } from "./perm/dto/create-module-perm.dto";
 import { UpdateModulePermDto } from "./perm/dto/update-module-perm.dto";
+import { I18nService } from "nestjs-i18n";
+import { I18nTranslations } from "@/generated/i18n.generated";
+import { BadRequestGraphQLException } from "@/common/exceptions";
 
 @Injectable()
 export class ModulePermManageService {
     constructor(
         private readonly moduleService: ModuleService,
         private readonly modulePermService: ModulePermService,
+        private readonly i18n: I18nService<I18nTranslations>,
     ) { }
 
     /**
@@ -27,11 +30,11 @@ export class ModulePermManageService {
         ]);
 
         if (!module) {
-            throw new BadRequestException(errorObject(`模块不存在`, { key: args.module }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.MODULE_NOT_EXIST', { args: { name: args.module } }));
         }
 
         if (existingPerm) {
-            throw new BadRequestException(errorObject(`权限已存在`, { key: args.key }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.PERM_KEY_EXISTS', { args: { key: args.key } }));
         }
 
         const dto: CreateModulePermDto = {
@@ -71,7 +74,7 @@ export class ModulePermManageService {
         this.validateModule(args.module);
 
         if (!args.key?.trim()) {
-            throw new BadRequestException(errorObject('权限key不能为空'));
+            throw new BadRequestGraphQLException(this.i18n.t('system.PERM_KEY_NOT_EMPTY'))
         }
 
         const [module, modulePerm] = await Promise.all([
@@ -95,7 +98,7 @@ export class ModulePermManageService {
      */
     private validateModule(moduleKey: string): void {
         if (!moduleKey?.trim()) {
-            throw new BadRequestException(errorObject('模块key不能为空', { key: moduleKey }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.MODULE_KEY_NOT_EMPTY'))
         }
     }
 
@@ -106,11 +109,11 @@ export class ModulePermManageService {
      */
     private validatePermission(module: ModuleEntity | null, permission: ModulePermEntity | null): void {
         if (!module) {
-            throw new BadRequestException(errorObject('模块不存在'));
+            throw new BadRequestGraphQLException(this.i18n.t('system.MODULE_NOT_EXIST'));
         }
 
         if (!permission) {
-            throw new BadRequestException(errorObject('权限不存在'));
+            throw new BadRequestGraphQLException(this.i18n.t('system.PERM_NOT_EXIST'));
         }
     }
 }

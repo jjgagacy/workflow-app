@@ -1,0 +1,4 @@
+{
+    "NOT_EMPTY": "{property} 不能为空",
+    "INVALID_EMAIL": "邮箱无效"
+}

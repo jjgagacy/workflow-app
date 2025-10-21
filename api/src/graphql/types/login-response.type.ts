@@ -13,4 +13,15 @@ export class LoginResponse {
 
   @Field({ nullable: true })
   isSuper?: boolean;
+
+  @Field({ nullable: false })
+  expiresIn: number;
+}
+
+@ObjectType('UserInfoResponse')
+export class UserInfoResponse {
+  @Field({ nullable: true })
+  id?: number;
+  @Field({ nullable: true })
+  name?: string;
 }

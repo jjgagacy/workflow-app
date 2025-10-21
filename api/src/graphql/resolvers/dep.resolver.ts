@@ -3,16 +3,19 @@ import { DepService } from "@/account/dep.service";
 import { Dep } from "../types/dep.type";
 import { GetDepArgs } from "../args/get-dep.args";
 import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
-import { BadRequestException, UseGuards } from "@nestjs/common";
+import { UseGuards } from "@nestjs/common";
 import { AccountService } from "@/account/account.service";
 import { AccountEntity } from "@/account/entities/account.entity";
-import { errorObject } from "@/common/types/errors/error";
+import { I18nTranslations } from "@/generated/i18n.generated";
+import { I18nService } from "nestjs-i18n";
+import { BadRequestGraphQLException } from "@/common/exceptions";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
 export class DepResolver {
     constructor(private readonly depService: DepService,
-        private readonly accountService: AccountService
+        private readonly accountService: AccountService,
+        private readonly i18n: I18nService<I18nTranslations>
     ) { }
 
     @Query(() => [Dep])
@@ -47,7 +50,7 @@ export class DepResolver {
     async depInfo(@Args({ name: 'key', type: () => String }) key: string): Promise<Dep> {
         const dep = await this.depService.getByKey(key);
         if (!dep) {
-            throw new BadRequestException(errorObject('参数key错误', { key }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.DEP_NOT_EXIST', { args: { name: key } }));
         }
         let manager: AccountEntity | null = null;
         if (dep?.managerId) {

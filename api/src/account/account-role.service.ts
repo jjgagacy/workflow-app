@@ -1,15 +1,18 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { AccountEntity } from "./entities/account.entity";
 import { QueryRunner, Repository } from "typeorm";
 import { RoleEntity } from "@/account/entities/role.entity";
-import { errorObject } from "@/common/types/errors/error";
+import { I18nTranslations } from "@/generated/i18n.generated";
+import { I18nService } from "nestjs-i18n";
+import { InvalidInputGraphQLException } from "@/common/exceptions";
 
 @Injectable()
 export class AccountRoleService {
     constructor(
         @InjectRepository(AccountEntity)
         private readonly accountRepository: Repository<AccountEntity>,
+        private readonly i18n: I18nService<I18nTranslations>,
     ) { }
 
     async getRoles(account: Pick<AccountEntity, 'id'>): Promise<RoleEntity[]> {
@@ -28,7 +31,7 @@ export class AccountRoleService {
         });
 
         if (!account) {
-            throw new BadRequestException(errorObject("账户ID不存在", { key: accountId }));
+            throw new InvalidInputGraphQLException(this.i18n.t('account.ACCOUNT_ID_NOT_EXISTS'));
         }
 
         account.roles = roleIds.map(id => ({ id } as RoleEntity));
@@ -52,7 +55,7 @@ export class AccountRoleService {
             });
 
             if (!account) {
-                throw new BadRequestException(errorObject("账户ID不存在", { key: accountId }));
+                throw new InvalidInputGraphQLException(this.i18n.t('account.ACCOUNT_ID_NOT_EXISTS'));
             }
 
             account.roles = roleIds.map(id => ({ id } as RoleEntity));
@@ -89,7 +92,7 @@ export class AccountRoleService {
         });
 
         if (!account) {
-            throw new BadRequestException(errorObject("账户ID不存在", { key: accountId }));
+            throw new InvalidInputGraphQLException(this.i18n.t('account.ACCOUNT_ID_NOT_EXISTS'));
         }
 
         // 添加新角色
@@ -106,7 +109,7 @@ export class AccountRoleService {
             where: { id: accountId }
         });
         if (!accountExists) {
-            throw new BadRequestException(errorObject("账户ID不存在", { key: accountId }));
+            throw new InvalidInputGraphQLException(this.i18n.t('account.ACCOUNT_ID_NOT_EXISTS'));
         }
         // 直接添加关系到联结表
         if (roleIds.length > 0) {
@@ -136,7 +139,7 @@ export class AccountRoleService {
             });
 
             if (!account) {
-                throw new BadRequestException(errorObject("账户ID不存在", { key: accountId }));
+                throw new InvalidInputGraphQLException(this.i18n.t('account.ACCOUNT_ID_NOT_EXISTS'));
             }
 
             // 添加新角色
@@ -155,7 +158,7 @@ export class AccountRoleService {
         });
 
         if (!account) {
-            throw new BadRequestException(errorObject("账户ID不存在", { key: accountId }));
+            throw new InvalidInputGraphQLException(this.i18n.t('account.ACCOUNT_ID_NOT_EXISTS'));
         }
 
         account.roles = [];
@@ -168,7 +171,7 @@ export class AccountRoleService {
             where: { id: accountId }
         });
         if (!accountExists) {
-            throw new BadRequestException(errorObject("账户ID不存在", { key: accountId }));
+            throw new InvalidInputGraphQLException(this.i18n.t('account.ACCOUNT_ID_NOT_EXISTS'));
         }
         // 直接清空关系表
         await this.accountRepository
@@ -206,7 +209,7 @@ export class AccountRoleService {
             });
 
             if (!account) {
-                throw new BadRequestException(errorObject("账户ID不存在", { key: accountId }));
+                throw new InvalidInputGraphQLException(this.i18n.t('account.ACCOUNT_ID_NOT_EXISTS'));
             }
 
             account.roles = [];

@@ -10,9 +10,9 @@ export class MenuItem {
 }
 
 export class SetRolePermsDto {
-  @IsNotEmpty({ message: "角色Key不能为空" })
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   key: string;
 
-  @IsNotEmpty({ message: "角色菜单不能为空" })
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   menus: MenuItem[];
 }

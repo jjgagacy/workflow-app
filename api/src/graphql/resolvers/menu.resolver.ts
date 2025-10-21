@@ -7,13 +7,17 @@ import { BadRequestException, UseGuards } from "@nestjs/common";
 import { errorObject } from "@/common/types/errors/error";
 import { ModuleService } from "@/account/module.service";
 import { ModulePermInterface } from "@/account/interfaces/module-perm.interface";
+import { I18nTranslations } from "@/generated/i18n.generated";
+import { I18nService } from "nestjs-i18n";
+import { BadRequestGraphQLException } from "@/common/exceptions";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
 export class MenuResolver {
     constructor(
         private readonly menuService: MenuService,
-        private readonly moduleService: ModuleService
+        private readonly moduleService: ModuleService,
+        private readonly i18n: I18nService<I18nTranslations>
     ) { }
 
     @Query(() => [Menu])
@@ -40,7 +44,7 @@ export class MenuResolver {
     async menuInfo(@Args({ name: 'id', type: () => Int }) id: number): Promise<Menu> {
         const menu = await this.menuService.getById(id);
         if (!menu) {
-            throw new BadRequestException(errorObject('参数key错误', { id }));
+            throw new BadRequestGraphQLException(this.i18n.t('system.MENU_NOT_EXIST', { args: { name: id } }));
         }
 
         let modulePerm: ModulePermInterface[] | undefined = undefined;

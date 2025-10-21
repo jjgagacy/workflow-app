@@ -6,14 +6,15 @@ function generateTypes() {
     const outputPath = path.join(__dirname, '../src/generated/i18n.generated.ts');
 
     const languages = fs.readdirSync(i18nPath);
-    const enFiles = fs.readdirSync(path.join(i18nPath, 'en-US'));
+    const readLang = 'zh-Hans';
+    const enFiles = fs.readdirSync(path.join(i18nPath, readLang));
 
     let typeDefinition = `export interface I18nTranslations {\n`;
 
     enFiles.forEach(file => {
         if (path.extname(file) === '.json') {
             const namespace = path.basename(file, '.json');
-            const filePath = path.join(i18nPath, 'en-US', file);
+            const filePath = path.join(i18nPath, readLang, file);
             const content = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
             typeDefinition += `  ${namespace}: ${generateInterface(content, 2)};\n`;

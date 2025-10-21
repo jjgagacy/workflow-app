@@ -1,7 +1,8 @@
 import { IsNotEmpty } from 'class-validator';
+import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class BaseModulePermDto {
-  @IsNotEmpty({ message: "模块Key不能为空" })
+  @IsNotEmpty({ message: "validation.not_empty" })
   key: string;
   restrictLevel?: number;
 }

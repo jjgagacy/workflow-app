@@ -1,7 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
 
 export class BasePermDto {
-  @IsNotEmpty({ message: "权限Key不能为空" })
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   key: string;
   level?: number;
 }

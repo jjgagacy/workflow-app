@@ -1,8 +1,11 @@
-import { Args, Mutation, Resolver } from "@nestjs/graphql";
+import { Args, Mutation, Resolver, Query } from "@nestjs/graphql";
 import { AccountService } from "@/account/account.service";
-import { LoginResponse } from "../types/login-response.type";
+import { LoginResponse, UserInfoResponse } from "../types/login-response.type";
 import { LoginInput } from "../types/login-input.type";
 import { AuthService } from "@/auth/auth.service";
+import { CurrentUser } from "@/common/decorators/current-user";
+import { UseGuards } from "@nestjs/common";
+import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 
 @Resolver()
 export class LoginResolver {
@@ -17,5 +20,14 @@ export class LoginResolver {
             .then(user => {
                 return this.authService.login(user)
             });
+    }
+
+    @UseGuards(GqlAuthGuard)
+    @Query(() => UserInfoResponse)
+    async currentUser(@CurrentUser() user: any): Promise<UserInfoResponse> {
+        return {
+            id: user.id,
+            name: user.name
+        };
     }
 }

@@ -4,10 +4,10 @@ import { IsNotEmpty } from 'class-validator';
 @InputType()
 export class InputAccountDto {
   @Field()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   username: string;
 
   @Field()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   password: string;
 }
