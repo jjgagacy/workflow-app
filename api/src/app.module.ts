@@ -82,6 +82,13 @@ import { GlobalLogger } from './logger/logger.service';
 import { WinstonLogger } from './logger/winston.service';
 import { LoggerModule } from './logger/logger.module';
 import { I18nGlobalModule } from './i18n-global/i18n-global.module';
+import { ServiceModule } from './service/service.module';
+import { AuthAccountService } from './service/auth-account.service';
+import { CacheModule } from '@nestjs/cache-manager';
+import { DefaultConfigValues } from './monie/constants/default-config-value';
+import KeyvRedis, { Keyv, RedisClientOptions } from '@keyv/redis';
+import { CacheableMemory, KeyvOptions } from 'cacheable';
+import { RedisUrlBuilder } from './common/utils/redis-url';
 
 @Module({
   imports: [
@@ -106,12 +113,10 @@ import { I18nGlobalModule } from './i18n-global/i18n-global.module';
           if (formattedError.extensions?.stacktrace) {
             delete formattedError.extensions.stacktrace;
           }
-
           // 移除其他敏感信息
           if (formattedError.extensions?.exception) {
             delete formattedError.extensions.exception;
           }
-
           // 隐藏内部错误详情
           if (formattedError.extensions?.code === 'INTERNAL_SERVER_ERROR') {
             return {
@@ -159,26 +164,6 @@ import { I18nGlobalModule } from './i18n-global/i18n-global.module';
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([
-      DepEntity,
-      RoleEntity,
-      MenuEntity,
-      ModuleEntity,
-      PermEntity,
-      ModulePermEntity,
-      MenuRoleEntity,
-      AccountEntity,
-      TenantEntity,
-      TenantAccountEntity,
-      ProviderEntity,
-      ProviderModelEntity,
-      TenantDefaultModelEntity,
-      TenantPreferredProviderEntity,
-      ProviderModelSettingEntity,
-      OperationLogsEntity,
-      AccountIntegrateEntity,
-      UserEntity,
-    ]),
     FooModule,
     AccountModule,
     AgentModule,
@@ -192,6 +177,33 @@ import { I18nGlobalModule } from './i18n-global/i18n-global.module';
     AppModule,
     LoggerModule,
     I18nGlobalModule,
+    ServiceModule,
+    CacheModule.registerAsync({
+      isGlobal: true,
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        const connectOptions: RedisClientOptions = {
+          url: RedisUrlBuilder.buildUrl(configService),
+        }
+        const options: KeyvOptions = {
+          serialize: JSON.stringify,
+          deserialize: JSON.parse,
+        };
+        return {
+          ttl: configService.get<number>('CACHE_TTL', DefaultConfigValues.CACHE_TTL), // 默认缓存时间，单位秒
+          stores: [
+            // new Keyv({
+            //   store: new CacheableMemory({
+            //     ttl: configService.get<number>('CACHE_TTL', DefaultConfigValues.CACHE_TTL),
+            //     lruSize: configService.get<number>('CACHE_TTL', DefaultConfigValues.CACHE_LRU_SIZE),
+            //   }),
+            // }),
+            new KeyvRedis(connectOptions, options)
+          ]
+        };
+      },
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AppController],
   providers: [

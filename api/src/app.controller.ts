@@ -1,4 +1,4 @@
-import { Controller, Get, UseFilters } from '@nestjs/common';
+import { BadRequestException, Controller, Get, HttpException, HttpStatus, Inject, UseFilters } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ConfigService } from '@nestjs/config';
 import { MonieConfig } from './monie/monie.config';
@@ -9,6 +9,11 @@ import { I18nTranslations } from './generated/i18n.generated';
 import { UpdateAccountDto } from './account/account/dto/update-account.dto';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
+import { AuthAccountService } from './service/auth-account.service';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import KeyvRedis from '@keyv/redis';
+import { EnhanceCacheService } from './service/caches/enhance-cache.service';
 
 @Controller()
 export class AppController {
@@ -17,11 +22,14 @@ export class AppController {
     private readonly monieConfig: MonieConfig,
     private readonly logger: GlobalLogger,
     private readonly winstonLogger: WinstonLogger,
-    private readonly i18nService: I18nService
+    private readonly i18n: I18nService,
+    private readonly authAccountService: AuthAccountService,
+    private readonly cacheService: EnhanceCacheService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) { }
 
   @Get()
-  async getHello(@I18n() i18n: I18nContext<I18nTranslations>) {
+  async getHello() {
     // console.log(this.monieConfig.redisHost())
     // this.logger.error("123");
     // this.winstonLogger.info('abc', { id: 1, name: 'foo' });
@@ -31,6 +39,14 @@ export class AppController {
     // const validateObj = plainToInstance(UpdateAccountDto, dto);
     // const errors = await this.i18nService.validate(validateObj);
     // console.log(errors)
-    return await i18n.t("hello.HELLO");
+    // this.authAccountService.test();
+    // await this.cacheManager.set('key', 'value', 15000);
+    // const value = await this.cacheManager.get<string>('key');
+    // console.log('cahce value:', value);
+    // console.log('cahce value:', await this.cacheManager.get('foo'));
+    // console.log(this.cacheManager.stores);
+    // const redisClient = await this.cacheService.getRedisClient();
+    // console.log('client', redisClient)
+    return await this.i18n.t("hello.HELLO");
   }
 }

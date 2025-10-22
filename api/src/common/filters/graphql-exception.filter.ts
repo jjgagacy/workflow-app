@@ -34,10 +34,25 @@ export class GraphQLExceptionFilter implements GqlExceptionFilter {
 
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
+
+        // 处理 HttpException
+        if (exception.getStatus && exception.getResponse) {
+            const status = exception.getStatus();
+            // const exceptionResponse = exception.getResponse();
+
+            response.status(status).json({
+                statusCode: status,
+                message: exception.message,
+            });
+            return;
+        }
+
+        // 处理其他类型的异常
+        const statusCode = this.getStatusCode(exception);
         response
-            .status(response.statusCode)
+            .status(statusCode)
             .json({
-                statusCode: response.statusCode,
+                statusCode: statusCode,
                 message: exception.message,
             });
 
@@ -52,5 +67,20 @@ export class GraphQLExceptionFilter implements GqlExceptionFilter {
             GraphqlErrorCodes.BAD_REQUEST,
             typeof response === 'object' ? (response as any) : {}
         );
+    }
+
+    private getStatusCode(exception: any): number {
+        // 根据异常类型返回不同的状态码
+        console.log('--', exception.name);
+        if (exception.name === 'ValidationError') return 400;
+        if (exception.name === 'UnauthorizedError') return 401;
+        if (exception.name === 'ForbiddenError') return 403;
+        if (exception.name === 'NotFoundError') return 404;
+        if (exception.name === 'ConflictError') return 409;
+        return 500; // 默认服务器错误
+    }
+
+    private getMessage(exception: any): string {
+        return exception.message || 'Internal server error';
     }
 }

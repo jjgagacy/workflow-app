@@ -23,6 +23,16 @@ import { AuthService } from '@/auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { MonieConfig } from '@/monie/monie.config';
 import { SystemService } from '@/monie/system.service';
+import { TenantEntity } from './entities/tenant.entity';
+import { TenantAccountEntity } from './entities/tenant-account.entity';
+import { ProviderEntity } from './entities/provider.entity';
+import { ProviderModelEntity } from './entities/provider-model.entity';
+import { TenantDefaultModelEntity } from './entities/tenant-default-model.entity';
+import { TenantPreferredProviderEntity } from './entities/tenant-preferred-provider.entity';
+import { ProviderModelSettingEntity } from './entities/provider-model-setting.entity';
+import { OperationLogsEntity } from './entities/operation-log.entity';
+import { AccountIntegrateEntity } from './entities/account-integrate.entity';
+import { UserEntity } from './entities/user.entity';
 
 @Global()
 @Module({
@@ -35,7 +45,17 @@ import { SystemService } from '@/monie/system.service';
             PermEntity,
             ModulePermEntity,
             MenuRoleEntity,
-            AccountEntity
+            AccountEntity,
+            TenantEntity,
+            TenantAccountEntity,
+            ProviderEntity,
+            ProviderModelEntity,
+            TenantDefaultModelEntity,
+            TenantPreferredProviderEntity,
+            ProviderModelSettingEntity,
+            OperationLogsEntity,
+            AccountIntegrateEntity,
+            UserEntity,
         ]),
     ],
     controllers: [],
@@ -70,6 +90,7 @@ import { SystemService } from '@/monie/system.service';
         AuthService,
         ModulePermManageService,
         JwtService,
+        TypeOrmModule,
     ]
 })
 export class AccountModule { }
