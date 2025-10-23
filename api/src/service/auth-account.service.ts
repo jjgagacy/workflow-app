@@ -28,4 +28,10 @@ export class AuthAccountService {
         // await redisClient.rPush('la', ['foo', 'bar']);
         console.log('client', await redisClient.lRange('la', 0, -1))
     }
+
+    isAccountFreezed(email: string): boolean {
+        return false;
+    }
+
+
 }

@@ -45,3 +45,4 @@
 192.168.65.1 - - [18/Oct/2025:00:21:02 +0000] "GET /test/foo.html HTTP/1.1" 404 555 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
 192.168.65.1 - - [18/Oct/2025:00:25:05 +0000] "GET /test/foo.html HTTP/1.1" 200 12 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
 192.168.65.1 - - [18/Oct/2025:00:25:09 +0000] "GET /test/ HTTP/1.1" 200 958 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+192.168.65.1 - - [23/Oct/2025:05:35:29 +0000] "GET / HTTP/1.1" 403 555 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"

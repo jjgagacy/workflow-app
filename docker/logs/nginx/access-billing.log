@@ -58,3 +58,7 @@
 192.168.65.1 - - [18/Oct/2025:00:25:25 +0000] "GET / HTTP/1.1" 200 52716 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
 192.168.65.1 - - [18/Oct/2025:00:25:25 +0000] "GET /build/assets/app-DIc0kdyo.css HTTP/1.1" 200 33350 "http://workflow-app-billing.test:8080/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
 192.168.65.1 - - [18/Oct/2025:00:25:25 +0000] "GET /build/assets/app-Bj43h_rG.js HTTP/1.1" 200 36081 "http://workflow-app-billing.test:8080/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+192.168.65.1 - - [23/Oct/2025:05:35:02 +0000] "GET / HTTP/1.1" 200 52716 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+192.168.65.1 - - [23/Oct/2025:05:35:05 +0000] "GET /favicon.ico HTTP/1.1" 200 0 "http://workflow-app-billing.test:8080/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+192.168.65.1 - - [23/Oct/2025:09:10:21 +0000] "GET / HTTP/1.1" 200 52716 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+192.168.65.1 - - [23/Oct/2025:14:30:01 +0000] "GET / HTTP/1.1" 200 52716 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"

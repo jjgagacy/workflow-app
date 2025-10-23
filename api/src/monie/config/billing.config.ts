@@ -10,4 +10,12 @@ export class BillingConfig {
     billingEnabled(): boolean {
         return toBoolean(this.configService.get<boolean>('BILLING_ENABLED', false));
     }
+
+    billingAPISecretKey(): string {
+        return this.configService.get<string>('BILLING_API_SECRET_KEY', '');
+    }
+
+    billingApiUrl(): string {
+        return this.configService.get<string>('BILLING_API_URL', '');
+    }
 }
