@@ -187,10 +187,10 @@ describe('RedisClient (e2e)', () => {
                 expect(result).toBeNull();
             });
         });
+    });
 
-        afterAll(async () => {
-            await app.close();
-        });
+    afterAll(async () => {
+        await app.close();
     });
 
     // describe('publish operation', () => {

@@ -89,6 +89,8 @@ import { DefaultConfigValues } from './monie/constants/default-config-value';
 import KeyvRedis, { Keyv, RedisClientOptions } from '@keyv/redis';
 import { CacheableMemory, KeyvOptions } from 'cacheable';
 import { RedisUrlBuilder } from './common/utils/redis-url';
+import { HttpModule } from '@nestjs/axios';
+import { timeout } from 'rxjs';
 
 @Module({
   imports: [
@@ -203,6 +205,14 @@ import { RedisUrlBuilder } from './common/utils/redis-url';
         };
       },
       inject: [ConfigService],
+    }),
+    HttpModule.registerAsync({
+      global: true,
+      useFactory: async (configService: ConfigService) => ({
+        timeout: Number(configService.get<number>('HTTP_TIMEOUT', 5000)),
+        maxRedirects: Number(configService.get<number>('HTTP_MAX_REDIRECTS', 5)),
+      }),
+      inject: [ConfigService,]
     }),
   ],
   controllers: [AppController],
