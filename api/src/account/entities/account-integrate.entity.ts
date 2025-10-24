@@ -9,10 +9,10 @@ export class AccountIntegrateEntity extends BaseEntity {
 
     @Column({
         name: 'account_id',
-        type: 'uuid',
+        type: 'int',
         nullable: false,
     })
-    accountId: string;
+    accountId: number;
 
     @Column({
         name: 'provider',

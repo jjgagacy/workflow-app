@@ -5,4 +5,6 @@ export abstract class BaseAccountDto {
   mobile?: string;
   status?: number;
   roles?: number[];
+  language?: string;
+  theme?: string;
 }

@@ -11,12 +11,19 @@ export type I18nTranslations = {
         "PASSWORD_NEW_NOT_EMPTY": string;
         "PASSWORD_FORMAT_INVALID": string;
         "PASSWORD_UPDATE_FAILED": string;
+        "ACCOUNT_NOT_FOUND": string;
         "ACCOUNT_NOT_EXIST": string;
         "ACCOUNT_EXIST": string;
         "ACCOUNT_ID_NOT_EXISTS": string;
+        "EMAIL_NOT_EMPTY": string;
+        "EMAIL_NOT_EXIST": string;
+        "EMAIL_EXIST": string;
     };
     "auth": {
         "PASSWORD_INVALID": string;
+    };
+    "billing": {
+        "GET_PAYMENT_LINK_ERROR": string;
     };
     "hello": {
         "HELLO": string;
@@ -56,6 +63,9 @@ export type I18nTranslations = {
         "CREATE_FAILED_ID_INVALID": string;
         "UPDATE_FAILED": string;
         "DELETE_FAILED": string;
+    };
+    "tenant": {
+        "WORKSPACE_CREATE_NOT_ALLOWD": string;
     };
     "validation": {
         "NOT_EMPTY": string;

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { AccountEntity } from "./entities/account.entity";
-import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, Like, Repository } from "typeorm";
+import { EntityManager, FindManyOptions, FindOptionsOrder, FindOptionsWhere, Like, Repository } from "typeorm";
 import { CreateAccountDto } from "./account/dto/create-account.dto";
 import * as bcrypt from 'bcrypt';
 import { PASSWORD_SALT } from "@/config/constants";
@@ -13,6 +13,8 @@ import { throwIfDtoValidateFail } from "@/common/utils/validation";
 import { I18nService } from "nestjs-i18n";
 import { BadRequestGraphQLException, InvalidInputGraphQLException } from "@/common/exceptions";
 import { I18nTranslations } from "@/generated/i18n.generated";
+import { MonieConfig } from "@/monie/monie.config";
+import { getSafeTimezone, getSupportedTimezones, getTimezoneByLanguage } from "@/common/constants/timezone";
 
 @Injectable()
 export class AccountService {
@@ -21,11 +23,19 @@ export class AccountService {
         private readonly accountRepository: Repository<AccountEntity>,
         private readonly roleService: RoleService,
         private readonly i18n: I18nService<I18nTranslations>,
+        private readonly monieConifg: MonieConfig,
     ) { }
 
     async getByUserName(username: string, roles: boolean = false): Promise<AccountEntity | null> {
         return await this.accountRepository.findOne({
             where: { username },
+            relations: { roles: roles }
+        });
+    }
+
+    async getByEmail(email: string, roles: boolean = false): Promise<AccountEntity | null> {
+        return await this.accountRepository.findOne({
+            where: { email },
             relations: { roles: roles }
         });
     }
@@ -37,23 +47,41 @@ export class AccountService {
         });
     }
 
-    async create(dto: CreateAccountDto): Promise<AccountEntity> {
+    async create(dto: CreateAccountDto, entityManager?: EntityManager): Promise<AccountEntity> {
+        const accountRepository = entityManager ?
+            entityManager.getRepository(AccountEntity) : this.accountRepository;
         const validateObj = plainToInstance(CreateAccountDto, dto);
         const errors = await this.i18n.validate(validateObj);
         throwIfDtoValidateFail(errors);
 
-        const existingAccount = await this.getByUserName(dto.username);
-        if (existingAccount) {
-            throw new BadRequestGraphQLException(this.i18n.t('account.ACCOUNT_EXIST', { args: { name: dto.username } }));
+        const edition = this.monieConifg.edition();
+        if (edition === MonieConfig.EDITION_SELF_HOSTED) {
+            if (dto.username === '')
+                throw new BadRequestGraphQLException(this.i18n.t('system.EMPTY_PARAM', { args: { name: 'username' } }));
+            if (dto.password === '')
+                throw new BadRequestGraphQLException(this.i18n.t('account.PASSWORD_NOT_EMPTY'));
+
+            const existingAccount = await this.getByUserName(dto.username!);
+            if (existingAccount) {
+                throw new BadRequestGraphQLException(this.i18n.t('account.ACCOUNT_EXIST', { args: { name: dto.username } }));
+            }
+        } else if (edition === MonieConfig.EDITION_CLOUD) {
+            if (dto.email === '')
+                throw new BadRequestGraphQLException(this.i18n.t('account.EMAIL_NOT_EMPTY'));
+            const existingAccount = await this.getByEmail(dto.email || '');
+            if (existingAccount) {
+                throw new BadRequestGraphQLException(this.i18n.t('account.EMAIL_EXIST', { args: { name: dto.email } }));
+            }
         }
+
         const accountEntity = this.accountRepository.create({
-            ...this.mapBaseFields(dto),
-            password: await this.hashPassword(dto.password),
-            operate: this.mapOperateFields(dto),
+            ...this.mapBaseFields(validateObj),
+            password: dto.password !== '' ? await this.hashPassword(dto.password) : '',
+            operate: this.mapOperateFields(validateObj),
             roles: await this.roleService.resolveRoles(dto.roles)
         });
 
-        await this.accountRepository.save(accountEntity);
+        await accountRepository.save(accountEntity);
         return accountEntity;
     }
 
@@ -108,7 +136,10 @@ export class AccountService {
             realName: dto.realName,
             email: dto.email,
             mobile: dto.mobile,
-            status: dto.status
+            status: dto.status,
+            prefer_language: dto.language,
+            theme: dto.theme,
+            timezone: getSafeTimezone(dto.language || ''),
         };
     }
 

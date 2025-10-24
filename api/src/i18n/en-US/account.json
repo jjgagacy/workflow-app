@@ -4,7 +4,11 @@
     "PASSWORD_NEW_NOT_EMPTY": "New password cannot be empty",
     "PASSWORD_FORMAT_INVALID": "Password format is invalid",
     "PASSWORD_UPDATE_FAILED": "Password update failed",
+    "ACCOUNT_NOT_FOUND": "Account does not found",
     "ACCOUNT_NOT_EXIST": "Account does not exist, {name}",
     "ACCOUNT_EXIST": "Account already exists, {name}",
-    "ACCOUNT_ID_NOT_EXISTS": "Login account ID does not exist"
+    "ACCOUNT_ID_NOT_EXISTS": "Login account ID does not exist",
+    "EMAIL_NOT_EMPTY": "Email cannot be empty",
+    "EMAIL_NOT_EXIST": "Email does not exists, {email}",
+    "EMAIL_EXIST": "Email already exists"
 }

@@ -1,7 +1,5 @@
 import { HttpService } from "@nestjs/axios";
-import { BadRequestException } from "@nestjs/common";
-import { count } from "console";
-import { catchError, delay, lastValueFrom, map, retry, throwError } from "rxjs";
+import { catchError, lastValueFrom, map, retry, throwError } from "rxjs";
 
 export class BillingApiService {
     constructor(
@@ -46,6 +44,24 @@ export class BillingApiService {
         const response = await lastValueFrom(request$);
         if (!response.success) {
             throw new Error(`Unable to retrieve billing data: ${response.message}`);
+        }
+        return response.data;
+    }
+
+    async postData<T>(endpoint: string, data?: any, params?: any): Promise<T> {
+        const request$ = await this.sendRequest('POST', endpoint, data, params);
+        const response = await lastValueFrom(request$);
+        if (!response.success) {
+            throw new Error(`Unable to post billing data: ${response.message}`);
+        }
+        return response.data;
+    }
+
+    async deleteData<T>(endpoint: string, data?: any, params?: any): Promise<T> {
+        const request$ = await this.sendRequest('DELETE', endpoint, data, params);
+        const response = await lastValueFrom(request$);
+        if (!response.success) {
+            throw new Error(`Unable to delete billing data: ${response.message}`);
         }
         return response.data;
     }

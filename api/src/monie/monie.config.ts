@@ -19,6 +19,9 @@ import { LoginConfig } from "./config/login.config";
 
 @Injectable()
 export class MonieConfig {
+    static EDITION_CLOUD = 'CLOUD';
+    static EDITION_SELF_HOSTED = 'SELF_HOSTED';
+
     constructor(protected readonly configService: ConfigService
     ) { }
 }

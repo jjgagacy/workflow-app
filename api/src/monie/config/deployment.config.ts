@@ -19,6 +19,7 @@ export class DeploymentConfig {
         return toBoolean(this.configService.get<boolean>('ENABLE_REQUEST_LOGGING', false))
     }
 
+    // Saas edition: CLOUD（云端/多租户）, SELF_HOSTED（自托管/单租户）
     edition(): string {
         return this.configService.get<string>('EDITION', 'SELF_HOSTED')
     }

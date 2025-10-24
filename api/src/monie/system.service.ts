@@ -19,6 +19,7 @@ export class SystemService {
     refreshTokenExpiryDays: number;
     loginRetryDurationMinutes: number;
     forgotPasswordRetryDuration: number;
+    billingEnabled: boolean;
 
     constructor(
         private readonly monieConfig: MonieConfig
@@ -36,10 +37,10 @@ export class SystemService {
         this.emailCodeLoginExpiryMinutes = this.monieConfig.emailCodeLoginExpiryMinutes();
         this.enableSocialOauthLogin = this.monieConfig.enableSocialOauthLogin();
         this.allowRegister = this.monieConfig.allowRegister();
-        this.allowCreateWorkspace = this.monieConfig.allowCreateWorkspace();
         this.accessTokenExpiryMinutes = this.monieConfig.accessTokenExpiryMinutes();
         this.refreshTokenExpiryDays = this.monieConfig.refreshTokenExpiryDays();
         this.loginRetryDurationMinutes = this.monieConfig.loginRetryDurationMinutes();
         this.forgotPasswordRetryDuration = this.monieConfig.forgotPasswordRetryDuration();
+        this.billingEnabled = this.monieConfig.billingEnabled();
     }
 }

@@ -10,8 +10,9 @@ export class AccountEntity extends BaseEntity {
 
     @Column({
         nullable: false,
-        unique: true,
+        unique: false,
     })
+    @Index()
     username: string;
 
     @Column({
