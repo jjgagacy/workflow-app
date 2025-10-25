@@ -51,4 +51,23 @@ export class EnumUtils {
     static getKeySafe<T extends Record<string, string | number>>(enumObj: T, value: string | number): keyof T | null {
         return this.safeValueOf(enumObj, value);
     }
+
+    static isEnumValue<T extends Record<string, string | number>>(enumObj: T, value: any): value is T[keyof T] {
+        return Object.values(enumObj).includes(value);
+    }
+
+    static areAllEnumValues<T extends Record<string, string | number>>(enumObj: T, values: any[]): values is T[keyof T][] {
+        return values.every(value => this.isEnumValue(enumObj, value));
+    }
+
+    static validateEnumValues<T extends Record<string, string | number>>(enumObj: T, values: any[], enumName: string = 'enum'): void {
+        if (!this.areAllEnumValues(enumObj, values)) {
+            throw new Error(`All values must be valid ${enumName} values`);
+        }
+    }
+
+    static safeValidateEnumValues<T extends Record<string, string | number>>(enumObj: T, values: any[]): boolean {
+        return this.areAllEnumValues(enumObj, values);
+    }
 }
+

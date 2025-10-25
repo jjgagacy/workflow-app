@@ -25,7 +25,7 @@ export class TenantAccountEntity extends BaseEntity {
     @Column({
         type: 'varchar',
         nullable: false,
-        default: 'normal',
+        default: 'owner',
     })
     role: string;
 
