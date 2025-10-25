@@ -34,66 +34,70 @@ describe('AuthAccountService (e2e)', () => {
     });
 
     describe('register function', () => {
-        //     it('should register a new account successfully', async () => {
-        //         const dto: AccountSignUpDto = {
-        //             email: 'test3@example.com',
-        //             name: 'testuser3',
-        //             password: 'password123',
-        //             language: 'en-US',
-        //             createWorkspaceRequired: true,
-        //         };
+        it('should register a new account successfully', async () => {
+            const dto: AccountSignUpDto = {
+                email: 'test3@example.com',
+                name: 'testuser3',
+                password: 'password123',
+                language: 'en-US',
+                createWorkspaceRequired: true,
+            };
 
-        //         const result = await authAccountService.register(dto, true);
+            if (!await accountService.getByEmail(dto.email)) {
+                const result = await authAccountService.register(dto, true);
 
-        //         expect(result.account.id).toBeDefined();
-        //         expect(result.tenant?.id).toBeDefined();
-        //     });
+                expect(result.account.id).toBeDefined();
+                expect(result.tenant?.id).toBeDefined();
+            }
+        });
 
-        //     it('should register a new account succesfully by open id', async () => {
-        //         const dto: AccountSignUpDto = {
-        //             email: 'test2@example.com',
-        //             name: 'testuser2',
-        //             password: 'password123',
-        //             language: 'zh-Hans',
-        //             createWorkspaceRequired: true,
-        //             openId: 'openid-123',
-        //             provider: 'opanai',
-        //         };
+        it('should register a new account succesfully by open id', async () => {
+            const dto: AccountSignUpDto = {
+                email: 'test2@example.com',
+                name: 'testuser2',
+                password: 'password123',
+                language: 'zh-Hans',
+                createWorkspaceRequired: true,
+                openId: 'openid-123',
+                provider: 'opanai',
+            };
 
-        //         const result = await authAccountService.register(dto, true);
+            if (!await accountService.getByEmail(dto.email)) {
+                const result = await authAccountService.register(dto, true);
 
-        //         expect(result.account.id).toBeDefined();
-        //         expect(result.tenant?.id).toBeDefined();
-        //     });
+                expect(result.account.id).toBeDefined();
+                expect(result.tenant?.id).toBeDefined();
+            }
+        });
 
-        // it('should can change account owner', async () => {
-        //     const accountId = 16;
-        //     const tenantId = 'fd3499b8-b8b3-4d42-859e-355a29c0f275';
+        it('should can change account owner', async () => {
+            const accountId = 16;
+            const tenantId = 'fd3499b8-b8b3-4d42-859e-355a29c0f275';
 
-        //     const account = await accountService.getById(accountId);
-        //     expect(account).toBeDefined();
+            const account = await accountService.getById(accountId);
+            expect(account).toBeDefined();
 
-        //     const tenant = await dataSource.manager.findOne(TenantEntity, {
-        //         where: { id: tenantId }
-        //     });
-        //     expect(tenant).toBeDefined();
+            const tenant = await dataSource.manager.findOne(TenantEntity, {
+                where: { id: tenantId }
+            });
+            expect(tenant).toBeDefined();
 
-        //     const hasRole = await tenantService.hasRoles(tenant!, [AccountRole.OWNER]);
-        //     expect(hasRole).toBeTruthy();
+            const hasRole = await tenantService.hasRoles(tenant!, [AccountRole.OWNER]);
+            expect(hasRole).toBeTruthy();
 
-        //     const newAccountTenantJoin = await tenantService.addAccountTenantMembership(account!, tenant!, AccountRole.ADMIN);
-        //     expect(newAccountTenantJoin).toBeDefined();
+            const newAccountTenantJoin = await tenantService.addAccountTenantMembership(account!, tenant!, AccountRole.ADMIN);
+            expect(newAccountTenantJoin).toBeDefined();
 
-        //     expect(newAccountTenantJoin?.role == AccountRole.ADMIN);
+            expect(newAccountTenantJoin?.role == AccountRole.ADMIN);
 
-        //     const tenantAccountCount = await dataSource.manager.count(TenantAccountEntity, {
-        //         where: { tenant: { id: tenantId } },
-        //     });
-        //     expect(tenantAccountCount).toBe(1);
+            const tenantAccountCount = await dataSource.manager.count(TenantAccountEntity, {
+                where: { tenant: { id: tenantId } },
+            });
+            expect(tenantAccountCount).toBe(1);
 
-        //     // restore role
-        //     await tenantService.addAccountTenantMembership(account!, tenant!, AccountRole.OWNER);
-        // });
+            // restore role
+            await tenantService.addAccountTenantMembership(account!, tenant!, AccountRole.OWNER);
+        });
 
         it('should throw error when creating duplicate owner', async () => {
             const tenantId = 'fd3499b8-b8b3-4d42-859e-355a29c0f275';

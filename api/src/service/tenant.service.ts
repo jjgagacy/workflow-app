@@ -47,33 +47,42 @@ export class TenantService {
             throw new Error('Role must be AccountRole');
         }
         const workManager = entityManager ? entityManager : this.dataSource.manager;
+
+        if (workManager?.queryRunner?.isTransactionActive) {
+            return await this.executeAddMembership(account, tenant, role, workManager);
+        }
+
         return workManager.transaction(async (manager) => {
-            if (role == AccountRole.OWNER) {
-                if (await this.hasRoles(tenant, [AccountRole.OWNER])) {
-                    throw new BadRequestGraphQLException('Tenant alrady has an owner');
-                }
+            return await this.executeAddMembership(account, tenant, role, manager);
+        });
+    }
+
+    private async executeAddMembership(account: AccountEntity, tenant: TenantEntity, role: AccountRole, entityManager: EntityManager) {
+        if (role == AccountRole.OWNER) {
+            if (await this.hasRoles(tenant, [AccountRole.OWNER])) {
+                throw new BadRequestGraphQLException('Tenant alrady has an owner');
             }
+        }
 
-            // execute upsert
-            const result = await manager
-                .createQueryBuilder()
-                .insert()
-                .into(TenantAccountEntity)
-                .values({
-                    tenant: tenant,
-                    account: account,
-                    role: role
-                })
-                .orUpdate(['role'], ['tenant_id', 'account_id'])
-                .execute();
+        // execute upsert
+        const result = await entityManager
+            .createQueryBuilder()
+            .insert()
+            .into(TenantAccountEntity)
+            .values({
+                tenant: tenant,
+                account: account,
+                role: role
+            })
+            .orUpdate(['role'], ['tenant_id', 'account_id'])
+            .execute();
 
-            if (!result || !result.identifiers || result.identifiers.length === 0) {
-                throw new Error('Failed to upsert result');
-            }
+        if (!result || !result.identifiers || result.identifiers.length === 0) {
+            throw new Error('Failed to upsert result');
+        }
 
-            return manager.findOne(TenantAccountEntity, {
-                where: { tenant: { id: tenant.id }, account: { id: account.id } }
-            });
+        return entityManager.findOne(TenantAccountEntity, {
+            where: { tenant: { id: tenant.id }, account: { id: account.id } }
         });
     }
 
