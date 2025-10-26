@@ -16,7 +16,6 @@ import { AccountIntegrateEntity } from "@/account/entities/account-integrate.ent
 import { plainToInstance } from "class-transformer";
 import { throwIfDtoValidateFail } from "@/common/utils/validation";
 import { TenantService } from "./tenant.service";
-import { isSet } from "util/types";
 import { SystemService } from "@/monie/system.service";
 import { TenantEntity } from "@/account/entities/tenant.entity";
 import { AccountRole } from "@/account/account.enums";

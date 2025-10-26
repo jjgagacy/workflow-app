@@ -15,6 +15,7 @@ import { BadRequestGraphQLException, InvalidInputGraphQLException } from "@/comm
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { MonieConfig } from "@/monie/monie.config";
 import { getSafeTimezone, getSupportedTimezones, getTimezoneByLanguage } from "@/common/constants/timezone";
+import { EditionType } from "@/monie/enums/version.enum";
 
 @Injectable()
 export class AccountService {
@@ -55,7 +56,7 @@ export class AccountService {
         throwIfDtoValidateFail(errors);
 
         const edition = this.monieConifg.edition();
-        if (edition === MonieConfig.EDITION_SELF_HOSTED) {
+        if (edition === EditionType.SELF_HOSTED) {
             if (dto.username === '')
                 throw new BadRequestGraphQLException(this.i18n.t('system.EMPTY_PARAM', { args: { name: 'username' } }));
             if (dto.password === '')
@@ -65,7 +66,7 @@ export class AccountService {
             if (existingAccount) {
                 throw new BadRequestGraphQLException(this.i18n.t('account.ACCOUNT_EXIST', { args: { name: dto.username } }));
             }
-        } else if (edition === MonieConfig.EDITION_CLOUD) {
+        } else if (edition === EditionType.CLOUD) {
             if (dto.email === '')
                 throw new BadRequestGraphQLException(this.i18n.t('account.EMAIL_NOT_EMPTY'));
             const existingAccount = await this.getByEmail(dto.email || '');

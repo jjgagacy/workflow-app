@@ -12,6 +12,7 @@ import { AccountRole } from "@/account/account.enums";
 import { AccountEntity } from "@/account/entities/account.entity";
 import { EnumUtils, getEnumKeySafe } from "@/common/utils/enums";
 import { TenantAccountEntity } from "@/account/entities/tenant-account.entity";
+import { Transactional } from "@/common/decorators/transaction.decorator";
 
 @Injectable()
 export class TenantService {
@@ -42,30 +43,25 @@ export class TenantService {
         return await workManager.save(tenant);
     }
 
+    @Transactional()
     async addAccountTenantMembership(account: AccountEntity, tenant: TenantEntity, role: AccountRole, entityManager?: EntityManager): Promise<TenantAccountEntity | null> {
         if (!EnumUtils.safeValidateEnumValues(AccountRole, [role])) {
             throw new Error('Role must be AccountRole');
         }
-        const workManager = entityManager ? entityManager : this.dataSource.manager;
 
-        if (workManager?.queryRunner?.isTransactionActive) {
-            return await this.executeAddMembership(account, tenant, role, workManager);
-        }
-
-        return workManager.transaction(async (manager) => {
-            return await this.executeAddMembership(account, tenant, role, manager);
-        });
+        return await this.executeAddMembership(account, tenant, role, entityManager);
     }
 
-    private async executeAddMembership(account: AccountEntity, tenant: TenantEntity, role: AccountRole, entityManager: EntityManager) {
+    private async executeAddMembership(account: AccountEntity, tenant: TenantEntity, role: AccountRole, entityManager?: EntityManager) {
+        const workManager = entityManager ? entityManager : this.dataSource.manager;
         if (role == AccountRole.OWNER) {
-            if (await this.hasRoles(tenant, [AccountRole.OWNER])) {
+            if (await this.hasRoles(tenant, [AccountRole.OWNER], entityManager)) {
                 throw new BadRequestGraphQLException('Tenant alrady has an owner');
             }
         }
 
         // execute upsert
-        const result = await entityManager
+        const result = await workManager
             .createQueryBuilder()
             .insert()
             .into(TenantAccountEntity)
@@ -81,7 +77,7 @@ export class TenantService {
             throw new Error('Failed to upsert result');
         }
 
-        return entityManager.findOne(TenantAccountEntity, {
+        return workManager.findOne(TenantAccountEntity, {
             where: { tenant: { id: tenant.id }, account: { id: account.id } }
         });
     }
@@ -99,4 +95,20 @@ export class TenantService {
         });
         return joinRecord != null;
     }
+
+    async getAccountRole(tenant: TenantEntity, account: AccountEntity, entityManager?: EntityManager): Promise<string | null> {
+        const workManager = entityManager ? entityManager : this.dataSource.manager;
+
+        const joinRecord = await workManager.findOne(TenantAccountEntity, {
+            where: {
+                tenant: { id: tenant.id },
+                account: { id: account.id },
+            },
+            select: ['role'],
+        });
+
+        return joinRecord?.role || null;
+    }
+
+
 }
