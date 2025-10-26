@@ -10,6 +10,8 @@ import { AccountService } from '@/account/account.service';
 import { TenantEntity } from '@/account/entities/tenant.entity';
 import { DataSource } from 'typeorm';
 import { TenantAccountEntity } from '@/account/entities/tenant-account.entity';
+import { AccountEntity } from '@/account/entities/account.entity';
+import { AccountIntegrateEntity } from '@/account/entities/account-integrate.entity';
 
 describe('AuthAccountService (e2e)', () => {
     let app: INestApplication<App>;
@@ -68,6 +70,30 @@ describe('AuthAccountService (e2e)', () => {
                 expect(result.account.id).toBeDefined();
                 expect(result.tenant?.id).toBeDefined();
             }
+        });
+
+        it('should register and delete a new account succesfully by open id', async () => {
+            const dto: AccountSignUpDto = {
+                email: 'test5@example.com',
+                name: 'testuser5',
+                password: 'password123',
+                language: 'zh-Hans',
+                createWorkspaceRequired: true,
+                openId: 'openid-456',
+                provider: 'opanai',
+            };
+
+            await dataSource.transaction(async (manager) => {
+                const result = await authAccountService.register(dto, true, manager);
+
+                expect(result.account.id).toBeDefined();
+                expect(result.tenant?.id).toBeDefined();
+
+                manager.delete(AccountEntity, result.account.id);
+                manager.delete(TenantEntity, result.tenant?.id);
+                manager.createQueryBuilder().delete().from(TenantAccountEntity).where('tenant_id IN (:...ids)', { ids: [result.tenant?.id] }).execute();
+                manager.createQueryBuilder().delete().from(AccountIntegrateEntity).where('account_id IN (:...ids)', { ids: [result.account.id] }).execute();
+            });
         });
 
         it('should can change account owner', async () => {

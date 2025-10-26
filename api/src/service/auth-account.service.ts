@@ -1,7 +1,7 @@
 import { AccountService } from "@/account/account.service";
 import { AccountEntity } from "@/account/entities/account.entity";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
-import { Inject, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Cache } from "cache-manager";
 import { DataSource, EntityManager, QueryRunner, Repository } from "typeorm";
@@ -19,6 +19,7 @@ import { TenantService } from "./tenant.service";
 import { SystemService } from "@/monie/system.service";
 import { TenantEntity } from "@/account/entities/tenant.entity";
 import { AccountRole } from "@/account/account.enums";
+import { Transactional } from "@/common/decorators/transaction.decorator";
 
 @Injectable()
 export class AuthAccountService {
@@ -54,50 +55,51 @@ export class AuthAccountService {
         return false;
     }
 
+    @Transactional()
     async register(dto: AccountSignUpDto, isSetup = false, entityManager?: EntityManager) {
         const validateObj = plainToInstance(AccountSignUpDto, dto);
         const errors = await this.i18n.validate(validateObj);
         throwIfDtoValidateFail(errors);
 
-        const workManager = entityManager || this.dataSource.manager;
+        const workManager = entityManager ? entityManager : this.dataSource.manager;
 
         if (!this.systemService.allowRegister && !isSetup) {
             throw new BadRequestGraphQLException(this.i18n.t('account.ACCOUNT_NOT_FOUND'));
         }
 
-        return workManager.transaction(async (manager) => {
-            const createAccount: CreateAccountDto = {
-                username: dto.name,
-                email: dto.email,
-                password: dto.password || '',
-                status: dto.status,
-                createdBy: 'SignUp',
-                language: dto.language,
-                theme: dto.theme,
-            };
-            const createdAccount = await this.accountService.create(createAccount, manager);
-            if (!createdAccount.id) {
-                throw new DatabaseGraphQLException(this.i18n.t('system.CREATE_FAILED_ID_INVALID'));
-            }
-            if (dto.openId) {
-                this.linkAccountIntegrate(dto.provider || '', dto.openId, createdAccount, manager);
-            }
+        const createAccount: CreateAccountDto = {
+            username: dto.name,
+            email: dto.email,
+            password: dto.password || '',
+            status: dto.status,
+            createdBy: 'SignUp',
+            language: dto.language,
+            theme: dto.theme,
+        };
+        const createdAccount = await this.accountService.create(createAccount, workManager);
+        if (!createdAccount.id) {
+            throw new DatabaseGraphQLException(this.i18n.t('system.CREATE_FAILED_ID_INVALID'));
+        }
 
-            let tenant: TenantEntity | undefined = undefined;
+        let linkIntegrate: AccountIntegrateEntity | undefined = undefined;
+        if (dto.openId) {
+            linkIntegrate = await this.linkAccountIntegrate(dto.provider || '', dto.openId, createdAccount, workManager);
+        }
 
-            if (this.systemService.allowCreateWorkspace &&
-                dto.createWorkspaceRequired
-                // && 验证账号是否开通企业版
-            ) {
-                tenant = await this.tenantService.createTenant({ name: dto.name, createdBy: createAccount.createdBy }, isSetup, manager);
-                await this.tenantService.addAccountTenantMembership(createdAccount, tenant!, AccountRole.OWNER, manager);
-            }
+        let tenant: TenantEntity | undefined = undefined;
 
-            return { account: createdAccount, tenant }
-        });
+        if (this.systemService.allowCreateWorkspace &&
+            dto.createWorkspaceRequired
+            // && 验证账号是否开通企业版
+        ) {
+            tenant = await this.tenantService.createTenant({ name: dto.name, createdBy: createAccount.createdBy }, isSetup, workManager);
+            await this.tenantService.addAccountTenantMembership(createdAccount, tenant!, AccountRole.OWNER, workManager);
+        }
+
+        return { account: createdAccount, tenant, linkIntegrate }
     }
 
-    async linkAccountIntegrate(provider: string, openId: string, account: AccountEntity, entityManager?: EntityManager) {
+    async linkAccountIntegrate(provider: string, openId: string, account: AccountEntity, entityManager?: EntityManager): Promise<AccountIntegrateEntity> {
         const workManager = entityManager || this.dataSource.manager;
 
         const accountIntegrate = await workManager.findOne(AccountIntegrateEntity, {
@@ -112,6 +114,7 @@ export class AuthAccountService {
             accountIntegrate.encryptedToken = '';
             accountIntegrate.updatedAt = new Date();
             await workManager.save(AccountIntegrateEntity, accountIntegrate);
+            return accountIntegrate;
         } else {
             const newAccountIntegrate = workManager.create(AccountIntegrateEntity, {
                 accountId: account.id,
@@ -121,7 +124,7 @@ export class AuthAccountService {
                 createdAt: new Date(),
             });
             await workManager.save(AccountIntegrateEntity, newAccountIntegrate);
+            return newAccountIntegrate;
         }
     }
-
 }

@@ -32,7 +32,7 @@ export class TenantService {
         ) {
             throw new BadRequestGraphQLException(this.i18n.t('tenant.WORKSPACE_CREATE_NOT_ALLOWD'));
         }
-        const workManager = entityManager || this.dataSource.manager;
+        const workManager = entityManager ? entityManager : this.dataSource.manager;
         const tenant = workManager.create(TenantEntity, {
             name: dto.name,
             operate: {
@@ -49,10 +49,6 @@ export class TenantService {
             throw new Error('Role must be AccountRole');
         }
 
-        return await this.executeAddMembership(account, tenant, role, entityManager);
-    }
-
-    private async executeAddMembership(account: AccountEntity, tenant: TenantEntity, role: AccountRole, entityManager?: EntityManager) {
         const workManager = entityManager ? entityManager : this.dataSource.manager;
         if (role == AccountRole.OWNER) {
             if (await this.hasRoles(tenant, [AccountRole.OWNER], entityManager)) {
@@ -60,18 +56,11 @@ export class TenantService {
             }
         }
 
-        // execute upsert
-        const result = await workManager
-            .createQueryBuilder()
-            .insert()
-            .into(TenantAccountEntity)
-            .values({
-                tenant: tenant,
-                account: account,
-                role: role
-            })
-            .orUpdate(['role'], ['tenant_id', 'account_id'])
-            .execute();
+        const result = await workManager.upsert(TenantAccountEntity, {
+            tenant: { id: tenant.id },
+            account: { id: account.id },
+            role: role
+        }, ['tenant', 'account']);
 
         if (!result || !result.identifiers || result.identifiers.length === 0) {
             throw new Error('Failed to upsert result');
@@ -109,6 +98,4 @@ export class TenantService {
 
         return joinRecord?.role || null;
     }
-
-
 }

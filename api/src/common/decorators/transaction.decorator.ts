@@ -1,4 +1,3 @@
-import { introspectionFromSchema } from "graphql";
 import { EntityManager } from "typeorm";
 
 export enum TransactionPropagation {
@@ -20,7 +19,7 @@ export function Transactional(propagation = TransactionPropagation.REQUIRED) {
                 throw new Error('DataSource not found in this class');
             }
 
-            const inTransaction = existingManager?.queryRunner?.isTransactionActives;
+            const inTransaction = existingManager?.queryRunner?.isTransactionActive;
 
             // 事务传播逻辑
             if (propagation == TransactionPropagation.REQUIRED && inTransaction) {
@@ -36,7 +35,7 @@ export function Transactional(propagation = TransactionPropagation.REQUIRED) {
             return dataSource.transaction(async (manager: EntityManager) => {
                 // 替换或添加 EntityManager 参数
                 const newArgs = [...args];
-                if (entityManagerIndex > 0) {
+                if (entityManagerIndex >= 0) {
                     newArgs[entityManagerIndex] = manager;
                 } else {
                     newArgs.push(manager);
