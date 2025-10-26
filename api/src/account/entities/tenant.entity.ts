@@ -34,7 +34,7 @@ export class TenantEntity extends BaseEntity {
     @Column({
         type: 'varchar',
         nullable: false,
-        default: 'normal',
+        default: 'active',
     })
     status: string;
 
@@ -61,4 +61,13 @@ export class TenantEntity extends BaseEntity {
 
     @Column(() => Operate, { prefix: false })
     operate: Operate;
+}
+
+export enum TenantStatus {
+    SETUP = 'setup',
+    ACTIVE = 'active',
+    TRIAL = 'trial',
+    SUSPENDED = 'suspended',
+    EXPIRED = 'expired',
+    DELETED = 'deleted',
 }

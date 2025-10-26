@@ -17,3 +17,9 @@ export enum AccountRole {
     ADMIN = 'admin',
     EDITOR = 'editor'
 }
+
+export enum MemberAction {
+    ADD = 'add',
+    REMOVE = 'remove',
+    UPDATE = 'update',
+}

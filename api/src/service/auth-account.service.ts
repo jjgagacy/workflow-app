@@ -18,8 +18,11 @@ import { throwIfDtoValidateFail } from "@/common/utils/validation";
 import { TenantService } from "./tenant.service";
 import { SystemService } from "@/monie/system.service";
 import { TenantEntity } from "@/account/entities/tenant.entity";
-import { AccountRole } from "@/account/account.enums";
+import { AccountRole, MemberAction } from "@/account/account.enums";
 import { Transactional } from "@/common/decorators/transaction.decorator";
+import { TenantAccountEntity } from "@/account/entities/tenant-account.entity";
+import { EnumConverter, EnumUtils } from "@/common/utils/enums";
+import { InvalidActionError, MemberNotInTenantError, NoPermissionError, permissionMap, RoleAlreadyAssignedError } from "@/account/errors";
 
 @Injectable()
 export class AuthAccountService {
@@ -126,5 +129,96 @@ export class AuthAccountService {
             await workManager.save(AccountIntegrateEntity, newAccountIntegrate);
             return newAccountIntegrate;
         }
+    }
+
+    async getAccountRole(account: AccountEntity, tenant: TenantEntity): Promise<AccountRole | null> {
+        const tenantAccount = await this.dataSource.manager.findOne(TenantAccountEntity, {
+            where: {
+                tenant: { id: tenant.id },
+                account: { id: account.id },
+            },
+            select: ['role', 'id'], // 不能没有id，因为可能会按照id排序，否则报错 error: column xxx_id not found
+        });
+
+        return EnumConverter.safeToEnum(AccountRole, tenantAccount?.role || '');
+    }
+
+    async checkOperatorPermission(tenant: TenantEntity, operator: AccountEntity, action: string, user: AccountEntity | null = null): Promise<void> {
+        this.validateAction(action);
+
+        if (user && user.id == operator.id) {
+            throw new BadRequestException('Cannot operate self');
+        }
+
+        const allowedRoles = permissionMap[action];
+        const role = this.getAccountRole(operator, tenant);
+        if (!role || !allowedRoles.includes(role)) {
+            throw new NoPermissionError(action, tenant.name);
+        }
+    }
+
+    private validateAction(action: string): void {
+        if (!EnumUtils.isEnumValue(MemberAction, action)) {
+            throw new InvalidActionError(action);
+        }
+    }
+
+    @Transactional()
+    async updateUserRole(
+        tenant: TenantEntity,
+        operator: AccountEntity,
+        newRole: AccountRole,
+        user: AccountEntity,
+        entityManager?: EntityManager
+    ): Promise<TenantAccountEntity> {
+        // Check operator permission
+        await this.checkOperatorPermission(tenant, operator, MemberAction.UPDATE, user);
+
+        const workManager = entityManager || this.dataSource.manager;
+
+        // Get target's member ship
+        const targetMemberJoin = await workManager.findOne(TenantAccountEntity, {
+            where: {
+                tenant: { id: tenant.id },
+                account: { id: user.id },
+            },
+        });
+
+        if (!targetMemberJoin) {
+            throw new MemberNotInTenantError(user.email, tenant.name);
+        }
+
+        // Check if role is already assigned
+        if (targetMemberJoin.role == newRole) {
+            throw new RoleAlreadyAssignedError(user.realName, newRole);
+        }
+
+        // Handle owern role transfer
+        if (newRole == AccountRole.OWNER) {
+            await this.tenantService.addAccountTenantMembership(user, tenant, newRole, entityManager);
+        }
+
+        // Update the role
+        targetMemberJoin.role = newRole;
+        return await workManager.save(TenantAccountEntity, targetMemberJoin);
+    }
+
+    async isOwner(account: AccountEntity, tenant: TenantEntity): Promise<boolean> {
+        const targetMemberJoin = await this.dataSource.manager.findOne(TenantAccountEntity, {
+            where: {
+                tenant: { id: tenant.id },
+                account: { id: account.id },
+            },
+        });
+        return targetMemberJoin?.role == AccountRole.OWNER;
+    }
+
+    async isMember(user: AccountEntity, tenant: TenantEntity): Promise<boolean> {
+        return !!this.dataSource.manager.findOne(TenantAccountEntity, {
+            where: {
+                tenant: { id: tenant.id },
+                account: { id: user.id },
+            }
+        });
     }
 }

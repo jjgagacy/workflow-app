@@ -91,6 +91,10 @@ import { CacheableMemory, KeyvOptions } from 'cacheable';
 import { RedisUrlBuilder } from './common/utils/redis-url';
 import { HttpModule } from '@nestjs/axios';
 import { timeout } from 'rxjs';
+import { InternalPluginApiController } from './controllers/internal/plugin/plugin.controller';
+import { InternalPluginInvokeController } from './controllers/internal/plugin/invoke.controller';
+import { InternalWorkspaceController } from './controllers/internal/workspace/workspace.controller';
+import { TenantContextMiddleware } from './common/middleware/tenant-context.middleware';
 
 @Module({
   imports: [
@@ -215,7 +219,7 @@ import { timeout } from 'rxjs';
       inject: [ConfigService,]
     }),
   ],
-  controllers: [AppController],
+  controllers: [AppController, InternalPluginApiController, InternalPluginInvokeController, InternalWorkspaceController],
   providers: [
     HelloResolver,
     LocalStrategy,
@@ -267,5 +271,9 @@ export class AppModule implements NestModule {
     // consumer
     //   .apply(AuthMiddleware)
     //   .forRoutes('graphql');
+
+    consumer
+      .apply(TenantContextMiddleware)
+      .forRoutes('/internal/api');
   }
 }

@@ -19,7 +19,7 @@ describe('AuthAccountService (e2e)', () => {
     let tenantService: TenantService;
     let accountService: AccountService;
     let dataSource: DataSource;
-    const testAccountName = 'testuser3';
+    const testAccountEmail = 'test3@example.com';
     const testTenantId = '106bd7b2-29d5-4b7e-bc2c-0dc14b1a966a';
 
     beforeAll(async () => {
@@ -35,7 +35,7 @@ describe('AuthAccountService (e2e)', () => {
         dataSource = app.get<DataSource>(DataSource);
     });
 
-    describe('register function', () => {
+    describe('AuthAccount Register', () => {
         it('should register a new account successfully', async () => {
             const dto: AccountSignUpDto = {
                 email: 'test3@example.com',
@@ -180,6 +180,27 @@ describe('AuthAccountService (e2e)', () => {
                     await tenantService.addAccountTenantMembership(account!, tenant!, "not-existent" as AccountRole, manager);
                 })
             ).rejects.toThrow();
+        });
+    });
+
+    describe('AuthAccount Check', () => {
+        it('should get existing account role', async () => {
+            const account = await accountService.getByEmail(testAccountEmail);
+            expect(account).toBeDefined();
+
+            const tenant = await tenantService.getTenant(testTenantId);
+            expect(tenant).toBeDefined();
+
+            const role = await authAccountService.getAccountRole(account!, tenant!);
+            expect(role).toBe(AccountRole.OWNER);
+
+            const anotherAccount = await accountService.getByEmail('test2@example.com');
+            const notExistent = await authAccountService.getAccountRole(anotherAccount!, tenant!);
+            expect(notExistent).toBeNull();
+        });
+
+        it('should have tenant data', async () => {
+            expect(await tenantService.getTenantCount()).toBeGreaterThan(0);
         });
     });
 

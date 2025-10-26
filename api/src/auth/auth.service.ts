@@ -10,7 +10,8 @@ import { BadRequestGraphQLException } from "@/common/exceptions";
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly jwtService: JwtService,
+    constructor(
+        private readonly jwtService: JwtService,
         private readonly accountService: AccountService,
         @I18n()
         private readonly i18n: I18nService<I18nTranslations>

@@ -1,5 +1,5 @@
 import { I18nTranslations } from "@/generated/i18n.generated";
-import { Injectable } from "@nestjs/common";
+import { ConflictException, Injectable } from "@nestjs/common";
 import { I18nService } from "nestjs-i18n";
 import { CreateTenantDto } from "./dto/tenant.dto";
 import { DataSource, EntityManager, In } from "typeorm";
@@ -85,6 +85,14 @@ export class TenantService {
         return joinRecord != null;
     }
 
+    async getTenant(tenantId: string): Promise<TenantEntity | null> {
+        return await this.dataSource.manager.findOne(TenantEntity, {
+            where: {
+                id: tenantId
+            }
+        });
+    }
+
     async getAccountRole(tenant: TenantEntity, account: AccountEntity, entityManager?: EntityManager): Promise<string | null> {
         const workManager = entityManager ? entityManager : this.dataSource.manager;
 
@@ -97,5 +105,113 @@ export class TenantService {
         });
 
         return joinRecord?.role || null;
+    }
+
+    async removeUserFromTenant(tenant: TenantEntity, account: AccountEntity, entityManager?: EntityManager): Promise<void> {
+        const workManager = entityManager ? entityManager : this.dataSource.manager;
+
+        await workManager.delete(TenantAccountEntity, {
+            tenant: { id: tenant.id },
+            account: { id: account.id },
+        });
+    }
+
+    async getTenantUsers(tenant: TenantEntity, entityManager?: EntityManager): Promise<TenantAccountEntity[]> {
+        const workManager = entityManager ? entityManager : this.dataSource.manager;
+
+        return await workManager.find(TenantAccountEntity, {
+            where: {
+                tenant: { id: tenant.id },
+            },
+            relations: ['account'],
+        });
+    }
+
+    // Transfer ownership to another member
+    @Transactional()
+    async transferOwnership(
+        tenant: TenantEntity,
+        fromAccount: AccountEntity,
+        toAccount: AccountEntity,
+        entityManager?: EntityManager
+    ): Promise<void> {
+        const workManager = entityManager || this.dataSource.manager;
+
+        const fromMember = await workManager.findOne(TenantAccountEntity, {
+            where: {
+                tenant: { id: tenant.id },
+                account: { id: fromAccount.id },
+                role: AccountRole.OWNER,
+            },
+        });
+
+        if (!fromMember) {
+            throw new ConflictException('Only owner can transfer ownership');
+        }
+
+        // 更新原owner为admin
+        fromMember.role = AccountRole.ADMIN;
+        await workManager.save(TenantAccountEntity, fromMember);
+
+        // 设置新用户为 OWNER
+        await this.addAccountTenantMembership(toAccount, tenant, AccountRole.OWNER, workManager);
+    }
+
+    async getTenantCount(): Promise<number> {
+        return this.dataSource.manager.count(TenantEntity);
+    }
+}
+
+
+@Injectable()
+export class TenantAccountService {
+    constructor(
+        private readonly dataSource: DataSource,
+    ) { }
+
+    private async hasOwner(
+        tenant: TenantEntity,
+        entityManager?: EntityManager
+    ): Promise<boolean> {
+        const workManager = entityManager || this.dataSource.manager;
+
+        const owner = await workManager.findOne(TenantAccountEntity, {
+            where: {
+                tenant: { id: tenant.id },
+                role: AccountRole.OWNER,
+            }
+        });
+
+        return !!owner;
+    }
+
+    async getTenanatMember(
+        tenant: TenantEntity,
+        account: AccountEntity,
+        entityManager?: EntityManager
+    ): Promise<TenantAccountEntity | null> {
+        const workManager = entityManager || this.dataSource.manager;
+
+        return workManager.findOne(TenantAccountEntity, {
+            where: {
+                tenant: { id: tenant.id },
+                account: { id: account.id },
+            }
+        });
+    }
+
+    async removeTenantMember(
+        tenant: TenantEntity,
+        account: AccountEntity,
+        entityManager?: EntityManager
+    ): Promise<void> {
+        const workManager = entityManager || this.dataSource.manager;
+
+        await workManager.delete(TenantAccountEntity, {
+            where: {
+                tenant: { id: tenant.id },
+                account: { id: account.id },
+            },
+        });
     }
 }

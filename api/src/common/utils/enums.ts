@@ -71,3 +71,26 @@ export class EnumUtils {
     }
 }
 
+export class EnumConverter {
+    static toEnum<T extends Record<string, string | number>>(enumObj: T, value: string | number, defaultValue?: T[keyof T]) {
+        if (Object.values(enumObj).includes(value as T[keyof T])) {
+            return value as T[keyof T];
+        }
+
+        if (defaultValue !== undefined) {
+            return defaultValue;
+        }
+
+        throw new Error(`Invalid enum value: ${value} for enum: ${enumObj.constructor.name}`);
+    }
+
+    static safeToEnum<T extends Record<string, string | number>>(enumObj: T, value: string | number): T[keyof T] | null {
+        return Object.values(enumObj).includes(value as T[keyof T]) ? (value as T[keyof T]) : null;
+    }
+
+    static toEnumArray<T extends Record<string, string | number>>(enumObj: T, values: string[] | number[]): T[keyof T][] | null {
+        return values
+            .map((value) => this.safeToEnum(enumObj, value))
+            .filter((val): val is T[keyof T] => val !== null);
+    }
+}
