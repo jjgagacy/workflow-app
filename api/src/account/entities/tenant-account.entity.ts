@@ -29,6 +29,13 @@ export class TenantAccountEntity extends BaseEntity {
     })
     role: string;
 
+    @Column({
+        type: 'boolean',
+        nullable: false,
+        default: false,
+    })
+    current: boolean;
+
     @CreateDateColumn({
         name: 'created_at',
         nullable: false,

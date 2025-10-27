@@ -33,3 +33,15 @@ export class RoleAlreadyAssignedError extends ConflictException {
         super(`Role ${role} already assigned to member ${member}`);
     }
 }
+
+export class AccountNotLinkTenantError extends NotFoundException {
+    constructor(tenantId: string, account: string) {
+        super(`Account ${account} is not a member of Tenant ${tenantId} or tenant is not active`);
+    }
+}
+
+export class CanNotOperateSelfError extends ForbiddenException {
+    constructor() {
+        super('Cannot operate self');
+    }
+}

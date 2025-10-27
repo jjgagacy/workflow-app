@@ -160,6 +160,31 @@ export class TenantService {
     async getTenantCount(): Promise<number> {
         return this.dataSource.manager.count(TenantEntity);
     }
+
+    async getOwner(tenant: TenantEntity, entityManager?: EntityManager): Promise<AccountEntity | null> {
+        const workManager = entityManager || this.dataSource.manager;
+        const owner = await workManager
+            .createQueryBuilder(TenantAccountEntity, 'taj')
+            .innerJoinAndSelect('taj.account', 'account')
+            .where('taj.tenant_id = :tenantId', { tenantId: tenant.id })
+            .andWhere('taj.role = :role', { role: AccountRole.OWNER })
+            .getOne();
+        return owner?.account || null;
+    }
+
+    private async hasOwner(
+        tenant: TenantEntity,
+        entityManager?: EntityManager
+    ): Promise<boolean> {
+        const workManager = entityManager || this.dataSource.manager;
+        const owner = await workManager.findOne(TenantAccountEntity, {
+            where: {
+                tenant: { id: tenant.id },
+                role: AccountRole.OWNER,
+            }
+        });
+        return !!owner;
+    }
 }
 
 
@@ -168,22 +193,6 @@ export class TenantAccountService {
     constructor(
         private readonly dataSource: DataSource,
     ) { }
-
-    private async hasOwner(
-        tenant: TenantEntity,
-        entityManager?: EntityManager
-    ): Promise<boolean> {
-        const workManager = entityManager || this.dataSource.manager;
-
-        const owner = await workManager.findOne(TenantAccountEntity, {
-            where: {
-                tenant: { id: tenant.id },
-                role: AccountRole.OWNER,
-            }
-        });
-
-        return !!owner;
-    }
 
     async getTenanatMember(
         tenant: TenantEntity,

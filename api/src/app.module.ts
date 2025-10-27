@@ -95,6 +95,7 @@ import { InternalPluginApiController } from './controllers/internal/plugin/plugi
 import { InternalPluginInvokeController } from './controllers/internal/plugin/invoke.controller';
 import { InternalWorkspaceController } from './controllers/internal/workspace/workspace.controller';
 import { TenantContextMiddleware } from './common/middleware/tenant-context.middleware';
+import { TenantContextGuard } from './common/guards/tenant-context.guard';
 
 @Module({
   imports: [
@@ -264,6 +265,7 @@ import { TenantContextMiddleware } from './common/middleware/tenant-context.midd
     LoginResolver,
     GlobalLogger,
     WinstonLogger,
+    TenantContextGuard,
   ],
 })
 export class AppModule implements NestModule {

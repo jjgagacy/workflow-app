@@ -17,12 +17,12 @@ import { plainToInstance } from "class-transformer";
 import { throwIfDtoValidateFail } from "@/common/utils/validation";
 import { TenantService } from "./tenant.service";
 import { SystemService } from "@/monie/system.service";
-import { TenantEntity } from "@/account/entities/tenant.entity";
-import { AccountRole, MemberAction } from "@/account/account.enums";
+import { TenantEntity, TenantStatus } from "@/account/entities/tenant.entity";
+import { AccountRole, AccountStatus, MemberAction } from "@/account/account.enums";
 import { Transactional } from "@/common/decorators/transaction.decorator";
 import { TenantAccountEntity } from "@/account/entities/tenant-account.entity";
 import { EnumConverter, EnumUtils } from "@/common/utils/enums";
-import { InvalidActionError, MemberNotInTenantError, NoPermissionError, permissionMap, RoleAlreadyAssignedError } from "@/account/errors";
+import { AccountNotLinkTenantError, CanNotOperateSelfError, InvalidActionError, MemberNotInTenantError, NoPermissionError, permissionMap, RoleAlreadyAssignedError } from "@/account/errors";
 
 @Injectable()
 export class AuthAccountService {
@@ -131,27 +131,21 @@ export class AuthAccountService {
         }
     }
 
-    async getAccountRole(account: AccountEntity, tenant: TenantEntity): Promise<AccountRole | null> {
-        const tenantAccount = await this.dataSource.manager.findOne(TenantAccountEntity, {
+    async getAccountRole(account: AccountEntity, tenant: TenantEntity, entityManager?: EntityManager): Promise<AccountRole | null> {
+        const workManager = entityManager || this.dataSource.manager;
+        const tenantAccount = await workManager.findOne(TenantAccountEntity, {
             where: {
                 tenant: { id: tenant.id },
                 account: { id: account.id },
             },
-            select: ['role', 'id'], // 不能没有id，因为可能会按照id排序，否则报错 error: column xxx_id not found
         });
-
         return EnumConverter.safeToEnum(AccountRole, tenantAccount?.role || '');
     }
 
-    async checkOperatorPermission(tenant: TenantEntity, operator: AccountEntity, action: string, user: AccountEntity | null = null): Promise<void> {
+    async checkOperatorPermission(tenant: TenantEntity, role: AccountRole, action: string): Promise<void> {
         this.validateAction(action);
 
-        if (user && user.id == operator.id) {
-            throw new BadRequestException('Cannot operate self');
-        }
-
         const allowedRoles = permissionMap[action];
-        const role = this.getAccountRole(operator, tenant);
         if (!role || !allowedRoles.includes(role)) {
             throw new NoPermissionError(action, tenant.name);
         }
@@ -171,10 +165,14 @@ export class AuthAccountService {
         user: AccountEntity,
         entityManager?: EntityManager
     ): Promise<TenantAccountEntity> {
-        // Check operator permission
-        await this.checkOperatorPermission(tenant, operator, MemberAction.UPDATE, user);
-
         const workManager = entityManager || this.dataSource.manager;
+
+        // Check operator permission
+        const role = await this.getAccountRole(operator, tenant, workManager);
+        if (!role) {
+            throw new MemberNotInTenantError(operator.email, tenant.name);
+        }
+        await this.checkOperatorPermission(tenant, role, MemberAction.UPDATE);
 
         // Get target's member ship
         const targetMemberJoin = await workManager.findOne(TenantAccountEntity, {
@@ -213,12 +211,129 @@ export class AuthAccountService {
         return targetMemberJoin?.role == AccountRole.OWNER;
     }
 
-    async isMember(user: AccountEntity, tenant: TenantEntity): Promise<boolean> {
-        return !!this.dataSource.manager.findOne(TenantAccountEntity, {
+    async isMember(user: AccountEntity, tenant: TenantEntity, entityManager?: EntityManager): Promise<boolean> {
+        const workManager = entityManager || this.dataSource.manager;
+        return !!await workManager.count(TenantAccountEntity, {
             where: {
                 tenant: { id: tenant.id },
                 account: { id: user.id },
             }
         });
     }
+
+    async removeMember(user: AccountEntity, tenant: TenantEntity, operator: AccountEntity, entityManager?: EntityManager): Promise<void> {
+        if (user.id == operator.id) {
+            throw new CanNotOperateSelfError();
+        }
+        const workManager = entityManager || this.dataSource.manager;
+
+        const tenantAccount = await workManager
+            .findOne(TenantAccountEntity, {
+                where: {
+                    tenant: { id: tenant.id },
+                    account: { id: user.id },
+                }
+            });
+        if (!tenantAccount) {
+            throw new MemberNotInTenantError(user.email, tenant.name);
+        }
+
+        const role = await this.getAccountRole(operator, tenant, workManager);
+        if (!role) {
+            throw new MemberNotInTenantError(operator.email, tenant.name);
+        }
+        await this.checkOperatorPermission(tenant, role, MemberAction.REMOVE);
+
+        await workManager.remove(tenantAccount);
+    }
+
+    @Transactional()
+    async switchTenant(user: AccountEntity, tenantId: string, entityManager?: EntityManager): Promise<void> {
+        if (!tenantId) {
+            throw new BadRequestException('Tenant ID must be provided');
+        }
+        const workManager = entityManager || this.dataSource.manager;
+        // Find the tenant membership
+        const tenantAccount = await this.findAndValidateMembership(user.id, tenantId, workManager);
+        // Reset current flag for all other tenants
+        await this.resetCurrentTenants(user.id, tenantId, workManager);
+        // Set new current flag
+        await this.setCurrentTenant(user, tenantAccount, workManager);
+    }
+
+    async getCurrentTenant(accountId: number, entityManager?: EntityManager): Promise<{ tenant: TenantEntity; membership: TenantAccountEntity } | null> {
+        const workManager = entityManager || this.dataSource.manager;
+        const membership = await await workManager
+            .createQueryBuilder(TenantAccountEntity, 'taj')
+            .innerJoinAndSelect('taj.tenant', 'tenant')
+            .where('taj.account_id = :accountId', { accountId })
+            .andWhere('taj.current = :current', { current: true })
+            .andWhere('tenant.status = :status', { status: TenantStatus.ACTIVE })
+            .getOne();
+        return membership ? { tenant: membership.tenant, membership } : null;
+    }
+
+    async findAndValidateMembership(accountId: number, tenantId: string, manager: EntityManager): Promise<TenantAccountEntity> {
+        const tenantAccount = await manager
+            .createQueryBuilder(TenantAccountEntity, 'taj')
+            .innerJoinAndSelect('taj.tenant', 'tenant')
+            .where('taj.account_id = :accountId', { accountId })
+            .andWhere('taj.tenant_id = :tenantId', { tenantId })
+            .andWhere('tenant.status = :status', { status: TenantStatus.ACTIVE })
+            .getOne();
+        if (!tenantAccount) {
+            throw new AccountNotLinkTenantError(tenantId, await this.getAccountEmail(accountId, manager));
+        }
+
+        return tenantAccount;
+    }
+
+    async getAccountEmail(accountId: number, manager: EntityManager): Promise<string> {
+        const account = await manager.findOne(AccountEntity, {
+            where: {
+                id: accountId
+            }
+        });
+        return account?.email || 'unknown';
+    }
+
+    private async resetCurrentTenants(accountId: number, excludeTenantId: string, manager: EntityManager): Promise<void> {
+        await manager
+            .createQueryBuilder()
+            .update(TenantAccountEntity)
+            .set({ current: false })
+            .where('account_id = :accountId', { accountId: accountId })
+            .andWhere('tenant_id != :excludeTenantId', { excludeTenantId })
+            .execute();
+    }
+
+    private async setCurrentTenant(account: AccountEntity, membership: TenantAccountEntity, manager: EntityManager): Promise<void> {
+        membership.current = true;
+        await manager.save(TenantAccountEntity, membership);
+    }
+
+    async getAvailableTenants(accountId: number, entityManager?: EntityManager): Promise<TenantEntity[]> {
+        const workManager = entityManager || this.dataSource.manager;
+        const memberships = await workManager
+            .createQueryBuilder(TenantAccountEntity, 'taj')
+            .innerJoinAndSelect('taj.tenant', 'tenant')
+            .where('taj.account_id = :accountId', { accountId })
+            .andWhere('tenant.status = :status', { status: TenantStatus.ACTIVE })
+            .orderBy('taj.current', 'DESC')
+            .addOrderBy('tenant.name', 'ASC')
+            .getMany();
+        return memberships.map(membership => membership.tenant);
+    }
+
+    async getTenantMembers(tenantId: string, entityManager?: EntityManager): Promise<AccountEntity[]> {
+        const workManager = entityManager || this.dataSource.manager;
+        const accounts = await workManager
+            .createQueryBuilder(AccountEntity, 'acc')
+            .leftJoinAndMapOne('account.tenant', TenantAccountEntity, 'taj', 'taj.account_id = acc.id AND taj.tenant_id = :tenantId', { tenantId })
+            .andWhere('taj.id IS NOT NULL')
+            .select(['acc'/*, 'taj.role as account_role', 'taj.current as current_tenant'*/]) // todo mapping role and current field
+            .getMany();
+        return accounts;
+    }
+
 }

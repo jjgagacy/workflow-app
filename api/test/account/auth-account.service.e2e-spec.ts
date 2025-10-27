@@ -19,6 +19,7 @@ describe('AuthAccountService (e2e)', () => {
     let tenantService: TenantService;
     let accountService: AccountService;
     let dataSource: DataSource;
+    const testAccountId = 15;
     const testAccountEmail = 'test3@example.com';
     const testTenantId = '106bd7b2-29d5-4b7e-bc2c-0dc14b1a966a';
 
@@ -201,6 +202,74 @@ describe('AuthAccountService (e2e)', () => {
 
         it('should have tenant data', async () => {
             expect(await tenantService.getTenantCount()).toBeGreaterThan(0);
+        });
+    });
+
+    describe('AuthAccount switchTenant', () => {
+        it('should switch tenant successfully', async () => {
+            const account = await accountService.getByEmail(testAccountEmail);
+            expect(account).toBeDefined();
+
+            await authAccountService.switchTenant(account!, '106bd7b2-29d5-4b7e-bc2c-0dc14b1a966a');
+            const current = await authAccountService.getCurrentTenant(testAccountId);
+
+            expect(current?.tenant.id).toBeDefined();
+            expect(current?.membership.id).toBeDefined();
+        });
+
+        it('should get available tenants', async () => {
+            const memberships = await authAccountService.getAvailableTenants(testAccountId);
+            expect(memberships.length).toBeGreaterThan(0);
+        });
+
+        it('should get tenant members', async () => {
+            const accounts = await authAccountService.getTenantMembers(testTenantId);
+            expect(accounts.length).toBeGreaterThan(0);
+        });
+    });
+
+    describe('RemoveMember', () => {
+        it('should remove user for tenant', async () => {
+            const operateId = 1;
+            const operator = await accountService.getById(operateId);
+            expect(operator).toBeDefined();
+
+            const tenant = await tenantService.getTenant(testTenantId);
+            expect(tenant).toBeDefined();
+
+            return await dataSource.transaction(async (manager) => {
+                // ensure test account is member
+                const account = await accountService.getByEmail(testAccountEmail);
+                expect(account).toBeDefined();
+                const testAccountIsMember = await authAccountService.isMember(account!, tenant!, manager);
+                if (!testAccountIsMember) {
+                    const membership = await tenantService.addAccountTenantMembership(account!, tenant!, AccountRole.ADMIN, manager);
+                    expect(membership).toBeDefined();
+                }
+
+                // ensure operator is member
+                const isMember = await authAccountService.isMember(operator!, tenant!, manager);
+                if (!isMember) {
+                    const membership = await tenantService.addAccountTenantMembership(operator!, tenant!, AccountRole.ADMIN, manager);
+                    expect(membership).toBeDefined();
+                }
+                // transfer ownership
+                const owner = await tenantService.getOwner(tenant!, manager);
+                if (!owner) {
+                    await tenantService.addAccountTenantMembership(operator!, tenant!, AccountRole.OWNER, manager);
+                } else {
+                    await tenantService.transferOwnership(tenant!, owner, operator!, manager);
+                }
+
+                await authAccountService.removeMember(account!, tenant!, operator!, manager);
+                // 恢复数据
+                const membership = await tenantService.addAccountTenantMembership(account!, tenant!, AccountRole.ADMIN, manager);
+                expect(membership).toBeDefined();
+
+                await tenantService.transferOwnership(tenant!, operator!, account!, manager);
+
+                return true;
+            })
         });
     });
 
