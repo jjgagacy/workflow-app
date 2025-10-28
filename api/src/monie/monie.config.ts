@@ -16,6 +16,7 @@ import { PluginConfig } from "./config/plugin.config";
 import { SecurityConfig } from "./config/security.config";
 import { BillingConfig } from "./config/billing.config";
 import { LoginConfig } from "./config/login.config";
+import { FeatureConfig } from "./config/feature.config";
 
 @Injectable()
 export class MonieConfig {
@@ -40,7 +41,8 @@ export interface MonieConfig extends
     LoginConfig,
     PluginConfig,
     RedisConfig,
-    SecurityConfig { }
+    SecurityConfig,
+    FeatureConfig { }
 
 applyMixins(MonieConfig, [
     AccountConfig,
@@ -57,5 +59,6 @@ applyMixins(MonieConfig, [
     LoginConfig,
     PluginConfig,
     RedisConfig,
-    SecurityConfig
+    SecurityConfig,
+    FeatureConfig,
 ])

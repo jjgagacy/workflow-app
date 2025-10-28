@@ -8,6 +8,7 @@ import { WinstonLogger } from './logger/winston.service';
 import { MonieConfig } from './monie/monie.config';
 import { GraphQLExceptionFilter } from './common/filters/graphql-exception.filter';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
+import { setModuleRef } from './common/modules/global';
 
 async function bootstrap() {
   process.env.APP_ROOT = resolve(__dirname, '..');
@@ -30,6 +31,7 @@ async function bootstrap() {
   // start app
   await app.listen(process.env.PORT ?? 3001);
   const appUrl = await app.getUrl();
+  setModuleRef(app);
   // cli and npm levels
   logger.error(`Application is running on: ${appUrl}`);
   logger.warn(`Application is running on: ${appUrl}`);

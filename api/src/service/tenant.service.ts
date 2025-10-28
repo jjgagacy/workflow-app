@@ -27,9 +27,7 @@ export class TenantService {
         const errors = await this.i18n.validate(validateObj);
         throwIfDtoValidateFail(errors);
 
-        if (!this.systemService.allowCreateWorkspace &&
-            !isSetup
-        ) {
+        if (!this.systemService.allowCreateWorkspace && !isSetup) {
             throw new BadRequestGraphQLException(this.i18n.t('tenant.WORKSPACE_CREATE_NOT_ALLOWD'));
         }
         const workManager = entityManager ? entityManager : this.dataSource.manager;
@@ -41,6 +39,25 @@ export class TenantService {
         });
         // todo 密钥等其他信息
         return await workManager.save(tenant);
+    }
+
+    async createDefaultTenantIfNotExists(account: AccountEntity, isSetup = false, entityManager?: EntityManager): Promise<void> {
+        const workManager = entityManager ? entityManager : this.dataSource.manager;
+        const tenant = await workManager.findOne(TenantAccountEntity, {
+            where: { account: { id: account.id } },
+            order: { id: 'ASC' },
+        });
+
+        if (tenant) return
+
+        if (!this.systemService.allowCreateWorkspace && !isSetup) {
+            throw new BadRequestGraphQLException(this.i18n.t('tenant.WORKSPACE_CREATE_NOT_ALLOWD'));
+        }
+
+        // todo feature get
+
+
+
     }
 
     @Transactional()

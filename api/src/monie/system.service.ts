@@ -20,6 +20,7 @@ export class SystemService {
     loginRetryDurationMinutes: number;
     forgotPasswordRetryDuration: number;
     billingEnabled: boolean;
+    enterpriseEnabled: boolean;
 
     constructor(
         private readonly monieConfig: MonieConfig
@@ -42,5 +43,6 @@ export class SystemService {
         this.loginRetryDurationMinutes = this.monieConfig.loginRetryDurationMinutes();
         this.forgotPasswordRetryDuration = this.monieConfig.forgotPasswordRetryDuration();
         this.billingEnabled = this.monieConfig.billingEnabled();
+        this.enterpriseEnabled = this.monieConfig.enterpriseEnabled();
     }
 }

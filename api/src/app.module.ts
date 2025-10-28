@@ -96,6 +96,7 @@ import { InternalPluginInvokeController } from './controllers/internal/plugin/in
 import { InternalWorkspaceController } from './controllers/internal/workspace/workspace.controller';
 import { TenantContextMiddleware } from './common/middleware/tenant-context.middleware';
 import { TenantContextGuard } from './common/guards/tenant-context.guard';
+import { keyvConfig } from './config/keyv.config';
 
 @Module({
   imports: [
@@ -188,27 +189,7 @@ import { TenantContextGuard } from './common/guards/tenant-context.guard';
     CacheModule.registerAsync({
       isGlobal: true,
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => {
-        const connectOptions: RedisClientOptions = {
-          url: RedisUrlBuilder.buildUrl(configService),
-        }
-        const options: KeyvOptions = {
-          serialize: JSON.stringify,
-          deserialize: JSON.parse,
-        };
-        return {
-          ttl: configService.get<number>('CACHE_TTL', DefaultConfigValues.CACHE_TTL), // 默认缓存时间，单位秒
-          stores: [
-            // new Keyv({
-            //   store: new CacheableMemory({
-            //     ttl: configService.get<number>('CACHE_TTL', DefaultConfigValues.CACHE_TTL),
-            //     lruSize: configService.get<number>('CACHE_TTL', DefaultConfigValues.CACHE_LRU_SIZE),
-            //   }),
-            // }),
-            new KeyvRedis(connectOptions, options)
-          ]
-        };
-      },
+      useFactory: keyvConfig,
       inject: [ConfigService],
     }),
     HttpModule.registerAsync({

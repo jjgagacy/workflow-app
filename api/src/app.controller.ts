@@ -14,6 +14,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import KeyvRedis from '@keyv/redis';
 import { EnhanceCacheService } from './service/caches/enhance-cache.service';
+import { GeneralCacheService } from './service/caches/general-cache.service';
 
 @Controller()
 export class AppController {
@@ -26,6 +27,7 @@ export class AppController {
     private readonly authAccountService: AuthAccountService,
     private readonly cacheService: EnhanceCacheService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    private readonly generalCache: GeneralCacheService,
   ) { }
 
   @Get()
@@ -47,6 +49,8 @@ export class AppController {
     // console.log(this.cacheManager.stores);
     // const redisClient = await this.cacheService.getRedisClient();
     // console.log('client', redisClient)
+    // console.log(await this.generalCache.findAll());
+    console.log(await GeneralCacheService.findItem());
     return await this.i18n.t("hello.HELLO");
   }
 }
