@@ -14,4 +14,12 @@ export class EnterpriseConfig {
     canReplaceLogo(): boolean {
         return toBoolean(this.configService.get<boolean>('CAN_REPLACE_LOGO', false))
     }
+
+    enterpriseAPISecretKey(): string {
+        return this.configService.get<string>('ENTERPRISE_API_SECRET_KEY', '');
+    }
+
+    enterpriseApiUrl(): string {
+        return this.configService.get<string>('ENTERPRISE_API_URL', '');
+    }
 }

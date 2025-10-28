@@ -24,6 +24,7 @@ export type I18nTranslations = {
     };
     "billing": {
         "GET_PAYMENT_LINK_ERROR": string;
+        "GET_PAYMENT_INFO_ERROR": string;
     };
     "hello": {
         "HELLO": string;

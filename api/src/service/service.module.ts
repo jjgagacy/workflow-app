@@ -4,6 +4,8 @@ import { EnhanceCacheService } from "./caches/enhance-cache.service";
 import { BillingService } from "./billing/billing.service";
 import { TenantService } from "./tenant.service";
 import { GeneralCacheService } from "./caches/general-cache.service";
+import { EnterpriseService } from "./enterprise/enterprise.service";
+import { FeatureService } from "./feature.service";
 
 @Global()
 @Module({
@@ -13,6 +15,8 @@ import { GeneralCacheService } from "./caches/general-cache.service";
         EnhanceCacheService,
         BillingService,
         TenantService,
+        EnterpriseService,
+        FeatureService,
     ],
     imports: [],
     exports: [
@@ -21,6 +25,8 @@ import { GeneralCacheService } from "./caches/general-cache.service";
         EnhanceCacheService,
         BillingService,
         TenantService,
+        EnterpriseService,
+        FeatureService,
     ],
 })
 export class ServiceModule { }

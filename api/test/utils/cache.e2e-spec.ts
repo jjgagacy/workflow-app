@@ -56,6 +56,22 @@ describe('CacheManager tests', () => {
             expect(secondCall).toBe('find all cats');
         });
 
+        it('should skip cache', async () => {
+            const firstCall = await cacheService.findAll(-1);
+            expect(firstCall).toBe('find all cats');
+
+            const secondCall = await cacheService.findAll(-1);
+            expect(secondCall).toBe('find all cats');
+        });
+
+        it('should skip cache', async () => {
+            const firstCall = await cacheService.findOne();
+            expect(firstCall).toBe('findOne');
+
+            const secondCall = await cacheService.findOne();
+            expect(secondCall).toBe('findOne');
+        });
+
         // it('should cache', async () => {
         //     class TestService {
         //         @ServiceCache({ key: 'differentKey', ttl: 100 })

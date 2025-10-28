@@ -50,7 +50,7 @@ export class AppController {
     // const redisClient = await this.cacheService.getRedisClient();
     // console.log('client', redisClient)
     // console.log(await this.generalCache.findAll());
-    console.log(await GeneralCacheService.findItem());
+    // console.log(await GeneralCacheService.findItem());
     return await this.i18n.t("hello.HELLO");
   }
 }

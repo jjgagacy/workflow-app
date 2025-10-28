@@ -1,3 +1,4 @@
 {
-    "GET_PAYMENT_LINK_ERROR": "获取订阅链接失败"
+    "GET_PAYMENT_LINK_ERROR": "获取订阅链接失败",
+    "GET_PAYMENT_INFO_ERROR": "获取订阅信息失败"
 }

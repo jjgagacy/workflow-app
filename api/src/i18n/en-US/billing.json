@@ -1,3 +1,4 @@
 {
-    "GET_PAYMENT_LINK_ERROR": "Failed to obtain subscription payment link"
+    "GET_PAYMENT_LINK_ERROR": "Failed to obtain subscription payment link",
+    "GET_PAYMENT_INFO_ERROR": "Failed to obtain tenant subscription details"
 }

@@ -5,10 +5,11 @@ import { BillingApiService } from "./billing-api.service";
 import { GlobalLogger } from "@/logger/logger.service";
 import { getErrorDetails } from "@/common/utils/error";
 import { EmailFreezeResponseDto, VoucherInfo, InvoiceResponseDto, SubscriptionResponseDto } from "./dto/response.dto";
-import { SubscriptionRequestDto } from "./dto/request.dto";
+import { GetTenantInfoRequestDto, SubscriptionRequestDto } from "./dto/request.dto";
 import { InternalServerGraphQLException } from "@/common/exceptions";
 import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
+import { Billing } from "@/monie/classes/feature.class";
 
 @Injectable()
 export class BillingService {
@@ -22,9 +23,9 @@ export class BillingService {
         private readonly logger: GlobalLogger,
         private readonly i18n: I18nService<I18nTranslations>
     ) {
-        this.baseUrl = monieConfig.billingApiUrl();
-        this.secretKey = monieConfig.billingAPISecretKey();
-        this.apiService = new BillingApiService(httpService, this.baseUrl, this.secretKey);
+        this.baseUrl = this.monieConfig.billingApiUrl();
+        this.secretKey = this.monieConfig.billingAPISecretKey();
+        this.apiService = new BillingApiService(this.httpService, this.baseUrl, this.secretKey);
     }
 
     private async handleRequest<T>(
@@ -98,6 +99,18 @@ export class BillingService {
 
         if (response == null) {
             throw new InternalServerGraphQLException(this.i18n.t('billing.GET_PAYMENT_LINK_ERROR'));
+        }
+        return response;
+    }
+
+    async getTenantSubscription(tenantId: string) {
+        const params: GetTenantInfoRequestDto = {
+            tenant_id: tenantId,
+        };
+        const response = await this.handleRequest<Billing>('/subscription/info', undefined, params);
+
+        if (response == null) {
+            throw new InternalServerGraphQLException(this.i18n.t('billing.GET_PAYMENT_INFO_ERROR'));
         }
         return response;
     }

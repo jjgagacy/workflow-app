@@ -8,3 +8,7 @@ export class SubscriptionRequestDto {
     // 租户ID, 用于多租户场景下区分不同租户
     tenant_id?: string;
 }
+
+export class GetTenantInfoRequestDto {
+    tenant_id: string;
+}

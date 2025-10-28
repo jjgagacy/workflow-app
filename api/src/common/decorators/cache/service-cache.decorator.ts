@@ -2,13 +2,37 @@ import 'reflect-metadata';
 import { globalModuleRef } from "@/common/modules/global";
 import { Cache, CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Inject } from "@nestjs/common";
-import { ModuleRef } from "@nestjs/core";
 
+/**
+ * Interface for ServiceCache configuration options
+ */
 export interface ServiceCacheOptions {
+    /**
+     * Cache key or function to generate cache key from methods arguments
+     */
     key?: string | ((...args: any[]) => string);
+
+    /**
+     * Time to live in ms
+     * @default 60
+     */
     ttl?: number;
+
+    /**
+     * Whether to include method arguments in cache key generation
+     */
     useArgs?: boolean;
+
+    /**
+     * Whether enabled by boolean or function 
+     */
     enabled?: boolean | ((...args: any[]) => boolean);
+
+    /**
+     * Skip cache function
+     * @param args 
+     * @returns 
+     */
     skipCache?: (...args: any[]) => boolean;
 }
 
@@ -34,6 +58,11 @@ function generateArgsHash(args: any[]): string {
     }
 }
 
+/**
+ * Get the class name from the target
+ * @param target - The target object from the decorator
+ * @returns The class name
+ */
 function getClassName(target: any): string {
     if (isClass(target)) {
         return target.name; // 静态方法：直接取类名
@@ -92,6 +121,14 @@ function getEffectiveArguments(target: any, propertyKey: string | symbol, receiv
     }
 }
 
+/**
+ * Generates a cache key based on class name, method name and arguments
+ * @param className - Name of the class containing the method
+ * @param methodName - Name of the method being cached
+ * @param args - Arguments passed to the method
+ * @param options - Cache configuation options
+ * @returns Generated cache key string
+ */
 function generateCacheKey(className: string, methodName: string, args: any[], options?: any): string {
     const config: ServiceCacheOptions = typeof options === 'string'
         ? { key: options, ttl: 60, useArgs: true }
@@ -119,11 +156,41 @@ async function getCacheManager(): Promise<Cache> {
     return globalModuleRef.get(CACHE_MANAGER);
 }
 
+/**
+ * Calculates TTL in milliseconds from options
+ * @param options - Cache configuration options
+ * @returns TTL in milliseconds
+ */
 function getTTL(options: any): number {
     const config = typeof options === 'string' ? { ttl: 60 } : { ttl: 60, ...options };
     return config.ttl;
 }
 
+/**
+ * ServiceCache decorator
+ * 
+ * A method decorator that provides caching functionality for service methods.
+ * This decorator automatically caches the return value of the methods and returns
+ * the cached value on subsequent calls with the same parameters.
+ * 
+ * @param options - Cache configuration options or a string representing the cache key
+ * 
+ * @example
+ * // Complex cache key with multiple arguments
+ * @ServiceCache({
+ *  key: (filter: any, page: number, limit: number) =>
+ *      `user:${JSON.stringify(filter)}:page:${page}:limit:${limit}`,
+ *  ttl: 600
+ * })
+ * async findByFilter(filter: any, page: number, limit: number): Promise<User[]> {
+ *   return this.userRepository.findByFilter(filter, page, limit);
+ * }
+ * 
+ * @remarks
+ * IMPORTANT: Methods using this decorator MUST return a Promise type.
+ * The caching mechanism relies on asynchronous operations and Promise resolution.
+ * @returns 
+ */
 export function ServiceCache(options?: ServiceCacheOptions | string): MethodDecorator {
     const injectCache = Inject(CACHE_MANAGER); // 创建注入装饰器
 
@@ -139,6 +206,19 @@ export function ServiceCache(options?: ServiceCacheOptions | string): MethodDeco
         const className = getClassName(target);
 
         descriptor.value = async function (...args: any[]) {
+            const config: ServiceCacheOptions = typeof options === 'string'
+                ? { key: options, ttl: 60, enabled: true }
+                : { ttl: 60, enabled: true, ...options };
+
+            if (!config.enabled) {
+                return original.apply(this, args);
+            }
+
+            const shouldSkipCache = config.skipCache?.(...args);
+            if (shouldSkipCache) {
+                return original.apply(this, args);
+            }
+
             let cacheManager: Cache;
 
             if (isStatic) {
