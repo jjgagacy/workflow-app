@@ -12,11 +12,11 @@ import { plainToInstance } from 'class-transformer';
 import { AuthAccountService } from './service/auth-account.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import KeyvRedis from '@keyv/redis';
 import { EnhanceCacheService } from './service/caches/enhance-cache.service';
 import { GeneralCacheService } from './service/caches/general-cache.service';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { LocalFileStorage } from './storage/implements/local-file.storage';
+import { StorageService } from './storage/storage.service';
 
 class OrderCreatedEvent {
   constructor(private eventObj: { orderId: number; payload: any }) { }
@@ -36,6 +36,7 @@ export class AppController {
     private readonly generalCache: GeneralCacheService,
     private readonly eventEmitter: EventEmitter2,
     private readonly localFileStorage: LocalFileStorage,
+    private readonly storageService: StorageService,
   ) { }
 
   @Get()
@@ -59,11 +60,12 @@ export class AppController {
     // console.log('client', redisClient)
     // console.log(await this.generalCache.findAll());
     // console.log(await GeneralCacheService.findItem());
-    this.eventEmitter.emit('order.created', new OrderCreatedEvent({
-      orderId: 1,
-      payload: {},
-    }));
+    // this.eventEmitter.emit('order.created', new OrderCreatedEvent({
+    //   orderId: 1,
+    //   payload: {},
+    // }));
 
+    await this.storageService.save('hello.txt', 'hello world');
     return await this.i18n.t("hello.HELLO");
   }
 

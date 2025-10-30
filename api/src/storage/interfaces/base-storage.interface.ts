@@ -1,4 +1,5 @@
 import { Readable } from "stream";
+import { ListOptions } from "../types/storage.types";
 
 export interface BaseStorage {
     // Save data to storage
@@ -14,5 +15,5 @@ export interface BaseStorage {
     // Delete file
     delete(filename: string): Promise<void>;
     // list files and directories 
-    list?(path: string, options?: { files?: boolean; directories?: boolean }): Promise<string[]>;
+    list?(dirPath: string, options?: ListOptions): Promise<string[]>;
 }
