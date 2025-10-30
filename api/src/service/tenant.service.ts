@@ -18,6 +18,8 @@ import { WorkspaceExceededError } from "@/account/errors";
 import { isSet } from "util/types";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { TenantCreatedEvent } from "@/events/tenant.event";
+import { EncryptionService } from "@/encryption/encryption.service";
+import { StorageService } from "@/storage/storage.service";
 
 @Injectable()
 export class TenantService {
@@ -26,7 +28,9 @@ export class TenantService {
         private readonly i18n: I18nService<I18nTranslations>,
         private readonly systemService: SystemService,
         private readonly featureService: FeatureService,
-        private readonly eventEmitter: EventEmitter2
+        private readonly eventEmitter: EventEmitter2,
+        private readonly encryptService: EncryptionService,
+        private readonly storageService: StorageService,
     ) { }
 
     async createTenant(dto: CreateTenantDto, isSetup = false, entityManager?: EntityManager): Promise<TenantEntity> {
@@ -44,9 +48,20 @@ export class TenantService {
                 createdBy: dto.createdBy
             }
         });
-        // todo 密钥等其他信息
 
-        return await workManager.save(tenant);
+        try {
+            const saved = await workManager.save(tenant);
+            const { publicKey, privateKey } = await this.encryptService.generateKeyPair();
+            this.storageService.save(`perms/${tenant.id}`, privateKey);
+            tenant.encryptPublicKey = publicKey;
+            await workManager.save(tenant);
+            return saved;
+        } catch (error) {
+            if (tenant.id) {
+                await workManager.delete(TenantEntity, tenant);
+            }
+            throw error;
+        }
     }
 
     @Transactional()

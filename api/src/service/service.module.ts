@@ -8,6 +8,8 @@ import { EnterpriseService } from "./enterprise/enterprise.service";
 import { FeatureService } from "./feature.service";
 import { EncryptionModule } from "@/encryption/encryption.module";
 import { EncryptionService } from "@/encryption/encryption.service";
+import { StorageModule } from "@/storage/storage.module";
+import { StorageService } from "@/storage/storage.service";
 
 @Global()
 @Module({
@@ -20,8 +22,9 @@ import { EncryptionService } from "@/encryption/encryption.service";
         EnterpriseService,
         FeatureService,
         EncryptionService,
+        StorageService,
     ],
-    imports: [EncryptionModule],
+    imports: [EncryptionModule, StorageModule],
     exports: [
         AuthAccountService,
         GeneralCacheService,
@@ -30,6 +33,7 @@ import { EncryptionService } from "@/encryption/encryption.service";
         TenantService,
         EnterpriseService,
         FeatureService,
+        StorageService,
     ],
 })
 export class ServiceModule { }
