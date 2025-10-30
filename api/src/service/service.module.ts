@@ -6,6 +6,8 @@ import { TenantService } from "./tenant.service";
 import { GeneralCacheService } from "./caches/general-cache.service";
 import { EnterpriseService } from "./enterprise/enterprise.service";
 import { FeatureService } from "./feature.service";
+import { EncryptionModule } from "@/encryption/encryption.module";
+import { EncryptionService } from "@/encryption/encryption.service";
 
 @Global()
 @Module({
@@ -17,8 +19,9 @@ import { FeatureService } from "./feature.service";
         TenantService,
         EnterpriseService,
         FeatureService,
+        EncryptionService,
     ],
-    imports: [],
+    imports: [EncryptionModule],
     exports: [
         AuthAccountService,
         GeneralCacheService,

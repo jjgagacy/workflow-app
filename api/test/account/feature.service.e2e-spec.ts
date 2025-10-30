@@ -27,6 +27,7 @@ describe('FeatureService tests', () => {
     describe('GetFeature test', () => {
         it('should can get feature', async () => {
             const feature = await featureService.getFeatures(testTenantId);
+            console.log(feature);
             expect(feature).toBeDefined();
         });
     });

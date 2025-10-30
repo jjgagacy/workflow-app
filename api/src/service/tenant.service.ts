@@ -13,6 +13,11 @@ import { AccountEntity } from "@/account/entities/account.entity";
 import { EnumUtils, getEnumKeySafe } from "@/common/utils/enums";
 import { TenantAccountEntity } from "@/account/entities/tenant-account.entity";
 import { Transactional } from "@/common/decorators/transaction.decorator";
+import { FeatureService } from "./feature.service";
+import { WorkspaceExceededError } from "@/account/errors";
+import { isSet } from "util/types";
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import { TenantCreatedEvent } from "@/events/tenant.event";
 
 @Injectable()
 export class TenantService {
@@ -20,9 +25,11 @@ export class TenantService {
         private readonly dataSource: DataSource,
         private readonly i18n: I18nService<I18nTranslations>,
         private readonly systemService: SystemService,
+        private readonly featureService: FeatureService,
+        private readonly eventEmitter: EventEmitter2
     ) { }
 
-    async createTenant(dto: CreateTenantDto, isSetup = false, entityManager?: EntityManager) {
+    async createTenant(dto: CreateTenantDto, isSetup = false, entityManager?: EntityManager): Promise<TenantEntity> {
         const validateObj = plainToInstance(CreateTenantDto, dto);
         const errors = await this.i18n.validate(validateObj);
         throwIfDtoValidateFail(errors);
@@ -38,10 +45,12 @@ export class TenantService {
             }
         });
         // todo 密钥等其他信息
+
         return await workManager.save(tenant);
     }
 
-    async createDefaultTenantIfNotExists(account: AccountEntity, isSetup = false, entityManager?: EntityManager): Promise<void> {
+    @Transactional()
+    async createDefaultTenantIfNotExists(account: AccountEntity, name?: string, isSetup = false, entityManager?: EntityManager): Promise<void> {
         const workManager = entityManager ? entityManager : this.dataSource.manager;
         const tenant = await workManager.findOne(TenantAccountEntity, {
             where: { account: { id: account.id } },
@@ -54,10 +63,28 @@ export class TenantService {
             throw new BadRequestGraphQLException(this.i18n.t('tenant.WORKSPACE_CREATE_NOT_ALLOWD'));
         }
 
-        // todo feature get
+        const licenseWorkspace = (await this.featureService.getFeatures()).license.workspaces
+        if (!licenseWorkspace.isAvailable()) {
+            throw new WorkspaceExceededError(this.i18n.t('tenant.WORKSPACE_LIMIT_EXEEEDED'));
+        }
 
+        let tenantNew: TenantEntity;
+        // create tenant
+        if (name) {
+            tenantNew = await this.createTenant({ name, createdBy: account.username }, isSetup, workManager);
+        } else {
+            tenantNew = await this.createTenant({ name: `${account.username}'s Workspace`, createdBy: account.username }, isSetup, workManager);
+        }
 
-
+        // create tenant join owner
+        const tenantAccount = await this.addAccountTenantMembership(account, tenantNew, AccountRole.OWNER, workManager);
+        // set account current
+        if (tenantAccount) {
+            tenantAccount.current = true;
+        }
+        workManager.save(tenantAccount);
+        // send signal
+        this.eventEmitter.emit('tenant.created', new TenantCreatedEvent(tenantNew.id));
     }
 
     @Transactional()
@@ -69,7 +96,7 @@ export class TenantService {
         const workManager = entityManager ? entityManager : this.dataSource.manager;
         if (role == AccountRole.OWNER) {
             if (await this.hasRoles(tenant, [AccountRole.OWNER], entityManager)) {
-                throw new BadRequestGraphQLException('Tenant alrady has an owner');
+                throw new BadRequestGraphQLException('Tenant already has an owner');
             }
         }
 

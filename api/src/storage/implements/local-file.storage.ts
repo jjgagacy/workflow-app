@@ -1,0 +1,177 @@
+import { Injectable } from "@nestjs/common";
+import { BaseStorage } from "../interfaces/base-storage.interface";
+import { Readable } from "stream";
+import { ConfigService } from "@nestjs/config";
+import { createWriteStream, existsSync, mkdirSync, statSync } from "fs";
+import { dirname, join } from "path";
+import { createReadStream, readdirSync } from 'node:fs';
+import { buffer } from 'stream/consumers';
+import { pipeline } from "node:stream/promises";
+import { unlink, access, readdir, stat } from "node:fs/promises";
+
+function ReadableFromBuffer(buffer: Buffer): Readable {
+    return Readable.from([buffer], { objectMode: false });
+}
+
+function ReadableFromString(text: string): Readable {
+    return Readable.from([text], { objectMode: false });
+}
+
+interface ListOptions {
+    files?: boolean;
+    directory?: boolean;
+}
+
+@Injectable()
+export class LocalFileStorage implements BaseStorage {
+    private basePath: string;
+
+    constructor(private readonly configService: ConfigService) {
+        this.basePath = this.configService.get<string>('LOCAL_STORAGE_PATH', './storage');
+        if (!existsSync(this.basePath)) {
+            mkdirSync(this.basePath, { recursive: true });
+        }
+    }
+
+    getFullPath(filename: string): string {
+        return join(this.basePath, filename);
+    }
+
+    async save(filename: string, data: Buffer | string): Promise<void> {
+        const fullPath = this.getFullPath(filename);
+        const directory = dirname(fullPath);
+        // ensure directory exists
+        if (!existsSync(directory)) {
+            mkdirSync(directory, { recursive: true });
+        }
+
+        const expectedSize = Buffer.isBuffer(data)
+            ? data.length
+            : Buffer.byteLength(data, 'utf-8');
+
+        const writeStream = createWriteStream(fullPath);
+        try {
+            if (Buffer.isBuffer(data)) {
+                await pipeline(
+                    ReadableFromBuffer(data),
+                    writeStream,
+                );
+            } else {
+                await pipeline(
+                    ReadableFromString(data),
+                    writeStream,
+                );
+            }
+
+            await this.verifySize(filename, expectedSize);
+        } catch (error) {
+            try {
+                if (existsSync(fullPath)) {
+                    await unlink(fullPath);
+                }
+            } catch { }
+            throw new Error(`Failed to save file: ${(error as Error).message}`);
+        }
+    }
+
+    protected async getFileSize(filename: string): Promise<number> {
+        const fullPath = this.getFullPath(filename);
+        try {
+            const stats = statSync(fullPath);
+            return stats.size;
+        } catch (error) {
+            throw new Error(`Failed to get file size: ${error.message}`);
+        }
+    }
+
+    protected async verifySize(filename: string, expectedSize?: number): Promise<void> {
+        try {
+            const exists = await this.exists(filename);
+            if (!exists) {
+                throw new Error(`File doesn't exist: ${filename}`);
+            }
+
+            if (expectedSize !== undefined) {
+                const actualSize = await this.getFileSize(filename);
+                if (actualSize !== expectedSize) {
+                    throw new Error(`File size mismatch: expected ${expectedSize}, got ${actualSize}`);
+                }
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async load(filename: string): Promise<Buffer> {
+        const fullPath = this.getFullPath(filename);
+        const stream = createReadStream(fullPath);
+        return await buffer(stream);
+    }
+
+    async loadStream(filename: string): Promise<Readable> {
+        const fullPath = this.getFullPath(filename);
+        try {
+            await access(fullPath);
+            return createReadStream(fullPath);
+        } catch {
+            throw new Error(`File not found or inaccessible: ${fullPath}`);
+        }
+    }
+
+    async copy(filename: string, targetPath: string): Promise<void> {
+        const fullPath = this.getFullPath(filename);
+
+        try {
+            const readStream = createReadStream(fullPath);
+            const writeStream = createWriteStream(targetPath);
+
+            await pipeline(readStream, writeStream);
+        } catch {
+            throw new Error(`Cannot copy file: ${fullPath}`);
+        }
+    }
+
+    async exists(filename: string): Promise<boolean> {
+        try {
+            const fullPath = this.getFullPath(filename);
+            await access(fullPath);
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    async delete(filename: string): Promise<void> {
+        if (await this.exists(filename)) {
+            await unlink(this.getFullPath(filename));
+        }
+    }
+
+    async list(dirPath: string, options?: { files?: boolean; directories?: boolean; }): Promise<string[]> {
+        const fullPath = this.getFullPath(dirPath);
+
+        try {
+            const items = await readdir(fullPath);
+            const result: string[] = [];
+
+            for (const item of items) {
+                const itemPath = join(fullPath, item);
+                const stats = await stat(itemPath);
+
+                if (stats.isFile() && options?.files) {
+                    result.push(join(dirPath, item));
+                } else if (stats.isDirectory() && options?.directories) {
+                    result.push(join(dirPath, item));
+                }
+            }
+
+            return result;
+        } catch (error) {
+            if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+                return []; // 目录不存在，返回空数组
+            }
+            throw new Error(`Failed to list directory "${dirPath}": ${(error as Error).message}`);
+        }
+    }
+}
+

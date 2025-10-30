@@ -8,16 +8,8 @@ import { join, resolve } from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AccountEntity } from './account/entities/account.entity';
-import { RoleEntity } from './account/entities/role.entity';
-import { MenuEntity } from './account/entities/menu.entity';
-import { ModuleEntity } from './account/entities/module.entity';
-import { PermEntity } from './account/entities/perm.entity';
-import { DepEntity } from './account/entities/dep.entity';
-import { MenuRoleEntity } from './account/entities/menu-role.entity';
 import { HelloResolver } from './common/graphql/hello.resolver';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { ModulePermEntity } from './account/entities/module-perm.entity';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { JWT_CONSTANTS } from './config/constants';
 import { FooModule } from './foo/foo.module';
@@ -67,36 +59,26 @@ import { PromptModule } from './ai/prompt/prompt.module';
 import { RagModule } from './ai/rag/rag.module';
 import { ToolModule } from './ai/tool/tool.module';
 import { WorkflowModule } from './ai/workflow/workflow.module';
-import { TenantEntity } from './account/entities/tenant.entity';
-import { TenantAccountEntity } from './account/entities/tenant-account.entity';
-import { ProviderEntity } from './account/entities/provider.entity';
-import { ProviderModelEntity } from './account/entities/provider-model.entity';
-import { TenantDefaultModelEntity } from './account/entities/tenant-default-model.entity';
-import { TenantPreferredProviderEntity } from './account/entities/tenant-preferred-provider.entity';
-import { ProviderModelSettingEntity } from './account/entities/provider-model-setting.entity';
-import { OperationLogsEntity } from './account/entities/operation-log.entity';
-import { AccountIntegrateEntity } from './account/entities/account-integrate.entity';
-import { UserEntity } from './account/entities/user.entity';
 import { MonieModule } from './monie/monie.module';
 import { GlobalLogger } from './logger/logger.service';
 import { WinstonLogger } from './logger/winston.service';
 import { LoggerModule } from './logger/logger.module';
 import { I18nGlobalModule } from './i18n-global/i18n-global.module';
 import { ServiceModule } from './service/service.module';
-import { AuthAccountService } from './service/auth-account.service';
 import { CacheModule } from '@nestjs/cache-manager';
-import { DefaultConfigValues } from './monie/constants/default-config-value';
-import KeyvRedis, { Keyv, RedisClientOptions } from '@keyv/redis';
-import { CacheableMemory, KeyvOptions } from 'cacheable';
-import { RedisUrlBuilder } from './common/utils/redis-url';
 import { HttpModule } from '@nestjs/axios';
-import { timeout } from 'rxjs';
 import { InternalPluginApiController } from './controllers/internal/plugin/plugin.controller';
 import { InternalPluginInvokeController } from './controllers/internal/plugin/invoke.controller';
 import { InternalWorkspaceController } from './controllers/internal/workspace/workspace.controller';
 import { TenantContextMiddleware } from './common/middleware/tenant-context.middleware';
 import { TenantContextGuard } from './common/guards/tenant-context.guard';
 import { keyvConfig } from './config/keyv.config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { EventModule } from './events/event.module';
+import { EncryptionModule } from './encryption/encryption.module';
+import { EncryptionService } from './encryption/encryption.service';
+import { StorageModule } from './storage/storage.module';
+import { LocalFileStorage } from './storage/implements/local-file.storage';
 
 @Module({
   imports: [
@@ -200,6 +182,18 @@ import { keyvConfig } from './config/keyv.config';
       }),
       inject: [ConfigService,]
     }),
+    EventEmitterModule.forRoot({
+      wildcard: true,
+      delimiter: '.',
+      newListener: true,
+      removeListener: false,
+      maxListeners: 10,
+      verboseMemoryLeak: false,
+      ignoreErrors: false,
+    }),
+    EventModule,
+    EncryptionModule,
+    StorageModule,
   ],
   controllers: [AppController, InternalPluginApiController, InternalPluginInvokeController, InternalWorkspaceController],
   providers: [
@@ -247,6 +241,8 @@ import { keyvConfig } from './config/keyv.config';
     GlobalLogger,
     WinstonLogger,
     TenantContextGuard,
+    EncryptionService,
+    LocalFileStorage,
   ],
 })
 export class AppModule implements NestModule {

@@ -16,7 +16,7 @@ export class FeatureService {
     ) { }
 
     @ServiceCache({ key: (tenantId: string) => `getFeature:${tenantId}` })
-    async getFeatures(tenantId: string): Promise<Feature> {
+    async getFeatures(tenantId?: string): Promise<Feature> {
         const feature = new Feature();
 
         this.fullfillFeatureFromEnv(feature);

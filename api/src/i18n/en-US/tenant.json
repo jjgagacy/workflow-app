@@ -1,3 +1,4 @@
 {
-    "WORKSPACE_CREATE_NOT_ALLOWD": "Failed to create namespace"
+    "WORKSPACE_CREATE_NOT_ALLOWD": "Failed to create namespace",
+    "WORKSPACE_LIMIT_EXEEEDED": "Workspace limit exceed"
 }

@@ -1,5 +1,7 @@
 import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from "@nestjs/common";
 import { AccountRole, MemberAction } from "./account.enums";
+import { I18nService } from "nestjs-i18n";
+import { I18nTranslations } from "@/generated/i18n.generated";
 
 export class InvalidActionError extends BadRequestException {
     constructor(action: string) {
@@ -43,5 +45,11 @@ export class AccountNotLinkTenantError extends NotFoundException {
 export class CanNotOperateSelfError extends ForbiddenException {
     constructor() {
         super('Cannot operate self');
+    }
+}
+
+export class WorkspaceExceededError extends ForbiddenException {
+    constructor(message: string) {
+        super(message);
     }
 }

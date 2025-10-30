@@ -67,6 +67,7 @@ export type I18nTranslations = {
     };
     "tenant": {
         "WORKSPACE_CREATE_NOT_ALLOWD": string;
+        "WORKSPACE_LIMIT_EXEEEDED": string;
     };
     "validation": {
         "NOT_EMPTY": string;

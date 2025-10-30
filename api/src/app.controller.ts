@@ -15,6 +15,12 @@ import { Cache } from 'cache-manager';
 import KeyvRedis from '@keyv/redis';
 import { EnhanceCacheService } from './service/caches/enhance-cache.service';
 import { GeneralCacheService } from './service/caches/general-cache.service';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { LocalFileStorage } from './storage/implements/local-file.storage';
+
+class OrderCreatedEvent {
+  constructor(private eventObj: { orderId: number; payload: any }) { }
+}
 
 @Controller()
 export class AppController {
@@ -28,6 +34,8 @@ export class AppController {
     private readonly cacheService: EnhanceCacheService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     private readonly generalCache: GeneralCacheService,
+    private readonly eventEmitter: EventEmitter2,
+    private readonly localFileStorage: LocalFileStorage,
   ) { }
 
   @Get()
@@ -51,6 +59,17 @@ export class AppController {
     // console.log('client', redisClient)
     // console.log(await this.generalCache.findAll());
     // console.log(await GeneralCacheService.findItem());
+    this.eventEmitter.emit('order.created', new OrderCreatedEvent({
+      orderId: 1,
+      payload: {},
+    }));
+
     return await this.i18n.t("hello.HELLO");
+  }
+
+  @OnEvent('order.created')
+  handleOrderCreatedEvent(payload: OrderCreatedEvent) {
+    // handle and process "OrderCreatedEvent" event
+    console.log('event handle', payload);
   }
 }
