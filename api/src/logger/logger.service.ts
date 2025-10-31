@@ -56,6 +56,7 @@ export class GlobalLogger extends ConsoleLogger implements LoggerService {
         super.error(logData.message, trace, logData.context);
 
         const meta = this.createMetaData(context, trace);
+        console.log(meta);
         this.winstonLogger.error(message, meta);
     }
 
@@ -212,6 +213,30 @@ export class GlobalLogger extends ConsoleLogger implements LoggerService {
             meta.trace = trace;
         }
         return meta;
+    }
+
+    private removeNewlines(text: string): string {
+        return text.replace(/[\r\n]+/g, ' ').trim();
+    }
+
+    private removeNewlinesDeep(obj: any): any {
+        if (typeof obj === 'string') {
+            return obj.replace(/[\r\n\t]+/g, ' ').trim();
+        }
+
+        if (Array.isArray(obj)) {
+            return obj.map(item => this.removeNewlinesDeep(item));
+        }
+
+        if (obj && typeof obj === 'object') {
+            const cleaned: any = {};
+            for (const [key, value] of Object.entries(obj)) {
+                cleaned[key] = this.removeNewlinesDeep(value);
+            }
+            return cleaned;
+        }
+
+        return obj;
     }
 
 }

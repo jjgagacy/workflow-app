@@ -79,6 +79,12 @@ import { EncryptionModule } from './encryption/encryption.module';
 import { EncryptionService } from './encryption/encryption.service';
 import { StorageModule } from './storage/storage.module';
 import { LocalFileStorage } from './storage/implements/local-file.storage';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+import { UniversalThrottlerGuard } from './common/guards/universal-throttler.guard';
+import { BullModule } from '@nestjs/bull';
+import { MailService } from './mail/mail.service';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -95,6 +101,7 @@ import { LocalFileStorage } from './storage/implements/local-file.storage';
       playground: process.env.NODE_ENV !== 'production',
       introspection: process.env.NODE_ENV !== 'production',
       graphiql: true,
+      context: ({ req, res }) => ({ req, res }),
       formatError: (formattedError, error) => {
         //console.log('Original error:', error);
         //console.log('Formatted error:', formattedError);
@@ -154,6 +161,29 @@ import { LocalFileStorage } from './storage/implements/local-file.storage';
       }),
       inject: [ConfigService],
     }),
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        throttlers: [
+          {
+            name: 'short',
+            ttl: 1000, // 1 second
+            limit: 3,   // 3 requests per second
+          },
+          {
+            name: 'medium',
+            ttl: 10000, // 10 seconds
+            limit: 20,  // 20 requests per 10 seconds
+          },
+          {
+            name: 'long',
+            ttl: 60000, // 1 minute
+            limit: 100, // 100 requests per minute
+          },
+        ]
+      })
+    }),
     FooModule,
     AccountModule,
     AgentModule,
@@ -194,6 +224,34 @@ import { LocalFileStorage } from './storage/implements/local-file.storage';
     EventModule,
     EncryptionModule,
     StorageModule,
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        redis: {
+          host: configService.get<string>('REDIS_HOST', 'localhost'),
+          port: configService.get<number>('REDIS_PORT', 6379),
+        },
+        prefix: 'queue',
+        // 其他全局设置
+        defaultJobOptions: {
+          removeOnComplete: 100, // 保留最近100个完成的任务
+          removeOnFail: 100,     // 保留最近100个失败的任务
+          attempts: 3,           // 默认重试3次
+          backoff: {             // 重试策略
+            type: 'exponential',
+            delay: 1000,
+          },
+        },
+        // 连接设置
+        settings: {
+          lockDuration: 30000,   // 任务锁持续时间(ms)
+          stalledInterval: 30000, // 检查卡住任务的间隔
+          maxStalledCount: 1,    // 最大卡住次数
+        }
+      }),
+    }),
+    MailModule,
   ],
   controllers: [AppController, InternalPluginApiController, InternalPluginInvokeController, InternalWorkspaceController],
   providers: [
@@ -243,6 +301,8 @@ import { LocalFileStorage } from './storage/implements/local-file.storage';
     TenantContextGuard,
     EncryptionService,
     LocalFileStorage,
+    { provide: APP_GUARD, useClass: UniversalThrottlerGuard },
+    MailService,
   ],
 })
 export class AppModule implements NestModule {
