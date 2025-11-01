@@ -1,3 +1,4 @@
 export default () => ({
-    hi: 'hello nest'
+    hi: 'hello nest',
+    defaultApplicationName: process.env.APPLICATION_NAME || 'monie/workflow',
 });

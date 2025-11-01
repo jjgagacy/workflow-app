@@ -17,9 +17,9 @@ export interface SendEmailDto {
 }
 
 export interface TemplateFile {
+    subject?: string;
     templateName: string;
     context: Record<string, any>;
 }
 
 export type EmailContent = string | TemplateFile;
-

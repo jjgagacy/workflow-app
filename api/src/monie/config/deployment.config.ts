@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { toBoolean } from "../helpers/to-boolean";
+import configuration from "@/config/configuration";
 
 @Injectable()
 export class DeploymentConfig {
@@ -8,7 +9,7 @@ export class DeploymentConfig {
     ) { }
 
     applicationName(): string {
-        return this.configService.get<string>('APPLICATION_NAME', 'monie/workflow')
+        return this.configService.get<string>('APPLICATION_NAME', configuration().defaultApplicationName);
     }
 
     debug(): boolean {

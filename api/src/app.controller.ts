@@ -20,6 +20,7 @@ import { StorageService } from './storage/storage.service';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { MailService } from './mail/mail.service';
+import { EmailLanguage } from './mail/templates/mail.i18n';
 
 class OrderCreatedEvent {
   constructor(private eventObj: { orderId: number; payload: any }) { }
@@ -69,8 +70,9 @@ export class AppController {
     //   payload: {},
     // }));
     // await this.storageService.save('hello.txt', 'hello world');
-    const job = await this.mailService.sendWelcome('jjgagacy@163.com', `Welcome MyApp 🎉`, 'welcome', { name: 'alex', url: 'http://ai.monie.cc', email: 'jjgagacy@163.com' });
-    console.log(job);
+    // await this.mailService.Template.sendWelcome('jjgagacy@163.com', { name: 'alex', url: 'http://ai.monie.cc' });
+    // const job = this.mailService.queue.sendWelcome('jjgagacy@163.com', { name: 'alex', url: 'http://ai.monie.cc' })
+    await this.mailService.queue.sendInviteNumber('jjgagacy@163.com', 'Monie', 'Sandbox', 24, 'http://ai.monie.cc/', EmailLanguage.ZH_HANS);
     return await this.i18n.t("hello.HELLO");
   }
 

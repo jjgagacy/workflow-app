@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Change Verification</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .email-container {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #3182ce;
+        }
+
+        .title {
+            color: #2d3748;
+            font-size: 24px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .greeting {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #4a5568;
+        }
+
+        .verification-card {
+            background: #ebf8ff;
+            padding: 25px;
+            border-radius: 6px;
+            margin: 20px 0;
+            border: 2px solid #3182ce;
+            text-align: center;
+        }
+
+        .verification-code {
+            font-size: 32px;
+            font-weight: bold;
+            color: #3182ce;
+            letter-spacing: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .expiry-notice {
+            text-align: center;
+            font-size: 14px;
+            color: #718096;
+            margin-top: 15px;
+        }
+
+        .email-change-info {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .info-item {
+            margin: 8px 0;
+        }
+
+        .help-text {
+            font-size: 14px;
+            color: #718096;
+            margin: 20px 0;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 14px;
+            color: #718096;
+            text-align: center;
+        }
+
+        .support-link {
+            color: #3182ce;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="title">Email Change Verification</h1>
+        </div>
+
+        <!-- Greeting -->
+        <p class="greeting">Hello,</p>
+
+        <!-- Main Content -->
+        <p>We received a request to change your Monie account email address.</p>
+
+        <!-- Verification Card -->
+        <div class="verification-card">
+            <p>Please enter the following verification code to complete the email change:</p>
+            <div class="verification-code">
+                {{verificationCode}}
+            </div>
+            <div class="expiry-notice">
+                This code will expire in {{expiryMinutes}} minutes
+            </div>
+        </div>
+
+        <!-- Email Change Info -->
+        <div class="email-change-info">
+            <div class="info-item"><strong>Current Email:</strong> {{oldEmail}}</div>
+            <div class="info-item"><strong>New Email:</strong> {{newEmail}}</div>
+        </div>
+
+        <!-- Help Text -->
+        <div class="help-text">
+            <p>If you didn't request to change your email address, please contact our support team immediately and
+                consider changing your account password.</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>This email was automatically sent by Monie System</p>
+            <p>Need help? Contact <a href="mailto:supports@monie.cc" class="support-link">supports@monie.cc</a></p>
+        </div>
+    </div>
+</body>
+
+</html>
