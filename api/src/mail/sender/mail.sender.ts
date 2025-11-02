@@ -1,6 +1,6 @@
 import { EmailContent, MailClient } from "../interfaces/client.interface";
 import { LoggerService } from "@nestjs/common";
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { v4 as uuidv4 } from 'uuid';
 import * as handlebars from 'handlebars';
@@ -71,7 +71,7 @@ export class MailSender {
 
     private async renderTemplate(templateName: string, context: Record<string, any>): Promise<string> {
         try {
-            const templatePath = join(__dirname, '../../../mail/templates', templateName);
+            const templatePath = this.getTemplatePath(templateName);
             const source = readFileSync(templatePath, 'utf-8');
             const compiledTemplate = handlebars.compile(source);
             return compiledTemplate(context);
@@ -79,6 +79,28 @@ export class MailSender {
             this.logger.log(`Failed to render template: ${templateName}: ${error.message}`, error.stack);
             throw new Error(`Template ${templateName} not found or invalid`);
         }
+    }
+
+    private getTemplatePath(templateName: string): string {
+        // check dist directory
+        const distPath = join(__dirname, '../../../dist/mail/templates/', templateName);
+        console.log('dist', distPath);
+        if (existsSync(distPath)) {
+            return distPath;
+        }
+
+        // else check src directory
+        const srcPath = join(__dirname, '../../../src/mail/templates', templateName);
+        if (existsSync(srcPath)) {
+            return srcPath;
+        }
+
+        const relativePath = join(process.cwd(), 'dist/mail/templates', templateName);
+        if (existsSync(relativePath)) {
+            return relativePath;
+        }
+
+        throw new Error(`Template file not found: ${templateName}`);
     }
 
     private logSendAttempt(details: {
@@ -170,9 +192,4 @@ export class MailSender {
         });
         return sanitized;
     }
-
-
-
-
-
 }

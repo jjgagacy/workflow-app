@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>账户删除验证</title>
+    <title>Account Deletion Verification</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: #333;
             max-width: 600px;
@@ -111,49 +111,51 @@
 
 <body>
     <div class="email-container">
-        <!-- 头部 -->
+        <!-- Header -->
         <div class="header">
             <div class="warning-icon">⚠️</div>
-            <h1 class="title">账户删除验证</h1>
+            <h1 class="title">Account Deletion Verification</h1>
         </div>
 
-        <!-- 问候语 -->
-        <p class="greeting">您好！</p>
+        <!-- Greeting -->
+        <p class="greeting">Hello,</p>
 
-        <!-- 主要内容 -->
-        <p>我们收到了您删除 Monie 账户的请求。这是一个不可逆的操作，请谨慎处理。</p>
+        <!-- Main Content -->
+        <p>We received a request to delete your Monie account. This is an irreversible action, please proceed with
+            caution.</p>
 
-        <!-- 验证码卡片 -->
+        <!-- Verification Card -->
         <div class="verification-card">
-            <p>请输入以下验证码完成账户删除操作：</p>
+            <p>Please enter the following verification code to complete the account deletion:</p>
             <div class="verification-code">
                 {{verificationCode}}
             </div>
             <div class="expiry-notice">
-                此验证码将在 {{expiryMinutes}} 分钟后过期
+                This code will expire in {{expiryMinutes}} minutes
             </div>
         </div>
 
-        <!-- 警告信息 -->
+        <!-- Warning Section -->
         <div class="warning-section">
-            <div class="warning-title">重要提醒</div>
-            <p>账户删除后：</p>
+            <div class="warning-title">Important Notice</div>
+            <p>After account deletion:</p>
             <ul>
-                <li>所有数据将被永久删除，无法恢复</li>
-                <li>您将失去对所有工作空间的访问权限</li>
-                <li>所有订阅和付费服务将立即终止</li>
+                <li>All data will be permanently deleted and cannot be recovered</li>
+                <li>You will lose access to all workspaces</li>
+                <li>All subscriptions and paid services will be terminated immediately</li>
             </ul>
         </div>
 
-        <!-- 帮助文本 -->
+        <!-- Help Text -->
         <div class="help-text">
-            <p>如果您没有请求删除账户，请立即联系我们的支持团队，并考虑更改您的账户密码。</p>
+            <p>If you didn't request to delete your account, please contact our support team immediately and consider
+                changing your account password.</p>
         </div>
 
-        <!-- 页脚 -->
+        <!-- Footer -->
         <div class="footer">
-            <p>此邮件由 Monie 系统自动发送</p>
-            <p>需要帮助？请联系 <a href="mailto:supports@monie.cc" class="support-link">supports@monie.cc</a></p>
+            <p>This email was automatically sent by Monie System</p>
+            <p>Need help? Contact <a href="mailto:{{supportsEmail}}" class="support-link">{{supportsEmail}}</a></p>
         </div>
     </div>
 </body>
