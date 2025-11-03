@@ -21,6 +21,10 @@ export type I18nTranslations = {
     };
     "auth": {
         "PASSWORD_INVALID": string;
+        "PASSWORD_RESET_RATE_LIMIT_EXCEEDED": string;
+        "ACCOUNT_DELETION_RATE_LIMIT_EXCEEDED": string;
+        "EMAIL_LOGIN_RATE_LIMIT_EXCEEDED": string;
+        "EMAIL_CHANGE_RATE_LIMIT_EXCEEDED": string;
     };
     "billing": {
         "GET_PAYMENT_LINK_ERROR": string;

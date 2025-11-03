@@ -10,9 +10,11 @@ import { EncryptionModule } from "@/encryption/encryption.module";
 import { EncryptionService } from "@/encryption/encryption.service";
 import { StorageModule } from "@/storage/storage.module";
 import { StorageService } from "@/storage/storage.service";
+import { EmailRateLimiterService } from "./libs/rate-limiter/email-rate-limiter.service";
 
 @Global()
 @Module({
+    imports: [EncryptionModule, StorageModule],
     providers: [
         AuthAccountService,
         GeneralCacheService,
@@ -23,8 +25,8 @@ import { StorageService } from "@/storage/storage.service";
         FeatureService,
         EncryptionService,
         StorageService,
+        EmailRateLimiterService,
     ],
-    imports: [EncryptionModule, StorageModule],
     exports: [
         AuthAccountService,
         GeneralCacheService,
@@ -34,6 +36,7 @@ import { StorageService } from "@/storage/storage.service";
         EnterpriseService,
         FeatureService,
         StorageService,
+        EmailRateLimiterService,
     ],
 })
 export class ServiceModule { }

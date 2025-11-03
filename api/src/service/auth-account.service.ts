@@ -23,6 +23,10 @@ import { Transactional } from "@/common/decorators/transaction.decorator";
 import { TenantAccountEntity } from "@/account/entities/tenant-account.entity";
 import { EnumConverter, EnumUtils } from "@/common/utils/enums";
 import { AccountNotLinkTenantError, CanNotOperateSelfError, InvalidActionError, MemberNotInTenantError, NoPermissionError, permissionMap, RoleAlreadyAssignedError } from "@/account/errors";
+import { EmailRateLimiterService, EmailRateLimitOptions, EmailRateLimitType } from "./libs/rate-limiter/email-rate-limiter.service";
+import { EmailLanguage } from "@/mail/mail-i18n.service";
+import { defaultSendResetPasswordEmailParams, SendResetPasswordEmailParams } from "./interfaces/account.interface";
+import { AccountChangeEmailRateLimitError, AccountDeletionRateLimitError, AccountResetPasswordRateLimitError, EmailCodeLoginRateLimitError } from "./exceptions/rate-limiter.error";
 
 @Injectable()
 export class AuthAccountService {
@@ -37,6 +41,7 @@ export class AuthAccountService {
         private readonly dataSource: DataSource,
         private readonly i18n: I18nService<I18nTranslations>,
         private readonly tenantService: TenantService,
+        private readonly emailRateLimiter: EmailRateLimiterService
     ) { }
 
     async test() {
@@ -49,6 +54,103 @@ export class AuthAccountService {
         const redisClient = await this.cacheService.getRedisClient();
         // await redisClient.rPush('la', ['foo', 'bar']);
         console.log('client', await redisClient.lRange('la', 0, -1))
+    }
+
+    async sendResetPasswordEmail({
+        email,
+        account,
+        language = defaultSendResetPasswordEmailParams.language!
+    }: SendResetPasswordEmailParams) {
+        const accountEmail = account?.email || email;
+        if (!accountEmail) {
+            throw new BadRequestException(this.i18n.t('account.EMAIL_NOT_EMPTY'));
+        }
+
+        const isRateLimited = await this.emailRateLimiter.isRateLimited(accountEmail, EMAIL_RATE_LIMITER_CONFIGS['reset_password']);
+        if (isRateLimited) {
+            throw AccountResetPasswordRateLimitError.create(this.i18n);
+        }
+
+        // todo: generate code token
+        const token = '';
+        // todo: send email
+
+        await this.emailRateLimiter.incrementRateLimited(accountEmail, EMAIL_RATE_LIMITER_CONFIGS['reset_password']);
+        return token;
+    }
+
+    async sendAccountDeletionEmail(account: AccountEntity, language: EmailLanguage): Promise<string> {
+        const accountEmail = account?.email;
+        if (!accountEmail) {
+            throw new BadRequestException(this.i18n.t('account.EMAIL_NOT_EMPTY'));
+        }
+        const isRateLimited = await this.emailRateLimiter.isRateLimited(accountEmail, EMAIL_RATE_LIMITER_CONFIGS['email_code_account_deletion']);
+
+        if (isRateLimited) {
+            throw AccountDeletionRateLimitError.create(this.i18n);
+        }
+
+        // todo: generate code token
+        const token = '';
+
+        await this.emailRateLimiter.incrementRateLimited(accountEmail, EMAIL_RATE_LIMITER_CONFIGS['email_code_account_deletion']);
+        return token;
+    }
+
+    async sendChangeEmailVerification(account: AccountEntity, newEmail: string, language: EmailLanguage): Promise<void> {
+        const accountEmail = account?.email;
+        if (!accountEmail) {
+            throw new BadRequestException(this.i18n.t('account.EMAIL_NOT_EMPTY'));
+        }
+        language = language || EmailLanguage.ZH_HANS;
+        const isRateLimited = await this.emailRateLimiter.isRateLimited(accountEmail, EMAIL_RATE_LIMITER_CONFIGS['change_email']);
+        if (isRateLimited) {
+            throw AccountChangeEmailRateLimitError.create(this.i18n);
+        }
+
+        // todo: generate code
+
+        await this.emailRateLimiter.incrementRateLimited(accountEmail, EMAIL_RATE_LIMITER_CONFIGS['change_email']);
+    }
+
+    async sendEmailCodeLogin(email: string, language?: EmailLanguage): Promise<void> {
+        language = language || EmailLanguage.ZH_HANS;
+        const isRateLimited = await this.emailRateLimiter.isRateLimited(email, EMAIL_RATE_LIMITER_CONFIGS['email_code_login']);
+        if (isRateLimited) {
+            throw EmailCodeLoginRateLimitError.create(this.i18n);
+        }
+
+        // todo: generate code
+
+        // send email
+
+        await this.emailRateLimiter.incrementRateLimited(email, EMAIL_RATE_LIMITER_CONFIGS['email_code_login']);
+    }
+
+    private async generateResetPasswordToken(email: string, account?: AccountEntity): Promise<{ code: string; token: string; }> {
+        // todo: generate token
+
+        return {
+            code: Math.random().toString(36).substring(2, 8).toUpperCase(),
+            token: 'xxxxx',
+        };
+    }
+
+    private async generateEmailLoginCode(): Promise<string> {
+        return Math.random().toString(36).substring(2, 8).toUpperCase();
+    }
+
+    private async generateChangeEmailCode(): Promise<string> {
+        return Math.random().toString(36).substring(2, 8).toUpperCase();
+    }
+
+    private async generateAccountDeletionToken(email: string): Promise<{ code: string; token: string; }> {
+        // todo: generate token
+
+        return {
+            code: Math.random().toString(36).substring(2, 8).toUpperCase(),
+            token: 'xxxxx',
+        };
     }
 
     async isAccountFreezed(email: string): Promise<boolean> {
@@ -336,4 +438,29 @@ export class AuthAccountService {
         return accounts;
     }
 
+}
+
+export type EMAIL_RATE_CONFIG_KEYS = 'reset_password' | 'change_email' | 'email_code_login' | 'email_code_account_deletion';
+
+export const EMAIL_RATE_LIMITER_CONFIGS: Record<EMAIL_RATE_CONFIG_KEYS, EmailRateLimitOptions> = {
+    'reset_password': {
+        type: EmailRateLimitType.RESET_PASSWORD,
+        maxAttempts: 1,
+        timeWindow: 60,
+    },
+    'change_email': {
+        type: EmailRateLimitType.CHANGE_EMAIL,
+        maxAttempts: 1,
+        timeWindow: 60,
+    },
+    'email_code_login': {
+        type: EmailRateLimitType.EMAIL_CODE_LOGIN,
+        maxAttempts: 1,
+        timeWindow: 60,
+    },
+    'email_code_account_deletion': {
+        type: EmailRateLimitType.EMAIL_CODE_ACCOUNT_DELETION,
+        maxAttempts: 1,
+        timeWindow: 60,
+    },
 }

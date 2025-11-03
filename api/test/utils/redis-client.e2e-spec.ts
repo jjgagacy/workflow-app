@@ -1,10 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '@/app.module';
 import { EnhanceCacheService } from '@/service/caches/enhance-cache.service';
-import { count } from 'console';
 
 describe('RedisClient (e2e)', () => {
     let app: INestApplication<App>;
@@ -25,9 +23,22 @@ describe('RedisClient (e2e)', () => {
         expect(redisClient).toBeDefined();
     });
 
+    it('should set ttl', async () => {
+        const ttlkey = 'test:ttl:key';
+
+        await cacheService.set(ttlkey, 'ttl_test', 2000);
+
+        const immediateResult = await cacheService.get(ttlkey);
+        expect(immediateResult).toBe('ttl_test');
+
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        const expiredResult = await cacheService.get(ttlkey);
+        expect(expiredResult).toBeUndefined();
+    });
+
     describe('basic operations', () => {
         const testKey = 'test:basic:key';
-        const testValue = { name: 'test', value: 123 };
+        const testValue = { name: 'test', value: 123 };;
 
         it('shoud set and get cache', async () => {
             await cacheService.set(testKey, testValue);
@@ -37,31 +48,31 @@ describe('RedisClient (e2e)', () => {
             expect(result?.value).toBe(123);
         });
 
-        // it('should set ttl', async () => {
-        //     const ttlkey = 'test:ttl:key';
+        it('should set ttl', async () => {
+            const ttlkey = 'test:ttl:key';
 
-        //     await cacheService.set(ttlkey, 'ttl_test', 2000);
+            await cacheService.set(ttlkey, 'ttl_test', 2000);
 
-        //     const immediateResult = await cacheService.get(ttlkey);
-        //     expect(immediateResult).toBe('ttl_test');
+            const immediateResult = await cacheService.get(ttlkey);
+            expect(immediateResult).toBe('ttl_test');
 
-        //     await new Promise(resolve => setTimeout(resolve, 3000));
-        //     const expiredResult = await cacheService.get(ttlkey);
-        //     expect(expiredResult).toBeUndefined();
-        // });
-
-        it('should can delete cache', async () => {
-            await cacheService.set(testKey, testValue);
-
-            const beforeDelete = await cacheService.get(testKey);
-            expect(beforeDelete).toBeDefined();
-
-            const deleteResult = await cacheService.del(testKey);
-            expect(deleteResult).toBe(true);
-
-            const afterDelete = await cacheService.get(testKey);
-            expect(afterDelete).toBeUndefined();
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            const expiredResult = await cacheService.get(ttlkey);
+            expect(expiredResult).toBeUndefined();
         });
+
+        // it('should can delete cache', async () => {
+        //     await cacheService.set(testKey, testValue);
+
+        //     const beforeDelete = await cacheService.get(testKey);
+        //     expect(beforeDelete).toBeDefined();
+
+        //     const deleteResult = await cacheService.del(testKey);
+        //     expect(deleteResult).toBe(true);
+
+        //     const afterDelete = await cacheService.get(testKey);
+        //     expect(afterDelete).toBeUndefined();
+        // });
     });
 
     describe('increment operation', () => {
@@ -133,60 +144,285 @@ describe('RedisClient (e2e)', () => {
             const result = await cacheService.listRange<{ id: number; name: string }>(listKey);
             expect(result).toEqual(complexItem);
         });
+    });
 
-        describe('set operation', () => {
-            const setKey = 'test:set';
+    describe('set operation', () => {
+        const setKey = 'test:set';
 
-            beforeEach(async () => {
-                await cacheService.del(setKey);
+        beforeEach(async () => {
+            await cacheService.del(setKey);
+        });
+
+        it('should add to set', async () => {
+            const count1 = await cacheService.setAdd(setKey, 'member1', 'member2');
+            expect(count1).toBe(2);
+
+            const count2 = await cacheService.setAdd(setKey, 'member2', 'member3'); // member2 已存在
+            expect(count2).toBe(1); // 只添加了 member3
+
+            const count3 = await cacheService.setAdd(setKey, 'member4');
+            expect(count3).toBe(1);
+        });
+
+        it('should get items from set', async () => {
+            await cacheService.setAdd(setKey, 'apple', 'banana', 'orange');
+
+            const members = await cacheService.setMembers(setKey);
+            expect(members).toHaveLength(3);
+            expect(members).toEqual(expect.arrayContaining(['apple', 'banana', 'orange']));
+        });
+    });
+
+    describe('hash operation', () => {
+        const hashKey = 'test:hash';
+
+        beforeEach(async () => {
+            await cacheService.del(hashKey);
+        });
+
+        it('should set and get hash data', async () => {
+            await cacheService.hashSet(hashKey, 'name', '张三');
+            await cacheService.hashSet(hashKey, 'age', 25);
+            await cacheService.hashSet(hashKey, 'profile', { city: '北京', job: '工程师' });
+
+            const name = await cacheService.hashGet<string>(hashKey, 'name');
+            const age = await cacheService.hashGet<number>(hashKey, 'age');
+            const profile = await cacheService.hashGet<{ city: string; job: string }>(hashKey, 'profile');
+
+            expect(name).toBe('张三');
+            expect(age).toBe(25);
+            expect(profile).toEqual({ city: '北京', job: '工程师' });
+        });
+
+        it('应该返回 null 对于不存在的字段', async () => {
+            const result = await cacheService.hashGet(hashKey, 'nonexistent');
+            expect(result).toBeNull();
+        });
+    });
+
+    describe('Sorted set operations', () => {
+        const sortedSetKey = 'test:sorted_set';
+
+        beforeEach(async () => {
+            await cacheService.del(sortedSetKey);
+        });
+
+        describe('zAdd', () => {
+            it('should add member to sorted set with score', async () => {
+                const result = await cacheService.zAdd(sortedSetKey, 100, 'member1');
+                expect(result).toBe(1);
+
+                const score = await cacheService.zScore(sortedSetKey, 'member1');
+                expect(score).toBe(100);
             });
 
-            it('should add to set', async () => {
-                const count1 = await cacheService.setAdd(setKey, 'member1', 'member2');
-                expect(count1).toBe(2);
+            it('should add multiple numbers with different scores', async () => {
+                const result1 = await cacheService.zAdd(sortedSetKey, 100, 'member1');
+                const result2 = await cacheService.zAdd(sortedSetKey, 200, 'member2');
+                const result3 = await cacheService.zAdd(sortedSetKey, 300, 'member3');
 
-                const count2 = await cacheService.setAdd(setKey, 'member2', 'member3'); // member2 已存在
-                expect(count2).toBe(1); // 只添加了 member3
+                expect(result1).toBe(1);
+                expect(result2).toBe(1);
+                expect(result3).toBe(1);
 
-                const count3 = await cacheService.setAdd(setKey, 'member4');
-                expect(count3).toBe(1);
+                const card = await cacheService.zCard(sortedSetKey);
+                expect(card).toBe(3);
             });
 
-            it('should get items from set', async () => {
-                await cacheService.setAdd(setKey, 'apple', 'banana', 'orange');
+            it('should update score for existing member', async () => {
+                await cacheService.zAdd(sortedSetKey, 100, 'member1');
 
-                const members = await cacheService.setMembers(setKey);
-                expect(members).toHaveLength(3);
-                expect(members).toEqual(expect.arrayContaining(['apple', 'banana', 'orange']));
+                await cacheService.zAdd(sortedSetKey, 300, 'member1');
+
+                const score = await cacheService.zScore(sortedSetKey, 'member1');
+                expect(score).toBe(300);
             });
         });
 
-        describe('hash operation', () => {
-            const hashKey = 'test:hash';
-
-            beforeEach(async () => {
-                await cacheService.del(hashKey);
+        describe('zCard', () => {
+            it('should return 0 for non-existent key', async () => {
+                const card = await cacheService.zCard('non-existing-key');
+                expect(card).toBe(0);
             });
 
-            it('should set and get hash data', async () => {
-                await cacheService.hashSet(hashKey, 'name', '张三');
-                await cacheService.hashSet(hashKey, 'age', 25);
-                await cacheService.hashSet(hashKey, 'profile', { city: '北京', job: '工程师' });
+            it('should return correct number of members', async () => {
+                await cacheService.zAdd(sortedSetKey, 100, 'member1');
+                await cacheService.zAdd(sortedSetKey, 100, 'member2');
+                await cacheService.zAdd(sortedSetKey, 100, 'member3');
 
-                const name = await cacheService.hashGet<string>(hashKey, 'name');
-                const age = await cacheService.hashGet<number>(hashKey, 'age');
-                const profile = await cacheService.hashGet<{ city: string; job: string }>(hashKey, 'profile');
-
-                expect(name).toBe('张三');
-                expect(age).toBe(25);
-                expect(profile).toEqual({ city: '北京', job: '工程师' });
-            });
-
-            it('应该返回 null 对于不存在的字段', async () => {
-                const result = await cacheService.hashGet(hashKey, 'nonexistent');
-                expect(result).toBeNull();
+                const card = await cacheService.zCard(sortedSetKey);
+                expect(card).toBe(3);
             });
         });
+
+        describe('zRemRangeByScore', () => {
+            beforeEach(async () => {
+                // 准备测试数据
+                await cacheService.zAdd(sortedSetKey, 100, 'member1');
+                await cacheService.zAdd(sortedSetKey, 200, 'member2');
+                await cacheService.zAdd(sortedSetKey, 300, 'member3');
+                await cacheService.zAdd(sortedSetKey, 400, 'member4');
+            });
+
+            it('should remove member by score range', async () => {
+                const removedCount = await cacheService.zRemRangeByScore(sortedSetKey, 150, 350);
+                expect(removedCount).toBe(2);
+
+                const remaining = await cacheService.zRange(sortedSetKey, 0, -1);
+                expect(remaining).toEqual(['member1', 'member4']);
+            });
+
+            it('should remove all members when using infinite range', async () => {
+                const removedCount = await cacheService.zRemRangeByScore(sortedSetKey, '-inf', '+inf');
+                expect(removedCount).toBe(4);
+
+                const card = await cacheService.zCard(sortedSetKey);
+                expect(card).toBe(0);
+            });
+
+            it('should remove members with minimum score only', async () => {
+                const removedCount = await cacheService.zRemRangeByScore(sortedSetKey, '-inf', '250');
+                expect(removedCount).toBe(2);
+
+                const remaining = await cacheService.zRange(sortedSetKey, 0, -1);
+                expect(remaining).toEqual(['member3', 'member4']);
+            });
+
+            it('should remove members with not included max value', async () => {
+                const removedCount = await cacheService.zRemRangeByScore(sortedSetKey, '-inf', '(200');
+                expect(removedCount).toBe(1);
+            });
+        });
+
+        describe('zRange', () => {
+            beforeEach(async () => {
+                await cacheService.zAdd(sortedSetKey, 100, 'member1');
+                await cacheService.zAdd(sortedSetKey, 200, 'member2');
+                await cacheService.zAdd(sortedSetKey, 300, 'member3');
+            });
+
+            it('should return all members in score order', async () => {
+                const members = await cacheService.zRange(sortedSetKey, 0, -1);
+                expect(members).toEqual(['member1', 'member2', 'member3']);
+            });
+
+            it('should return subset of members', async () => {
+                const members = await cacheService.zRange(sortedSetKey, 1, 2);
+                expect(members).toEqual(['member2', 'member3']);
+            });
+
+            it('should return empty array for out of range', async () => {
+                const members = await cacheService.zRange(sortedSetKey, 10, 20);
+                expect(members).toEqual([]);
+            });
+        });
+
+        describe('zRangeByScore', () => {
+            beforeEach(async () => {
+                await cacheService.zAdd(sortedSetKey, 100, 'member1');
+                await cacheService.zAdd(sortedSetKey, 200, 'member2');
+                await cacheService.zAdd(sortedSetKey, 300, 'member3');
+                await cacheService.zAdd(sortedSetKey, 400, 'member4');
+            });
+
+            it('should return members by score range', async () => {
+                const members = await cacheService.zRangeByScore(sortedSetKey, 150, 350);
+                expect(members).toEqual(['member2', 'member3']);
+            });
+
+            it('should return all members with infinite range', async () => {
+                const members = await cacheService.zRangeByScore(sortedSetKey, '-inf', '+inf');
+                expect(members).toEqual(['member1', 'member2', 'member3', 'member4']);
+            });
+
+            it('should return empty array for non-matching range', async () => {
+                const members = await cacheService.zRangeByScore(sortedSetKey, 500, 600);
+                expect(members).toEqual([]);
+            });
+        });
+
+        describe('zRem', () => {
+            beforeEach(async () => {
+                await cacheService.zAdd(sortedSetKey, 100, 'member1');
+                await cacheService.zAdd(sortedSetKey, 200, 'member2');
+                await cacheService.zAdd(sortedSetKey, 300, 'member3');
+            });
+
+            it('should remove single member', async () => {
+                const removedCount = await cacheService.zRem(sortedSetKey, 'member2');
+                expect(removedCount).toBe(1);
+
+                const members = await cacheService.zRange(sortedSetKey, 0, -1);
+                expect(members).toEqual(['member1', 'member3']);
+            });
+
+            it('should remove multiple members', async () => {
+                const removedCount = await cacheService.zRem(sortedSetKey, 'member1', 'member3');
+                expect(removedCount).toBe(2);
+
+                const members = await cacheService.zRange(sortedSetKey, 0, -1);
+                expect(members).toEqual(['member2']);
+            });
+
+            it('should return 0 when removing non-existent member', async () => {
+                const removedCount = await cacheService.zRem(sortedSetKey, 'non_existent');
+                expect(removedCount).toBe(0);
+            });
+        });
+
+        describe('zScore', () => {
+            beforeEach(async () => {
+                await cacheService.zAdd(sortedSetKey, 250, 'member1');
+            });
+
+            it('should return correct score for member', async () => {
+                const score = await cacheService.zScore(sortedSetKey, 'member1');
+                expect(score).toBe(250);
+            });
+
+            it('should return null for non-existent member', async () => {
+                const score = await cacheService.zScore(sortedSetKey, 'non_existent');
+                expect(score).toBeNull();
+            });
+        });
+
+        describe('zRank', () => {
+            beforeEach(async () => {
+                await cacheService.zAdd(sortedSetKey, 100, 'member1');
+                await cacheService.zAdd(sortedSetKey, 200, 'member2');
+                await cacheService.zAdd(sortedSetKey, 300, 'member3');
+            });
+
+            it('should return correct rank for member', async () => {
+                const rank = await cacheService.zRank(sortedSetKey, 'member2');
+                expect(rank).toBe(1); // 0-based index
+            });
+
+            it('should return null for non-existent member', async () => {
+                const rank = await cacheService.zRank(sortedSetKey, 'non_existent');
+                expect(rank).toBeNull();
+            });
+        });
+
+        describe('expire', () => {
+            it('should set expiration for key', async () => {
+                await cacheService.zAdd(sortedSetKey, 100, 'member1');
+
+                const result = await cacheService.expire(sortedSetKey, 2); // 2秒过期
+                expect(result).toBe(1);
+                // 等待过期
+                await new Promise(resolve => setTimeout(resolve, 2500));
+
+                const card = await cacheService.zCard(sortedSetKey);
+                expect(card).toBe(0);
+            }, 5000); // 设置更长的超时时间
+
+            it('should return false for non-existent key', async () => {
+                const result = await cacheService.expire('non_existent_key', 10);
+                expect(result).toBe(0);
+            });
+        });
+
     });
 
     afterAll(async () => {

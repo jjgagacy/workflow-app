@@ -80,6 +80,7 @@ export class AppController {
     //   expiryHours: 24,
     //   language: EmailLanguage.ZH_HANS,
     // });
+    // await this.cacheService.set('foo', 'bar', 5000);
     return await this.i18n.t("hello.HELLO");
   }
 

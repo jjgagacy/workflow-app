@@ -26,6 +26,7 @@ export class EnhanceCacheService {
         return this.cacheManager.get(key);
     }
 
+    // ttl unit is milliseconds
     async set<T>(key: string, value: T, ttl?: number): Promise<T> {
         return this.cacheManager.set(key, value, ttl);
     }
@@ -118,25 +119,94 @@ export class EnhanceCacheService {
         throw new InternalServerErrorException('Redis client not available');
     }
 
+    // Note: EXPIRE would return 0 and not alter the timeout for a key with a timeout set.
+    // and return 1 will be alter the timeout.
+    async expire(key: string, seconds: number): Promise<number> {
+        const redisClient = await this.getRedisClient();
+        if (redisClient) {
+            return await redisClient.expire(key, seconds);
+        }
+        throw new InternalServerErrorException('Redis client not available');
+    }
+
+    async zAdd(key: string, score: number, member: string): Promise<number> {
+        const redisClient = await this.getRedisClient();
+        if (redisClient) {
+            return await redisClient.zAdd(key, { score, value: member });
+        }
+        throw new InternalServerErrorException('Redis client not available');
+    }
+
+    async zRemRangeByScore(key: string, min: number | string, max: number | string): Promise<number> {
+        const redisClient = await this.getRedisClient();
+        if (redisClient) {
+            return await redisClient.zRemRangeByScore(key, min, max);
+        }
+        throw new InternalServerErrorException('Redis client not available');
+    }
+
+    async zCard(key: string): Promise<number> {
+        const redisClient = await this.getRedisClient();
+        if (redisClient) {
+            return await redisClient.zCard(key);
+        }
+        throw new InternalServerErrorException('Redis client not available');
+    }
+
+    async zRange(key: string, start: number, stop: number): Promise<string[]> {
+        const redisClient = await this.getRedisClient();
+        if (redisClient) {
+            return await redisClient.zRange(key, start, stop);
+        }
+        throw new InternalServerErrorException('Redis client not available');
+    }
+
+    async zRangeByScore(key: string, min: number | string, max: number | string): Promise<string[]> {
+        const redisClient = await this.getRedisClient();
+        if (redisClient) {
+            return await redisClient.zRangeByScore(key, min, max);
+        }
+        throw new InternalServerErrorException('Redis client not available');
+    }
+
+    async zRem(key: string, ...members: string[]): Promise<number> {
+        const redisClient = await this.getRedisClient();
+        if (redisClient) {
+            return await redisClient.zRem(key, members);
+        }
+        throw new InternalServerErrorException('Redis client not available');
+    }
+
+    async zScore(key: string, member: string): Promise<number | null> {
+        const redisClient = await this.getRedisClient();
+        if (redisClient) {
+            return await redisClient.zScore(key, member);
+        }
+        throw new InternalServerErrorException('Redis client not available');
+    }
+
+    async zRank(key: string, member: string): Promise<number | null> {
+        const redisClient = await this.getRedisClient();
+        if (redisClient) {
+            return await redisClient.zRank(key, member);
+        }
+        throw new InternalServerErrorException('Redis client not available');
+    }
 
     async keys(pattern: string): Promise<string[]> {
         const redisClient = await this.getRedisClient();
         if (redisClient) {
             // todo
-
         }
-
         throw new InternalServerErrorException("Redis client not available");
     }
 
-    // async isConnected(): Promise<boolean> {
-    //     const client = await this.getRedisClient();
-    //     if (!client) {
-    //         return false;
-    //     }
-
-    //     try {
-    //         if (typeof client.is)
-    //     }
-    // }
+    async isConnected(): Promise<boolean> {
+        const client = await this.getRedisClient();
+        if (!client) {
+            return false;
+        }
+        // todo
+        return true;
+    }
 }
