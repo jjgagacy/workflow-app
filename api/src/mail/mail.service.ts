@@ -119,5 +119,4 @@ export class MailService implements OnModuleInit {
     isHtmlString(content: EmailContent): content is string {
         return typeof content === 'string';
     }
-
 }

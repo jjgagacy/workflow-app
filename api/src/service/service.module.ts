@@ -11,10 +11,15 @@ import { EncryptionService } from "@/encryption/encryption.service";
 import { StorageModule } from "@/storage/storage.module";
 import { StorageService } from "@/storage/storage.service";
 import { EmailRateLimiterService } from "./libs/rate-limiter/email-rate-limiter.service";
+import { TokenManagerService } from "./libs/token-manager.service";
+import { LocationService } from "./libs/location.service";
+import { MailModule } from "@/mail/mail.module";
+import { MailService } from "@/mail/mail.service";
+import { DeviceService } from "./libs/device.service";
 
 @Global()
 @Module({
-    imports: [EncryptionModule, StorageModule],
+    imports: [EncryptionModule, StorageModule, MailModule],
     providers: [
         AuthAccountService,
         GeneralCacheService,
@@ -26,6 +31,10 @@ import { EmailRateLimiterService } from "./libs/rate-limiter/email-rate-limiter.
         EncryptionService,
         StorageService,
         EmailRateLimiterService,
+        TokenManagerService,
+        LocationService,
+        MailService,
+        DeviceService,
     ],
     exports: [
         AuthAccountService,
@@ -37,6 +46,9 @@ import { EmailRateLimiterService } from "./libs/rate-limiter/email-rate-limiter.
         FeatureService,
         StorageService,
         EmailRateLimiterService,
+        TokenManagerService,
+        LocationService,
+        DeviceService,
     ],
 })
 export class ServiceModule { }

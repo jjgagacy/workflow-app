@@ -18,7 +18,8 @@ export const TOKEN_TYPES = {
     CHANGE_EMAIL: 'change_email',
 } as const;
 
-export type TokenType = typeof TOKEN_TYPES[keyof typeof TOKEN_TYPES];
+type TokenTypeKey = keyof typeof TOKEN_TYPES;
+export type TokenType = typeof TOKEN_TYPES[TokenTypeKey];
 
 export interface TokenData {
     accountId?: number;
@@ -113,7 +114,6 @@ export class TokenManagerService {
 
         try {
             const tokenData = await this.cacheService.get<TokenData>(key);
-
             if (!tokenData) {
                 return null;
             }

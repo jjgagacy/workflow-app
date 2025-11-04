@@ -5,8 +5,10 @@ import { AppModule } from '@/app.module';
 import { EnhanceCacheService } from '@/service/caches/enhance-cache.service';
 
 describe('RedisClient (e2e)', () => {
+    // jest.setTimeout(30000);
     let app: INestApplication<App>;
     let cacheService: EnhanceCacheService;
+    let connected = false;
 
     beforeAll(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -16,11 +18,22 @@ describe('RedisClient (e2e)', () => {
         app = moduleFixture.createNestApplication();
         await app.init();
         cacheService = app.get<EnhanceCacheService>(EnhanceCacheService);
+        // trigger connect redis because lazy connect
+        cacheService.get('foo');
+        connected = true;
     });
 
     it('should initialize redis client', async () => {
         const redisClient = await cacheService.getRedisClient();
         expect(redisClient).toBeDefined();
+    });
+
+    it('should return true when connected', async () => {
+        if (!connected) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+        const result = await cacheService.isConnected();
+        expect(result).toBe(true);
     });
 
     it('should set ttl', async () => {
@@ -423,6 +436,37 @@ describe('RedisClient (e2e)', () => {
             });
         });
 
+    });
+
+    describe('Scan', () => {
+        it('should scan all keys in redis', async () => {
+            await cacheService.set('user:1', 'A');
+            await cacheService.set('user:2', 'B');
+            await cacheService.set('session:3', 'C');
+
+            const keys = await cacheService.scan({ pattern: 'user:*' });
+
+            // console.log(typeof keys, keys);
+            expect(keys.sort()).toEqual(['user:1', 'user:2']);
+        });
+
+        it('should call onBatch for each batch', async () => {
+            const keysToSet = Array.from({ length: 5 }, (_, i) => `item:${i}`);
+            await Promise.all(keysToSet.map(k => cacheService.set(k, 'x')));
+
+            const batches: string[][] = [];
+
+            const allKeys = await cacheService.scan({
+                pattern: 'item:*',
+                count: 2,
+                onBatch: (batch) => batches.push(batch),
+            });
+
+            // console.log(batches);
+            expect(allKeys.length).toBe(5);
+            expect(batches.length).toBeGreaterThan(1); // multiple batches
+            expect(batches.flat().sort()).toEqual(allKeys.sort());
+        });
     });
 
     afterAll(async () => {

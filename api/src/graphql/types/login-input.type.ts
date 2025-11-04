@@ -8,3 +8,15 @@ export class LoginInput {
   @Field()
   password: string;
 }
+
+@InputType('EmailCodeLoginInput')
+export class EmailCodeLoginInput {
+  @Field()
+  email: string;
+
+  @Field()
+  code: string;
+
+  @Field()
+  token: string;
+}

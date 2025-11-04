@@ -10,5 +10,6 @@
     "ACCOUNT_ID_NOT_EXISTS": "Login account ID does not exist",
     "EMAIL_NOT_EMPTY": "Email cannot be empty",
     "EMAIL_NOT_EXIST": "Email does not exists, {email}",
-    "EMAIL_EXIST": "Email already exists"
+    "EMAIL_EXIST": "Email already exists",
+    "EMAIL_IN_FREEZE": "Your email account is temporarily unavailable. Please try again later."
 }

@@ -7,8 +7,8 @@ export const JWT_CONSTANTS = {
 export const PASSWORD_SALT = '$2b$10$/mPO8XPZKGXUegJVXusa9.';
 export const PAGE_LIMIT_MAX = 1000;
 export const DEFAULT_TOKEN_TYPE_EXPIRY: Record<TokenType, number> = {
-  'change_email': 5, // minutes
-  'account_deletion': 60, // minutes
-  'email_verification': 60, // minutes
-  'reset_password': 5, // minutes
+  'change_email': Number(process.env.CHANGE_EMAIL_TOKEN_EXPIRY_MINUTES || 5), // minutes
+  'account_deletion': Number(process.env.ACCOUNT_DELETION_TOKEN_EXPIRY_MINUTES || 60), // minutes
+  'email_verification': Number(process.env.EMAIL_CODE_LOGIN_EXPIRY_MINUTES || 60), // minutes
+  'reset_password': Number(process.env.RESET_PASSWORD_TOKEN_EXPIRY_MINUTES || 5), // minutes
 };

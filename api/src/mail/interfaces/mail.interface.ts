@@ -11,7 +11,7 @@ export interface InviteMumberOptions {
 
 export interface AccountDeletionOptions {
     to: string;
-    expiryMinutes: string;
+    expiryMinutes: number;
     verificationCode: string;
     language?: EmailLanguage;
 }
@@ -19,7 +19,7 @@ export interface AccountDeletionOptions {
 export interface EmailCodeLoginOptions {
     to: string;
     verificationCode: string;
-    expiryMinutes: string;
+    expiryMinutes: number;
     userEmail: string;
     requestTime: string;
     location?: string;
@@ -30,14 +30,14 @@ export interface EmailCodeLoginOptions {
 export interface ResetPasswordOptions {
     to: string;
     resetUrl: string;
-    expiryMinutes: string;
+    expiryMinutes: number;
     language?: EmailLanguage;
 }
 
 export interface ChangeEmailOldOptions {
     to: string;
     verificationCode: string;
-    expiryMinutes: string;
+    expiryMinutes: number;
     oldEmail: string;
     newEmail: string;
     language?: EmailLanguage;

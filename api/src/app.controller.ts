@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Get, HttpException, HttpStatus, Inject, UseFilters } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Headers, HttpException, HttpStatus, Inject, Res, UseFilters } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ConfigService } from '@nestjs/config';
 import { MonieConfig } from './monie/monie.config';
@@ -21,6 +21,9 @@ import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { MailService } from './mail/mail.service';
 import { EmailLanguage } from './mail/mail-i18n.service';
+import { LocationService } from './service/libs/location.service';
+import { DeviceService } from './service/libs/device.service';
+import { Response } from 'express';
 
 class OrderCreatedEvent {
   constructor(private eventObj: { orderId: number; payload: any }) { }
@@ -42,10 +45,12 @@ export class AppController {
     private readonly localFileStorage: LocalFileStorage,
     private readonly storageService: StorageService,
     private readonly mailService: MailService,
+    private readonly locationService: LocationService,
+    private readonly deviceService: DeviceService,
   ) { }
 
   @Get()
-  async getHello() {
+  async getHello(@Headers('user-agent') userAgent: string) {
     // console.log(this.monieConfig.redisHost())
     // this.logger.error("123");
     // this.winstonLogger.info('abc', { id: 1, name: 'foo' });
@@ -81,6 +86,9 @@ export class AppController {
     //   language: EmailLanguage.ZH_HANS,
     // });
     // await this.cacheService.set('foo', 'bar', 5000);
+    // await this.locationService.getLocationFromIp('113.108.81.189');
+    const deviceInfo = this.deviceService.getDeviceInfo(userAgent);
+    console.log(deviceInfo);
     return await this.i18n.t("hello.HELLO");
   }
 
@@ -88,5 +96,10 @@ export class AppController {
   handleOrderCreatedEvent(payload: OrderCreatedEvent) {
     // handle and process "OrderCreatedEvent" event
     console.log('event handle', payload);
+  }
+
+  @Get('/favicon.ico')
+  getFavicon(@Res() res: Response) {
+    return res.sendStatus(204); // 返回 204 No Content
   }
 }

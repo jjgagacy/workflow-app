@@ -20,9 +20,19 @@ export class SecurityConfig {
         return getSafeNumber(min, DefaultConfigValues.RESET_PASSWORD_TOKEN_EXPIRY_MINUTES);
     }
 
+    emailCodeLoginExpiryMinutes(): number {
+        const min = this.configService.get<number>('EMAIL_CODE_LOGIN_EXPIRY_MINUTES', DefaultConfigValues.EMAIL_CODE_LOGIN_EXPIRY_MINUTES);
+        return getSafeNumber(min, DefaultConfigValues.EMAIL_CODE_LOGIN_EXPIRY_MINUTES);
+    }
+
     changeEmailTokenExpiryMinutes(): number {
         const min = this.configService.get<number>('CHANGE_EMAIL_TOKEN_EXPIRY_MINUTES', DefaultConfigValues.CHANGE_EMAIL_TOKEN_EXPIRY_MINUTES);
         return getSafeNumber(min, DefaultConfigValues.CHANGE_EMAIL_TOKEN_EXPIRY_MINUTES);
+    }
+
+    accountDeletionTokenExpiryMinutes(): number {
+        const min = this.configService.get<number>('ACCOUNT_DELETION_TOKEN_EXPIRY_MINUTES', DefaultConfigValues.ACCOUNT_DELETION_TOKEN_EXPIRY_MINUTES);
+        return getSafeNumber(min, DefaultConfigValues.ACCOUNT_DELETION_TOKEN_EXPIRY_MINUTES);
     }
 
     loginCheckDisabled(): boolean {

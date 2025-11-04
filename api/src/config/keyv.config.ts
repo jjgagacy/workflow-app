@@ -45,6 +45,14 @@ export const keyvConfig = async (configService: ConfigService) => {
         serialize: JSON.stringify,
         deserialize: JSON.parse,
     };
+    const keyvRedis = new KeyvRedis(connectOptions, options);
+    keyvRedis.on('connect', () => {
+        console.log('Keyv Redis conected');
+    });
+    keyvRedis.on('error', (err) => {
+        console.log('Keyv Redis connection Error', err)
+    });
+
     return {
         ttl: configService.get<number>('CACHE_TTL', DefaultConfigValues.CACHE_TTL), // 默认缓存时间，单位秒
         stores: [
@@ -56,7 +64,7 @@ export const keyvConfig = async (configService: ConfigService) => {
                 serialize: serializeCustom,
                 deserialize: deserializeCustom,
             }),
-            new KeyvRedis(connectOptions, options)
+            keyvRedis,
         ]
     };
 }
