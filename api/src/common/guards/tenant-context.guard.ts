@@ -2,7 +2,6 @@ import { AccountService } from "@/account/account.service";
 import { TenantService } from "@/service/tenant.service";
 import { BadRequestException, CanActivate, ExecutionContext, Injectable, NotFoundException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { Observable } from "rxjs";
 
 @Injectable()
 export class TenantContextGuard implements CanActivate {

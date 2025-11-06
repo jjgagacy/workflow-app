@@ -19,7 +19,7 @@ describe('RedisClient (e2e)', () => {
         await app.init();
         cacheService = app.get<EnhanceCacheService>(EnhanceCacheService);
         // trigger connect redis because lazy connect
-        cacheService.get('foo');
+        await cacheService.get('foo');
         connected = true;
     });
 
@@ -86,6 +86,16 @@ describe('RedisClient (e2e)', () => {
         //     const afterDelete = await cacheService.get(testKey);
         //     expect(afterDelete).toBeUndefined();
         // });
+
+        it('should get null for non-existent key', async () => {
+            const data = await cacheService.get('non-existent-key');
+            expect(data).toBeUndefined();
+
+            const dataNumber = await cacheService.get<number>('non-existent-key');
+            expect(dataNumber).toBeUndefined();
+            expect(Number(dataNumber)).toBeNaN();
+            expect(dataNumber || 0).toBe(0);
+        });
     });
 
     describe('increment operation', () => {

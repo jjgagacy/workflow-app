@@ -34,6 +34,7 @@ import { InvalidEmailError, InvalidTokenError, VerifyCodeError } from "./excepti
 import { EmailInFreezeError } from "./exceptions/account.error";
 import { GlobalLogger } from "@/logger/logger.service";
 import { FeatureService } from "./feature.service";
+import authConfig from "@/config/auth.config";
 
 @Injectable()
 export class AuthAccountService {
@@ -537,6 +538,71 @@ export class AuthAccountService {
         return accounts;
     }
 
+    async addLoginErrorRateLimit(email: string): Promise<void> {
+        const key = `auth:login_error_rate_limit:${email}`;
+        await this.cacheService.incr(key);
+    }
+
+    async isLoginErrorRateLimit(email: string): Promise<boolean> {
+        const key = `auth:login_error_rate_limit:${email}`;
+        const count = await this.cacheService.get<number>(key);
+        if (!count) {
+            return false;
+        }
+        if (count > authConfig().emailChangeMaxErrorLimit) {
+            return true;
+        }
+        return false;
+    }
+
+    async resetLoginErrorRateLimit(email: string): Promise<void> {
+        const key = `auth:login_error_rate_limit:${email}`;
+        await this.cacheService.del(key);
+    }
+
+    async addForgetPasswordErrorRateLimit(email: string): Promise<void> {
+        const key = `auth:forget_password_error_rate_limit:${email}`;
+        await this.cacheService.incr(key);
+    }
+
+    async isForgetPasswordErrorRateLimit(email: string): Promise<boolean> {
+        const key = `auth:forget_password_error_rate_limit:${email}`;
+        const count = await this.cacheService.get<number>(key);
+        if (!count) {
+            return false;
+        }
+        if (count > authConfig().forgetPasswordMaxErrorLimit) {
+            return true;
+        }
+        return false;
+    }
+
+    async resetForgetPasswordErrorRateLimit(email: string): Promise<void> {
+        const key = `auth:forget_password_error_rate_limit:${email}`;
+        await this.cacheService.del(key);
+    }
+
+    async addChangeEmailErrorRateLimit(email: string): Promise<void> {
+        const key = `auth:change_email_error_rate_limit:${email}`;
+        await this.cacheService.incr(key);
+    }
+
+    async isChangeEmailErrorRateLimit(email: string): Promise<boolean> {
+        const key = `auth:change_email_error_rate_limit:${email}`;
+        const count = await this.cacheService.get<number>(key);
+        if (!count) {
+            return false;
+        }
+        if (count > authConfig().emailChangeMaxErrorLimit) {
+            return true;
+        }
+        return false;
+    }
+
+    async resetChangeEmailErrorRateLimit(email: string): Promise<void> {
+        const key = `auth:change_email_error_rate_limit:${email}`;
+        await this.cacheService.del(key);
+    }
 }
 
 export type EMAIL_RATE_CONFIG_KEYS = 'reset_password' | 'change_email' | 'email_code_login' | 'email_code_account_deletion';

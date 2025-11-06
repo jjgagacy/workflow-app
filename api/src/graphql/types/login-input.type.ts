@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, PickType } from '@nestjs/graphql';
 
 @InputType('LoginInput')
 export class LoginInput {
@@ -19,4 +19,22 @@ export class EmailCodeLoginInput {
 
   @Field()
   token: string;
+}
+
+@InputType('ResetPasswordSendEmailInput')
+export class ResetPasswordSendEmailInput {
+  @Field()
+  email: string;
+
+  @Field()
+  language: string;
+}
+
+@InputType('EmailCodeLoginSendEmail')
+export class EmailCodeLoginSendEmail {
+  @Field()
+  email: string;
+
+  @Field()
+  language: string;
 }

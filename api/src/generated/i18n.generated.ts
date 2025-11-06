@@ -29,6 +29,11 @@ export type I18nTranslations = {
         "INVALID_TOKEN": string;
         "INVALID_EMAIL": string;
         "VERIFY_CODE_ERROR": string;
+        "EMAIL_CHANGE_ERROR_RATE_LIMIT": string;
+        "LOGIN_ERROR_RATE_LIMIT": string;
+        "FORGET_PASSWORD_ERROR_RATE_LIMIT": string;
+        "PASSWORD_MISMATCH": string;
+        "PASSWORD_VALIDATE_ERROR": string;
     };
     "billing": {
         "GET_PAYMENT_LINK_ERROR": string;

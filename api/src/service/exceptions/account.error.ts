@@ -1,5 +1,5 @@
 import { I18nTranslations } from "@/generated/i18n.generated";
-import { ForbiddenException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, NotFoundException } from "@nestjs/common";
 import { I18nService } from "nestjs-i18n";
 
 export class EmailInFreezeError extends ForbiddenException {
@@ -10,5 +10,60 @@ export class EmailInFreezeError extends ForbiddenException {
 
     static create(i18n: I18nService<I18nTranslations>): EmailInFreezeError {
         return new EmailInFreezeError(i18n.t('account.EMAIL_IN_FREEZE'));
+    }
+}
+
+export class AccountNotFoundError extends NotFoundException {
+    constructor(message: string) {
+        super(message);
+        this.name = 'AccountNotFound';
+    }
+
+    static create(i18n: I18nService<I18nTranslations>): AccountNotFoundError {
+        return new AccountNotFoundError(i18n.t('account.ACCOUNT_NOT_EXIST'));
+    }
+}
+
+export class EmailChangeErrorRateLimit extends BadRequestException {
+    constructor(message: string) {
+        super(message);
+        this.name = 'EmailChangeErrorRateLimit';
+    }
+
+    static create(i18n: I18nService<I18nTranslations>): EmailChangeErrorRateLimit {
+        return new EmailChangeErrorRateLimit(i18n.t('auth.EMAIL_CHANGE_ERROR_RATE_LIMIT'));
+    }
+}
+
+export class LoginErrorRateLimit extends BadRequestException {
+    constructor(message: string) {
+        super(message);
+        this.name = 'LoginErrorRateLimit';
+    }
+
+    static create(i18n: I18nService<I18nTranslations>): LoginErrorRateLimit {
+        return new LoginErrorRateLimit(i18n.t('auth.LOGIN_ERROR_RATE_LIMIT'));
+    }
+}
+
+export class ForgetPasswordErrorRateLimit extends BadRequestException {
+    constructor(message: string) {
+        super(message);
+        this.name = 'ForgetPasswordErrorRateLimit';
+    }
+
+    static create(i18n: I18nService<I18nTranslations>): ForgetPasswordErrorRateLimit {
+        return new ForgetPasswordErrorRateLimit(i18n.t('auth.FORGET_PASSWORD_ERROR_RATE_LIMIT'));
+    }
+}
+
+export class PasswordMismatchError extends BadRequestException {
+    constructor(message: string) {
+        super(message);
+        this.name = "PasswordMismatchError";
+    }
+
+    static create(i18n: I18nService<I18nTranslations>): PasswordMismatchError {
+        return new PasswordMismatchError(i18n.t('auth.PASSWORD_MISMATCH'));
     }
 }

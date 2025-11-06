@@ -10,6 +10,7 @@ import { UseGuards } from "@nestjs/common";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { I18nService } from "nestjs-i18n";
 import { BadRequestGraphQLException, DatabaseGraphQLException } from "@/common/exceptions";
+import authConfig from "@/config/auth.config";
 
 @UseGuards(GqlAuthGuard)
 @Resolver()
@@ -68,8 +69,8 @@ export class UpdateAccountResolver {
 
     // 密码强度检查方法
     private isPasswordStrong(password: string): boolean {
-        const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-        return strongRegex.test(password);
+        const passwordPattern = authConfig().passwordPattern;
+        return passwordPattern.test(password);
     }
 
     @Mutation(() => Boolean)

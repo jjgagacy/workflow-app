@@ -63,6 +63,11 @@ input EmailCodeLoginInput {
   token: String!
 }
 
+input EmailCodeLoginSendEmail {
+  email: String!
+  language: String!
+}
+
 input LoginInput {
   password: String!
   username: String!
@@ -143,7 +148,9 @@ type Mutation {
   deletePerm(input: PermInput!): Boolean!
   deleteRole(id: Int!): Boolean!
   emailCodeLogin(input: EmailCodeLoginInput!): LoginResponse!
+  emailCodeLoginSendEmail(input: EmailCodeLoginSendEmail!): String!
   login(input: LoginInput!): LoginResponse!
+  resetPasswordSendEmail(input: ResetPasswordSendEmailInput!): String!
   setRolePerms(key: String!, menus: [RoleSetPermMenu!]!): Boolean!
   toggleAccountStatus(id: Int!): Boolean!
   updateAccount(input: AccountInput!): AccountResponse!
@@ -186,6 +193,11 @@ type Query {
   modules(key: String, limit: Int, name: String, page: Int): ModuleList!
   roles(hasMenus: Boolean, hasRolePerms: Boolean, id: Int, key: String, limit: Int, name: String, page: Int, parent: String, status: Int): RoleList!
   routes: [Route!]!
+}
+
+input ResetPasswordSendEmailInput {
+  email: String!
+  language: String!
 }
 
 type Role {

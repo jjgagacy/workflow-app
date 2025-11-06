@@ -16,6 +16,7 @@ import { I18nTranslations } from "@/generated/i18n.generated";
 import { MonieConfig } from "@/monie/monie.config";
 import { getSafeTimezone, getSupportedTimezones, getTimezoneByLanguage } from "@/common/constants/timezone";
 import { EditionType } from "@/monie/enums/version.enum";
+import authConfig from "@/config/auth.config";
 
 @Injectable()
 export class AccountService {
@@ -75,6 +76,10 @@ export class AccountService {
             }
         }
 
+        if (dto.password != '') {
+            this.validPassword(dto.password);
+        }
+
         const accountEntity = this.accountRepository.create({
             ...this.mapBaseFields(validateObj),
             password: dto.password !== '' ? await this.hashPassword(dto.password) : '',
@@ -108,6 +113,11 @@ export class AccountService {
             ...this.mapBaseFields(dto),
             operate: this.mapOperateFields(dto),
         };
+
+        if (dto.password) {
+            this.validPassword(dto.password);
+            updatedFields.password = await this.hashPassword(dto.password);
+        }
 
         await this.accountRepository.update(account.id, updatedFields);
 
@@ -216,5 +226,13 @@ export class AccountService {
             operate: this.mapOperateFields(dto),
         };
         await this.accountRepository.update(accountId, updateFields);
+    }
+
+    validPassword(password: string): string {
+        const passwordPattern = authConfig().passwordPattern;
+        if (passwordPattern.test(password)) {
+            return password;
+        }
+        throw new InvalidInputGraphQLException(this.i18n.t('auth.PASSWORD_VALIDATE_ERROR'));
     }
 }

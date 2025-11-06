@@ -85,6 +85,7 @@ import { UniversalThrottlerGuard } from './common/guards/universal-throttler.gua
 import { BullModule } from '@nestjs/bull';
 import { MailService } from './mail/mail.service';
 import { MailModule } from './mail/mail.module';
+import { EnableEmailPasswordLoginGuard } from './common/guards/auth/enable-email-password-login.guard';
 
 @Module({
   imports: [
@@ -303,6 +304,7 @@ import { MailModule } from './mail/mail.module';
     LocalFileStorage,
     { provide: APP_GUARD, useClass: UniversalThrottlerGuard },
     MailService,
+    EnableEmailPasswordLoginGuard
   ],
 })
 export class AppModule implements NestModule {
