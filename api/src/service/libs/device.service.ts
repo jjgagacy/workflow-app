@@ -12,13 +12,15 @@ export interface DeviceInfo {
     isDesktop: boolean;
     deviceVendor: string;
     deviceModel: string;
+    language: string;
 }
 
 @Injectable()
 export class DeviceService {
-    getDeviceInfo(userAgent: string): DeviceInfo {
+    getDeviceInfo(userAgent: string, acceptLanguage?: string): DeviceInfo {
         const parser = new UAParser();
         const result = parser.setUA(userAgent).getResult();
+        const language = !acceptLanguage ? 'zh-Hans' : this.getLanguageFromHeader(acceptLanguage);
 
         return {
             browser: result.browser.name || 'Unknown',
@@ -31,6 +33,7 @@ export class DeviceService {
             isDesktop: !result.device.type || result.device.type === 'desktop',
             deviceVendor: result.device.vendor || '',
             deviceModel: result.device.model || '',
+            language,
         };
     }
 
@@ -60,5 +63,22 @@ export class DeviceService {
             name: result.os,
             version: result.osVersion,
         };
+    }
+
+    getLanguageFromHeader(acceptLanguage: string): string {
+        const defaultLanguage = 'en-US';
+        if (!acceptLanguage) return defaultLanguage;
+
+        const languages = acceptLanguage
+            .split(',')
+            .map((lang) => {
+                const [language, quality] = lang.split(';');
+                return { language: language.trim(), quality: quality ? parseFloat(quality.split('=')[1]) : 1 }
+            });
+        // sort languages by quality score in desending order (lighest priority first)
+        languages.sort((a, b) => b.quality - a.quality);
+
+        const primaryLang = languages[0].language;
+        return primaryLang.startsWith('zh') ? 'zh-Hans' : 'en-US';
     }
 }

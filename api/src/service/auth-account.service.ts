@@ -33,6 +33,7 @@ import { MonieConfig } from "@/monie/monie.config";
 import { InvalidEmailError, InvalidTokenError, VerifyCodeError } from "./exceptions/token.error";
 import { EmailInFreezeError } from "./exceptions/account.error";
 import { GlobalLogger } from "@/logger/logger.service";
+import { FeatureService } from "./feature.service";
 
 @Injectable()
 export class AuthAccountService {
@@ -52,6 +53,7 @@ export class AuthAccountService {
         private readonly mailService: MailService,
         private readonly monieConfig: MonieConfig,
         private readonly logger: GlobalLogger,
+        private readonly featureService: FeatureService
     ) { }
 
     async test() {
@@ -149,7 +151,7 @@ export class AuthAccountService {
         return token;
     }
 
-    async sendEmailCodeLogin(email: string, language?: EmailLanguage, location?: string, deviceInfo?: string): Promise<string> {
+    async sendEmailCodeLogin(email: string, language?: EmailLanguage, location?: string, deviceInfo?: string, codeProvide?: string): Promise<string> {
         language = language || EmailLanguage.ZH_HANS;
         const isRateLimited = await this.emailRateLimiter.isRateLimited(email, EMAIL_RATE_LIMITER_CONFIGS['email_code_login']);
         if (isRateLimited) {
@@ -157,7 +159,7 @@ export class AuthAccountService {
         }
 
         // generate code
-        const code = await this.generateEmailLoginCode();
+        const code = codeProvide || await this.generateEmailLoginCode();
         const token = await this.tokenManagerService.generateToken(TOKEN_TYPES.EMAIL_VERIFICATION, undefined, email, { code });
 
         // send email
@@ -176,7 +178,7 @@ export class AuthAccountService {
         return token;
     }
 
-    async validateEmailCodeLogin(email: string, token: string, code: string, entityManager?: EntityManager): Promise<AccountEntity> {
+    async validateEmailCodeLogin(email: string, token: string, code: string, language: string, entityManager?: EntityManager): Promise<AccountEntity> {
         if (email == "" || token == "" || code == "") {
             throw new BadRequestException('Email and token and code cannot be empty');
         }
@@ -198,7 +200,8 @@ export class AuthAccountService {
             const dto: AccountSignUpDto = {
                 email,
                 name: email,
-                createWorkspaceRequired: false
+                createWorkspaceRequired: true,
+                language,
             }
             const accountNew = await this.register(dto);
             return accountNew.account;
@@ -220,7 +223,7 @@ export class AuthAccountService {
         try {
             await this.tenantService.createDefaultTenantIfNotExists(account, undefined, false, workManager);
         } catch (error) {
-            this.logger.log(`createTenantForNewAccount ${account.email} error: ${error.message}`);
+            this.logger.error(`createTenantForNewAccount ${account.email} error: ${error.message}`, error.stack);
         }
     }
 
@@ -285,12 +288,16 @@ export class AuthAccountService {
 
         let tenant: TenantEntity | undefined = undefined;
 
-        if (this.systemService.allowCreateWorkspace &&
-            dto.createWorkspaceRequired
-            // && 验证账号是否开通企业版
+        if (this.systemService.allowCreateWorkspace
+            && dto.createWorkspaceRequired
+            && (await this.featureService.getFeatures()).license.workspaces.isAvailable()
         ) {
             tenant = await this.tenantService.createTenant({ name: dto.name, createdBy: createAccount.createdBy }, isSetup, workManager);
-            await this.tenantService.addAccountTenantMembership(createdAccount, tenant!, AccountRole.OWNER, workManager);
+            const tenantAccount = await this.tenantService.addAccountTenantMembership(createdAccount, tenant!, AccountRole.OWNER, workManager);
+            if (tenantAccount && !await this.getCurrentTenant(createAccount.id!, workManager)) {
+                tenantAccount.current = true;
+                workManager.save(tenantAccount);
+            }
         }
 
         return { account: createdAccount, tenant, linkIntegrate }

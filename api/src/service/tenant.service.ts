@@ -15,7 +15,6 @@ import { TenantAccountEntity } from "@/account/entities/tenant-account.entity";
 import { Transactional } from "@/common/decorators/transaction.decorator";
 import { FeatureService } from "./feature.service";
 import { WorkspaceExceededError } from "@/account/errors";
-import { isSet } from "util/types";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { TenantCreatedEvent } from "@/events/tenant.event";
 import { EncryptionService } from "@/encryption/encryption.service";

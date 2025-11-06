@@ -16,9 +16,10 @@ export class LicenseLimitation {
     @ApiProperty({ description: 'Number of resources already consumed', default: 0 })
     size: number = 0;
 
-    @ApiProperty({ description: 'Maximum number of resources allowed', default: 0 })
+    @ApiProperty({ description: 'Maximum number of resources allowed, 0 means unlimited', default: 0 })
     limit: number = 0;
 
+    // 检查是否有足够的资源配额
     isAvailable(required: number = 1): boolean {
         if (!this.enabled || this.limit == 0) {
             return true;

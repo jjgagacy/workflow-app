@@ -22,6 +22,7 @@ export class SystemService {
     billingEnabled: boolean;
     enterpriseEnabled: boolean;
     canReplaceLogo: boolean;
+    enableChangeEmail: boolean;
 
     constructor(
         private readonly monieConfig: MonieConfig
@@ -33,12 +34,10 @@ export class SystemService {
         this.allowCreateWorkspace = this.monieConfig.allowCreateWorkspace();
         this.applicationName = this.monieConfig.applicationName();
         this.debug = this.monieConfig.debug();
-        this.enableEmailCodeLogin = this.monieConfig.enableEmailCodeLogin();
         this.edition = this.monieConfig.edition();
         this.deployEnvironment = this.monieConfig.deployEnvironment();
         this.emailCodeLoginExpiryMinutes = this.monieConfig.emailCodeLoginExpiryMinutes();
         this.enableSocialOauthLogin = this.monieConfig.enableSocialOauthLogin();
-        this.allowRegister = this.monieConfig.allowRegister();
         this.accessTokenExpiryMinutes = this.monieConfig.accessTokenExpiryMinutes();
         this.refreshTokenExpiryDays = this.monieConfig.refreshTokenExpiryDays();
         this.loginRetryDurationMinutes = this.monieConfig.loginRetryDurationMinutes();
@@ -46,5 +45,6 @@ export class SystemService {
         this.billingEnabled = this.monieConfig.billingEnabled();
         this.enterpriseEnabled = this.monieConfig.enterpriseEnabled();
         this.canReplaceLogo = this.monieConfig.canReplaceLogo();
+        this.enableChangeEmail = this.monieConfig.enableChangeEmail();
     }
 }

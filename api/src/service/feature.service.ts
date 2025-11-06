@@ -26,6 +26,8 @@ export class FeatureService {
         }
 
         if (this.systemService.enterpriseEnabled) {
+            feature.branding.enabled = true;
+            feature.enableChangeEmail = false;
             await this.fullfillFeatureFromEnterprise(feature);
         }
 
@@ -34,6 +36,12 @@ export class FeatureService {
 
     private fullfillFeatureFromEnv(feature: Feature): void {
         feature.canReplaceLogo = this.systemService.canReplaceLogo;
+        feature.allowCreateWorkSpace = this.systemService.allowCreateWorkspace;
+        feature.allowRegister = this.systemService.allowRegister;
+        feature.enableEmailCodeLogin = this.systemService.enableEmailCodeLogin;
+        feature.enableEmailPasswordLogin = this.systemService.enableEmailPasswordLogin;
+        feature.enableSocialOauthLogin = this.systemService.enableSocialOauthLogin;
+        feature.enableChangeEmail = this.systemService.enableChangeEmail;
     }
 
     private async fullfillFeatureFromBillingApi(feature: Feature, tenantId: string): Promise<void> {
@@ -87,6 +95,10 @@ export class FeatureService {
 
     private async fullfillFeatureFromEnterprise(feature: Feature) {
         const enterpriseInfo = await this.enterpriseService.getEnterpriseInfo();
+        // enable workspace default
+        feature.license.workspaces.enabled = true;
+        // default workspace 1
+        feature.license.workspaces.limit = 1;
 
         if (enterpriseInfo.branding) {
             feature.branding.applicationTitle = enterpriseInfo.branding.applicationTitle;

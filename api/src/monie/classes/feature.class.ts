@@ -75,6 +75,18 @@ export class Feature {
     @ApiProperty({ default: '' })
     docsProcessing = '';
 
+    @ApiProperty({ default: true })
+    enableChangeEmail: boolean = true;
+
+    @ApiProperty({ default: false })
+    enableEmailCodeLogin: boolean = false;
+
+    @ApiProperty({ default: false })
+    enableEmailPasswordLogin: boolean = false;
+
+    @ApiProperty({ default: false })
+    enableSocialOauthLogin: boolean = false;
+
     @ApiProperty({ default: false })
     canReplaceLogo: boolean = false;
 

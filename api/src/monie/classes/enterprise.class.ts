@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 export class EnterpriseBranding {
+    enabled?: boolean;
     applicationTitle?: string;
     loginPageLogo?: string;
     workspaceLogo?: string;

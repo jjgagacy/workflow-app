@@ -57,6 +57,12 @@ type DepResponse {
   id: Int
 }
 
+input EmailCodeLoginInput {
+  code: String!
+  email: String!
+  token: String!
+}
+
 input LoginInput {
   password: String!
   username: String!
@@ -136,6 +142,7 @@ type Mutation {
   deleteModule(id: Int!): Boolean!
   deletePerm(input: PermInput!): Boolean!
   deleteRole(id: Int!): Boolean!
+  emailCodeLogin(input: EmailCodeLoginInput!): LoginResponse!
   login(input: LoginInput!): LoginResponse!
   setRolePerms(key: String!, menus: [RoleSetPermMenu!]!): Boolean!
   toggleAccountStatus(id: Int!): Boolean!

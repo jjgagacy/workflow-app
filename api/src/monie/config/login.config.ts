@@ -53,4 +53,8 @@ export class LoginConfig {
         const min = this.configService.get<number>('FORGOT_PASSWORD_RETRY_DURATION_MINUTES', DefaultConfigValues.FORGOT_PASSWORD_RETRY_DURATION_MINUTES);
         return getSafeNumber(min, DefaultConfigValues.FORGOT_PASSWORD_RETRY_DURATION_MINUTES);
     }
+
+    enableChangeEmail(): boolean {
+        return toBoolean(this.configService.get<boolean>('ENABLE_CHANGE_EMAIL', true))
+    }
 }
