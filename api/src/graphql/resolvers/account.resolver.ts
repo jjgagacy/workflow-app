@@ -10,6 +10,7 @@ import { AuthService } from "@/auth/auth.service";
 import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { UseGuards } from "@nestjs/common";
 import { BadRequestGraphQLException } from "@/common/exceptions";
+import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 
 @UseGuards(GqlAuthGuard)
 @Resolver()
@@ -19,6 +20,7 @@ export class AccountResolver {
     ) { }
 
     @Query(() => AccountList)
+    @UseGuards(EditionSelfHostedGuard)
     async accounts(@Args() args: GetAccountArgs): Promise<AccountList> {
         const { data: accountList, total } = await this.accountService.query({ ...args, relations: { roles: true } });
         const data: Account[] = accountList.map(this.transformAccountToGQLType);

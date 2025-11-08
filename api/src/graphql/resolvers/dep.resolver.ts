@@ -9,9 +9,11 @@ import { AccountEntity } from "@/account/entities/account.entity";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { I18nService } from "nestjs-i18n";
 import { BadRequestGraphQLException } from "@/common/exceptions";
+import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
+@UseGuards(EditionSelfHostedGuard)
 export class DepResolver {
     constructor(private readonly depService: DepService,
         private readonly accountService: AccountService,

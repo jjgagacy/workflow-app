@@ -146,11 +146,12 @@ export class AccountService {
             username: dto.username,
             realName: dto.realName,
             email: dto.email,
+            avatar: dto.avatar,
             mobile: dto.mobile,
             status: dto.status,
             prefer_language: dto.language,
             theme: dto.theme,
-            timezone: getSafeTimezone(dto.language || ''),
+            ...(dto.language && { timezone: getSafeTimezone(dto.language || '') }),
         };
     }
 

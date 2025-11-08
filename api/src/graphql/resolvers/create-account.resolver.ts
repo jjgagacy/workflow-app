@@ -5,6 +5,7 @@ import { AccountInput } from "../types/account-input.type";
 import { CurrentUser } from "@/common/decorators/current-user";
 import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { UseGuards } from "@nestjs/common";
+import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 
 @UseGuards(GqlAuthGuard)
 @Resolver()
@@ -12,6 +13,7 @@ export class CreateAccountResolver {
     constructor(private readonly accountService: AccountService) { }
 
     @Mutation(() => AccountResponse)
+    @UseGuards(EditionSelfHostedGuard)
     async createAccount(@Args('input') input: AccountInput, @CurrentUser() user: any): Promise<AccountResponse> {
         const dto = {
             username: input.username,

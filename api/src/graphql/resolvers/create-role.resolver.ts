@@ -5,9 +5,11 @@ import { CurrentUser } from "@/common/decorators/current-user";
 import { RoleInput } from "../args/role.input.args";
 import { UseGuards } from "@nestjs/common";
 import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
+import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
+@UseGuards(EditionSelfHostedGuard)
 export class CreateRoleResolver {
     constructor(private readonly roleService: RoleService) { }
 

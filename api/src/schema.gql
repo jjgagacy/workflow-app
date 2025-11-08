@@ -36,6 +36,9 @@ type AccountResponse {
   id: Int!
 }
 
+"""Date custom scalar type"""
+scalar Date
+
 type Dep {
   id: Int!
   key: String!
@@ -154,7 +157,11 @@ type Mutation {
   setRolePerms(key: String!, menus: [RoleSetPermMenu!]!): Boolean!
   toggleAccountStatus(id: Int!): Boolean!
   updateAccount(input: AccountInput!): AccountResponse!
+  updateAccountAvatar(input: UpdateAccountAvatarInput!): Boolean!
+  updateAccountLanguage(input: UpdateAccountLanguageInput!): Boolean!
+  updateAccountName(input: UpdateAccountNameInput!): Boolean!
   updateAccountPassword(newPassword: String!, password: String!): Boolean!
+  updateAccountTheme(input: UpdateAccountThemeInput!): Boolean!
   updateDep(input: DepInput!): DepResponse!
   updateMenu(input: MenuInput!): MenuResponse!
   updateModule(input: ModuleInput!): ModuleResponse!
@@ -193,6 +200,7 @@ type Query {
   modules(key: String, limit: Int, name: String, page: Int): ModuleList!
   roles(hasMenus: Boolean, hasRolePerms: Boolean, id: Int, key: String, limit: Int, name: String, page: Int, parent: String, status: Int): RoleList!
   routes: [Route!]!
+  workspaces: [WorkspaceList!]!
 }
 
 input ResetPasswordSendEmailInput {
@@ -256,7 +264,32 @@ type Scope {
   name: String!
 }
 
+input UpdateAccountAvatarInput {
+  avatar: String!
+}
+
+input UpdateAccountLanguageInput {
+  language: String!
+}
+
+input UpdateAccountNameInput {
+  username: String!
+}
+
+input UpdateAccountThemeInput {
+  theme: String!
+}
+
 type UserInfoResponse {
   id: Float
   name: String
+}
+
+type WorkspaceList {
+  created_at: Date!
+  current: Boolean!
+  id: String!
+  name: String!
+  plan: String!
+  status: String!
 }

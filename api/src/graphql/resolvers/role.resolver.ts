@@ -8,9 +8,11 @@ import { formatDate } from "@/common/utils/time";
 import { validNumber } from "@/common/utils/strings";
 import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { UseGuards } from "@nestjs/common";
+import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
+@UseGuards(EditionSelfHostedGuard)
 export class RoleResolver {
     constructor(private readonly roleService: RoleService) { }
 

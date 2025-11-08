@@ -1,8 +1,9 @@
 import { Module } from "@nestjs/common";
+import { DateScalar } from "./graphql/scalars/date.scalar";
 
 @Module({
   imports: [],
   controllers: [],
-  providers: []
+  providers: [DateScalar]
 })
-export class CommonModule {}
+export class CommonModule { }

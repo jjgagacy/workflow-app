@@ -4,6 +4,7 @@ import { DepResponse } from "../types/dep-response.type";
 import { DepInput } from "../args/dep-input.args";
 import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { UseGuards } from "@nestjs/common";
+import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 
 @UseGuards(GqlAuthGuard)
 @Resolver()
@@ -11,6 +12,7 @@ export class CreateDepResolver {
     constructor(private readonly depService: DepService) { }
 
     @Mutation(() => DepResponse)
+    @UseGuards(EditionSelfHostedGuard)
     async createDep(@Args('input') input: DepInput): Promise<DepResponse> {
         const createDto = {
             key: input.key!, // 使用非空断言，实际应有验证

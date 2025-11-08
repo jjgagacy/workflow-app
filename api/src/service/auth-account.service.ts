@@ -57,18 +57,6 @@ export class AuthAccountService {
         private readonly featureService: FeatureService
     ) { }
 
-    async test() {
-        const account = await this.accountRepository.findOne({ where: { id: 1 } });
-        console.log('account', account);
-        const accountSame = await this.accountService.getByUserName('admin');
-        console.log('account', accountSame);
-        const value = await this.cacheManager.get<string>('key');
-        console.log('cahce value:', value);
-        const redisClient = await this.cacheService.getRedisClient();
-        // await redisClient.rPush('la', ['foo', 'bar']);
-        console.log('client', await redisClient.lRange('la', 0, -1))
-    }
-
     // 可以不用code，直接生成链接重置，因为邮件模版没有用code
     async sendResetPasswordEmail({
         email,
@@ -465,7 +453,7 @@ export class AuthAccountService {
 
     async getCurrentTenant(accountId: number, entityManager?: EntityManager): Promise<{ tenant: TenantEntity; membership: TenantAccountEntity } | null> {
         const workManager = entityManager || this.dataSource.manager;
-        const membership = await await workManager
+        const membership = await workManager
             .createQueryBuilder(TenantAccountEntity, 'taj')
             .innerJoinAndSelect('taj.tenant', 'tenant')
             .where('taj.account_id = :accountId', { accountId })

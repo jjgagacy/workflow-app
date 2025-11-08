@@ -8,7 +8,7 @@ import { GlobalLogger } from '@/logger/logger.service';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-describe('UserInfo (e2e)', () => {
+describe('WorkspaceList (e2e)', () => {
     let app: INestApplication<App>;
     let accessToken: string;
 
@@ -47,12 +47,16 @@ describe('UserInfo (e2e)', () => {
         accessToken = await login();
     });
 
-    it('should get current user', async () => {
+    it('should get account workspace list', async () => {
         const query = `
                 query {
-                    currentUser {
+                    workspaces {
                         id,
-                        name
+                        name,
+                        status,
+                        plan,
+                        created_at,
+                        current
                     }
                 }
             `;
@@ -63,29 +67,8 @@ describe('UserInfo (e2e)', () => {
             .send({ query });
 
         expect(response.status).toBe(200);
-        expect(response.body.data.currentUser.name).toBe('admin');
+        expect(response.body.data.length).toBeGreaterThan(0);
     });
-
-    // it('should get current user fail', async () => {
-    //     const query = `
-    //             query {
-    //                 currentUser {
-    //                     id,
-    //                     name
-    //                 }
-    //             }
-    //         `;
-
-    //     await delay(4000); // 等待4秒，确保token过期（假设token有效期为3秒）
-
-    //     const response = await request(app.getHttpServer())
-    //         .post('/graphql')
-    //         .set('Authorization', `Bearer ${accessToken}`)
-    //         .send({ query });
-
-    //     console.log(response.body);
-    //     expect(response.status).toBe(200);
-    // });
 
     afterAll(async () => {
         // 关闭 NestJS 应用
