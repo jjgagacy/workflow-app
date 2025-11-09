@@ -2,6 +2,8 @@ import { AccountService } from "@/account/account.service";
 import { TenantService } from "@/service/tenant.service";
 import { BadRequestException, CanActivate, ExecutionContext, Injectable, NotFoundException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
+import { GqlExecutionContext } from "@nestjs/graphql";
+import { Request } from "express";
 
 @Injectable()
 export class TenantContextGuard implements CanActivate {
@@ -12,7 +14,16 @@ export class TenantContextGuard implements CanActivate {
     ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        const req = context.switchToHttp().getRequest();
+        const requestType = context.getType() as string;
+        let req: Request;
+
+        if (requestType === 'graphql') {
+            const gqlContext = GqlExecutionContext.create(context);
+            const ctx = gqlContext.getContext();
+            req = ctx.req;
+        } else {
+            req = context.switchToHttp().getRequest();
+        }
         const tenantId = this.getTenantId(req);
         const userId = this.getUserId(req);
 
@@ -28,7 +39,7 @@ export class TenantContextGuard implements CanActivate {
         (req as any).tenant = tenant;
         // todo user
 
-        console.log('tenant context guard...');
+        // console.log('tenant context guard...');
         return true;
     }
 
@@ -36,7 +47,8 @@ export class TenantContextGuard implements CanActivate {
         // 支持多种方式获取 tenant_id
         return request.body?.tenant_id ||
             request.query?.tenant_id ||
-            request.params?.tenant_id;
+            request.params?.tenant_id ||
+            request.headers['x-tenant-id'];
     }
 
     private getUserId(request: any): string {

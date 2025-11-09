@@ -5,12 +5,15 @@ import { App } from 'supertest/types';
 import { AppModule } from '@/app.module';
 import { GraphQLExceptionFilter } from '@/common/filters/graphql-exception.filter';
 import { GlobalLogger } from '@/logger/logger.service';
+import { WinstonLogger } from '@/logger/winston.service';
+import { ConfigService } from '@nestjs/config';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 describe('WorkspaceList (e2e)', () => {
     let app: INestApplication<App>;
     let accessToken: string;
+    const tenant_id = '106bd7b2-29d5-4b7e-bc2c-0dc14b1a966a';
 
     beforeAll(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -67,7 +70,58 @@ describe('WorkspaceList (e2e)', () => {
             .send({ query });
 
         expect(response.status).toBe(200);
-        expect(response.body.data.length).toBeGreaterThan(0);
+        expect(response.body.data.workspaces.length).toBeGreaterThan(0);
+    });
+
+    it('should get account workspace detail', async () => {
+        const query = `
+                query {
+                    workspaceDetail {
+                        id,
+                        name,
+                        status,
+                        plan,
+                        created_at
+                    }
+                }
+            `;
+
+        const response = await request(app.getHttpServer())
+            .post('/graphql')
+            .query({
+                tenant_id,
+            })
+            .set('Authorization', `Bearer ${accessToken}`)
+            .send({ query });
+
+        expect(response.status).toBe(200);
+        // console.log(response.body);
+        expect(response.body.data.workspaceDetail.id).toBe(tenant_id);
+    });
+
+    it('should get account workspace detail (headers)', async () => {
+        const query = `
+                query {
+                    workspaceDetail {
+                        id,
+                        name,
+                        status,
+                        plan,
+                        created_at
+                    }
+                }
+            `;
+
+        const response = await request(app.getHttpServer())
+            .post('/graphql')
+            .set('Authorization', `Bearer ${accessToken}`)
+            .set('X-Tenant-Id', tenant_id)
+            .send({
+                query,
+            });
+
+        expect(response.status).toBe(200);
+        expect(response.body.data.workspaceDetail.id).toBe(tenant_id);
     });
 
     afterAll(async () => {

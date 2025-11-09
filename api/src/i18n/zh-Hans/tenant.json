@@ -1,4 +1,5 @@
 {
     "WORKSPACE_CREATE_NOT_ALLOWD": "创建命名空间失败",
-    "WORKSPACE_LIMIT_EXEEEDED": "命名空间超出限制"
+    "WORKSPACE_LIMIT_EXEEEDED": "命名空间超出限制",
+    "TENANT_NOT_FOUND": "命名空间不存在"
 }

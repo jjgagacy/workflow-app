@@ -150,3 +150,59 @@ export function parseTime(timeString: string): Date | null {
   }
   return null;
 }
+
+// src/utils/date.util.ts
+export function toISOWithOffset(date: Date, timeZone: string): string {
+  // 使用 Intl 拆分时区对应的年月日时分秒（不含毫秒）
+  const dtf = new Intl.DateTimeFormat(undefined, {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
+
+  const parts = dtf.formatToParts(date);
+  const get = (type: string) => parts.find(p => p.type === type)?.value ?? '00';
+
+  const year = Number(get('year'));
+  const month = Number(get('month'));
+  const day = Number(get('day'));
+  const hour = Number(get('hour'));
+  const minute = Number(get('minute'));
+  const second = Number(get('second'));
+
+  // 把上面的时分秒当作目标时区的“本地时间”，用 Date.UTC 构造对应的 UTC 毫秒数
+  // 注意：使用 date.getMilliseconds() 保留原始毫秒精度
+  const ms = date.getMilliseconds();
+  const tzLocalAsUTCms = Date.UTC(year, month - 1, day, hour, minute, second, ms);
+
+  // 原始时间（UTC ms）
+  const utcMs = date.getTime();
+
+  // 偏移（以毫秒计）
+  const offsetMs = tzLocalAsUTCms - utcMs;
+
+  // 把偏移四舍五入到最近的整分钟，避免出现 +07:59 这类微小误差
+  const offsetMinExact = offsetMs / 60000;
+  const offsetMinRounded = Math.round(offsetMinExact);
+
+  const sign = offsetMinRounded >= 0 ? '+' : '-';
+  const absMin = Math.abs(offsetMinRounded);
+  const pad = (n: number) => String(Math.floor(n)).padStart(2, '0');
+  const hh = pad(Math.floor(absMin / 60));
+  const mm = pad(absMin % 60);
+
+  const msStr = String(ms).padStart(3, '0');
+  const yearStr = String(year).padStart(4, '0');
+  const monthStr = String(month).padStart(2, '0');
+  const dayStr = String(day).padStart(2, '0');
+  const hourStr = String(hour).padStart(2, '0');
+  const minuteStr = String(minute).padStart(2, '0');
+  const secondStr = String(second).padStart(2, '0');
+
+  return `${yearStr}-${monthStr}-${dayStr}T${hourStr}:${minuteStr}:${secondStr}.${msStr}${sign}${hh}:${mm}`;
+}

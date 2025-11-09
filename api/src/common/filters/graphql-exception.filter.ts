@@ -71,7 +71,7 @@ export class GraphQLExceptionFilter implements GqlExceptionFilter {
 
     private getStatusCode(exception: any): number {
         // 根据异常类型返回不同的状态码
-        console.log('--', exception.name);
+        // console.log('--', exception.name);
         if (exception.name === 'ValidationError') return 400;
         if (exception.name === 'UnauthorizedError') return 401;
         if (exception.name === 'ForbiddenError') return 403;

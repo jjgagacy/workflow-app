@@ -20,3 +20,22 @@ export class WorkspaceList {
     @Field()
     current: boolean;
 }
+
+@ObjectType('WorkspaceDetail')
+export class WorkspaceDetail {
+    @Field(() => String)
+    id: string;
+
+    @Field()
+    name: string;
+
+    @Field()
+    plan: string;
+
+    @Field()
+    status: string;
+
+    @Field(() => Date)
+    created_at: Date;
+}
+

@@ -200,6 +200,7 @@ type Query {
   modules(key: String, limit: Int, name: String, page: Int): ModuleList!
   roles(hasMenus: Boolean, hasRolePerms: Boolean, id: Int, key: String, limit: Int, name: String, page: Int, parent: String, status: Int): RoleList!
   routes: [Route!]!
+  workspaceDetail: WorkspaceDetail!
   workspaces: [WorkspaceList!]!
 }
 
@@ -283,6 +284,14 @@ input UpdateAccountThemeInput {
 type UserInfoResponse {
   id: Float
   name: String
+}
+
+type WorkspaceDetail {
+  created_at: Date!
+  id: String!
+  name: String!
+  plan: String!
+  status: String!
 }
 
 type WorkspaceList {

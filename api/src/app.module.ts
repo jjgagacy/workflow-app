@@ -106,9 +106,10 @@ import { WorkspaceResolver } from './graphql/resolvers/workspace/workspace.resol
             introspection: process.env.NODE_ENV !== 'production',
             graphiql: true,
             context: ({ req, res }) => ({ req, res }),
+            csrfPrevention: process.env.NODE_ENV !== 'production',
             formatError: (formattedError, error) => {
-                //console.log('Original error:', error);
-                //console.log('Formatted error:', formattedError);
+                // console.log('Original error:', error);
+                // console.log('Formatted error:', formattedError);
                 if (process.env.NODE_ENV === 'production') {
                     // 移除堆栈跟踪
                     if (formattedError.extensions?.stacktrace) {
@@ -173,17 +174,17 @@ import { WorkspaceResolver } from './graphql/resolvers/workspace/workspace.resol
                     {
                         name: 'short',
                         ttl: 1000, // 1 second
-                        limit: 3,   // 3 requests per second
+                        limit: process.env.NODE_ENV !== 'production' ? 100 : 3,   // 3 requests per second
                     },
                     {
                         name: 'medium',
                         ttl: 10000, // 10 seconds
-                        limit: 20,  // 20 requests per 10 seconds
+                        limit: process.env.NODE_ENV !== 'production' ? 100 : 20,  // 20 requests per 10 seconds
                     },
                     {
                         name: 'long',
                         ttl: 60000, // 1 minute
-                        limit: 100, // 100 requests per minute
+                        limit: process.env.NODE_ENV !== 'production' ? 500 : 100, // 100 requests per minute
                     },
                 ]
             })

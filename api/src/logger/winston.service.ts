@@ -5,6 +5,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import 'winston-daily-rotate-file';
 import { MonieConfig } from '@/monie/monie.config';
+import { getSafeTimezone } from '@/common/constants/timezone';
+import { toISOWithOffset } from '@/common/utils/time';
 
 const customLevels = {
     levels: {
@@ -63,12 +65,17 @@ export class WinstonLogger {
         // register custom colors with winston
         winston.addColors(customLevels.colors);
         const isProduction = this.configService.get<string>('NODE_ENV') === 'production';
+        const logTimezone = this.configService.get<string>('SYSTEM_TIMEZONE', 'Asia/Shanghai');
 
         this.logger = winston.createLogger({
             level: this.monieConfig.winstonLogLevel(),
             levels: customLevels.levels,
             format: winston.format.combine(
-                winston.format.timestamp(),
+                winston.format.timestamp({
+                    format: () => {
+                        return toISOWithOffset(new Date(), logTimezone);
+                    }
+                }),
                 winston.format.colorize({ all: true, colors: customLevels.colors }),
                 winston.format.printf(({ timestamp, level, message, context, ...meta }) => {
                     let log = `${timestamp} [${level}]: ${message}`;

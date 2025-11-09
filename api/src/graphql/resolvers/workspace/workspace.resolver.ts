@@ -1,16 +1,27 @@
+import { AccountService } from "@/account/account.service";
+import { CurrentTenent } from "@/common/decorators/current-tenant";
 import { CurrentUser } from "@/common/decorators/current-user";
 import { AccountNotInFreezeGuard } from "@/common/guards/auth/account-not-infreeze.guard";
 import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
-import { WorkspaceList } from "@/graphql/types/workspace/workspace.type";
+import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
+import { I18nTranslations } from "@/generated/i18n.generated";
+import { WorkspaceDetail, WorkspaceList } from "@/graphql/types/workspace/workspace.type";
 import { AuthAccountService } from "@/service/auth-account.service";
-import { UseGuards } from "@nestjs/common";
+import { AccountNotFoundError } from "@/service/exceptions/account.error";
+import { TenantNotFoundError } from "@/service/exceptions/tenant.error";
+import { TenantService } from "@/service/tenant.service";
+import { BadRequestException, Req, UseGuards } from "@nestjs/common";
 import { Query, Resolver } from "@nestjs/graphql";
+import { I18nService } from "nestjs-i18n";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
 export class WorkspaceResolver {
     constructor(
         private readonly authAccountService: AuthAccountService,
+        private readonly tenantService: TenantService,
+        private readonly accountService: AccountService,
+        private readonly i18n: I18nService<I18nTranslations>,
     ) { }
 
     @Query(() => [WorkspaceList])
@@ -30,6 +41,32 @@ export class WorkspaceResolver {
             });
         });
         return workspaces;
+    }
+
+    @Query(() => WorkspaceDetail)
+    @UseGuards(TenantContextGuard)
+    async workspaceDetail(
+        @CurrentUser() user: any,
+        @CurrentTenent() currentTenant: any
+    ): Promise<WorkspaceDetail> {
+        const account = await this.accountService.getById(user.id);
+        if (!account) {
+            throw AccountNotFoundError.create(this.i18n);
+        }
+        const tenant = await this.tenantService.getTenant(currentTenant.id);
+        if (!tenant) {
+            throw TenantNotFoundError.create(this.i18n);
+        }
+        const workspaceDetail: WorkspaceDetail = {
+            id: tenant.id,
+            name: tenant.name,
+            status: tenant.status,
+            plan: tenant.plan,
+            created_at: tenant.operate.createdAt,
+        };
+
+        return workspaceDetail;
+
     }
 }
 
