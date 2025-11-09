@@ -89,6 +89,7 @@ import { EnableEmailPasswordLoginGuard } from './common/guards/auth/enable-email
 import { UpdateAccountFieldsResolver } from './graphql/resolvers/update-account-fields.resolver';
 import { DateScalar } from './common/graphql/scalars/date.scalar';
 import { WorkspaceResolver } from './graphql/resolvers/workspace/workspace.resolver';
+import { ModelProviderResolver } from './graphql/resolvers/workspace/model-provider.resolver';
 
 @Module({
     imports: [
@@ -312,6 +313,7 @@ import { WorkspaceResolver } from './graphql/resolvers/workspace/workspace.resol
         UpdateAccountFieldsResolver,
         DateScalar,
         WorkspaceResolver,
+        ModelProviderResolver,
     ],
 })
 export class AppModule implements NestModule {

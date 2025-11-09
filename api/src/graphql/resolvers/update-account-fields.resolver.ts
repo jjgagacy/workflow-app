@@ -11,89 +11,89 @@ import { UpdateAccountDto } from "@/account/account/dto/update-account.dto";
 
 @UseGuards(GqlAuthGuard)
 export class UpdateAccountFieldsResolver {
-    constructor(
-        private readonly accountService: AccountService,
-        private readonly i18n: I18nService<I18nTranslations>,
-    ) { }
+  constructor(
+    private readonly accountService: AccountService,
+    private readonly i18n: I18nService<I18nTranslations>,
+  ) { }
 
-    @Mutation(() => Boolean)
-    async updateAccountName(
-        @Args('input') input: UpdateAccountNameInput,
-        @CurrentUser() user: any
-    ): Promise<boolean> {
-        const account = await this.accountService.getById(user.id);
-        if (!account) {
-            throw AccountNotFoundError.create(this.i18n);
-        }
-
-        if (input.username.length < 3 || input.username.length > 30) {
-            throw new BadRequestException("Account name length error.");
-        }
-
-        const dto: UpdateAccountDto = {
-            username: input.username,
-            updatedBy: user.name,
-        };
-
-        await this.accountService.update(dto);
-        return true;
+  @Mutation(() => Boolean)
+  async updateAccountName(
+    @Args('input') input: UpdateAccountNameInput,
+    @CurrentUser() user: any
+  ): Promise<boolean> {
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw AccountNotFoundError.create(this.i18n);
     }
 
-    @Mutation(() => Boolean)
-    async updateAccountAvatar(
-        @Args('input') input: UpdateAccountAvatarInput,
-        @CurrentUser() user: any
-    ): Promise<boolean> {
-        const account = await this.accountService.getById(user.id);
-        if (!account) {
-            throw AccountNotFoundError.create(this.i18n);
-        }
-
-        const dto: UpdateAccountDto = {
-            avatar: input.avatar,
-            updatedBy: user.name,
-        }
-
-        await this.accountService.update(dto);
-        return true;
+    if (input.username.length < 3 || input.username.length > 30) {
+      throw new BadRequestException("Account name length error.");
     }
 
-    @Mutation(() => Boolean)
-    async updateAccountLanguage(
-        @Args('input') input: UpdateAccountLanguageInput,
-        @CurrentUser() user: any
-    ): Promise<boolean> {
-        const account = await this.accountService.getById(user.id);
-        if (!account) {
-            throw AccountNotFoundError.create(this.i18n);
-        }
+    const dto: UpdateAccountDto = {
+      username: input.username,
+      updatedBy: user.name,
+    };
 
-        const dto: UpdateAccountDto = {
-            language: input.language,
-            updatedBy: user.name,
-        };
+    await this.accountService.update(dto);
+    return true;
+  }
 
-        await this.accountService.update(dto);
-        return true;
+  @Mutation(() => Boolean)
+  async updateAccountAvatar(
+    @Args('input') input: UpdateAccountAvatarInput,
+    @CurrentUser() user: any
+  ): Promise<boolean> {
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw AccountNotFoundError.create(this.i18n);
     }
 
-    @Mutation(() => Boolean)
-    async updateAccountTheme(
-        @Args('input') input: UpdateAccountThemeInput,
-        @CurrentUser() user: any
-    ): Promise<boolean> {
-        const account = await this.accountService.getById(user.id);
-        if (!account) {
-            throw AccountNotFoundError.create(this.i18n);
-        }
-
-        const dto: UpdateAccountDto = {
-            theme: input.theme,
-            updatedBy: user.name,
-        };
-
-        await this.accountService.update(dto);
-        return true;
+    const dto: UpdateAccountDto = {
+      avatar: input.avatar,
+      updatedBy: user.name,
     }
+
+    await this.accountService.update(dto);
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async updateAccountLanguage(
+    @Args('input') input: UpdateAccountLanguageInput,
+    @CurrentUser() user: any
+  ): Promise<boolean> {
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw AccountNotFoundError.create(this.i18n);
+    }
+
+    const dto: UpdateAccountDto = {
+      language: input.language,
+      updatedBy: user.name,
+    };
+
+    await this.accountService.update(dto);
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async updateAccountTheme(
+    @Args('input') input: UpdateAccountThemeInput,
+    @CurrentUser() user: any
+  ): Promise<boolean> {
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw AccountNotFoundError.create(this.i18n);
+    }
+
+    const dto: UpdateAccountDto = {
+      theme: input.theme,
+      updatedBy: user.name,
+    };
+
+    await this.accountService.update(dto);
+    return true;
+  }
 }
 

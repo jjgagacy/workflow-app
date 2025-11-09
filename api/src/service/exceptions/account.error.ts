@@ -1,69 +1,80 @@
 import { I18nTranslations } from "@/generated/i18n.generated";
-import { BadRequestException, ForbiddenException, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { I18nService } from "nestjs-i18n";
 
 export class EmailInFreezeError extends ForbiddenException {
-    constructor(message: string) {
-        super(message);
-        this.name = 'EmailInFreezeError';
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'EmailInFreezeError';
+  }
 
-    static create(i18n: I18nService<I18nTranslations>): EmailInFreezeError {
-        return new EmailInFreezeError(i18n.t('account.EMAIL_IN_FREEZE'));
-    }
+  static create(i18n: I18nService<I18nTranslations>): EmailInFreezeError {
+    return new EmailInFreezeError(i18n.t('account.EMAIL_IN_FREEZE'));
+  }
 }
 
 export class AccountNotFoundError extends NotFoundException {
-    constructor(message: string) {
-        super(message);
-        this.name = 'AccountNotFound';
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'AccountNotFound';
+  }
 
-    static create(i18n: I18nService<I18nTranslations>): AccountNotFoundError {
-        return new AccountNotFoundError(i18n.t('account.ACCOUNT_NOT_EXIST'));
-    }
+  static create(i18n: I18nService<I18nTranslations>): AccountNotFoundError {
+    return new AccountNotFoundError(i18n.t('account.ACCOUNT_NOT_EXIST'));
+  }
 }
 
 export class EmailChangeErrorRateLimit extends BadRequestException {
-    constructor(message: string) {
-        super(message);
-        this.name = 'EmailChangeErrorRateLimit';
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'EmailChangeErrorRateLimit';
+  }
 
-    static create(i18n: I18nService<I18nTranslations>): EmailChangeErrorRateLimit {
-        return new EmailChangeErrorRateLimit(i18n.t('auth.EMAIL_CHANGE_ERROR_RATE_LIMIT'));
-    }
+  static create(i18n: I18nService<I18nTranslations>): EmailChangeErrorRateLimit {
+    return new EmailChangeErrorRateLimit(i18n.t('auth.EMAIL_CHANGE_ERROR_RATE_LIMIT'));
+  }
 }
 
 export class LoginErrorRateLimit extends BadRequestException {
-    constructor(message: string) {
-        super(message);
-        this.name = 'LoginErrorRateLimit';
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'LoginErrorRateLimit';
+  }
 
-    static create(i18n: I18nService<I18nTranslations>): LoginErrorRateLimit {
-        return new LoginErrorRateLimit(i18n.t('auth.LOGIN_ERROR_RATE_LIMIT'));
-    }
+  static create(i18n: I18nService<I18nTranslations>): LoginErrorRateLimit {
+    return new LoginErrorRateLimit(i18n.t('auth.LOGIN_ERROR_RATE_LIMIT'));
+  }
 }
 
 export class ForgetPasswordErrorRateLimit extends BadRequestException {
-    constructor(message: string) {
-        super(message);
-        this.name = 'ForgetPasswordErrorRateLimit';
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'ForgetPasswordErrorRateLimit';
+  }
 
-    static create(i18n: I18nService<I18nTranslations>): ForgetPasswordErrorRateLimit {
-        return new ForgetPasswordErrorRateLimit(i18n.t('auth.FORGET_PASSWORD_ERROR_RATE_LIMIT'));
-    }
+  static create(i18n: I18nService<I18nTranslations>): ForgetPasswordErrorRateLimit {
+    return new ForgetPasswordErrorRateLimit(i18n.t('auth.FORGET_PASSWORD_ERROR_RATE_LIMIT'));
+  }
 }
 
 export class PasswordMismatchError extends BadRequestException {
-    constructor(message: string) {
-        super(message);
-        this.name = "PasswordMismatchError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = "PasswordMismatchError";
+  }
 
-    static create(i18n: I18nService<I18nTranslations>): PasswordMismatchError {
-        return new PasswordMismatchError(i18n.t('auth.PASSWORD_MISMATCH'));
-    }
+  static create(i18n: I18nService<I18nTranslations>): PasswordMismatchError {
+    return new PasswordMismatchError(i18n.t('auth.PASSWORD_MISMATCH'));
+  }
+}
+
+export class AccountNotInitializedError extends UnauthorizedException {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AccountNotInitializedError';
+  }
+
+  static create(i18n: I18nService<I18nTranslations>): AccountNotInitializedError {
+    return new AccountNotInitializedError(i18n.t('account.ACCOUNT_NOT_INITIALIZED'));
+  }
 }

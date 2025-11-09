@@ -1,13 +1,14 @@
+import { AccountStatus } from "@/account/account.enums";
 import { AccountService } from "@/account/account.service";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { AuthAccountService } from "@/service/auth-account.service";
-import { AccountNotFoundError, EmailInFreezeError } from "@/service/exceptions/account.error";
+import { AccountNotFoundError, AccountNotInitializedError, EmailInFreezeError } from "@/service/exceptions/account.error";
 import { BadRequestException, CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { GqlExecutionContext } from "@nestjs/graphql";
 import { I18nService } from "nestjs-i18n";
 
 @Injectable()
-export class AccountNotInFreezeGuard implements CanActivate {
+export class AccountInitializedGuard implements CanActivate {
     constructor(
         private readonly accountService: AccountService,
         private readonly authAccountService: AuthAccountService,
@@ -27,9 +28,8 @@ export class AccountNotInFreezeGuard implements CanActivate {
             throw AccountNotFoundError.create(this.i18n);
         }
 
-        const inFreeze = await this.authAccountService.isAccountFreezed(account.email);
-        if (inFreeze) {
-            throw EmailInFreezeError.create(this.i18n);
+        if (account.status == AccountStatus.UNINITIALIZED) {
+            throw AccountNotInitializedError.create(this.i18n);
         }
 
         return true;

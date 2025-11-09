@@ -2,40 +2,40 @@ import { Field, ObjectType } from "@nestjs/graphql";
 
 @ObjectType('WorkspaceList')
 export class WorkspaceList {
-    @Field(() => String)
-    id: string;
+  @Field(() => String)
+  id: string;
 
-    @Field()
-    name: string;
+  @Field()
+  name: string;
 
-    @Field()
-    plan: string;
+  @Field()
+  plan: string;
 
-    @Field()
-    status: string;
+  @Field()
+  status: string;
 
-    @Field(() => Date)
-    created_at: Date;
+  @Field(() => Date)
+  created_at: Date;
 
-    @Field()
-    current: boolean;
+  @Field()
+  current: boolean;
 }
 
 @ObjectType('WorkspaceDetail')
 export class WorkspaceDetail {
-    @Field(() => String)
-    id: string;
+  @Field(() => String)
+  id: string;
 
-    @Field()
-    name: string;
+  @Field()
+  name: string;
 
-    @Field()
-    plan: string;
+  @Field()
+  plan: string;
 
-    @Field()
-    status: string;
+  @Field()
+  status: string;
 
-    @Field(() => Date)
-    created_at: Date;
+  @Field(() => Date)
+  created_at: Date;
 }
 
