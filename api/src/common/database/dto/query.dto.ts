@@ -1,22 +1,21 @@
-import { BadRequestException } from "@nestjs/common";
-import { PAGE_LIMIT_MAX } from "@/config/constants";
-import { BadRequestGraphQLException } from "@/common/exceptions";
-
 export class QueryDto {
-    page?: number;
-    limit?: number;
+  page?: number;
+  limit?: number;
+}
 
-    get paginate(): boolean {
-        return this.page !== undefined && this.limit !== undefined;
-    }
+export function getPaginationOptions(dto: { page?: number; limit?: number; }) {
+  if (!dto) {
+    return {};
+  }
+  if (typeof dto.page === 'undefined' || typeof dto.limit === 'undefined') {
+    return {};
+  }
 
-    get skip(): number {
-        return this.paginate ? (this.page! - 1) * this.limit! : 0;
-    }
+  const skip = (dto.page! - 1) * dto.limit!;
+  const take = dto.limit!;
 
-    checkLimitAndThrow() {
-        if (this.limit !== undefined && this.limit > PAGE_LIMIT_MAX) {
-            throw new BadRequestGraphQLException(`The number of entries per page cannot exceed ${PAGE_LIMIT_MAX}.`);
-        }
-    }
+  return {
+    skip: skip || 0,
+    take: take || 10
+  };
 }

@@ -17,6 +17,8 @@ import { MonieConfig } from "@/monie/monie.config";
 import { getSafeTimezone, getSupportedTimezones, getTimezoneByLanguage } from "@/common/constants/timezone";
 import { EditionType } from "@/monie/enums/version.enum";
 import authConfig from "@/config/auth.config";
+import { getPaginationOptions } from "@/common/database/dto/query.dto";
+import { isPaginator } from "@/common/database/utils/pagination";
 
 @Injectable()
 export class AccountService {
@@ -199,11 +201,11 @@ export class AccountService {
       where,
       order,
       ...(dto.relations && { relations: dto.relations }),
-      ...(dto.paginate && { skip: dto.skip || 0, take: dto.limit || 10 })
+      ...(getPaginationOptions(dto))
     };
 
     // 执行查询
-    if (dto.paginate) {
+    if (isPaginator(dto)) {
       const [data, total] = await this.accountRepository.findAndCount(options);
       return { data, total };
     } else {

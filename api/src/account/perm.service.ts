@@ -10,6 +10,8 @@ import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { throwIfDtoValidateFail } from "@/common/utils/validation";
 import { BadRequestGraphQLException } from "@/common/exceptions";
+import { getPaginationOptions } from "@/common/database/dto/query.dto";
+import { isPaginator } from "@/common/database/utils/pagination";
 
 @Injectable()
 export class PermService {
@@ -98,19 +100,14 @@ export class PermService {
             ...(dto.key && { key: dto.key }),
             ...(dto.name && { name: dto.name }),
         };
-        // 构建排序
-        const order: FindOptionsOrder<PermEntity> = { ...dto.order };
         // 构建查询选项
         const options: FindManyOptions<PermEntity> = {
             where,
             order: dto.order ? { ...dto.order } : undefined,
-            ...(dto.paginate && {
-                skip: dto.skip ?? 0,
-                take: dto.limit ?? 10,
-            }),
+            ...(getPaginationOptions(dto)),
         }
         // 执行查询
-        if (dto.paginate) {
+        if (isPaginator(dto)) {
             const [data, total] = await this.permRepository.findAndCount(options);
             return { data, total };
         } else {

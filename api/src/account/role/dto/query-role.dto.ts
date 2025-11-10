@@ -27,7 +27,6 @@ export class QueryRoleDto extends QueryDto {
     if (validNumber(page) && validNumber(limit)) {
       this.page = page;
       this.limit = limit;
-      this.checkLimitAndThrow();
     }
   }
 }

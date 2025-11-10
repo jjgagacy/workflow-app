@@ -43,7 +43,6 @@ export class QueryAccountDto extends QueryDto {
     if (validNumber(page) && validNumber(limit)) {
       this.page = page;
       this.limit = limit;
-      this.checkLimitAndThrow();
     }
   }
 }

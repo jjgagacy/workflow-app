@@ -12,6 +12,7 @@ import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { throwIfDtoValidateFail } from "@/common/utils/validation";
 import { BadRequestGraphQLException, InvalidInputGraphQLException } from "@/common/exceptions";
+import { isPaginator } from "@/common/database/utils/pagination";
 
 @Injectable()
 export class DepService {
@@ -176,7 +177,7 @@ export class DepService {
         };
 
         // 执行查询
-        if (dto.paginate) {
+        if (isPaginator(dto)) {
             const [data, total] = await this.depRepository.findAndCount(options);
             return { data, total };
         } else {

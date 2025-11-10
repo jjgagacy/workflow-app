@@ -16,6 +16,8 @@ import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { throwIfDtoValidateFail } from "@/common/utils/validation";
 import { BadRequestGraphQLException } from "@/common/exceptions";
+import { getPaginationOptions } from "@/common/database/dto/query.dto";
+import { isPaginator } from "@/common/database/utils/pagination";
 
 @Injectable()
 export class MenuService {
@@ -235,14 +237,11 @@ export class MenuService {
             where,
             order,
             ...(dto.relations && { relations: dto.relations }),
-            ...(dto.paginate && {
-                skip: dto.skip ?? 0,
-                take: dto.limit ?? 10,
-            }),
+            ...(getPaginationOptions(dto)),
         };
 
         // 执行查询
-        if (dto.paginate) {
+        if (isPaginator(dto)) {
             const [data, total] = await this.menuRepository.findAndCount(options);
             return { data, total };
         } else {

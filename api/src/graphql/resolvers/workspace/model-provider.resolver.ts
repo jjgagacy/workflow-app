@@ -8,9 +8,9 @@ import { Query, Resolver } from "@nestjs/graphql";
 export class ModelProviderResolver {
     constructor() { }
 
-    @UseGuards(AccountInitializedGuard)
-    @Query(() => [ProviderList])
-    async providers(): Promise<ProviderList[]> {
+    // @UseGuards(AccountInitializedGuard)
+    // @Query(() => [ProviderList])
+    // async providers(): Promise<ProviderList[]> {
 
-    }
+    // }
 }
