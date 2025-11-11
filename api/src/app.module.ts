@@ -90,240 +90,246 @@ import { UpdateAccountFieldsResolver } from './graphql/resolvers/update-account-
 import { DateScalar } from './common/graphql/scalars/date.scalar';
 import { WorkspaceResolver } from './graphql/resolvers/workspace/workspace.resolver';
 import { ModelProviderResolver } from './graphql/resolvers/workspace/model-provider.resolver';
+import { PluginModule } from './ai/plugin/plugin.model';
+import { BasePluginClient } from './ai/plugin/classes/plugin-client';
+import { PluginClientService } from './ai/plugin/services/plugin-client.service';
 
 @Module({
-    imports: [
-        AuthModule,
-        CoreModule,
-        JwtModule.register({
-            secret: JWT_CONSTANTS.secret,
-            signOptions: { expiresIn: JWT_CONSTANTS.expiresIn }
-        }),
-        GraphQLModule.forRoot<ApolloDriverConfig>({
-            driver: ApolloDriver,
-            autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-            sortSchema: true,
-            playground: process.env.NODE_ENV !== 'production',
-            introspection: process.env.NODE_ENV !== 'production',
-            graphiql: true,
-            context: ({ req, res }) => ({ req, res }),
-            csrfPrevention: process.env.NODE_ENV !== 'production',
-            formatError: (formattedError, error) => {
-                // console.log('Original error:', error);
-                // console.log('Formatted error:', formattedError);
-                if (process.env.NODE_ENV === 'production') {
-                    // 移除堆栈跟踪
-                    if (formattedError.extensions?.stacktrace) {
-                        delete formattedError.extensions.stacktrace;
-                    }
-                    // 移除其他敏感信息
-                    if (formattedError.extensions?.exception) {
-                        delete formattedError.extensions.exception;
-                    }
-                    // 隐藏内部错误详情
-                    if (formattedError.extensions?.code === 'INTERNAL_SERVER_ERROR') {
-                        return {
-                            message: 'Internal server error',
-                            path: formattedError.path,
-                            extensions: {
-                                code: 'INTERNAL_SERVER_ERROR'
-                            }
-                        };
-                    }
-                }
-                return formattedError;
-            }
-        }),
-        ConfigModule.forRoot({
-            envFilePath: resolve(process.cwd(), `.env.${process.env.NODE_ENV || 'dev'}`),
-            isGlobal: true,
-            load: [configuration]
-        }),
-        TypeOrmModule.forRootAsync({
-            imports: [ConfigModule],
-            useFactory: (configService: ConfigService) => ({
-                type: 'postgres',
-                host: configService.get('POSTGRES_HOST'),
-                port: configService.get('POSTGRES_PORT'), //
-                username: configService.get('POSTGRES_USERNAME'),
-                password: configService.get('POSTGRES_PASSWORD'),
-                database: configService.get('POSTGRES_DATABASE'),
-                synchronize: process.env.NODE_ENV !== 'production', // development only
-                autoLoadEntities: true,
-                namingStrategy: new SnakeNamingStrategy(),
-                poolSize: configService.get<number>('POSTGRES_POOL_SIZE', 10), // 连接池大小
-                extra: {
-                    connectionLimit: configService.get<number>('POSTGRES_CONNECTION_LIMIT', 10), // 连接限制
-                    acquireTimeout: configService.get<number>('POSTGRES_ACQUIRE_TIMEOUT', 30000), // 获取连接超时时间30s(毫秒milliseconds)
-                    timeout: configService.get<number>('POSTGRES_TIMEOUT', 30000),           // 查询超时 30 秒
-                    connectTimeout: configService.get<number>('POSTGRES_CONNECT_TIMEOUT', 10000),    // 连接建立超时 10 秒
-                    charset: configService.get<string>('POSTGRES_CHARSET', 'utf8mb4'),
-                    timezone: configService.get<string>('POSTGRES_TIMEZONE', '+08:00'),
-                },
-                retryAttempts: configService.get<number>('POSTGRES_RETRY_ATTEMPTS', 10),        // 重试次数
-                retryDelay: configService.get<number>('POSTGRES_RETRY_DELAY', 3000),        // 重试延迟(毫秒)
-                // logging: process.env.NODE_ENV !== 'production',
-                // logger: 'advanced-console',
-            }),
-            inject: [ConfigService],
-        }),
-        ThrottlerModule.forRootAsync({
-            imports: [ConfigModule],
-            inject: [ConfigService],
-            useFactory: (config: ConfigService) => ({
-                throttlers: [
-                    {
-                        name: 'short',
-                        ttl: 1000, // 1 second
-                        limit: process.env.NODE_ENV !== 'production' ? 100 : 3,   // 3 requests per second
-                    },
-                    {
-                        name: 'medium',
-                        ttl: 10000, // 10 seconds
-                        limit: process.env.NODE_ENV !== 'production' ? 100 : 20,  // 20 requests per 10 seconds
-                    },
-                    {
-                        name: 'long',
-                        ttl: 60000, // 1 minute
-                        limit: process.env.NODE_ENV !== 'production' ? 500 : 100, // 100 requests per minute
-                    },
-                ]
-            })
-        }),
-        FooModule,
-        AccountModule,
-        AgentModule,
-        ModelRuntimeModule,
-        McpModule,
-        PromptModule,
-        RagModule,
-        ToolModule,
-        WorkflowModule,
-        MonieModule,
-        AppModule,
-        LoggerModule,
-        I18nGlobalModule,
-        ServiceModule,
-        CacheModule.registerAsync({
-            isGlobal: true,
-            imports: [ConfigModule],
-            useFactory: keyvConfig,
-            inject: [ConfigService],
-        }),
-        HttpModule.registerAsync({
-            global: true,
-            useFactory: async (configService: ConfigService) => ({
-                timeout: Number(configService.get<number>('HTTP_TIMEOUT', 5000)),
-                maxRedirects: Number(configService.get<number>('HTTP_MAX_REDIRECTS', 5)),
-            }),
-            inject: [ConfigService,]
-        }),
-        EventEmitterModule.forRoot({
-            wildcard: true,
-            delimiter: '.',
-            newListener: true,
-            removeListener: false,
-            maxListeners: 10,
-            verboseMemoryLeak: false,
-            ignoreErrors: false,
-        }),
-        EventModule,
-        EncryptionModule,
-        StorageModule,
-        BullModule.forRootAsync({
-            imports: [ConfigModule],
-            inject: [ConfigService],
-            useFactory: (configService: ConfigService) => ({
-                redis: {
-                    host: configService.get<string>('REDIS_HOST', 'localhost'),
-                    port: configService.get<number>('REDIS_PORT', 6379),
-                },
-                prefix: 'queue',
-                // 其他全局设置
-                defaultJobOptions: {
-                    removeOnComplete: 100, // 保留最近100个完成的任务
-                    removeOnFail: 100,     // 保留最近100个失败的任务
-                    attempts: 3,           // 默认重试3次
-                    backoff: {             // 重试策略
-                        type: 'exponential',
-                        delay: 1000,
-                    },
-                },
-                // 连接设置
-                settings: {
-                    lockDuration: 30000,   // 任务锁持续时间(ms)
-                    stalledInterval: 30000, // 检查卡住任务的间隔
-                    maxStalledCount: 1,    // 最大卡住次数
-                }
-            }),
-        }),
-        MailModule,
-    ],
-    controllers: [AppController, InternalPluginApiController, InternalPluginInvokeController, InternalWorkspaceController],
-    providers: [
-        HelloResolver,
-        LocalStrategy,
-        JwtStrategy,
-        JwtService,
-        FooService,
-        AppService,
-        ConfigService,
-        DepService,
-        MenuService,
-        AccountRoleService,
-        MenuRoleService,
-        RoleMenuService,
-        ModuleService,
-        ModulePermService,
-        PermService,
-        ModuleResolver,
-        UpdateModuleResolver,
-        CreateModuleResolver,
-        DeleteModuleResolver,
-        AccountResolver,
-        CreateAccountResolver,
-        CreateDepResolver,
-        CreateMenuResolver,
-        CreatePermResolver,
-        CreateRoleResolver,
-        DeleteAccountResolver,
-        DeleteDepResolver,
-        DeleteMenuResolver,
-        DeletePermResolver,
-        DeleteRoleResolver,
-        DepResolver,
-        MenuResolver,
-        RoleResolver,
-        RoutesResolver,
-        SetRolePermsResolver,
-        UpdateAccountResolver,
-        UpdateDepResolver,
-        UpdateMenuResolver,
-        UpdatePermResolver,
-        UpdateRoleResolver,
-        LoginResolver,
-        GlobalLogger,
-        WinstonLogger,
-        TenantContextGuard,
-        EncryptionService,
-        LocalFileStorage,
-        { provide: APP_GUARD, useClass: UniversalThrottlerGuard },
-        MailService,
-        EnableEmailPasswordLoginGuard,
-        UpdateAccountFieldsResolver,
-        DateScalar,
-        WorkspaceResolver,
-        ModelProviderResolver,
-    ],
+  imports: [
+    AuthModule,
+    CoreModule,
+    JwtModule.register({
+      secret: JWT_CONSTANTS.secret,
+      signOptions: { expiresIn: JWT_CONSTANTS.expiresIn }
+    }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      sortSchema: true,
+      playground: process.env.NODE_ENV !== 'production',
+      introspection: process.env.NODE_ENV !== 'production',
+      graphiql: true,
+      context: ({ req, res }) => ({ req, res }),
+      csrfPrevention: process.env.NODE_ENV !== 'production',
+      formatError: (formattedError, error) => {
+        // console.log('Original error:', error);
+        // console.log('Formatted error:', formattedError);
+        if (process.env.NODE_ENV === 'production') {
+          // 移除堆栈跟踪
+          if (formattedError.extensions?.stacktrace) {
+            delete formattedError.extensions.stacktrace;
+          }
+          // 移除其他敏感信息
+          if (formattedError.extensions?.exception) {
+            delete formattedError.extensions.exception;
+          }
+          // 隐藏内部错误详情
+          if (formattedError.extensions?.code === 'INTERNAL_SERVER_ERROR') {
+            return {
+              message: 'Internal server error',
+              path: formattedError.path,
+              extensions: {
+                code: 'INTERNAL_SERVER_ERROR'
+              }
+            };
+          }
+        }
+        return formattedError;
+      }
+    }),
+    ConfigModule.forRoot({
+      envFilePath: resolve(process.cwd(), `.env.${process.env.NODE_ENV || 'dev'}`),
+      isGlobal: true,
+      load: [configuration]
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('POSTGRES_HOST'),
+        port: configService.get('POSTGRES_PORT'), //
+        username: configService.get('POSTGRES_USERNAME'),
+        password: configService.get('POSTGRES_PASSWORD'),
+        database: configService.get('POSTGRES_DATABASE'),
+        synchronize: process.env.NODE_ENV !== 'production', // development only
+        autoLoadEntities: true,
+        namingStrategy: new SnakeNamingStrategy(),
+        poolSize: configService.get<number>('POSTGRES_POOL_SIZE', 10), // 连接池大小
+        extra: {
+          connectionLimit: configService.get<number>('POSTGRES_CONNECTION_LIMIT', 10), // 连接限制
+          acquireTimeout: configService.get<number>('POSTGRES_ACQUIRE_TIMEOUT', 30000), // 获取连接超时时间30s(毫秒milliseconds)
+          timeout: configService.get<number>('POSTGRES_TIMEOUT', 30000),           // 查询超时 30 秒
+          connectTimeout: configService.get<number>('POSTGRES_CONNECT_TIMEOUT', 10000),    // 连接建立超时 10 秒
+          charset: configService.get<string>('POSTGRES_CHARSET', 'utf8mb4'),
+          timezone: configService.get<string>('POSTGRES_TIMEZONE', '+08:00'),
+        },
+        retryAttempts: configService.get<number>('POSTGRES_RETRY_ATTEMPTS', 10),        // 重试次数
+        retryDelay: configService.get<number>('POSTGRES_RETRY_DELAY', 3000),        // 重试延迟(毫秒)
+        // logging: process.env.NODE_ENV !== 'production',
+        // logger: 'advanced-console',
+      }),
+      inject: [ConfigService],
+    }),
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        throttlers: [
+          {
+            name: 'short',
+            ttl: 1000, // 1 second
+            limit: process.env.NODE_ENV !== 'production' ? 100 : 3,   // 3 requests per second
+          },
+          {
+            name: 'medium',
+            ttl: 10000, // 10 seconds
+            limit: process.env.NODE_ENV !== 'production' ? 100 : 20,  // 20 requests per 10 seconds
+          },
+          {
+            name: 'long',
+            ttl: 60000, // 1 minute
+            limit: process.env.NODE_ENV !== 'production' ? 500 : 100, // 100 requests per minute
+          },
+        ]
+      })
+    }),
+    FooModule,
+    AccountModule,
+    AgentModule,
+    ModelRuntimeModule,
+    McpModule,
+    PromptModule,
+    RagModule,
+    ToolModule,
+    WorkflowModule,
+    MonieModule,
+    AppModule,
+    LoggerModule,
+    I18nGlobalModule,
+    ServiceModule,
+    CacheModule.registerAsync({
+      isGlobal: true,
+      imports: [ConfigModule],
+      useFactory: keyvConfig,
+      inject: [ConfigService],
+    }),
+    HttpModule.registerAsync({
+      global: true,
+      useFactory: async (configService: ConfigService) => ({
+        timeout: Number(configService.get<number>('HTTP_TIMEOUT', 5000)),
+        maxRedirects: Number(configService.get<number>('HTTP_MAX_REDIRECTS', 5)),
+      }),
+      inject: [ConfigService,]
+    }),
+    EventEmitterModule.forRoot({
+      wildcard: true,
+      delimiter: '.',
+      newListener: true,
+      removeListener: false,
+      maxListeners: 10,
+      verboseMemoryLeak: false,
+      ignoreErrors: false,
+    }),
+    EventModule,
+    EncryptionModule,
+    StorageModule,
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        redis: {
+          host: configService.get<string>('REDIS_HOST', 'localhost'),
+          port: configService.get<number>('REDIS_PORT', 6379),
+        },
+        prefix: 'queue',
+        // 其他全局设置
+        defaultJobOptions: {
+          removeOnComplete: 100, // 保留最近100个完成的任务
+          removeOnFail: 100,     // 保留最近100个失败的任务
+          attempts: 3,           // 默认重试3次
+          backoff: {             // 重试策略
+            type: 'exponential',
+            delay: 1000,
+          },
+        },
+        // 连接设置
+        settings: {
+          lockDuration: 30000,   // 任务锁持续时间(ms)
+          stalledInterval: 30000, // 检查卡住任务的间隔
+          maxStalledCount: 1,    // 最大卡住次数
+        }
+      }),
+    }),
+    MailModule,
+    PluginModule,
+  ],
+  controllers: [AppController, InternalPluginApiController, InternalPluginInvokeController, InternalWorkspaceController],
+  providers: [
+    HelloResolver,
+    LocalStrategy,
+    JwtStrategy,
+    JwtService,
+    FooService,
+    AppService,
+    ConfigService,
+    DepService,
+    MenuService,
+    AccountRoleService,
+    MenuRoleService,
+    RoleMenuService,
+    ModuleService,
+    ModulePermService,
+    PermService,
+    ModuleResolver,
+    UpdateModuleResolver,
+    CreateModuleResolver,
+    DeleteModuleResolver,
+    AccountResolver,
+    CreateAccountResolver,
+    CreateDepResolver,
+    CreateMenuResolver,
+    CreatePermResolver,
+    CreateRoleResolver,
+    DeleteAccountResolver,
+    DeleteDepResolver,
+    DeleteMenuResolver,
+    DeletePermResolver,
+    DeleteRoleResolver,
+    DepResolver,
+    MenuResolver,
+    RoleResolver,
+    RoutesResolver,
+    SetRolePermsResolver,
+    UpdateAccountResolver,
+    UpdateDepResolver,
+    UpdateMenuResolver,
+    UpdatePermResolver,
+    UpdateRoleResolver,
+    LoginResolver,
+    GlobalLogger,
+    WinstonLogger,
+    TenantContextGuard,
+    EncryptionService,
+    LocalFileStorage,
+    { provide: APP_GUARD, useClass: UniversalThrottlerGuard },
+    MailService,
+    EnableEmailPasswordLoginGuard,
+    UpdateAccountFieldsResolver,
+    DateScalar,
+    WorkspaceResolver,
+    ModelProviderResolver,
+    BasePluginClient,
+    PluginClientService,
+  ],
 })
 export class AppModule implements NestModule {
-    configure(consumer: MiddlewareConsumer) {
-        // consumer
-        //   .apply(AuthMiddleware)
-        //   .forRoutes('graphql');
+  configure(consumer: MiddlewareConsumer) {
+    // consumer
+    //   .apply(AuthMiddleware)
+    //   .forRoutes('graphql');
 
-        consumer
-            .apply(TenantContextMiddleware)
-            .forRoutes('/internal/api');
-    }
+    consumer
+      .apply(TenantContextMiddleware)
+      .forRoutes('/internal/api');
+  }
 }
