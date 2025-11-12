@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotImplementedException } from "@nestjs/common";
 import { ProviderType } from "../enums/provider.enum";
 import { CustomProviderConfiguration, SystemConfiguration } from "../entities/quota.entity";
 import { Provider } from "./provider.class";
@@ -92,6 +92,43 @@ export class ProviderConfiguration {
     credentials: Credentials
   ): Promise<void> {
   }
-
-
 }
+
+export class ProviderCofigurations {
+  configurations: Record<string, ProviderConfiguration> = {};
+
+  constructor(public tenantId: string) { }
+
+  getModels(
+    provider?: string,
+    modelType?: ModelType,
+    onlyActive: boolean = false
+  ): ModelWithProvider[] {
+    throw new NotImplementedException();
+  }
+
+  toList(): ProviderConfiguration[] {
+    return Object.values(this.configurations);
+  }
+
+  get(key: string): ProviderConfiguration | undefined {
+    const normalizeKey = this.normalizeProviderKey(key);
+    return this.configurations[normalizeKey];
+  }
+
+  set(key: string, value: ProviderConfiguration): void {
+    const normalizeKey = this.normalizeProviderKey(key);
+    this.configurations[normalizeKey] = value;
+  }
+
+  private normalizeProviderKey(key: string): string {
+    return key;
+  }
+
+  *values(): IterableIterator<ProviderConfiguration> {
+    for (const configuration of Object.values(this.configurations)) {
+      yield configuration;
+    }
+  }
+}
+

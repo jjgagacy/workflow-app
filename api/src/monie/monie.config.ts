@@ -17,48 +17,67 @@ import { SecurityConfig } from "./config/security.config";
 import { BillingConfig } from "./config/billing.config";
 import { LoginConfig } from "./config/login.config";
 import { FeatureConfig } from "./config/feature.config";
+import { HostedAnthropicConfig, HostedAzureOpenAIConfig, HostedMiniMaxConfig, HostedModerationConfig, HostedOpenAIConfig, HostedSparkConfig, HostedZhipuAIConfig, ModelCreditService } from "./config/hosted.config";
 
 @Injectable()
 export class MonieConfig {
-    constructor(protected readonly configService: ConfigService
-    ) { }
+  constructor(protected readonly configService: ConfigService
+  ) { }
 }
 
 // In TypeScript, when a class and interface have the same name, it doesn't
 // cause a complilation error due to a feature called Declaration Merging.
 export interface MonieConfig extends
-    AccountConfig,
-    AppExecutionConfig,
-    BillingConfig,
-    CodeExecutionConfig,
-    DeploymentConfig,
-    EndPointConfig,
-    EnterpriseConfig,
-    FileUploadConfig,
-    HttpRequestConfig,
-    InnerApiConfig,
-    LoggingConfig,
-    LoginConfig,
-    PluginConfig,
-    RedisConfig,
-    SecurityConfig,
-    FeatureConfig { }
+  AccountConfig,
+  AppExecutionConfig,
+  BillingConfig,
+  CodeExecutionConfig,
+  DeploymentConfig,
+  EndPointConfig,
+  EnterpriseConfig,
+  FileUploadConfig,
+  HttpRequestConfig,
+  InnerApiConfig,
+  LoggingConfig,
+  LoginConfig,
+  PluginConfig,
+  RedisConfig,
+  SecurityConfig,
+  FeatureConfig,
+  ModelCreditService,
+  HostedOpenAIConfig,
+  HostedAzureOpenAIConfig,
+  HostedAnthropicConfig,
+  HostedSparkConfig,
+  HostedMiniMaxConfig,
+  HostedSparkConfig,
+  HostedZhipuAIConfig,
+  HostedModerationConfig { }
 
 applyMixins(MonieConfig, [
-    AccountConfig,
-    AppExecutionConfig,
-    BillingConfig,
-    CodeExecutionConfig,
-    DeploymentConfig,
-    EndPointConfig,
-    EnterpriseConfig,
-    FileUploadConfig,
-    HttpRequestConfig,
-    InnerApiConfig,
-    LoggingConfig,
-    LoginConfig,
-    PluginConfig,
-    RedisConfig,
-    SecurityConfig,
-    FeatureConfig,
+  AccountConfig,
+  AppExecutionConfig,
+  BillingConfig,
+  CodeExecutionConfig,
+  DeploymentConfig,
+  EndPointConfig,
+  EnterpriseConfig,
+  FileUploadConfig,
+  HttpRequestConfig,
+  InnerApiConfig,
+  LoggingConfig,
+  LoginConfig,
+  PluginConfig,
+  RedisConfig,
+  SecurityConfig,
+  FeatureConfig,
+  ModelCreditService,
+  HostedOpenAIConfig,
+  HostedAzureOpenAIConfig,
+  HostedAnthropicConfig,
+  HostedSparkConfig,
+  HostedMiniMaxConfig,
+  HostedSparkConfig,
+  HostedZhipuAIConfig,
+  HostedModerationConfig,
 ])
