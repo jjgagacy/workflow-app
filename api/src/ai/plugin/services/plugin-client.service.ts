@@ -8,6 +8,5 @@ export class PluginClientService {
   async getModelProviders(tenantId: string): Promise<ModelProviderDto[]> {
     return [];
   }
-
 }
 

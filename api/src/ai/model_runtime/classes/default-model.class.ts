@@ -2,9 +2,9 @@ import { ModelType } from "../enums/model-runtime.enum";
 import { DefaultModelProvider } from "./default-model-provider.class";
 
 export class DefaultModel {
-    model: string;
+  model: string;
 
-    modelType: ModelType;
+  modelType: ModelType;
 
-    provider: DefaultModelProvider;
+  provider: DefaultModelProvider;
 }

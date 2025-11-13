@@ -8,6 +8,7 @@ import { Provider } from "../provider.class";
 import { ProviderModel } from "../provider-model.class";
 import { TenantPreferredProviderEntity } from "@/account/entities/tenant-preferred-provider.entity";
 import { ProviderModelSettingEntity } from "@/account/entities/provider-model-setting.entity";
+import { ProviderEntity } from "@/account/entities/provider.entity";
 
 @Injectable()
 export class ModelProviderPlugin {
@@ -27,23 +28,27 @@ export class ModelProviderPlugin {
     throw new NotImplementedException();
   }
 
-  private async getAllProvider(tenantId: string): Promise<Map<string, Provider[]>> {
+  async getAllProviderEntities(tenantId: string): Promise<Map<string, ProviderEntity[]>> {
     throw new NotImplementedException();
   }
 
-  private async getAllProviderModels(tenantId: string): Promise<Map<string, ProviderModel[]>> {
+  async getAllProviderModels(tenantId: string): Promise<Map<string, ProviderModel[]>> {
     throw new NotImplementedException();
   }
 
-  private async getPreferredModelProviders(tenantId: string): Promise<Map<string, TenantPreferredProviderEntity>> {
+  async getPreferredModelProviders(tenantId: string): Promise<Map<string, TenantPreferredProviderEntity>> {
     throw new NotImplementedException();
   }
 
-  private async getAllProviderModelSettings(tenantId: string): Promise<Map<string, ProviderModelSettingEntity[]>> {
+  async getAllProviderModelSettings(tenantId: string): Promise<Map<string, ProviderModelSettingEntity[]>> {
     throw new NotImplementedException();
   }
 
-  private async initTrialProvider(tenantId: string, providerNameToProviderMaps: Map<string, Provider[]>): Promise<Map<string, Provider[]>> {
+  async getAllProviders(tenantId: string): Promise<Provider[]> {
+    return [];
+  }
+
+  async initTrialProvider(tenantId: string, providerNameToProviderMaps: Map<string, ProviderEntity[]>): Promise<Map<string, ProviderEntity[]>> {
     throw new NotImplementedException();
   }
 

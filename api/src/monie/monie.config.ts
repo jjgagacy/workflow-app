@@ -12,7 +12,7 @@ import { FileUploadConfig } from "./config/fileupload.config";
 import { HttpRequestConfig } from "./config/http-request.config";
 import { InnerApiConfig } from "./config/inner-api.config";
 import { LoggingConfig } from "./config/logging.config";
-import { PluginConfig } from "./config/plugin.config";
+import { ModelPositionConfig, PluginConfig } from "./config/plugin.config";
 import { SecurityConfig } from "./config/security.config";
 import { BillingConfig } from "./config/billing.config";
 import { LoginConfig } from "./config/login.config";
@@ -52,7 +52,8 @@ export interface MonieConfig extends
   HostedMiniMaxConfig,
   HostedSparkConfig,
   HostedZhipuAIConfig,
-  HostedModerationConfig { }
+  HostedModerationConfig,
+  ModelPositionConfig { }
 
 applyMixins(MonieConfig, [
   AccountConfig,
@@ -80,4 +81,5 @@ applyMixins(MonieConfig, [
   HostedSparkConfig,
   HostedZhipuAIConfig,
   HostedModerationConfig,
+  ModelPositionConfig,
 ])

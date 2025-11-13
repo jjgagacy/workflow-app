@@ -6,19 +6,19 @@ import { I18nObject } from "./model-runtime.class";
  * Model class for Provider
  */
 export class ProviderModel {
-    model: string;
-    modelProperties: { [key in ModelPropertyKey]?: any };
-    label: I18nObject;
-    modelType: ModelType;
+  model: string;
+  modelProperties: { [key in ModelPropertyKey]?: any };
+  label: I18nObject;
+  modelType: ModelType;
 
-    @IsOptional()
-    features?: ModelFeature[];
-    fetchFrom: FetchFrom;
+  @IsOptional()
+  features?: ModelFeature[];
+  fetchFrom: FetchFrom;
 
-    @IsOptional()
-    deprecated?: boolean = false;
+  @IsOptional()
+  deprecated?: boolean = false;
 
-    get supportStructureOutput(): boolean {
-        return this.features?.includes(ModelFeature.STRUCTURED_OUTPUT) ?? false;
-    }
+  get supportStructureOutput(): boolean {
+    return this.features?.includes(ModelFeature.STRUCTURED_OUTPUT) ?? false;
+  }
 }
