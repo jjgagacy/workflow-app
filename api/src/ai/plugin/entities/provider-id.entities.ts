@@ -1,5 +1,7 @@
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 
+const cache = new Map<string, string>();
+
 export class ProviderID {
   organization: string;
 
@@ -48,5 +50,13 @@ export class ToolProviderID extends ProviderID {
   constructor(value: string) {
     super(value);
   }
+}
+
+
+export function normalizeProviderName(name: string): string {
+  if (!cache.has(name)) {
+    cache.set(name, new ModelProviderID(name).toString());
+  }
+  return cache.get(name)!;
 }
 

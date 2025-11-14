@@ -28,19 +28,9 @@ export class ModelProviderPlugin {
     throw new NotImplementedException();
   }
 
-  async getAllProviderEntities(tenantId: string): Promise<Map<string, ProviderEntity[]>> {
-    throw new NotImplementedException();
-  }
+
 
   async getAllProviderModels(tenantId: string): Promise<Map<string, ProviderModel[]>> {
-    throw new NotImplementedException();
-  }
-
-  async getPreferredModelProviders(tenantId: string): Promise<Map<string, TenantPreferredProviderEntity>> {
-    throw new NotImplementedException();
-  }
-
-  async getAllProviderModelSettings(tenantId: string): Promise<Map<string, ProviderModelSettingEntity[]>> {
     throw new NotImplementedException();
   }
 
@@ -48,8 +38,6 @@ export class ModelProviderPlugin {
     return [];
   }
 
-  async initTrialProvider(tenantId: string, providerNameToProviderMaps: Map<string, ProviderEntity[]>): Promise<Map<string, ProviderEntity[]>> {
-    throw new NotImplementedException();
-  }
+
 
 }

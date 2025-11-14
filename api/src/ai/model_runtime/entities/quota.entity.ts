@@ -6,11 +6,8 @@ import { ModelType } from "../enums/model-runtime.enum";
 // Provider quota configuration
 export class QuotaConfigiration {
   quotaType: QuotaType;
-
   quotaUnit: QuotaUnit;
-
   quotaLimit: number;
-
   quotaUsed: number;
 
   isValid: boolean;
@@ -35,7 +32,6 @@ export class SystemConfiguration {
 // Provider custom model
 export class CustomProviderModel {
   model: string;
-
   modelType: ModelType;
 
   credentials: Record<string, any>;
@@ -48,4 +44,3 @@ export class CustomProviderConfiguration {
 
   models: CustomProviderModel[] = [];
 }
-
