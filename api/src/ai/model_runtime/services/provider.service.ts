@@ -12,7 +12,7 @@ import { Provider } from "../classes/provider.class";
 import { DefaultModel } from "../classes/default-model.class";
 import { TenantDefaultModelEntity } from "@/account/entities/tenant-default-model.entity";
 import { ModelProviderPlugin } from "../classes/plugin/model-provider.plugin";
-import { CustomProviderConfiguration, SystemConfiguration } from "../entities/quota.entity";
+import { CustomProviderConfiguration, QuotaConfiguration, SystemConfiguration } from "../entities/quota.entity";
 import { ProviderType } from "../enums/provider.enum";
 import { ModelSettings } from "../interfaces/model.interface";
 import { ModelProviderID, normalizeProviderName } from "@/ai/plugin/entities/provider-id.entities";
@@ -20,9 +20,14 @@ import { ProviderListService } from "./provider-list.service";
 import { groupToMap, groupToMaps } from "@/common/utils/map";
 import { ProviderModelEntity } from "@/account/entities/provider-model.entity";
 import { HostConfiguration } from "@/ai/plugin/services/host-configuration";
-import { QuotaType } from "../enums/quota.enum";
+import { QuotaType, QuotaUnit } from "../enums/quota.enum";
 import { HostingQuota } from "../entities/hosting-quota.entity";
 import { Transactional } from "@/common/decorators/transaction.decorator";
+import { QuotaTypeUnavailableError, QuotaUsedOrLimitNullError } from "@/ai/plugin/exceptions/quota.error";
+import { I18nService } from "nestjs-i18n";
+import { I18nTranslations } from "@/generated/i18n.generated";
+import { CredentialFormSchema, FormType } from "../entities/form.entity";
+import { Credentials } from "../types/credentials.type";
 
 @Injectable()
 export class ProviderService {
@@ -40,6 +45,7 @@ export class ProviderService {
     private readonly hostConfiguration: HostConfiguration,
     private readonly providerListService: ProviderListService,
     private readonly dataSource: DataSource,
+    private readonly i18n: I18nService<I18nTranslations>,
   ) { }
 
   async getConfigurations(tenantId: string): Promise<ProviderConfigurations> {
@@ -163,9 +169,83 @@ export class ProviderService {
   private async toSystemConfiguration(
     tenantId: string,
     provider: Provider,
-    providers: ProviderEntity[],
+    providerEntities: ProviderEntity[],
   ): Promise<SystemConfiguration> {
-    throw new NotImplementedException();
+    const hostingConfig = this.hostConfiguration.providerMap.get(provider.provider);
+    if (!hostingConfig?.enabled) {
+      return new SystemConfiguration(false);
+    }
+
+    // Generate quotaType -> providerRecord Map
+    const systemRecordMapByQuota = this.groupSystemRecordsByQuota(providerEntities);
+    // Generate quotaConfigurations
+    const quotaConfigurations: QuotaConfiguration[] = [];
+
+    for (const quota of hostingConfig.quotas) {
+      const providerRecord = systemRecordMapByQuota.get(quota.quotaType);
+      // If not found in ProviderEntity table
+      if (!providerRecord) {
+        if (quota.quotaType === QuotaType.FREE) {
+          quotaConfigurations.push(
+            new QuotaConfiguration({
+              quotaType: quota.quotaType,
+              quotaUnit: hostingConfig.quotaUnit || QuotaUnit.TOKENS,
+              quotaUsed: 0,
+              quotaLimit: 0,
+              isValid: false,
+            })
+          );
+        }
+        continue
+      }
+
+      // have record
+      if (providerRecord.quotaLimit == null || providerRecord.quotaUsed == null) {
+        throw QuotaUsedOrLimitNullError.create(this.i18n);
+      }
+
+      const isValid = providerRecord.quotaLimit === -1 || providerRecord.quotaUsed < providerRecord.quotaLimit;
+
+      quotaConfigurations.push(
+        new QuotaConfiguration({
+          quotaType: quota.quotaType,
+          quotaUnit: hostingConfig.quotaUnit || QuotaUnit.TOKENS,
+          quotaUsed: providerRecord.quotaUsed,
+          quotaLimit: providerRecord.quotaLimit,
+          isValid,
+          restrictModel: quota.restrictModels,
+        })
+      );
+    }
+
+    if (quotaConfigurations.length === 0) {
+      return new SystemConfiguration(false);
+    }
+
+    // select current quotaType
+    const currentQuotaType = this.choiceCurrentUsingQuotaType(quotaConfigurations);
+    // Default to using credentials from hosting configuration (system built-in key)
+    let currentCredentials = hostingConfig.credentials;
+
+    // The free quota is not provided by the platform, so users must use their own 
+    // keys to claim the free allowance.
+    if (currentQuotaType === QuotaType.FREE) {
+      const freeRecord = systemRecordMapByQuota.get(QuotaType.FREE);
+
+      if (freeRecord) {
+        const secretVars = this.extractSecretVariables(provider.providerCredentialSchema?.credentialFromSchemas || [])
+        currentCredentials = await this.getProviderCredential(tenantId, freeRecord, secretVars);
+      } else {
+        currentCredentials = {};
+      }
+    }
+
+    return new SystemConfiguration(
+      true,
+      quotaConfigurations,
+      currentQuotaType,
+      currentCredentials,
+    );
   }
 
   private async toModelSettings(
@@ -327,6 +407,38 @@ export class ProviderService {
 
     await workManager.save(newRecord);
     return newRecord;
+  }
+
+  private choiceCurrentUsingQuotaType(quotaConfigurations: QuotaConfiguration[]): QuotaType {
+    const quotaTypeToConfigurationMap = groupToMap(quotaConfigurations, (qc) => qc.quotaType);
+    let lastQuotaConfiguration: QuotaConfiguration | undefined;
+
+    // Priority order: paid > free > trial
+    for (const quotaType of [QuotaType.PAID, QuotaType.FREE, QuotaType.TRIAL]) {
+      const quotaConfiguration = quotaTypeToConfigurationMap.get(quotaType);
+      if (quotaConfiguration) {
+        lastQuotaConfiguration = quotaConfiguration;
+        if (quotaConfiguration.isValid) return quotaType;
+      }
+    }
+
+    if (lastQuotaConfiguration) return lastQuotaConfiguration.quotaType;
+
+    throw QuotaTypeUnavailableError.create(this.i18n);
+  }
+
+  private extractSecretVariables(credentialFormSchemas: CredentialFormSchema[]): string[] {
+    const secretFormVariables: string[] = [];
+    for (const credentialFormSchema of credentialFormSchemas) {
+      if (credentialFormSchema.type === FormType.SECRET_INPUT) {
+        secretFormVariables.push(credentialFormSchema.variable);
+      }
+    }
+    return secretFormVariables;
+  }
+
+  private getProviderCredential(tenantId: string, providerEntity: ProviderEntity, secretVars: string[]): Promise<Credentials> {
+    throw new NotImplementedException();
   }
 
 }

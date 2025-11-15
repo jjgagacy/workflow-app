@@ -84,7 +84,7 @@ export class HostedOpenAIConfig {
   }
 
   openAIPaidModels(): string {
-    return this.configService.get<string>('HOSTED_OPENAI_TRIAL_MODELS', OPENAI_PAIED_MODELS);
+    return this.configService.get<string>('HOSTED_OPENAI_PAIED_MODELS', OPENAI_PAIED_MODELS);
   }
 }
 

@@ -1,0 +1,4 @@
+{
+  "QUOTA_USED_OR_LIMIT_NULL": "Quota used or limit value is null",
+  "QUOTA_TYPE_UNAVAILABLE": "Quota type unavailable"
+}

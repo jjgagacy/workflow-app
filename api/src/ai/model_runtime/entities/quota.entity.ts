@@ -2,9 +2,19 @@ import { IsOptional } from "class-validator";
 import { QuotaType, QuotaUnit } from "../enums/quota.enum";
 import { RestrictModel } from "./configuration.entity";
 import { ModelType } from "../enums/model-runtime.enum";
+import { Credentials } from "../types/credentials.type";
+
+export interface QuotaConfigurationProps {
+  quotaType: QuotaType;
+  quotaUnit: QuotaUnit;
+  quotaLimit: number;
+  quotaUsed: number;
+  isValid: boolean;
+  restrictModel?: RestrictModel[];
+}
 
 // Provider quota configuration
-export class QuotaConfigiration {
+export class QuotaConfiguration {
   quotaType: QuotaType;
   quotaUnit: QuotaUnit;
   quotaLimit: number;
@@ -14,6 +24,14 @@ export class QuotaConfigiration {
 
   @IsOptional()
   restrictModel?: RestrictModel[];
+
+  constructor(props: QuotaConfigurationProps) {
+    this.quotaType = props.quotaType;
+    this.quotaUnit = props.quotaUnit;
+    this.quotaLimit = props.quotaLimit;
+    this.quotaUsed = props.quotaUsed;
+    this.restrictModel = props.restrictModel;
+  }
 }
 
 // Provider system configuration
@@ -23,10 +41,22 @@ export class SystemConfiguration {
   @IsOptional()
   currentQuotaType?: QuotaType;
 
-  quotaConfiguration: QuotaConfigiration[] = [];
+  quotaConfiguration: QuotaConfiguration[] = [];
 
   @IsOptional()
-  credentials?: Record<string, any>;
+  credentials?: Credentials;
+
+  constructor(
+    enabled: boolean,
+    quotaConfiguration: QuotaConfiguration[] = [],
+    currentQuotaType?: QuotaType,
+    credentials?: Credentials
+  ) {
+    this.enabled = enabled;
+    this.quotaConfiguration = quotaConfiguration;
+    this.currentQuotaType = currentQuotaType;
+    this.credentials = credentials;
+  }
 }
 
 // Provider custom model
@@ -34,13 +64,13 @@ export class CustomProviderModel {
   model: string;
   modelType: ModelType;
 
-  credentials: Record<string, any>;
+  credentials: Credentials;
 }
 
 // Provider custom configuration
 export class CustomProviderConfiguration {
   @IsOptional()
-  credentials?: Record<string, any>;
+  credentials?: Credentials;
 
   models: CustomProviderModel[] = [];
 }

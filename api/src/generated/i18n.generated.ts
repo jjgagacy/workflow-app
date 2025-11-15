@@ -43,6 +43,10 @@ export type I18nTranslations = {
     "hello": {
         "HELLO": string;
     };
+    "model": {
+        "QUOTA_USED_OR_LIMIT_NULL": string;
+        "QUOTA_TYPE_UNAVAILABLE": string;
+    };
     "system": {
         "DTO_VALIDATION_ERROR": string;
         "MENU_EXISTS": string;

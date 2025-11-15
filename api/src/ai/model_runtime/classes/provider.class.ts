@@ -3,6 +3,7 @@ import { I18nObject } from "./model-runtime.class";
 import { ModelType } from "../enums/model-runtime.enum";
 import { AIModel } from "./ai-model.class";
 import { ConfigurateMethod } from "../enums/provider.enum";
+import { CredentialFormSchema } from "../entities/form.entity";
 
 export class ProviderConfig {
   provider: string;
@@ -14,6 +15,19 @@ export class ProviderHelp {
   url: I18nObject;
 }
 
+export class ProviderCredentialSchema {
+  credentialFromSchemas?: CredentialFormSchema[];
+}
+
+export class FieldModelSchema {
+  label: I18nObject;
+  placeholder?: I18nObject;
+}
+
+export class ModelCredentialSchema {
+  model: FieldModelSchema;
+  credentialFormSchemas: CredentialFormSchema[];
+}
 
 export class Provider {
   provider: string;
@@ -32,6 +46,10 @@ export class Provider {
   help?: ProviderHelp;
   supportedModelTypes: ModelType[];
   configurateMethod: ConfigurateMethod[];
+
+  // credentials
+  providerCredentialSchema?: ProviderCredentialSchema;
+  modeScredentialSchema?: ModelCredentialSchema;
 
   models: AIModel[];
 

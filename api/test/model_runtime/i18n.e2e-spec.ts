@@ -2,12 +2,12 @@ import { I18nObject } from "@/ai/model_runtime/classes/model-runtime.class"
 
 describe('I18nObject Basic Functionality', () => {
     it('should create I18nObject with multiple language translations', () => {
-        const welcomeMessage: I18nObject = {
-            'en': 'Welcome to our application',
+        const welcomeMessage: I18nObject = new I18nObject({
+            'en_US': 'Welcome to our application',
             'zh-CN': '欢迎使用我们的应用程序',
             'ja': '私たちのアプリケーションへようこそ',
             'ko': '우리 애플리케이션에 오신 것을 환영합니다'
-        }
+        })
         expect(welcomeMessage['en']).toBe('Welcome to our application');
         expect(welcomeMessage['zh-CN']).toBe('欢迎使用我们的应用程序');
         expect(welcomeMessage['ja']).toBe('私たちのアプリケーションへようこそ');
@@ -15,11 +15,11 @@ describe('I18nObject Basic Functionality', () => {
     });
 
     it('should allow dynamic language key access', () => {
-        const errMessage: I18nObject = {
-            'en': 'An error occurred',
+        const errMessage: I18nObject = new I18nObject({
+            'en_US': 'An error occurred',
             'zh-CN': '发生了一个错误',
             'fr': 'Une erreur est survenue'
-        }
+        });
 
         const language = 'zh-CN';
         expect(errMessage[language]).toBe('发生了一个错误');
@@ -37,11 +37,11 @@ describe('I18nObject in API response', () => {
                 id: 1,
                 name: 'Test user',
             },
-            message: {
-                'en': 'User created successfully',
+            message: new I18nObject({
+                'en_US': 'User created successfully',
                 'zh-CN': '用户创建成功',
                 'ja': 'ユーザーが正常に作成されました'
-            } as I18nObject
+            })
         }
 
         // Verify the structure
@@ -54,16 +54,16 @@ describe('I18nObject in API response', () => {
         // Mock service that uses I18nObject
         class NotificationService {
             private readonly messages: Record<string, I18nObject> = {
-                'welcome': {
-                    'en': 'Welcome!',
+                'welcome': new I18nObject({
+                    'en_US': 'Welcome!',
                     'zh-CN': '欢迎！',
                     'ja': 'ようこそ！'
-                },
-                'error': {
-                    'en': 'Something went wrong',
+                }),
+                'error': new I18nObject({
+                    'en_US': 'Something went wrong',
                     'zh-CN': '出了点问题',
                     'ja': '問題が発生しました'
-                }
+                })
             }
 
             getMessage(key: string, language: string): string {
@@ -83,11 +83,11 @@ describe('I18nObject in API response', () => {
             return i18nObject[preferredLanguage] || i18nObject['en'] || Object.values(i18nObject)[0] || '';
         };
 
-        const messages: I18nObject = {
-            'en': 'Hello World',
+        const messages: I18nObject = new I18nObject({
+            'en_US': 'Hello World',
             'zh-CN': '你好世界',
             'es': 'Hola Mundo'
-        };
+        });
 
         // Preferred language exists
         expect(getLocalizedText(messages, 'zh-CN')).toBe('你好世界');
@@ -96,10 +96,11 @@ describe('I18nObject in API response', () => {
         expect(getLocalizedText(messages, 'fr')).toBe('Hello World');
 
         // Fallback to first available
-        const messagesWithoutEnglish: I18nObject = {
+        const messagesWithoutEnglish: I18nObject = new I18nObject({
+            'en_US': "Hello",
             'zh-CN': '你好世界',
             'es': 'Hola Mundo'
-        };
+        });
         expect(getLocalizedText(messagesWithoutEnglish, 'fr')).toBe('你好世界');
     });
 });
