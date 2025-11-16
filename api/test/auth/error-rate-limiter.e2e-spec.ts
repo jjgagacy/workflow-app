@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { App } from 'supertest/types';
 import { AppModule } from '@/app.module';
-import { EnhanceCacheService } from '@/service/caches/enhance-cache.service';
+import { EnhanceCacheService } from '@/common/services/cache/enhance-cache.service';
 import { AuthAccountService } from '@/service/auth-account.service';
 import authConfig from '@/config/auth.config';
 

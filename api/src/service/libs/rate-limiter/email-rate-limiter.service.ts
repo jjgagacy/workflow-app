@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { EnhanceCacheService } from "../../caches/enhance-cache.service";
+import { EnhanceCacheService } from "../../../common/services/cache/enhance-cache.service";
 
 export enum EmailRateLimitType {
     RESET_PASSWORD = 'reset_password',

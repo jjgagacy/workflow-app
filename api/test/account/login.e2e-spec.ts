@@ -9,7 +9,7 @@ import { AccountService } from '@/account/account.service';
 import { TenantAccountEntity } from '@/account/entities/tenant-account.entity';
 import { TenantEntity, TenantStatus } from '@/account/entities/tenant.entity';
 import { AccountEntity } from '@/account/entities/account.entity';
-import { EnhanceCacheService } from '@/service/caches/enhance-cache.service';
+import { EnhanceCacheService } from '@/common/services/cache/enhance-cache.service';
 
 describe('Login (e2e)', () => {
     let app: INestApplication<App>;

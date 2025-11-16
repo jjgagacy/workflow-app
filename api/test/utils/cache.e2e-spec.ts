@@ -1,6 +1,6 @@
 import { AppModule } from "@/app.module";
-import { GeneralCacheService } from "@/service/caches/general-cache.service";
-import { EnhanceCacheService } from "@/service/caches/enhance-cache.service";
+import { GeneralCacheService } from "@/common/services/cache/general-cache.service";
+import { EnhanceCacheService } from "@/common/services/cache/enhance-cache.service";
 import { Cache, CACHE_MANAGER, CacheKey, CacheTTL } from "@nestjs/cache-manager";
 import { INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";

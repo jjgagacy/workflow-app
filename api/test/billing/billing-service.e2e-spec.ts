@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '@/app.module';
-import { EnhanceCacheService } from '@/service/caches/enhance-cache.service';
+import { EnhanceCacheService } from '@/common/services/cache/enhance-cache.service';
 import { count } from 'console';
 import { BillingService } from '@/service/billing/billing.service';
 

@@ -5,6 +5,7 @@ import { ModelProviderPlugin } from './classes/plugin/model-provider.plugin';
 import { PluginModule } from '../plugin/plugin.model';
 import { PluginClientService } from '../plugin/services/plugin-client.service';
 import { AIModel } from './classes/ai-model.class';
+import { ProviderCredentialsCacheService } from './services/provider-credentials-cache.service';
 
 @Module({
   imports: [PluginModule, AIModel],
@@ -12,7 +13,8 @@ import { AIModel } from './classes/ai-model.class';
     ModelTypeService,
     ProviderListService,
     ModelProviderPlugin,
-    PluginClientService
+    PluginClientService,
+    ProviderCredentialsCacheService,
   ],
   exports: [ModelTypeService, ProviderListService, ModelProviderPlugin]
 })

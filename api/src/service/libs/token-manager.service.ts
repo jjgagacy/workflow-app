@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { EnhanceCacheService } from "../caches/enhance-cache.service";
+import { EnhanceCacheService } from "../../common/services/cache/enhance-cache.service";
 import { v4 as uuidv4 } from 'uuid';
 import { ConfigService } from "@nestjs/config";
 import { DEFAULT_TOKEN_TYPE_EXPIRY } from "@/config/constants";

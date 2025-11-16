@@ -4,7 +4,7 @@ import { App } from 'supertest/types';
 import { AppModule } from '@/app.module';
 import { AuthAccountService } from '@/service/auth-account.service';
 import { EmailRateLimiterService, EmailRateLimitOptions, EmailRateLimitType } from '@/service/libs/rate-limiter/email-rate-limiter.service';
-import { EnhanceCacheService } from '@/service/caches/enhance-cache.service';
+import { EnhanceCacheService } from '@/common/services/cache/enhance-cache.service';
 
 describe('RateLimiter (e2e)', () => {
     jest.setTimeout(30000); // 默认 300ms 太短，这里改成 30 秒

@@ -5,7 +5,7 @@ import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Cache } from "cache-manager";
 import { DataSource, EntityManager, QueryRunner, Repository } from "typeorm";
-import { EnhanceCacheService } from "./caches/enhance-cache.service";
+import { EnhanceCacheService } from "../common/services/cache/enhance-cache.service";
 import { BillingService } from "./billing/billing.service";
 import { AccountSignUpDto } from "./dto/account.dto";
 import { CreateAccountDto } from "@/account/account/dto/create-account.dto";
