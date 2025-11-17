@@ -37,12 +37,10 @@ export class QuotaConfiguration {
 // Provider system configuration
 export class SystemConfiguration {
   enabled: boolean;
+  quotaConfiguration: QuotaConfiguration[] = [];
 
   @IsOptional()
   currentQuotaType?: QuotaType;
-
-  quotaConfiguration: QuotaConfiguration[] = [];
-
   @IsOptional()
   credentials?: Credentials;
 
@@ -61,10 +59,11 @@ export class SystemConfiguration {
 
 // Provider custom model
 export class CustomProviderModel {
-  model: string;
-  modelType: ModelType;
-
-  credentials: Credentials;
+  constructor(
+    public model: string,
+    public modelType: ModelType,
+    public credentials: Credentials
+  ) { }
 }
 
 // Provider custom configuration
@@ -73,4 +72,9 @@ export class CustomProviderConfiguration {
   credentials?: Credentials;
 
   models: CustomProviderModel[] = [];
+
+  constructor(models: CustomProviderModel[], credentials?: Credentials) {
+    this.credentials = credentials;
+    this.models = models || [];
+  }
 }

@@ -38,6 +38,10 @@ export class ProviderID {
   get pluginId(): string {
     return `${this.pluginName}/${this.providerName}`;
   }
+
+  isMonie(): boolean {
+    return this.organization === 'monie';
+  }
 }
 
 export class ModelProviderID extends ProviderID {
@@ -58,5 +62,14 @@ export function normalizeProviderName(name: string): string {
     cache.set(name, new ModelProviderID(name).toString());
   }
   return cache.get(name)!;
+}
+
+export function mergeMonieProviderName(providerName: string): string[] {
+  const modelProviderId = new ModelProviderID(providerName);
+  const providerNames = [providerName];
+  if (modelProviderId.isMonie()) {
+    providerNames.push(modelProviderId.providerName);
+  }
+  return providerNames;
 }
 

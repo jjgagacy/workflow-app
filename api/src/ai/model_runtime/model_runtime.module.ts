@@ -6,15 +6,18 @@ import { PluginModule } from '../plugin/plugin.model';
 import { PluginClientService } from '../plugin/services/plugin-client.service';
 import { AIModel } from './classes/ai-model.class';
 import { ProviderCredentialsCacheService } from './services/provider-credentials-cache.service';
+import { StorageModule } from '@/storage/storage.module';
+import { StorageService } from '@/storage/storage.service';
 
 @Module({
-  imports: [PluginModule, AIModel],
+  imports: [PluginModule, AIModel, StorageModule],
   providers: [
     ModelTypeService,
     ProviderListService,
     ModelProviderPlugin,
     PluginClientService,
     ProviderCredentialsCacheService,
+    StorageService
   ],
   exports: [ModelTypeService, ProviderListService, ModelProviderPlugin]
 })

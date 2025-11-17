@@ -1,4 +1,4 @@
-import { Injectable, NotImplementedException, Scope } from "@nestjs/common";
+import { NotImplementedException } from "@nestjs/common";
 import { ProviderType } from "../enums/provider.enum";
 import { CustomProviderConfiguration, SystemConfiguration } from "../entities/quota.entity";
 import { Provider } from "./provider.class";
@@ -7,7 +7,11 @@ import { SystemConfigurationStatus } from "../enums/quota.enum";
 import { Credentials } from "../types/credentials.type";
 import { ModelSettings } from "../interfaces/model.interface";
 import { ModelWithProvider } from "./provider-model-status.class";
-import { ProviderService } from "../services/provider.service";
+import { ProviderManager } from "../services/provider-manager";
+import { CredentialFormSchema, extractSecretVariables } from "../entities/form.entity";
+import { obfuscateToken } from "@/encryption/encryption.service";
+import { ProviderEntity } from "@/account/entities/provider.entity";
+import { EntityManager } from "typeorm";
 
 export interface ConfigurationOptions {
   tenantId: string;
@@ -29,7 +33,7 @@ export class ProviderConfiguration {
   modelSettings: ModelSettings[];
 
   constructor(
-    public providerService: ProviderService,
+    public providerManager: ProviderManager,
     public configurationOptions: ConfigurationOptions
   ) {
     this.tenantId = configurationOptions.tenantId;
@@ -58,38 +62,114 @@ export class ProviderConfiguration {
     return [];
   }
 
-  async getCurrentCredentials(
+  modelDisabledByModelSetting(
+    model: string,
     modelType: ModelType,
-    model: string
+    modelSettings: ModelSettings[],
+  ): boolean {
+    return modelSettings.some(
+      (s) => s.modelType === modelType && s.model === model && !s.enabled
+    );
+  }
+
+  async getCurrentCredentials(
+    model: string,
+    modelType: ModelType,
   ): Promise<Credentials | null> {
-    return null;
+    if (this.modelSettings) {
+      if (this.modelDisabledByModelSetting(model, modelType, this.modelSettings))
+        return null;
+    }
+
+    if (this.usingProviderType === ProviderType.SYSTEM) {
+      const quotaConfiguration = this.systemConfiguration.quotaConfiguration.find(
+        (q) => q.quotaType === this.systemConfiguration.currentQuotaType
+      );
+
+      const restrictModels = quotaConfiguration?.restrictModel ?? [];
+      const credentials = { ...(this.systemConfiguration.credentials ?? {}) };
+
+      for (const rm of restrictModels) {
+        if (rm.model === model && rm.modelType === modelType) {
+          credentials['base_model_name'] = rm.baseModel;
+        }
+      }
+      return credentials;
+    } else {
+      let credentials: Credentials | undefined;
+      const modelConfiguration = this.customConfiguration.models.find(
+        (m) => m.modelType === modelType && m.model === model
+      );
+      if (modelConfiguration) credentials = modelConfiguration.credentials;
+      if (!credentials && this.customConfiguration.credentials) {
+        credentials = this.customConfiguration.credentials;
+      }
+      return credentials ?? null;
+    }
   }
 
   async getSystemConfigurationStatus(
   ): Promise<SystemConfigurationStatus | null> {
-    return null;
+    if (!this.systemConfiguration.enabled) {
+      return null;
+    }
+    const quota = this.systemConfiguration.quotaConfiguration.find(
+      (q) => q.quotaType === this.systemConfiguration.currentQuotaType
+    );
+    if (!quota) return null;
+
+    return quota.isValid ? SystemConfigurationStatus.ACTIVE : SystemConfigurationStatus.QUOTA_EXCEEDED;
   }
 
   getCustomCredentials(
-    obfucated: boolean = false
+    obfuscated: boolean = false
   ): Credentials | null {
+    const credentials = this.customConfiguration.credentials;
+    if (!credentials) return null;
+    if (!obfuscated) return credentials ?? null;
+
+    return this.obfuscatCredentials(
+      credentials,
+      this.provider.providerCredentialSchema?.credentialFromSchemas ?? []
+    );
+  }
+
+  getCustomModelCredentials(
+    modelName: string,
+    modelType: ModelType,
+    obfuscated: boolean = false
+  ): Credentials | null {
+    if (this.customConfiguration.models.length === 0)
+      return null;
+
+    for (const modelConfiguration of this.customConfiguration.models) {
+      if (modelConfiguration.model === modelName && modelConfiguration.modelType === modelType) {
+        const credentials = modelConfiguration.credentials;
+        if (!obfuscated) return credentials;
+
+        // Obfuscated credentials
+        return this.obfuscatCredentials(credentials, this.provider.modeScredentialSchema?.credentialFormSchemas || []);
+      }
+    }
+
     return null;
   }
 
-  async getCustomProviderCredentials(
-  ): Promise<Provider | null> {
-    return null;
-  }
+  obfuscatCredentials(credentials: Credentials, credentialFormSchema: CredentialFormSchema[]): Credentials {
+    const secretVariables = extractSecretVariables(credentialFormSchema);
 
-  async validateCustomCredentials(
-    credentials: Credentials,
-  ): Promise<[Provider | null, Credentials]> {
-    return [null, {}];
+    const copy = { ...credentials };
+    for (const key of secretVariables) {
+      if (copy[key]) copy[key] = obfuscateToken(copy[key]);
+    }
+    return copy;
   }
 
   async upsertCustomCredentials(
-    credentials: Credentials
-  ): Promise<void> {
+    credentials: Credentials,
+    entityManager?: EntityManager,
+  ): Promise<ProviderEntity> {
+    return this.providerManager.addOrUpdateCustomCredentials(this, credentials, entityManager);
   }
 }
 

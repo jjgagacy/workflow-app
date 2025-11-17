@@ -12,8 +12,8 @@ import { Provider } from "../classes/provider.class";
 import { DefaultModel } from "../classes/default-model.class";
 import { TenantDefaultModelEntity } from "@/account/entities/tenant-default-model.entity";
 import { ModelProviderPlugin } from "../classes/plugin/model-provider.plugin";
-import { CustomProviderConfiguration, QuotaConfiguration, SystemConfiguration } from "../entities/quota.entity";
-import { ProviderType } from "../enums/provider.enum";
+import { CustomProviderConfiguration, CustomProviderModel, QuotaConfiguration, SystemConfiguration } from "../entities/quota.entity";
+import { ConfigurateMethod, ProviderType } from "../enums/provider.enum";
 import { ModelSettings } from "../interfaces/model.interface";
 import { ModelProviderID, normalizeProviderName } from "@/ai/plugin/entities/provider-id.entities";
 import { ProviderListService } from "./provider-list.service";
@@ -26,8 +26,15 @@ import { Transactional } from "@/common/decorators/transaction.decorator";
 import { QuotaTypeUnavailableError, QuotaUsedOrLimitNullError } from "@/ai/plugin/exceptions/quota.error";
 import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
-import { CredentialFormSchema, FormType } from "../entities/form.entity";
+import { CredentialFormSchema, extractSecretVariables, FormType } from "../entities/form.entity";
 import { Credentials } from "../types/credentials.type";
+import { ProviderCredentialsCacheProps, ProviderCredentialsCacheService } from "./provider-credentials-cache.service";
+import { EncryptionService } from "@/encryption/encryption.service";
+import { CredentialsCacheType } from "../types/cache.type";
+import { GlobalConfig } from "rxjs";
+import { GlobalLogger } from "@/logger/logger.service";
+import { StorageService } from "@/storage/storage.service";
+import { ProviderManager } from "./provider-manager";
 
 @Injectable()
 export class ProviderService {
@@ -46,6 +53,11 @@ export class ProviderService {
     private readonly providerListService: ProviderListService,
     private readonly dataSource: DataSource,
     private readonly i18n: I18nService<I18nTranslations>,
+    private readonly providerCredentialCacheService: ProviderCredentialsCacheService,
+    private readonly encryptionService: EncryptionService,
+    private readonly logger: GlobalLogger,
+    private readonly storageService: StorageService,
+    private readonly providerManager: ProviderManager
   ) { }
 
   async getConfigurations(tenantId: string): Promise<ProviderConfigurations> {
@@ -72,10 +84,10 @@ export class ProviderService {
 
       const providerName = provider.provider;
       const providerEntities = addAllProvidersEntities.get(providerName) || [];
-      const providerModels = allProviderModelEntities.get(providerName) || [];
+      const providerModelEntities = allProviderModelEntities.get(providerName) || [];
 
       // 转换为自定义配置
-      const customConfiguration = await this.toCustomConfiguration(tenantId, provider, providerEntities, providerModels);
+      const customConfiguration = await this.toCustomConfiguration(tenantId, provider, providerEntities, providerModelEntities);
       // 转换为系统配置
       const systemConfiguration = await this.toSystemConfiguration(tenantId, provider, providerEntities);
       // 获取首选提供商类型
@@ -112,7 +124,7 @@ export class ProviderService {
       // 转换为模型设置
       const modelSettings = await this.toModelSettings(provider, providerModelSetting);
 
-      const providerConfiguration = new ProviderConfiguration(this, {
+      const providerConfiguration = new ProviderConfiguration(this.providerManager, {
         tenantId,
         provider,
         preferredProviderType,
@@ -157,15 +169,73 @@ export class ProviderService {
     return false;
   }
 
+  /**
+   * toCustomConfiguration performs a full custom-provider restruction process.
+   *   1. Extract secret variables from the provider's credential schema.
+   *   2. Locate the tenant's custom provider record (non-system provider)
+   *   3. Decrypts the provider credential from cache, or:
+   *      - Parse raw encrypted config (JSON or raw string)
+   *      - Descrpt RSA-encrypted string
+   *      - Cache the decrypted credentials
+   *   4. Extract secret variables from model credentials
+   *   5. For each model:
+   *      - Load decrypted credentials from the cache, or
+   *      - Parse raw encrypted config, and cache the result
+   */
   private async toCustomConfiguration(
     tenantId: string,
     provider: Provider,
     providerEntities: ProviderEntity[],
     providerModels: ProviderModelEntity[]
   ): Promise<CustomProviderConfiguration> {
-    throw new NotImplementedException();
+    const secretVars = extractSecretVariables(provider.providerCredentialSchema?.credentialFromSchemas || [])
+    // Extract the custom provider record
+    let customProviderRecord: ProviderEntity | undefined;
+    for (const providerRecord of providerEntities) {
+      if (providerRecord.providerType === ProviderType.SYSTEM) continue;
+      if (!providerRecord.encryptedConfig) continue;
+
+      customProviderRecord = providerRecord;
+      break;
+    }
+    // Load and decrypt custom provider credential
+    let providerCredentials: Credentials | undefined;
+    if (customProviderRecord) {
+      providerCredentials = await this.getProviderCredential(tenantId, customProviderRecord, secretVars);
+    }
+    // Extract model-level credential secret variables
+    const modelCredentialSecretVariables = extractSecretVariables(provider.modeScredentialSchema?.credentialFormSchemas || []);
+    const customProviderModels: CustomProviderModel[] = [];
+
+    for (const modelRecord of providerModels) {
+      if (!modelRecord.encryptedConfig) continue;
+
+      let modelCredentials = await this.getModelCredential(tenantId, modelRecord, modelCredentialSecretVariables);
+
+      customProviderModels.push(
+        new CustomProviderModel(
+          modelRecord.modelName,
+          modelRecord.modelType as ModelType,
+          modelCredentials
+        ),
+      );
+    }
+
+    return new CustomProviderConfiguration(customProviderModels, providerCredentials);
   }
 
+  /**
+   * toSystemConfiguration constructs a configuration that uses only "system" providers 
+   * and models (i.e., built-in or platform-defined providers), without any custom 
+   * credentilas or overrides specified by the tenant.
+   *   1. Load the provider's hosting configuration
+   *   2. Build a dictionary mapping from system provider entities 
+   *   3. Determine which quota type should be used as the active quota (paid > free > trial)
+   *   4. Load Credentials
+   *      - Load the default system-level credentials in the hosting config 
+   *      - If the active quota type is free, overrides the credentials with the tenant's stored
+   *        FREE-tier key from the database.
+   */
   private async toSystemConfiguration(
     tenantId: string,
     provider: Provider,
@@ -233,7 +303,7 @@ export class ProviderService {
       const freeRecord = systemRecordMapByQuota.get(QuotaType.FREE);
 
       if (freeRecord) {
-        const secretVars = this.extractSecretVariables(provider.providerCredentialSchema?.credentialFromSchemas || [])
+        const secretVars = extractSecretVariables(provider.providerCredentialSchema?.credentialFromSchemas || [])
         currentCredentials = await this.getProviderCredential(tenantId, freeRecord, secretVars);
       } else {
         currentCredentials = {};
@@ -252,7 +322,29 @@ export class ProviderService {
     provider: Provider,
     providerModelSettings: ProviderModelSettingEntity[]
   ): Promise<ModelSettings[]> {
-    throw new NotImplementedException();
+    let credentialsSecretVariables: string[] = [];
+    if (provider.configurateMethod.includes(ConfigurateMethod.PREDEFINED_MODEL)) {
+      credentialsSecretVariables = extractSecretVariables(
+        provider.providerCredentialSchema?.credentialFromSchemas || []
+      );
+    } else {
+      credentialsSecretVariables = extractSecretVariables(
+        provider.modeScredentialSchema?.credentialFormSchemas || []
+      );
+    }
+    const modelSettings: ModelSettings[] = [];
+    if (providerModelSettings.length === 0) {
+      return [];
+    }
+
+    for (const providerModelSetting of providerModelSettings) {
+      modelSettings.push(new ModelSettings(
+        providerModelSetting.modelName,
+        providerModelSetting.modelType as ModelType,
+        providerModelSetting.enabled
+      ));
+    }
+    return modelSettings;
   }
 
   async getAllProviderEntities(tenantId: string): Promise<Map<string, ProviderEntity[]>> {
@@ -427,19 +519,97 @@ export class ProviderService {
     throw QuotaTypeUnavailableError.create(this.i18n);
   }
 
-  private extractSecretVariables(credentialFormSchemas: CredentialFormSchema[]): string[] {
-    const secretFormVariables: string[] = [];
-    for (const credentialFormSchema of credentialFormSchemas) {
-      if (credentialFormSchema.type === FormType.SECRET_INPUT) {
-        secretFormVariables.push(credentialFormSchema.variable);
+  private async getProviderCredential(tenantId: string, providerEntity: ProviderEntity, secretVars: string[]): Promise<Credentials> {
+    const providerCredentialCacheProps = {
+      tenantId,
+      identityId: providerEntity.id,
+      cacheType: CredentialsCacheType.PROVIDER,
+    } as ProviderCredentialsCacheProps;
+
+    const cachedData = await this.providerCredentialCacheService.getCredentials(providerCredentialCacheProps);
+    if (cachedData)
+      return cachedData;
+
+    if (!providerEntity.encryptedConfig) return {};
+
+    let credentials = this.safeJsonParse<Record<string, any>>(
+      providerEntity.encryptedConfig,
+      `Failed to parse provider credentials`
+    ) || {};
+
+    credentials = await this.decryptCredentialFields(
+      tenantId,
+      credentials,
+      secretVars
+    );
+
+    if (credentials) await this.providerCredentialCacheService.setCredentials(providerCredentialCacheProps, credentials);
+    return credentials;
+  }
+
+  private async getModelCredential(tenantId: string, modelEntity: ProviderModelEntity, secretVars: string[]): Promise<Credentials> {
+    const providerCredentialCacheProps = {
+      tenantId,
+      identityId: modelEntity.id,
+      cacheType: CredentialsCacheType.MODEL,
+    } as ProviderCredentialsCacheProps;
+
+    const cachedData = await this.providerCredentialCacheService.getCredentials(providerCredentialCacheProps);
+    if (cachedData)
+      return cachedData;
+
+    if (!modelEntity.encryptedConfig) return {};
+
+    let credentials = this.safeJsonParse<Record<string, any>>(
+      modelEntity.encryptedConfig,
+      `Failed to parse provider model credentials`
+    ) || {};
+
+    credentials = await this.decryptCredentialFields(
+      tenantId,
+      credentials,
+      secretVars
+    );
+
+    if (credentials) await this.providerCredentialCacheService.setCredentials(providerCredentialCacheProps, credentials);
+    return credentials;
+  }
+
+  private safeJsonParse<T>(raw: string, logPrefix: string): T | null {
+    try {
+      return JSON.parse(raw);
+    } catch (e) {
+      this.logger.error(`${logPrefix}: ${e}`);
+      return null;
+    }
+  }
+
+  private async decryptCredentialFields(
+    tenantId: string,
+    credentials: Record<string, any>,
+    secretVars: string[]
+  ): Promise<Record<string, any>> {
+
+    const privateKeyPem = await this.storageService.load(`perms/${tenantId}`);
+    const privateKeyContent = privateKeyPem.toString('utf-8');
+    if (!privateKeyContent) {
+      this.logger.error(`Private key not found, tenant_id: ${tenantId}`);
+      throw new Error(`Private key not found`);
+    }
+
+    for (const key of secretVars) {
+      if (!credentials[key]) {
+        continue;
+      }
+
+      try {
+        const buf = Buffer.from(credentials[key], 'utf8');
+        credentials[key] = this.encryptionService.decrypt(buf, privateKeyContent);
+      } catch (error) {
+        this.logger.warn(`Failed to descrypt variable: ${key}`);
       }
     }
-    return secretFormVariables;
-  }
 
-  private getProviderCredential(tenantId: string, providerEntity: ProviderEntity, secretVars: string[]): Promise<Credentials> {
-    throw new NotImplementedException();
+    return credentials;
   }
-
 }
-

@@ -1,8 +1,10 @@
 import { ModelType } from "../enums/model-runtime.enum";
 
-export interface ModelSettings {
-  modelType: ModelType;
-  model: string;
-  enabled: boolean;
+export class ModelSettings {
+  constructor(
+    public model: string,
+    public modelType: ModelType,
+    public enabled: boolean,
+  ) { }
 }
 

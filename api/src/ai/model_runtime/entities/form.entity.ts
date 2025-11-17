@@ -35,3 +35,12 @@ export class CredentialFormSchema {
   maxLength?: number = 0;
 }
 
+export function extractSecretVariables(credentialFormSchemas: CredentialFormSchema[]): string[] {
+  const secretFormVariables: string[] = [];
+  for (const credentialFormSchema of credentialFormSchemas) {
+    if (credentialFormSchema.type === FormType.SECRET_INPUT) {
+      secretFormVariables.push(credentialFormSchema.variable);
+    }
+  }
+  return secretFormVariables;
+}
