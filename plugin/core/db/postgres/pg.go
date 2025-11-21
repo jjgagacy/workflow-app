@@ -57,10 +57,7 @@ func InitDB(config *PGConfig) (*gorm.DB, error) {
 			}
 		}
 		// connect the db
-		dsn = fmt.Sprintf(
-			"host=%s port=%d user=%s passowrd=%s dbname=%s sslmode=%s",
-			config.Host, config.Port, config.User, config.Pass, config.DBName, config.SSLMode,
-		)
+		dsn = buildDSN(config, false)
 		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 		if err != nil {
 			return nil, err

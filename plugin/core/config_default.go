@@ -8,14 +8,15 @@ import (
 func (config *Config) SetDefault() {
 	setDefaultInt(&config.ServerPort, 5002)
 	setDefaultInt(&config.RoutinePoolSize, 10000)
+
 	setDefaultInt(&config.LifetimeCollectionGCInterval, 60)
 	setDefaultInt(&config.LifetimeCollectionHeartbeatInterval, 5)
 	setDefaultInt(&config.LifetimeStateGCInterval, 300)
-	setDefaultInt(&config.InvocationConnectionIdleTimeout, 120)
-	setDefaultInt(&config.MaxPluginPackageSize, 52428800)
-	setDefaultInt(&config.MaxBundlePackageSize, 52428800*12)
+
+	setDefaultInt(&config.MaxPluginPackageSize, 50*1024*1024)    // 50Mb
+	setDefaultInt(&config.MaxBundlePackageSize, 12*50*1024*1024) // 600Mb
 	setDefaultInt(&config.MaxServerlessTransactionTimeout, 300)
-	setDefaultInt(&config.PluginMaxExecutionTimeout, 10*60)
+
 	setDefaultString(&config.PluginStorageType, oss.OSS_TYPE_LOCAL)
 	setDefaultInt(&config.PluginMediaCacheSize, 1024)
 	setDefaultBoolPtr(&config.PluginEndPointEnabled, true)
@@ -24,10 +25,15 @@ func (config *Config) SetDefault() {
 	setDefaultString(&config.PluginMediaCachePath, "assets")
 	setDefaultString(&config.PersistenceStoragePath, "persistence")
 	setDefaultInt(&config.PluginLocalLaunchingConcurrent, 2)
-	setDefaultInt(&config.PersistenceStorageMaxSize, 100*1024*1024)
+	setDefaultInt(&config.PersistenceStorageMaxSize, 100*1024*1024) // 100Mb
+
+	setDefaultInt(&config.PluginMaxExecutionTimeout, 10*60)
 	setDefaultString(&config.PluginPackageCachePath, "plugin_packages")
-	setDefaultInt(&config.InvocationWriteTimeout, 5000)
-	setDefaultInt(&config.InvocationReadTimeout, 240000)
+
+	setDefaultInt(&config.InvocationConnectionIdleTimeout, 120)
+	setDefaultInt(&config.InvocationWriteTimeout, 5000)  // Milliseconds = 5s
+	setDefaultInt(&config.InvocationReadTimeout, 240000) // Milliseconds = 240s
+
 	switch config.DBType {
 	case "postgresql":
 		setDefaultString(&config.DBDefaultDatabase, "postgres")

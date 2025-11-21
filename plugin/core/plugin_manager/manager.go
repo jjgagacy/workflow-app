@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/jjgagacy/workflow-app/plugin/cache"
 	"github.com/jjgagacy/workflow-app/plugin/core"
@@ -84,6 +85,32 @@ func (p *PluginManager) Get(identity plugin_entities.PluginUniqueIdentifier) (pl
 }
 
 func (p *PluginManager) Launch(config *core.Config) {
+	if config.RedisUseSentinel {
+		sentinels := strings.Split(config.RedisSentinels, ",")
+		if err := cache.InitRedisSentinelClient(
+			sentinels,
+			config.RedisSentinelServiceName,
+			config.RedisUser,
+			config.RedisPass,
+			config.RedisSentinelUsername,
+			config.RedisSentinelPassword,
+			config.RedisUseSsl,
+			config.RedisDB,
+			config.RedisSentinelSocketTimeout,
+		); err != nil {
+			utils.Panic("failed to init redis sentinel: %s", err.Error())
+		}
+	} else {
+		if err := cache.InitRedisClient(
+			fmt.Sprintf("%s:%d", config.RedisHost, config.RedisPort),
+			config.RedisUser,
+			config.RedisPass,
+			config.RedisUseSsl,
+			config.RedisDB,
+		); err != nil {
+			utils.Panic("failed to init redis: %s", err.Error())
+		}
+	}
 	invocation, err := invocation.NewInvocationDaemon(
 		invocation.InvocationDaemonPayload{
 			BaseUrl:      config.InnerApiUrl,
@@ -96,17 +123,14 @@ func (p *PluginManager) Launch(config *core.Config) {
 		log.Panicf("Failed to create invocation client: %s", err)
 	}
 	p.backwardsInvocation = invocation
-
 	// start local watcher
 	if config.Platform == core.PLATFORM_LOCAL {
 		p.startLocalWatcher(config)
 	}
-
 	// start serverless watcher
 	if config.Platform == core.PLATFORM_SERVERLESS {
 		// todo
 	}
-
 	// start remote watcher
 	p.startRemoteWatcher(config)
 }

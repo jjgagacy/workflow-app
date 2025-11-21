@@ -9,6 +9,7 @@ import (
 type App struct {
 	// Customize behavior of EndPoint handler
 	endPointHandler EndPointHandler
-	localSentry     *local_sentry.LocalSentry
-	loggerFile      *os.File
+
+	ls     *local_sentry.LocalSentry
+	logger *os.File
 }

@@ -42,9 +42,9 @@ func TestCacheConcurrentAccess(t *testing.T) {
 
 	done := make(chan bool)
 
-	for i := 0; i < goRoutines; i++ {
+	for i := range goRoutines {
 		go func(id int) {
-			for j := 0; j < iterations; j++ {
+			for j := range iterations {
 				key := string(rune(id)) + ":" + string(rune(j))
 				declaration := &plugin_entities.PluginDeclaration{
 					PluginDeclarationBaseFields: plugin_entities.PluginDeclarationBaseFields{
@@ -66,7 +66,7 @@ func TestCacheConcurrentAccess(t *testing.T) {
 		}(i)
 	}
 
-	for i := 0; i < goRoutines; i++ {
+	for range goRoutines {
 		<-done
 	}
 

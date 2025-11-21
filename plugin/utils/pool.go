@@ -55,21 +55,21 @@ func Submit(labels map[string]string, f func()) {
 	}
 
 	pool.Submit(func() {
-		label := []string{
+		ll := []string{
 			"LaunchedAt", time.Now().Format(time.RFC3339),
 		}
 		if len(labels) > 0 {
 			for k, v := range labels {
-				label = append(label, k, v)
+				ll = append(ll, k, v)
 			}
 		}
-		pprof.Do(context.Background(), pprof.Labels(label...), func(ctx context.Context) {
+		pprof.Do(context.Background(), pprof.Labels(ll...), func(ctx context.Context) {
 			if LocalSentry != nil {
 				defer func() {
 					if r := recover(); r != nil {
 						err := fmt.Errorf("panic: %v", r)
 						LocalSentry.CatpureException(err, map[string]any{
-							"labels": label,
+							"labels": ll,
 							"stack":  string(debug.Stack()),
 						})
 						log.Printf("Recovered from panic in task: %v", r)

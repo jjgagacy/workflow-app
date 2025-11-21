@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"strings"
 	"time"
 
@@ -8,9 +9,11 @@ import (
 	"github.com/jjgagacy/workflow-app/plugin/core"
 	"github.com/jjgagacy/workflow-app/plugin/core/db"
 	"github.com/jjgagacy/workflow-app/plugin/model"
+	"github.com/jjgagacy/workflow-app/plugin/pkg/entities"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/endpoint_entities"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
 	"github.com/jjgagacy/workflow-app/plugin/service"
+	"github.com/jjgagacy/workflow-app/plugin/types"
 )
 
 type EndPointHandler = func(ctx *gin.Context, hookId string, maxExecutionTime time.Duration, path string)
@@ -49,11 +52,14 @@ func (app *App) EndPointHandler(ctx *gin.Context, hookId string, maxExecutionTim
 	endPoint, err := db.GetOne[model.EndPoint](
 		db.Equal("hook_id", hookId),
 	)
-	if err != nil {
-		ctx.JSON(404, gin.H{"error": "Endpoint not found"})
+	if err == types.ErrRecordNotFound {
+		ctx.JSON(404, entities.BadRequestError(errors.New("endpoint not found")).ToResponse())
 		return
 	}
-
+	if err != nil {
+		ctx.JSON(404, entities.InternalError(errors.New("internal server error")).ToResponse())
+		return
+	}
 	// get plugin installation
 	pluginInstallation, err := db.GetOne[model.PluginInstallation](
 		db.Equal("plugin_id", endPoint.PluginID),
@@ -68,7 +74,6 @@ func (app *App) EndPointHandler(ctx *gin.Context, hookId string, maxExecutionTim
 		ctx.JSON(500, gin.H{"error": "Invalid plugin unique identifier"})
 		return
 	}
-
 	// service
 	service.EndPoint(ctx, &endPoint, &pluginInstallation, maxExecutionTime, path)
 }

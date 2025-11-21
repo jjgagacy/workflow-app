@@ -73,7 +73,7 @@ func TestConfigValidate(t *testing.T) {
 
 		// 持久化存储配置
 		PersistenceStoragePath:    "/var/lib/persistence",
-		PersistenceStorageMaxSize: 1073741824, // 1GB
+		PersistenceStorageMaxSize: 1 * 1024 * 1024 * 1024, // 1GB
 
 		// 签名验证配置
 		ThirdPartySignatureVerificationEnabled:    false,

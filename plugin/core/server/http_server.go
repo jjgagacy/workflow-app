@@ -31,6 +31,17 @@ func (app *App) server(config *core.Config) func() {
 	app.endPointGroup(endPointGroup, config)
 	app.pluginGroup(pluginGroup, config)
 
+	if config.AdminApiEnabled {
+		if len(config.AdminApiKey) < 10 {
+			log.Panic("length of admin api key must be greater than 10")
+		}
+
+		adminGroup := engine.Group("/admin")
+		adminGroup.Use(app.AdminAPIKey(config.AdminApiKey))
+
+		app.adminGroup(adminGroup, config)
+	}
+
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", config.ServerPort),
 		Handler: engine,
@@ -69,9 +80,14 @@ func (app *App) endPointGroup(group *gin.RouterGroup, config *core.Config) {
 	}
 }
 
+func (app *App) adminGroup(group *gin.RouterGroup, config *core.Config) {
+	// todo admin api endpoints
+}
+
 func (app *App) pluginDispatchGroup(group *gin.RouterGroup, config *core.Config) {
 	group.Use(controllers.CollectActiveDispatchRequests())
 	group.Use(app.FetchPluginInstallation())
+	group.Use(app.RedirectPluginInvoke())
 
 	app.setupDispatchGroup(group, config)
 }

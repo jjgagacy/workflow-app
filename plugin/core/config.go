@@ -6,6 +6,13 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+type PlatformType string
+
+const (
+	PLATFORM_LOCAL      PlatformType = "local"
+	PLATFORM_SERVERLESS PlatformType = "serverless"
+)
+
 type Config struct {
 	ServerPort uint16 `envconfig:"SERVER_PORT" validate:"required"`
 	ServerKey  string `envconfig:"SERVER_KEY" validate:"required"`
@@ -13,11 +20,14 @@ type Config struct {
 	InnerApiUrl string `envconfig:"INNER_API_URL" validate:"required"`
 	InnerApiKey string `envconfig:"INNER_API_KEY" validate:"required"`
 
+	AdminApiEnabled bool   `envconfig:"ADMIN_API_ENABLED" default:"false"`
+	AdminApiKey     string `envconfig:"ADMIN_API_KEY"`
+
 	PluginStorageType      string `envconfig:"PLUGIN_STORAGE_TYPE" validate:"required"`
 	PluginStorageOssBucket string `envconfig:"PLUGIN_STORAGE_OSS_BUCKET"`
 	PluginStorageLocalRoot string `envconfig:"PLUGIN_STORAGE_LOCAL_ROOT"`
 
-	// request timeout
+	// request timeout seconds
 	PluginMaxExecutionTimeout int `envconfig:"PLUGIN_MAX_EXECUTION_TIMEOUT" validate:"required"`
 
 	// local launching max concurrent
@@ -114,10 +124,9 @@ type Config struct {
 	SentrySampleRate       float64 `envconfig:"SENTRY_SAMPLE_RATE"`
 	SentryUseLocal         bool    `envconfig:"SENTRY_USE_LOCAL"`
 
-	LogingLocalPath string `envconfig:"LOGGING_LOCAL_PATH"`
+	LoggingLocalPath string `envconfig:"LOGGING_LOCAL_PATH"`
 
 	InvocationConnectionIdleTimeout int `envconfig:"INVOCATION_CONNECTION_IDLE_TIMEOUT" validate:"required"`
-
 	// invocation write timeout in milliseconds
 	InvocationWriteTimeout int64 `envconfig:"BACKWARDS_INVOCATION_WRITE_TIMEOUT" default:"5000"`
 	// invocation read timeout in milliseconds
@@ -164,10 +173,3 @@ func (c *Config) Validate() error {
 	}
 	return nil
 }
-
-type PlatformType string
-
-const (
-	PLATFORM_LOCAL      PlatformType = "local"
-	PLATFORM_SERVERLESS PlatformType = "serverless"
-)

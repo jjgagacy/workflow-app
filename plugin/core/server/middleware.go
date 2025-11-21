@@ -17,8 +17,19 @@ func CheckKey(key string) gin.HandlerFunc {
 		// get header X-Api-Key
 		if ctx.GetHeader(server_const.X_API_KEY) != key {
 			ctx.AbortWithStatusJSON(401, entities.UnauthorizedError(errors.New("unauthorized")).ToResponse())
+			return
 		}
 
+		ctx.Next()
+	}
+}
+
+func (app *App) AdminAPIKey(key string) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		if ctx.GetHeader(server_const.X_ADMIN_API_KEY) != key {
+			ctx.AbortWithStatusJSON(401, entities.UnauthorizedError(errors.New("unauthorized")).ToResponse())
+			return
+		}
 		ctx.Next()
 	}
 }
@@ -59,6 +70,14 @@ func (app *App) FetchPluginInstallation() gin.HandlerFunc {
 
 		ctx.Set(server_const.PLUGIN_INSTALLATION, installation)
 		ctx.Set(server_const.PLUGIN_UNIQUE_IDENTIFIER, identity)
+		ctx.Next()
+	}
+}
+
+// RedirectPluginInvoke redirects the plugin request to the correct cluster node
+func (app *App) RedirectPluginInvoke() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		// todo
 		ctx.Next()
 	}
 }

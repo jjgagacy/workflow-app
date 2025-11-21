@@ -13,24 +13,28 @@ import (
 )
 
 func (app *App) setupLogging(config *core.Config) {
-	file, err := os.OpenFile(filepath.Join(config.LogingLocalPath, "app.log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	file, err := os.OpenFile(
+		filepath.Join(config.LoggingLocalPath, "app.log"),
+		os.O_CREATE|os.O_WRONLY|os.O_APPEND,
+		0666,
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
-	app.loggerFile = file
+	app.logger = file
 
 	multi := io.MultiWriter(os.Stderr, file)
 	log.SetOutput(multi)
 }
 
 func (app *App) setupLocalSentry(config *core.Config) {
-	l, err := local_sentry.NewLocalSentry(filepath.Join(config.LogingLocalPath, "local_errors.log"))
+	ls, err := local_sentry.NewLocalSentry(filepath.Join(config.LoggingLocalPath, "errors.log"))
 
 	if err != nil {
 		log.Fatalf("local sentry err: %s", err.Error())
 	}
-	app.localSentry = l
-	utils.LocalSentry = l
+	app.ls = ls
+	utils.LocalSentry = ls
 }
 
 func (app *App) setupPool(config *core.Config) {
@@ -48,10 +52,10 @@ func (app *App) setupPool(config *core.Config) {
 }
 
 func (app *App) closeLogging() {
-	if app.localSentry != nil {
-		app.localSentry.Close()
+	if app.ls != nil {
+		app.ls.Close()
 	}
-	if app.loggerFile != nil {
-		app.loggerFile.Close()
+	if app.logger != nil {
+		app.logger.Close()
 	}
 }
