@@ -32,6 +32,7 @@ export class ModelCredentialSchema {
 export class Provider {
   provider: string;
   label: I18nObject;
+
   @IsOptional()
   description?: I18nObject;
   @IsOptional()
@@ -44,6 +45,7 @@ export class Provider {
   background?: string;
   @IsOptional()
   help?: ProviderHelp;
+
   supportedModelTypes: ModelType[];
   configurateMethod: ConfigurateMethod[];
 
@@ -52,7 +54,6 @@ export class Provider {
   modeScredentialSchema?: ModelCredentialSchema;
 
   models: AIModel[];
-
   @IsOptional()
   position?: Record<string, string[]>;
 
@@ -71,7 +72,6 @@ export class Provider {
   }
 }
 
-
 export class SimpleProvider {
   provider: string;
   label: I18nObject;
@@ -79,9 +79,9 @@ export class SimpleProvider {
   iconSmall?: I18nObject;
   @IsOptional()
   iconLarge?: I18nObject;
-  supportedModelTypes: ModelType[];
 
   models: AIModel[];
+  supportedModelTypes: ModelType[];
 
   constructor(providerObj?: Provider) {
     if (providerObj) {

@@ -90,9 +90,9 @@ import { UpdateAccountFieldsResolver } from './graphql/resolvers/update-account-
 import { DateScalar } from './common/graphql/scalars/date.scalar';
 import { WorkspaceResolver } from './graphql/resolvers/workspace/workspace.resolver';
 import { ModelProviderResolver } from './graphql/resolvers/workspace/model-provider.resolver';
-import { PluginModule } from './ai/plugin/plugin.model';
-import { BasePluginClient } from './ai/plugin/classes/plugin-client';
-import { PluginClientService } from './ai/plugin/services/plugin-client.service';
+import { PluginModule } from './ai/plugin/plugin.module';
+import { BasePluginClient } from './ai/plugin/classes/base-plugin-client';
+import { PluginModelClientService } from './ai/plugin/services/model-client.service';
 
 @Module({
   imports: [
@@ -262,6 +262,7 @@ import { PluginClientService } from './ai/plugin/services/plugin-client.service'
     }),
     MailModule,
     PluginModule,
+    ModelRuntimeModule,
   ],
   controllers: [AppController, InternalPluginApiController, InternalPluginInvokeController, InternalWorkspaceController],
   providers: [
@@ -319,7 +320,7 @@ import { PluginClientService } from './ai/plugin/services/plugin-client.service'
     WorkspaceResolver,
     ModelProviderResolver,
     BasePluginClient,
-    PluginClientService,
+    PluginModelClientService,
   ],
 })
 export class AppModule implements NestModule {

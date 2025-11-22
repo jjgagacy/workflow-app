@@ -20,3 +20,7 @@ export enum SystemConfigurationStatus {
   QUOTA_EXCEEDED = 'quota_exceeded',
 }
 
+export enum CustomConfigurationStatus {
+  ACTIVE = 'active',
+  UNSUPPORTED = 'unsupported'
+}

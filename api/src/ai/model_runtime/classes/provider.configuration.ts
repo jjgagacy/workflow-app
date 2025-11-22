@@ -171,6 +171,10 @@ export class ProviderConfiguration {
   ): Promise<ProviderEntity> {
     return this.providerManager.addOrUpdateCustomCredentials(this, credentials, entityManager);
   }
+
+  customConfigurationAvailable(): boolean {
+    return this.customConfiguration.credentials !== undefined || this.customConfiguration.models.length > 0;
+  }
 }
 
 export class ProviderConfigurations {

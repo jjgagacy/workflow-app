@@ -12,6 +12,8 @@ export const DEFAULT_TOKEN_TYPE_EXPIRY: Record<TokenType, number> = {
   'email_verification': Number(process.env.EMAIL_CODE_LOGIN_EXPIRY_MINUTES || 60), // minutes
   'reset_password': Number(process.env.RESET_PASSWORD_TOKEN_EXPIRY_MINUTES || 5), // minutes
 };
+export const DEFAULT_LANG = 'en_US';
 export const HIDDEN_VALUE = '[__HIDDEN__]';
 export const UNKNOWN_ALUE = '[__UNKNOWN__]';
 export const UUID_NIL = '00000000-0000-0000-0000-000000000000';
+

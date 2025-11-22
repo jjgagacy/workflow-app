@@ -16,10 +16,14 @@ import { LocationService } from "./libs/location.service";
 import { MailModule } from "@/mail/mail.module";
 import { MailService } from "@/mail/mail.service";
 import { DeviceService } from "./libs/device.service";
+import { ModelRuntimeModule } from "@/ai/model_runtime/model_runtime.module";
+import { ModelProviderService } from "./model-provider.service";
+import { ProviderManager } from "@/ai/model_runtime/services/provider-manager";
+import { ProviderService } from "@/ai/model_runtime/services/provider.service";
 
 @Global()
 @Module({
-  imports: [EncryptionModule, StorageModule, MailModule],
+  imports: [EncryptionModule, StorageModule, MailModule, ModelRuntimeModule],
   providers: [
     AuthAccountService,
     GeneralCacheService,
@@ -35,6 +39,9 @@ import { DeviceService } from "./libs/device.service";
     LocationService,
     MailService,
     DeviceService,
+    ProviderManager,
+    ProviderService,
+    ModelProviderService,
   ],
   exports: [
     AuthAccountService,

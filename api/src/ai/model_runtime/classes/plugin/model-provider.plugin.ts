@@ -1,4 +1,4 @@
-import { PluginClientService } from "@/ai/plugin/services/plugin-client.service";
+import { PluginModelClientService } from "@/ai/plugin/services/model-client.service";
 import { Injectable, NotImplementedException } from "@nestjs/common";
 import { ModelType } from "../../enums/model-runtime.enum";
 import { DefaultModel } from "../default-model.class";
@@ -13,7 +13,7 @@ import { ProviderEntity } from "@/account/entities/provider.entity";
 @Injectable()
 export class ModelProviderPlugin {
   constructor(
-    private readonly pluginClientService: PluginClientService
+    private readonly pluginClientService: PluginModelClientService
   ) { }
 
   async getDefaultModel(tenantId: string, modelType: ModelType): Promise<DefaultModel | null> {

@@ -40,7 +40,6 @@ export class ProviderManager {
     private readonly logger: GlobalLogger,
   ) { }
 
-
   async getCustomProviderCredentials(
     tenantId: string,
     providerName: string

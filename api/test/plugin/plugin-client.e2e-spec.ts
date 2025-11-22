@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { App } from 'supertest/types';
 import { AppModule } from '@/app.module';
-import { BasePluginClient } from '@/ai/plugin/classes/plugin-client';
+import { BasePluginClient } from '@/ai/plugin/classes/base-plugin-client';
 
 describe('PluginClientTest (e2e)', () => {
     jest.setTimeout(10000);
