@@ -6,6 +6,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/manifest_entites"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/validators"
+	"github.com/xeipuuv/gojsonschema"
 )
 
 type ToolIdentity struct {
@@ -82,10 +83,10 @@ func isToolParameterForm(fl validator.FieldLevel) bool {
 type ToolProviderIdentity struct {
 	Author      string                       `json:"author" yaml:"author" validate:"required"`
 	Name        string                       `json:"name" yaml:"name" validate:"required,tool_provider_identity_name"`
+	Label       I18nObject                   `json:"label" yaml:"label" validate:"required"`
 	Description I18nObject                   `json:"description" yaml:"description"`
 	Icon        string                       `json:"icon" yaml:"icon" validate:"required"`
 	IconDark    string                       `json:"icon_dark" yaml:"icon_dark" validate:"omitempty"`
-	Label       I18nObject                   `json:"label" yaml:"label" validate:"required"`
 	Tags        []manifest_entites.PluginTag `json:"tags" yaml:"tags" validate:"omitempty,dive,plugin_tag"`
 }
 
@@ -161,8 +162,43 @@ type ToolProviderDeclaration struct {
 }
 
 func isJsonSchema(fl validator.FieldLevel) bool {
-	// todo
-	return true
+	schemaInterface := fl.Field().Interface()
+	// convert to map[string]any
+	var schemaMap map[string]any
+	toolSchemaMap, ok := schemaInterface.(ToolOutputSchema)
+	if !ok {
+		agentSchemaMap, ok := schemaInterface.(AgentStrategyOutputSchema)
+		if !ok {
+			return false
+		}
+		schemaMap = agentSchemaMap
+	} else {
+		schemaMap = toolSchemaMap
+	}
+
+	// validate root schema must be type object
+	rootType, ok := schemaMap["type"].(string)
+	if !ok || rootType != "object" {
+		return false
+	}
+	// validate properties
+	properties, ok := schemaMap["properties"].(map[string]any)
+	if !ok {
+		return false
+	}
+	// disallow text, json, files as property names
+	disallowedProps := []string{"text", "json", "files"}
+	for _, prop := range disallowedProps {
+		if _, exists := properties[prop]; exists {
+			return false
+		}
+	}
+	// load schema and validate
+	_, err := gojsonschema.NewSchema(gojsonschema.NewGoLoader(fl.Field().Interface()))
+	if err != nil {
+		return false
+	}
+	return err == nil
 }
 
 func init() {
@@ -170,5 +206,7 @@ func init() {
 	validators.EntitiesValidator.RegisterValidation("is_basic_type", isBasicType)
 	validators.EntitiesValidator.RegisterValidation("tool_provider_identity_name", isToolProviderIdentityName)
 	validators.EntitiesValidator.RegisterValidation("parameter_auto_generate_type", isParameterAutoGenerateType)
-	validators.EntitiesValidator.RegisterValidation("json_schemaa", isJsonSchema)
+	validators.EntitiesValidator.RegisterValidation("json_schema", isJsonSchema)
+	validators.EntitiesValidator.RegisterValidation("tool_parameter_type", isToolParameterType)
+	validators.EntitiesValidator.RegisterValidation("tool_parameter_form", isToolParameterForm)
 }

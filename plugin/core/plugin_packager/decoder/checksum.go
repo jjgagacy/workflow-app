@@ -8,6 +8,13 @@ import (
 	"slices"
 )
 
+// CalculateChecksum computes a deterministic SHA-256 checksum for all files in the
+// decoder
+// The checksum is calculated by hashing the concatenation of the SHA-256 hashes of each file's path and content.
+// The files are processed in sorted order to ensure consistency.
+//
+// This approach ensures the checksum is consistent regardless of file order or metadata and detects
+// both file changes and file additions/removals/renames.
 func CalculateChecksum(decoder PluginDecoder) (string, error) {
 	m := map[string][]byte{}
 

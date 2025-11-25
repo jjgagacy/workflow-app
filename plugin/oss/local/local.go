@@ -77,7 +77,6 @@ func (l *LocalStorage) List(prefix string) ([]oss.OSSPath, error) {
 		})
 		return nil
 	})
-
 	if err != nil {
 		return nil, err
 	}

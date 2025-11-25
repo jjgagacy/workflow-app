@@ -3,6 +3,6 @@ package manifest_entites
 type ManifestType string
 
 const (
-	PluginType  ManifestType = "plugin"
-	BundlejType ManifestType = "bundle"
+	PluginType ManifestType = "plugin"
+	BundleType ManifestType = "bundle"
 )

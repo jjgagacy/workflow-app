@@ -84,14 +84,13 @@ func SetupEndPoint(
 			},
 		},
 	)
+
 	if err != nil {
 		return entities.InternalError(fmt.Errorf("failed to encrypt settings: %v", err)).ToResponse()
 	}
-
 	if err := ApplyEndPointUpdate(endPoint, name, encryptedSettings); err != nil {
 		return entities.InternalError(fmt.Errorf("failed to update endpoint: %v", err)).ToResponse()
 	}
-
 	return entities.NewSuccessResponse(true)
 }
 
@@ -188,7 +187,6 @@ func UpdateEndPoint(
 	}
 
 	maskedSettings := encryption.MaskConfigCredentials(originalSettings, pluginDeclaration.EndPoint.Settings)
-
 	// check if the settings is changed, replace the value is the same as masked settings
 	for name, value := range settings {
 		// skip it if the value is not secret-input
@@ -203,7 +201,6 @@ func UpdateEndPoint(
 		if !found {
 			continue
 		}
-
 		if maskedSettings[name] == value {
 			settings[name] = originalSettings[name]
 		}
@@ -213,7 +210,6 @@ func UpdateEndPoint(
 	if err := plugin_entities.ValidateProviderConfig(settings, pluginDeclaration.EndPoint.Settings); err != nil {
 		return entities.BadRequestError(fmt.Errorf("failed to validate settings: %v", err)).ToResponse()
 	}
-
 	// encrypt settings
 	encryptedSettings, err := manager.BackwardsInvocation().InvokeEncrypt(
 		&invocation.InvokeEncryptRequest{
@@ -256,7 +252,6 @@ func UpdateEndPoint(
 	}); err != nil {
 		return entities.InternalError(fmt.Errorf("failed to clear credentials cache: %v", err)).ToResponse()
 	}
-
 	return entities.NewSuccessResponse(true)
 }
 
@@ -264,7 +259,6 @@ func SetEndPointEnable(endPointId string, tenantId string) *entities.Response {
 	if err := EnableEndPoint(endPointId, tenantId); err != nil {
 		return entities.InternalError(errors.New("failed to enable endpoint")).ToResponse()
 	}
-
 	return entities.NewSuccessResponse(true)
 }
 
@@ -273,6 +267,5 @@ func SetEndPointDisabled(endPointId string, tenantId string) *entities.Response 
 	if err != nil {
 		return entities.InternalError(errors.New("failed to disabled endpoint")).ToResponse()
 	}
-
 	return entities.NewSuccessResponse(true)
 }

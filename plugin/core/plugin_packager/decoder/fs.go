@@ -33,12 +33,10 @@ func NewFSPluginDecoder(root string) (*FSPluginDecoder, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	// read the manifest
 	if _, err := decoder.Manifest(); err != nil {
 		return nil, err
 	}
-
 	return decoder, nil
 }
 
@@ -49,20 +47,27 @@ func (d *FSPluginDecoder) Open() error {
 	if err != nil {
 		return err
 	}
-
 	if !st.IsDir() {
 		return ErrNotDir
 	}
-
 	return nil
 }
 
+// Walk traverse the file system starting from the root directory and executes the provided
+// function for each file found.
+// It automatically reads and applies .gitignore rules if a .gitignore file is present.
+//
+// Notes:
+//   - The root directory itself is not included in the walk.
+//   - .gitignore patterns are parsed and applied if .gitignore file exists in the root.
+//   - If a directory matches an ignore pattern, its entire subtree is skipped.
+//   - The callback function is only called for files, not directories.
 func (d *FSPluginDecoder) Walk(fn func(filename string, dir string) error) error {
 	ignorePatterns := []gitignore.Pattern{}
 	ignoreBytes, err := d.ReadFile(".gitignore")
 	if err == nil {
-		ignoreLines := strings.Split(string(ignoreBytes), "\n")
-		for _, line := range ignoreLines {
+		ignoreLines := strings.SplitSeq(string(ignoreBytes), "\n")
+		for line := range ignoreLines {
 			line = strings.TrimSpace(line)
 			if line == "" || strings.HasPrefix(line, "#") {
 				continue
@@ -75,18 +80,15 @@ func (d *FSPluginDecoder) Walk(fn func(filename string, dir string) error) error
 		if err != nil {
 			return err
 		}
-
 		// get relative path from root
 		relPath, err := filepath.Rel(d.root, path)
 		if err != nil {
 			return err
 		}
-
 		// skip root directory
 		if relPath == "." {
 			return nil
 		}
-
 		// check if path matches any ignore pattern
 		pathParts := strings.Split(relPath, string(filepath.Separator))
 		for _, pattern := range ignorePatterns {
@@ -102,11 +104,9 @@ func (d *FSPluginDecoder) Walk(fn func(filename string, dir string) error) error
 		if dir == "." {
 			dir = ""
 		}
-
 		if info.IsDir() {
 			return nil
 		}
-
 		return fn(info.Name(), dir)
 	})
 }
@@ -115,6 +115,14 @@ func (d *FSPluginDecoder) ReadFile(filename string) ([]byte, error) {
 	return os.ReadFile(filepath.Join(d.root, filename))
 }
 
+// ReadDir reads the directory and returns relative file paths of all files.
+// It tranverse the directory tree starting from the specified directory relative to the root.
+// and collects all file paths (excluding directories) as relative paths from the root.
+//
+// Example:
+// If the root is "/projects/app" and dirname is "src"
+// it will tranverse "/projects/app/src" and returns paths like:
+// "src/main.go", "src/utils/helper.go", etc.
 func (d *FSPluginDecoder) ReadDir(dirname string) ([]string, error) {
 	var files []string
 	err := filepath.WalkDir(filepath.Join(d.root, dirname), func(path string, info fs.DirEntry, err error) error {

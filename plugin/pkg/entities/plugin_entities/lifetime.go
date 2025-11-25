@@ -109,7 +109,3 @@ func (r *PluginRuntime) UpdateScheduledAt(t time.Time) {
 func (r *PluginRuntime) Stopped() bool {
 	return r.State.Status == string(PLUGIN_RUNTIME_STATUS_STOPPED)
 }
-
-func NewPluginRuntime(config PluginDeclaration) *PluginRuntime {
-	return nil
-}

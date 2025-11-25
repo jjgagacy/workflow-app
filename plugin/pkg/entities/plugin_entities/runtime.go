@@ -119,6 +119,8 @@ func (r *PluginRuntime) Error(msg string) {
 	r.State.Logs = append(r.State.Logs, fmt.Sprintf("[Error] %s: %s", time.Now().Format(time.RFC3339), msg))
 }
 
+// Checksum() implements by basic_runtime.BasicChecksum
+
 func (r *PluginRuntime) InitState() {
 	r.State = PluginRuntimeState{
 		Restarts:   0,

@@ -13,12 +13,14 @@ type I18nObject struct {
 
 func isBasicType(fl validator.FieldLevel) bool {
 	switch fl.Field().Kind() {
-	case reflect.String, reflect.Bool,
-		reflect.Float64, reflect.Float32,
+	case
+		reflect.String,
+		reflect.Bool,
+		reflect.Float32, reflect.Float64,
 		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
-		reflect.Int8, reflect.Int, reflect.Int16, reflect.Int32, reflect.Int64:
+		reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		return true
-	case reflect.Ptr:
+	case reflect.Pointer:
 		// check if the pointer is nil
 		if fl.Field().IsNil() {
 			return true
@@ -26,6 +28,5 @@ func isBasicType(fl validator.FieldLevel) bool {
 	default:
 		return false
 	}
-
 	return false
 }

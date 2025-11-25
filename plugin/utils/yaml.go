@@ -24,3 +24,12 @@ func UnmarshalYamlBytes[T any](data []byte, validator ...validator.Validate) (T,
 
 	return result, err
 }
+
+func MarshalYaml[T any](data T) string {
+	return string(MarshalYamlBytes(data))
+}
+
+func MarshalYamlBytes[T any](data T) []byte {
+	b, _ := yaml.Marshal(data)
+	return b
+}

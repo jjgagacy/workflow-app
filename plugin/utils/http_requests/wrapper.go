@@ -106,7 +106,7 @@ func RequestAndParseStream[T any](client *http.Client, url string, method string
 
 		var err error
 		if usingLengthPrefixed {
-			// todo
+			err = parser.LengthPrefixedChunking(resp.Body, 0x7f, 1024*1024*30, processData) // 30MB limit
 		} else {
 			err = parser.LineBasedChunking(resp.Body, 1024*1024*30, func(data []byte) error { // 30MB limit
 				if len(data) == 0 {

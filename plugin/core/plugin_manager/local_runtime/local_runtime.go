@@ -69,11 +69,9 @@ func (r *LocalPluginRuntime) Init() error {
 	default:
 		return fmt.Errorf("unsupported language: %s", r.Config.Meta.Runner.Language)
 	}
-
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 

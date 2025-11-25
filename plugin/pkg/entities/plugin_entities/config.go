@@ -66,8 +66,8 @@ const (
 )
 
 type ConfigOption struct {
-	Value string     `json:"value"`
 	Label I18nObject `json:"label"`
+	Value string     `json:"value"`
 }
 
 // ConfigType 验证
@@ -111,7 +111,7 @@ var validCredentialTypes = map[ConfigType]bool{
 	CONFIG_TYPE_TOOLS_SELECTOR: true,
 }
 
-func isCredentialType(fl validator.FieldLevel) bool {
+func IsCredentialType(fl validator.FieldLevel) bool {
 	value := fl.Field().String()
 	return validCredentialTypes[ConfigType(value)]
 }
@@ -168,7 +168,7 @@ type ProviderConfig struct {
 	Type     string         `json:"type" yaml:"type"`
 	Scope    *string        `json:"scope" yaml:"scope,omitempty"`
 	Required bool           `json:"required" yaml:"required"`
-	Default  any            `json:"deault" yaml:"deault"`
+	Default  any            `json:"default" yaml:"default"`
 	Options  []ConfigOption `json:"options" yaml:"options"`
 	Label    *I18nObject    `json:"label" yaml:"label,omitempty"`
 	Help     *I18nObject    `json:"help" yaml:"help,omitempty"`
@@ -221,7 +221,7 @@ func init() {
 	validators.EntitiesValidator.RegisterValidation("is_app_selector_scope", IsValidAppSelectorScope)
 	validators.EntitiesValidator.RegisterValidation("is_model_config_scope", IsValidModelConfigScope)
 	validators.EntitiesValidator.RegisterValidation("is_tool_selector_scope", IsValidToolSelectorScope)
-	validators.EntitiesValidator.RegisterValidation("is_credential_type", isCredentialType)
+	validators.EntitiesValidator.RegisterValidation("is_credential_type", IsCredentialType)
 }
 
 func ValidateProviderConfig(settings map[string]any, configs []ProviderConfig) error {

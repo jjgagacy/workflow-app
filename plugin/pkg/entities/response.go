@@ -24,9 +24,13 @@ func NewResponse(code int, message string, args ...any) *Response {
 	resp := &Response{
 		Code:    code,
 		Message: message,
-		Data:    nil,
 	}
-	if len(args) > 0 {
+	switch len(args) {
+	case 0:
+		resp.Data = nil
+	case 1:
+		resp.Data = args[0]
+	default:
 		resp.Data = args
 	}
 	return resp

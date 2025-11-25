@@ -28,7 +28,7 @@ type OSSPath struct {
 // OSS defines the interface for Object Storage Service operations
 // It provides a unified abstraction for various cloud storage services.
 type OSS interface {
-	// Save stores the g  friven data with the specified key in the object storage.
+	// Save stores the given data with the specified key in the object storage.
 	// Returns an error of the operation fails.
 	Save(key string, data []byte) error
 

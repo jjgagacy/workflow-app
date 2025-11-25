@@ -131,7 +131,6 @@ func (z *ZipPluginDecoder) ReadFile(filename string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return data.Bytes(), nil
 }
 
@@ -167,28 +166,24 @@ func (z *ZipPluginDecoder) decode() error {
 
 	signature := comment.Signature
 	time := comment.Time
-
 	// 读取验证文件
 	verifyData, err := z.ReadFile(VERIFICATION_FILE)
 	if err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
 			return err
 		}
-
 		verification = nil
 	} else {
 		verificationData, err := utils.UnmarshalJsonBytes[Verification](verifyData)
 		if err != nil {
 			return err
 		}
-
 		verification = &verificationData
 	}
 
 	z.sig = signature
 	z.createTime = time
 	z.verification = verification
-
 	return nil
 }
 
@@ -196,7 +191,6 @@ func (z *ZipPluginDecoder) Signature() (string, error) {
 	if z.sig != "" {
 		return z.sig, nil
 	}
-
 	return "", nil
 }
 
@@ -227,24 +221,20 @@ func (z *ZipPluginDecoder) ExtractTo(dst string) error {
 		if err := os.MkdirAll(workingPath, 0755); err != nil {
 			return err
 		}
-
 		bytes, err := z.ReadFile(filepath.Join(dir, filename))
 		if err != nil {
 			return err
 		}
-
 		writeFile := filepath.Join(workingPath, filename)
 		// copy file
 		if err := os.WriteFile(writeFile, bytes, 0644); err != nil {
 			return err
 		}
-
 		return nil
 	}); err != nil {
 		os.RemoveAll(dst)
 		return errors.Join(err, fmt.Errorf("copy plugin to working plugin error: %v", err))
 	}
-
 	return nil
 }
 

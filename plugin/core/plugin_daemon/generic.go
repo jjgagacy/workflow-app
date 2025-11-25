@@ -88,6 +88,5 @@ func GenericInvokePlugin[T any, R any](
 			req,
 		),
 	)
-
 	return response, nil
 }

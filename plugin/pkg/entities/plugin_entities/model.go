@@ -179,6 +179,7 @@ type ModelProviderFormOption struct {
 	Value  string         `json:"value"`
 	ShowOn []ShowOnObject `json:"show_on"`
 }
+
 type ModelProviderCredentialFormSchema struct {
 	Variable    string                    `json:"variable" validate:"required,lt=256" yaml:"variable"`
 	Label       I18nObject                `json:"label" validate:"required" yaml:"label"`
@@ -234,4 +235,6 @@ func init() {
 	validators.EntitiesValidator.RegisterValidation("model_type", isModelType)
 	validators.EntitiesValidator.RegisterValidation("model_provider_configuration_method", isModelProviderConfigMethod)
 	validators.EntitiesValidator.RegisterValidation("parameter_rule", isParameterRule)
+	validators.EntitiesValidator.RegisterValidation("default_parameter_name", isDefaultModelParameterName)
+	validators.EntitiesValidator.RegisterValidation("model_parameter_type", isModelParameterType)
 }

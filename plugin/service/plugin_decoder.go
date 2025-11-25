@@ -90,12 +90,10 @@ func UploadPluginBundle(
 	result := []map[string]any{}
 
 	for _, dependency := range bundle.Dependencies {
-		if dependency.Type == bundle_entities.DEPENDENCY_TYPE_GITHUB {
-
-		} else if dependency.Type == bundle_entities.DEPENDENCY_TYPE_MARKETPLACE {
-
-		} else if dependency.Type == bundle_entities.DEPENDENCY_TYPE_PACKAGE {
-
+		switch dependency.Type {
+		case bundle_entities.DEPENDENCY_TYPE_GITHUB:
+		case bundle_entities.DEPENDENCY_TYPE_MARKETPLACE:
+		case bundle_entities.DEPENDENCY_TYPE_PACKAGE:
 		}
 	}
 
@@ -117,10 +115,8 @@ func FetchPluginManifest(
 	if err == types.ErrPluginNotFound {
 		return entities.BadRequestError(errors.New("plugin not found")).ToResponse()
 	}
-
 	if err != nil {
 		return entities.InternalError(err).ToResponse()
 	}
-
 	return entities.NewSuccessResponse(pluginManifest)
 }

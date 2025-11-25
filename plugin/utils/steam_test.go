@@ -48,11 +48,11 @@ func TestStreamConcurrentOperations(t *testing.T) {
 		var resultMu sync.Mutex
 
 		// start 3 producers
-		for i := 0; i < 3; i++ {
+		for i := range 3 {
 			wg.Add(1)
 			go func(producerID int) {
 				defer wg.Done()
-				for j := 0; j < 10; j++ {
+				for j := range 10 {
 					value := producerID*100 + j
 					stream.Write(value)
 					time.Sleep(time.Millisecond)
@@ -61,7 +61,7 @@ func TestStreamConcurrentOperations(t *testing.T) {
 		}
 
 		// start 2 consumers
-		for i := 0; i < 2; i++ {
+		for i := range 2 {
 			wg.Add(1)
 			go func(consumerID int) {
 				defer wg.Done()
@@ -98,13 +98,10 @@ func TestStreamBlockingWrite(t *testing.T) {
 		stream.Write(2)
 
 		var wg sync.WaitGroup
-		wg.Add(1)
-
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			stream.WriteBlocking(3)
 			stream.WriteBlocking(4)
-		}()
+		})
 
 		time.Sleep(10 * time.Millisecond)
 		data, err := stream.Read()
@@ -117,7 +114,6 @@ func TestStreamBlockingWrite(t *testing.T) {
 		assert.Equal(t, 2, data)
 
 		wg.Wait()
-
 		stream.Close()
 	})
 }
@@ -223,7 +219,7 @@ func TestStreamAsyncProcessing(t *testing.T) {
 		processed := make([]int, 0)
 		var mu sync.Mutex
 
-		for i := 0; i < 5; i++ {
+		for i := range 5 {
 			stream.Write(i)
 		}
 		stream.Close()

@@ -80,7 +80,6 @@ func NewSession(payload SessionPayload) *Session {
 	if !payload.IgnoreCache {
 		// todo
 	}
-
 	return s
 }
 
@@ -97,7 +96,6 @@ func GetSession(payload GetSessionPayload) (*Session, error) {
 	if session == nil {
 		// todo get from cache
 	}
-
 	return session, nil
 }
 

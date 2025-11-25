@@ -65,11 +65,8 @@ func (p *Packager) Pack(maxSize int64) ([]byte, error) {
 			return files[i].Size > files[j].Size
 		})
 		fileTopInfo := ""
-		top := 5
-		if len(files) < 5 {
-			top = len(files)
-		}
-		for i := 0; i < top; i++ {
+		top := min(len(files), 5)
+		for i := range top {
 			fileTopInfo += fmt.Sprintf("%d. name: %s, size: %d bytes\n", i+1, files[i].Path, files[i].Size)
 		}
 		errMsg := fmt.Sprintf("Plugin package size is too large. Please ensure the uncompressed size is less than %d bytes.\nPackaged file info:\n%s", maxSize, fileTopInfo)
