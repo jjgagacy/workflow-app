@@ -152,7 +152,7 @@ type LLMResultChunkWithStructuredOutput struct {
 }
 
 type LLMUsage struct {
-	PromptTokens        int             `json:"prompt_tokens" validate:"required"`
+	PromptTokens        *int            `json:"prompt_tokens" validate:"required"`
 	PromptUnitPrice     decimal.Decimal `json:"prompt_unit_price" validate:"required"`
 	PromptPricePerUnit  decimal.Decimal `json:"prompt_price_per_unit" validate:"required"`
 	PromptPrice         decimal.Decimal `json:"prompt_price" validate:"required"`

@@ -107,7 +107,6 @@ func (s *stdioHolder) Error() error {
 			return errors.New(s.errMessage)
 		}
 	}
-
 	return nil
 }
 
@@ -134,16 +133,13 @@ func (s *stdioHolder) StartStdout(notifyHeartbeat func()) {
 	defer s.Stop()
 
 	scanner := bufio.NewScanner(s.reader)
-
 	scanner.Buffer(make([]byte, s.stdoutBufferSize), s.stdoutMaxBufferSize)
 
 	for scanner.Scan() {
 		data := scanner.Bytes()
-
 		if len(data) == 0 {
 			continue
 		}
-
 		// update the last active time on each time the plugin sends data
 		s.lastActiveAt = time.Now()
 

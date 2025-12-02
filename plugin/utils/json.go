@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/jjgagacy/workflow-app/plugin/pkg/validators"
+	"github.com/xeipuuv/gojsonschema"
 )
 
 func MarshalJson[T any](data T) string {
@@ -62,4 +63,94 @@ func UnmarshalJsonBytesToMap(data []byte) (map[string]any, error) {
 		return nil, err
 	}
 	return result, err
+}
+
+// Generate a valid json from its json schema
+func GenerateValidateJson(schema map[string]any) (map[string]any, error) {
+	// Since gojsonschema doesn't provide a direct way to generate valid JSON from a schema,
+	// we'll need to implement our own logic based on the schema structure
+	result := map[string]any{}
+
+	schemaLoader := gojsonschema.NewGoLoader(schema)
+	schemaDoc, err := schemaLoader.LoadJSON()
+	if err != nil {
+		return nil, err
+	}
+
+	// Process the schema document and generate valid JSON
+	if schemaType, ok := schemaDoc.(map[string]any)["type"].(string); ok && schemaType == "object" {
+		// Get properties
+		if properties, ok := schemaDoc.(map[string]any)["properties"].(map[string]any); ok {
+			for propName, propSchema := range properties {
+				propMap, ok := propSchema.(map[string]any)
+				if !ok {
+					continue
+				}
+
+				propType, _ := propMap["type"].(string)
+				switch propType {
+				case "string":
+					if enum, ok := propMap["enum"].([]any); ok && len(enum) > 0 {
+						result[propName] = enum[0]
+					} else {
+						result[propName] = RandomString(10)
+					}
+				case "number", "integer":
+					if enum, ok := propMap["enum"].([]any); ok && len(enum) > 0 {
+						result[propName] = enum[0]
+					} else {
+						min := 0.0
+						max := 100.0
+
+						if minVal, ok := propMap["minimum"].(float64); ok {
+							min = minVal
+						}
+						if maxVal, ok := propMap["maximum"].(float64); ok {
+							max = maxVal
+						}
+						result[propName] = min + (max-min)/2
+					}
+				case "boolean":
+					result[propName] = true
+				case "array":
+					arr := []any{}
+
+					if items, ok := propMap["items"].(map[string]any); ok {
+						itemType, _ := items["type"].(string)
+						switch itemType {
+						case "string":
+							arr = append(arr, "item0")
+						case "number", "integer":
+							arr = append(arr, 42)
+						case "boolean":
+							arr = append(arr, true)
+						}
+					}
+
+					result[propName] = arr
+				case "object":
+					nestedObj := map[string]any{}
+
+					if nestedProps, ok := propMap["properties"].(map[string]any); ok {
+						for nestedPropName, nestedPropSchema := range nestedProps {
+							if nestedPropMap, ok := nestedPropSchema.(map[string]any); ok {
+								nestedType, _ := nestedPropMap["type"].(string)
+								switch nestedType {
+								case "string":
+									nestedObj[nestedPropName] = "nested_" + nestedPropName
+								case "number", "integer":
+									nestedObj[nestedPropName] = 42
+								case "boolean":
+									nestedObj[nestedPropName] = true
+								}
+							}
+						}
+					}
+
+					result[propName] = nestedObj
+				}
+			}
+		}
+	}
+	return result, nil
 }

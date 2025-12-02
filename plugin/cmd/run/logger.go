@@ -26,3 +26,23 @@ func runLog(response GenericResponse, responseFormat string) {
 		}
 	}
 }
+
+func logResponse(response GenericResponse, responseFormat string, client client) {
+	var responseBytes []byte
+	switch responseFormat {
+	case "json":
+		responseBytes = utils.MarshalJsonBytes(response)
+	case "text":
+		responseBytes = fmt.Appendf(nil, "[%s] %s\n", response.Type, response.Response)
+	}
+
+	// add a newline to the respponse
+	responseBytes = append(responseBytes, '\n')
+
+	if _, err := client.writer.Write(responseBytes); err != nil {
+		runLog(GenericResponse{
+			Type:     GENERIC_RESPONSE_TYPE_ERROR,
+			Response: map[string]any{"error": err.Error()},
+		}, responseFormat)
+	}
+}

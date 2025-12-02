@@ -25,5 +25,6 @@ func init() {
 
 	runCmd.Flags().StringVarP(&runMode, "mode", "m", "stdio", "run mode, stdio or tcp")
 	runCmd.Flags().BoolVarP(&runPluginPayload.EnableLogs, "enable-logs", "l", false, "enable logs")
+	runCmd.Flags().BoolVarP(&runPluginPayload.ZipFilePlugin, "zip-file", "l", false, "plugin file is zip")
 	runCmd.Flags().StringVarP(&runPluginPayload.ResponseFormat, "response-format", "r", "text", "response format, text or json")
 }

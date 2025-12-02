@@ -3,6 +3,8 @@ package run
 import (
 	"context"
 	"io"
+
+	"github.com/jjgagacy/workflow-app/plugin/core/plugin_daemon/access_types"
 )
 
 type RunMode string
@@ -22,6 +24,7 @@ type RunPluginPayload struct {
 	TcpServerPort int
 
 	ResponseFormat string
+	ZipFilePlugin  bool
 }
 
 type GenericResponseType = string
@@ -42,7 +45,15 @@ type GenericResponse struct {
 }
 
 type client struct {
-	reader io.ReadCloser
-	writer io.WriteCloser
+	reader io.Reader
+	writer io.Writer
 	cancel context.CancelFunc
+}
+
+type InvokePluginPayload struct {
+	InvokeId string                          `json:"invoke_id"`
+	Type     access_types.PluginAccessType   `json:"type"`
+	Action   access_types.PluginAccessAction `json:"action"`
+
+	Request map[string]any `json:"request"`
 }

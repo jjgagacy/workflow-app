@@ -33,12 +33,12 @@ const (
 )
 
 type InvokeLLMSchema struct {
-	Mode             string                                 `json:"mode" validate:"required"` // chat or completion
-	CompletionParams map[string]any                         `json:"completion_params" validate:"omitempty"`
-	PromptMessages   []model_entities.PromptMessage         `json:"prompt_messages" validate:"omitempty"`
-	Tools            []model_entities.PromptMessageToolCall `json:"tools" validate:"omitempty,dive"`
-	Stop             []string                               `json:"stop" validate:"omitempty"`
-	Stream           bool                                   `json:"stream"`
+	Mode             string                             `json:"mode" validate:"required"` // chat or completion
+	CompletionParams map[string]any                     `json:"completion_params" validate:"omitempty"`
+	PromptMessages   []model_entities.PromptMessage     `json:"prompt_messages" validate:"omitempty"`
+	Tools            []model_entities.PromptMessageTool `json:"tools" validate:"omitempty,dive"`
+	Stop             []string                           `json:"stop" validate:"omitempty"`
+	Stream           bool                               `json:"stream"`
 }
 
 type InvokeLLMRequest struct {
@@ -145,7 +145,7 @@ type InvokeParameterExtractorRequest struct {
 	Parameters []struct {
 		Name        string   `json:"name" validate:"required"`
 		Type        string   `json:"type" validate:"required,oneof=string number bool select array[string] array[number] array[object]"`
-		Option      []string `json:"options" validate:"omitempty"`
+		Options     []string `json:"options" validate:"omitempty"`
 		Description string   `json:"description" validate:"omitempty"`
 		Required    bool     `json:"required" validate:"omitempty"`
 	} `json:"parameters" validate:"required,dive"`

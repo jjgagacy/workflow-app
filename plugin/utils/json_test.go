@@ -555,3 +555,34 @@ func TestUnmarshalJsonBytesToMap_FieldMatching(t *testing.T) {
 		}
 	})
 }
+
+func TestJSONSchema(t *testing.T) {
+	schema := map[string]any{
+		"type": "object",
+		"properties": map[string]any{
+			"name": map[string]any{
+				"type": "string",
+			},
+			"age": map[string]any{
+				"type":    "integer",
+				"minimum": 0,
+				"maximum": 120,
+			},
+			"isStudent": map[string]any{
+				"type": "boolean",
+			},
+			"hobbies": map[string]any{
+				"type": "array",
+				"items": map[string]any{
+					"type": "string",
+				},
+			},
+		},
+		"required": []string{"name", "age"},
+	}
+
+	result, err := GenerateValidateJson(schema)
+	require.NoError(t, err)
+
+	t.Logf("Generate JSON: %+v", result)
+}

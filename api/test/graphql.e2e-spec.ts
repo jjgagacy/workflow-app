@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
 
@@ -27,6 +27,6 @@ describe('AppController (e2e)', () => {
       .send({ query })
       .expect(200);
 
-      expect(response.body.data.hello).toBe('Hello World!');
+    expect(response.body.data.hello).toBe('Hello World!');
   });
 });

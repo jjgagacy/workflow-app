@@ -118,6 +118,10 @@ type LocalPluginRuntimeConfig struct {
 	UvPath                 string
 	PythonEnvInitTimeout   int
 	PythonCompileExtraArgs string
+
+	NodeExecutePath    string
+	NodeEnvInitTimeout int
+	NodeExtraArg       string
 }
 
 func NewLocalPluginRuntime(config LocalPluginRuntimeConfig) *LocalPluginRuntime {

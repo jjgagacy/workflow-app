@@ -10,10 +10,12 @@ import (
 	"time"
 
 	"github.com/jjgagacy/workflow-app/plugin/core/constants"
+	"github.com/jjgagacy/workflow-app/plugin/core/plugin_daemon"
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager"
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager/basic_runtime"
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager/local_runtime"
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_packager/decoder"
+	"github.com/jjgagacy/workflow-app/plugin/core/session_manager"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
 	"github.com/jjgagacy/workflow-app/plugin/utils"
 )
@@ -66,6 +68,7 @@ func GetRuntime(pluginZip []byte, dir string) (*local_runtime.LocalPluginRuntime
 		UvPath:                uvPath,
 		PythonInterpreterPath: os.Getenv("PYTHON_INTERPRETER_PATH"),
 		PythonEnvInitTimeout:  120,
+		NodeExecutePath:       os.Getenv("NODE_EXECUTE_PATH"),
 	})
 
 	localPluginRuntime.PluginRuntime = plugin_entities.PluginRuntime{
@@ -121,4 +124,18 @@ func GetRuntime(pluginZip []byte, dir string) (*local_runtime.LocalPluginRuntime
 	time.Sleep(1 * time.Second)
 
 	return localPluginRuntime, nil
+}
+
+type RunOnceRequest any
+
+// RunOnceWithSession sends a request to plugin and returns a stream of responses
+func RunOnceWithSession[T RunOnceRequest, R any](
+	runtime *local_runtime.LocalPluginRuntime,
+	session *session_manager.Session,
+	request T,
+) (*utils.Stream[R], error) {
+	// bind the runtime to the session
+	session.BindRuntime(runtime)
+
+	return plugin_daemon.GenericInvokePlugin[T, R](session, &request, 1024)
 }
