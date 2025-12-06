@@ -8,6 +8,7 @@ export class StdioReader extends RequestReader {
   private errorQueue: Error[] = [];
   private resolveQueue: ((value: IteratorResult<StreamMessage>) => void) | null = null;
   private isClosed = false;
+  private max_queue = 1000;
 
   constructor() {
     super('stdio');
@@ -79,6 +80,10 @@ export class StdioReader extends RequestReader {
   private setupEventListeners(): void {
     this.rl.on('line', (line: string) => {
       if (!line.trim()) return;
+
+      if (this.messageQueue.length > this.max_queue) {
+        throw new Error("message queue overflow");
+      }
 
       try {
         const message = JSON.parse(line) as StreamMessage;

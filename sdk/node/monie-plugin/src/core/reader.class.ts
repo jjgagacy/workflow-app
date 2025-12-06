@@ -1,11 +1,17 @@
+import { callbackify } from "util";
 import { StreamMessage } from "./dtos/stream.dto";
 import { StreamReader } from "./streams/stream";
 import { EventEmitter } from 'events';
+
+export type MessageCallback = (message: StreamMessage) => Promise<void> | void;
 
 export abstract class RequestReader extends EventEmitter implements StreamReader {
   type: string;
   private isRunning: boolean = false;
   private processingPromise: Promise<void> | null = null;
+  protected useNonBlocking: boolean = true;
+  private messageCallbacks: Set<MessageCallback> = new Set();
+  private isProcessingQueue: boolean = false;
 
   constructor(
     type: string,
@@ -24,7 +30,12 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
   async startEventLoop(): Promise<void> {
     if (this.isRunning) return;
     this.isRunning = true;
-    this.processingPromise = this.runEventLoopNonBlocking();
+    // 启动消息队列处理器
+    if (this.useNonBlocking) {
+      this.processingPromise = this.runEventLoopNonBlocking();
+    } else {
+      this.processingPromise = this.runEventLoop();
+    }
     return this.processingPromise;
   }
 
@@ -131,7 +142,11 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
         consecutiveEmpty = 0; // 重置空转计数
 
         // 处理消息
-        await this.processLineAsync(message);
+        // await this.processLineAsync(message);
+        // await this.processMessageWithSession(message);
+        this.handleMessageAsync(message).catch(error => {
+          console.error('Async message handling error:', error);
+        });
 
         // 添加处理间隔
         if (this.pollInterval > 0) {
@@ -140,7 +155,7 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
       } catch (error) {
         if (error instanceof Error && error.message.includes('timeout')) {
           consecutiveEmpty++;
-          console.log('Read timeout, continuing...');
+          console.log('Read timeout, continueing...');
           continue;
         }
         throw error;
@@ -158,7 +173,6 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
       // 使用 setImmediate 确保不阻塞事件循环
       setImmediate(async () => {
         try {
-          // 这里调用原来的 processLine 或自定义逻辑
           this.processLine(data);
         } catch (error) {
           console.error('Error processing message:', error);
@@ -170,12 +184,62 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
     });
   }
 
+  private async processMessageWithSession(dta: StreamMessage): Promise<void> {
+
+  }
+
+  // 异步处理消息（不阻塞事件循环）
+  private async handleMessageAsync(data: StreamMessage): Promise<void> {
+    return new Promise<void>((resolve) => {
+      queueMicrotask(async () => {
+        try {
+          this.triggerMessageProcessing(data);
+        } catch (error) {
+          console.error('Error in async message handling:', error);
+          this.emit('message.process.error', { message: data, error });
+        } finally {
+          resolve();
+        }
+      });
+    });
+  }
+
+  protected async triggerMessageProcessing(message: StreamMessage): Promise<void> {
+    this.emit('message.received', message);
+
+    if (this.messageCallbacks.size > 0) {
+      const callbacks = Array.from(this.messageCallbacks);
+      await Promise.all(
+        callbacks.map(async (callback) => {
+          try {
+            await callback(message);
+          } catch (error) {
+            console.error('Message callback error:', error);
+            this.emit('callback.error', { message, callback, error });
+          }
+        }),
+      );
+    }
+
+    await this.processLine(message);
+  }
+
+  public onMessage(callback: MessageCallback): void {
+    this.messageCallbacks.add(callback);
+  }
+
+  public offMessage(callback: MessageCallback): void {
+    this.messageCallbacks.delete(callback);
+  }
+
   private sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  private processLine(data: StreamMessage): void {
+  private async processLine(data: StreamMessage): Promise<void> {
     console.log('process line: ', data);
+    // 外部 IO Server 可以监听 'message.received' 事件
+    // 或者通过 onMessage 注册回调来处理
   }
 
   async stop(): Promise<void> {

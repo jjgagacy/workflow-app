@@ -1,7 +1,10 @@
 import { PluginConfig } from "@/config/config";
 import type { Server, ServerInfo } from "./server";
-import { RequestReader } from "@/core/reader.class";
+import { MessageCallback, RequestReader } from "@/core/reader.class";
 import { ResponseWriter } from "@/core/writer.class";
+import { StreamMessage } from "@/core/dtos/stream.dto";
+import { Worker } from 'worker_threads';
+import os from 'os';
 
 export class IOServer implements Server {
   private isRunning: boolean = false;
@@ -9,12 +12,16 @@ export class IOServer implements Server {
   private heartbeatPromise?: Promise<void>;
   private parentCheckPromise?: Promise<void>;
 
+  private workerPool: Worker[] = [];
+  private maxWorkers: number = Math.max(2, Math.floor(os.cpus().length / 2));
+
   constructor(
     private config: PluginConfig,
     private reader: RequestReader,
     private writer?: ResponseWriter
   ) {
     this.isRunning = false;
+    this.initWorkerPool();
   }
 
   async start(): Promise<void> {
@@ -22,6 +29,11 @@ export class IOServer implements Server {
       return;
     }
     this.isRunning = true;
+
+    const callback: MessageCallback = async (message) => {
+      await this.processMessageWithWorker(message);
+    };
+    this.reader.onMessage(callback);
 
     try {
       this.eventLoopPromise = this.runEventLoop();
@@ -49,6 +61,12 @@ export class IOServer implements Server {
     return new Promise<never>(() => {
       // 什么都不做，永远等待
     });
+  }
+
+  private initWorkerPool() {
+    for (let i = 0; i < this.maxWorkers; i++) {
+
+    }
   }
 
   private async parentAliveCheck(): Promise<void> {
@@ -129,6 +147,10 @@ export class IOServer implements Server {
   async gracefulStop(): Promise<void> {
     this.isRunning = false;
     this.cleanup();
+  }
+
+  private async processMessageWithWorker(message: StreamMessage): Promise<void> {
+    console.log("processing...");
   }
 
 }
