@@ -1,9 +1,11 @@
 import type { RouterContract } from "../../interfaces/router.interface";
+import { RequestReader } from "../reader.class";
 import { StreamReader, StreamWriter } from "../streams/stream";
+import { ResponseWriter } from "../writer.class";
 
 export class Router implements RouterContract {
   constructor(
-    private reader: StreamReader,
-    private writer?: StreamWriter
+    private reader: RequestReader,
+    private writer?: ResponseWriter
   ) { }
 }

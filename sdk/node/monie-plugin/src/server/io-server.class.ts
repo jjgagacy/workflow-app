@@ -1,20 +1,90 @@
 import { PluginConfig } from "@/config/config";
 import type { Server, ServerInfo } from "./server";
-import { StreamReader, StreamWriter } from "@/core/streams/stream";
+import { RequestReader } from "@/core/reader.class";
+import { ResponseWriter } from "@/core/writer.class";
 
 export class IOServer implements Server {
+  private isRunning: boolean = false;
+  private eventLoopPromise?: Promise<void>;
+  private heartbeatPromise?: Promise<void>;
+  private parentCheckPromise?: Promise<void>;
+
   constructor(
     private config: PluginConfig,
-    private reader: StreamReader,
-    private writer?: StreamWriter
-  ) { }
-
-  start(): Promise<void> {
-    throw new Error("Method not implemented.");
+    private reader: RequestReader,
+    private writer?: ResponseWriter
+  ) {
+    this.isRunning = false;
   }
 
-  stop(): Promise<void> {
-    throw new Error("Method not implemented.");
+  async start(): Promise<void> {
+    if (this.isRunning) {
+      return;
+    }
+    this.isRunning = true;
+
+    try {
+      this.eventLoopPromise = this.runEventLoop();
+      if (this.writer) {
+        this.heartbeatPromise = this.heartbeat();
+      }
+      if (this.reader.type === 'stdio') {
+        this.parentCheckPromise = this.parentAliveCheck();
+      }
+
+      // 创建一个永不完成的 Promise，保持服务运行
+      await this.keepAlive();
+    } catch (error) {
+      console.error('Service error:', error);
+      await this.restart();
+    }
+  }
+
+  private async runEventLoop(): Promise<void> {
+    return this.reader.startEventLoop();
+  }
+
+  private async keepAlive(): Promise<never> {
+    // 创建永不完成的 Promise
+    return new Promise<never>(() => {
+      // 什么都不做，永远等待
+    });
+  }
+
+  private async parentAliveCheck(): Promise<void> {
+    while (this.isRunning) {
+      console.log('check parent alive');
+      if (process.ppid === 1) { // 父进程退出
+        console.log('Parent process died, shutting down...');
+        this.isRunning = false;
+        this.cleanup();
+        process.exit(-1);
+      }
+      await this.sleep(500);
+    }
+  }
+
+  private async heartbeat(): Promise<void> {
+    while (this.isRunning) {
+      try {
+        await this.send_heartbeat();
+        await this.sleep(2000);
+      } catch (error) {
+        console.error('Heartbeat error:', error);
+        await this.sleep(1000);
+      }
+    }
+  }
+
+  private async send_heartbeat(): Promise<void> {
+    console.log('Sending heartbeat...', new Date().toISOString());
+    // 实际心跳逻辑
+    await this.sleep(500); // 模拟网络延迟
+  }
+
+  async stop(): Promise<void> {
+    this.isRunning = false;
+    this.cleanup();
   }
 
   handleRequest(request: any): Promise<any> {
@@ -24,4 +94,41 @@ export class IOServer implements Server {
   getServerInfo(): ServerInfo {
     throw new Error("Method not implemented.");
   }
+
+  private sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  private async cleanup() {
+    this.reader.stop();
+    this.writer?.close();
+    await this.sleep(2000);
+  }
+
+  private async restart(): Promise<void> {
+    if (this.eventLoopPromise) {
+      this.eventLoopPromise.catch(() => { }).finally(() => {
+        this.eventLoopPromise = this.runEventLoop();
+      })
+    }
+
+    if (this.heartbeatPromise) {
+      this.heartbeatPromise.catch(() => { }).finally(() => {
+        this.heartbeatPromise = this.heartbeat();
+      });
+    }
+
+    if (this.parentCheckPromise) {
+      this.parentCheckPromise.catch(() => { }).finally(() => {
+        this.parentCheckPromise = this.parentAliveCheck();
+      })
+    }
+  }
+
+  // gracefulStop for testing only
+  async gracefulStop(): Promise<void> {
+    this.isRunning = false;
+    this.cleanup();
+  }
+
 }

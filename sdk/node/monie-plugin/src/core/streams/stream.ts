@@ -1,5 +1,9 @@
+import { RequestReader } from "../reader.class";
+import { ResponseWriter } from "../writer.class";
+
 export interface StreamReader {
   read(): Promise<any>;
+  stop(): Promise<void>;
 }
 
 export interface StreamWriter {
@@ -8,6 +12,6 @@ export interface StreamWriter {
 }
 
 export interface StreamPair {
-  reader: StreamReader;
-  writer: StreamWriter;
+  reader: RequestReader;
+  writer: ResponseWriter;
 }

@@ -22,23 +22,19 @@ export class Plugin {
   }
 
   async startServer(): Promise<void> {
-    console.log('plugin daemon:', this.config.pluginDaemonUrl);
+    return this.ioServer.start();
   }
 
   async stopServer(): Promise<void> {
-
+    return this.ioServer.stop();
   }
 
   async start() {
-    console.log('Starting plugin...');
-
     await this.startServer();
-
-    console.log('Plugin started successfully');
   }
 
   async run(): Promise<void> {
-    this.start();
+    await this.start();
   }
 
   private registerRoutes(): void {
