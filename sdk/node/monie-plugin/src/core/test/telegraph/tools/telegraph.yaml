@@ -1,0 +1,12 @@
+identity:
+  name: "telegraph"
+  author: "jjgagacy"
+description:
+  human:
+    en_US: "test plugin"
+    zh_Hans: "测试插件"
+parameters:
+  - name: query
+extra:
+  node:
+    source: tools/telegraph.js

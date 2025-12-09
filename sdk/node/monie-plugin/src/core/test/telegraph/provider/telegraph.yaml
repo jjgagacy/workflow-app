@@ -1,0 +1,35 @@
+identity:
+  author: "jjgagacy"
+  name: "telegraph"
+  label:
+    en_US: "telegraph"
+    zh_Hans: "telegraph"
+  description:
+    en_US: "test plugin"
+    zh_Hans: "test plugin"
+  icon: "icon.svg"
+
+oauth_schema:
+  client_schema:
+    - name: "client_id"
+    - name: "client_secret"
+tools:
+  - tools/telegraph.yaml
+extra:
+  node:
+    source: provider/telegraph.js
+
+credentials_for_provider:
+  telegraph_access_token:
+    type: secret-input
+    required: true
+    label:
+      en_US: Telegraph Access Token
+      zh_Hans: Telegraph Access Token
+    placeholder:
+      en_US: Enter your Telegraph access token
+      zh_Hans: Please enter your Telegraph access token
+    help:
+      en_US: How to get your Telegraph access token
+      zh_Hans: How to get your Telegraph access token
+    url: https://telegra.ph/api#createAccount

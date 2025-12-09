@@ -3,41 +3,39 @@ import { Router } from "./core/classes/router.class";
 import { EnvLoader } from "./config/env-loader";
 import { PluginConfig } from "./config/config";
 import { StreamFactory } from "./core/factory.class";
+import { StreamMessage } from "./core/dtos/stream.dto";
 
-export class Plugin {
-  private config: PluginConfig;
-  private ioServer: IOServer;
+export class Plugin extends IOServer {
   private router: Router
 
   constructor(configPath?: string) {
     const envLoader = new EnvLoader();
     envLoader.load(configPath);
-    this.config = new PluginConfig(envLoader);
+    const config = new PluginConfig(envLoader);
+    const { reader, writer } = StreamFactory.create(config);
+    super(config, reader, writer);
 
-    const { reader, writer } = StreamFactory.create(this.config);
-    this.ioServer = new IOServer(this.config, reader, writer);
     this.router = new Router(reader, writer);
-
     this.registerRoutes();
   }
 
   async startServer(): Promise<void> {
-    return this.ioServer.start();
+    return this.start();
   }
 
   async stopServer(): Promise<void> {
-    return this.ioServer.stop();
-  }
-
-  async start() {
-    await this.startServer();
+    return this.stop();
   }
 
   async run(): Promise<void> {
-    await this.start();
+    await this.startServer();
   }
 
   private registerRoutes(): void {
     // Register your routes here
+  }
+
+  protected override isCpuTask(message: StreamMessage): boolean {
+    return true;
   }
 }

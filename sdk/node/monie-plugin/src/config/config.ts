@@ -21,6 +21,7 @@ export class PluginConfig implements PluginConfigContract {
 
   constructor(private envLoader: EnvLoader) {
     const rawEnv = this.envLoader.getRawEnv();
+    console.log(rawEnv);
     this.installMethod = this.parseInstallMethod(rawEnv.INSTALL_METHOD);
     this.maxRequestTimeout = this.parseNumber(rawEnv.MAX_REQUEST_TIMEOUT, 300)!;
     this.pluginDaemonUrl = this.parseUrl(rawEnv.PLUGIN_DAEMON_URL, 'http://localhost:50002');

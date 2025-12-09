@@ -8,20 +8,26 @@
     "test": "npx jest",
     "test:watch": "npx jest --watch",
     "test:coverage": "npx jest --coverage",
-    "build": "tsc",
-    "dev": "tsc --watch"
+    "build": "tsc && tsc-alias",
+    "dev": "tsc --watch",
+    "test:telegraph": "tsc && tsc-alias && npm run copy-env-file && NODE_ENV=development node dist/src/core/test/telegraph/main.js",
+    "copy-env-file": "cp src/core/test/telegraph/.env.development dist/src/core/test/telegraph 2>/dev/null"
   },
   "files": [
     "dist"
   ],
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "@types/node": "^24.10.2",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
     "jest": "^30.2.0",
     "prettier": "^3.4.2",
     "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.16",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.20.0"
   },

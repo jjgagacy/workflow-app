@@ -1,5 +1,6 @@
-import dotenv from 'dotenv';
+import dotenv, { config } from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
+import path from 'path';
 
 export class RawEnvConfig {
   INSTALL_METHOD: string | undefined;
@@ -21,8 +22,26 @@ export class EnvLoader {
   private loadedEnv: NodeJS.ProcessEnv = {};
 
   load(configPath?: string): NodeJS.ProcessEnv {
+    const getEnvPath = () => {
+      if (configPath) {
+        const env = process.env.NODE_ENV || 'development';
+        const envSpecificFile = `.env.${env}`;
+        const separator = path.sep;
+
+        if (configPath.endsWith(separator)) {
+          return configPath + envSpecificFile;
+        }
+
+        return path.join(configPath, envSpecificFile);
+      }
+
+      const env = process.env.NODE_ENV || 'development';
+      return `.env.${env}`;
+    }
+
+    console.log('pp', getEnvPath())
     const result = dotenv.config({
-      path: configPath || '',
+      path: getEnvPath(),
       debug: process.env.NODE_ENV === 'development',
     })
 
