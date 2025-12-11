@@ -1,4 +1,4 @@
-export type RouteHandler = (request: any) => Promise<any>;
+import { RouteHandler } from "./handler.type";
 
 export interface RouteMatch {
   path: string;

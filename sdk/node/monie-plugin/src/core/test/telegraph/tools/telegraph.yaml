@@ -1,3 +1,6 @@
+# module: path relative to project src (or dist) that worker/main can import (must be .js in runtime)
+# class: exported class name in module
+# cpuBound: true => should run in worker threads; false => run in main thread
 identity:
   name: "telegraph"
   author: "jjgagacy"
@@ -9,4 +12,6 @@ parameters:
   - name: query
 extra:
   node:
-    source: tools/telegraph.js
+    module: tools/telegraph.js
+    class: TelegraphHandler
+    cpuBound: false

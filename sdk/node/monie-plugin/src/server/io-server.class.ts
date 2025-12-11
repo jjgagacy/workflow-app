@@ -8,6 +8,7 @@ import path from "path";
 import { DynamicThreadPool } from "poolifier";
 import { StreamRequestEvent } from "@/core/entities/event.enum";
 import { TaskData, TaskResult } from "./workers/worker.type";
+import { PluginRegistry } from "./plugin-registry";
 
 export class IOServer implements Server {
   private isRunning: boolean = false;
@@ -17,6 +18,7 @@ export class IOServer implements Server {
   private maxWorkers: number = Math.max(2, Math.floor(os.cpus().length / 2));
   private pool: DynamicThreadPool<TaskData, TaskResult>;
   private messageHandler?: (msg: StreamMessage) => Promise<any> | any;
+  private registry: PluginRegistry;
 
   constructor(
     protected config: PluginConfig,
@@ -24,6 +26,7 @@ export class IOServer implements Server {
     private writer?: ResponseWriter
   ) {
     this.isRunning = false;
+    this.registry = new PluginRegistry(config);
     this.pool = new DynamicThreadPool(
       2,
       this.maxWorkers * 2,

@@ -10,15 +10,18 @@
     "test:coverage": "npx jest --coverage",
     "build": "tsc && tsc-alias",
     "dev": "tsc --watch",
-    "test:telegraph": "tsc && tsc-alias && npm run copy-env-file && NODE_ENV=development node dist/src/core/test/telegraph/main.js",
-    "copy-env-file": "cp src/core/test/telegraph/.env.development dist/src/core/test/telegraph 2>/dev/null"
+    "test:telegraph": "tsc && tsc-alias && npm run copy-env-file && npm run copy-asset && NODE_ENV=development node dist/src/core/test/telegraph/main.js",
+    "copy-env-file": "cp src/core/test/telegraph/.env.development dist/src/core/test/telegraph 2>/dev/null",
+    "copy-asset": "npx copyfiles -u 0 \"src/**/*.{yaml,yml,json}\" dist/"
   },
   "files": [
     "dist"
   ],
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.10.2",
+    "copyfiles": "^2.4.1",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
@@ -54,6 +57,7 @@
   "dependencies": {
     "dotenv": "^17.2.3",
     "dotenv-expand": "^12.0.3",
+    "js-yaml": "^4.1.1",
     "poolifier": "^5.1.7"
   }
 }

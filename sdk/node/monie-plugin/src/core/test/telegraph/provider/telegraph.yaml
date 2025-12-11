@@ -8,17 +8,16 @@ identity:
     en_US: "test plugin"
     zh_Hans: "test plugin"
   icon: "icon.svg"
-
 oauth_schema:
   client_schema:
     - name: "client_id"
     - name: "client_secret"
-tools:
-  - tools/telegraph.yaml
-extra:
-  node:
-    source: provider/telegraph.js
-
+plugins:
+  tools:
+    - tools/telegraph.yaml
+  models:
+  endpoints:
+  agent_strategies:
 credentials_for_provider:
   telegraph_access_token:
     type: secret-input
