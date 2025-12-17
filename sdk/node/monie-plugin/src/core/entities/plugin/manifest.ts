@@ -1,5 +1,4 @@
 export class PluginManifest {
-  providers: string[] = [];
   tools: string[] = [];
   models: string[] = [];
   endpoints: string[] = [];

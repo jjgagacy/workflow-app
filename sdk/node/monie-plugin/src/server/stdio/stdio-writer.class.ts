@@ -1,7 +1,6 @@
-import { StreamWriter } from "@/core/streams/stream";
+import { ResponseWriter } from "@/core/writer.class";
 
-export class StdioWriter implements StreamWriter {
-
+export class StdioWriter extends ResponseWriter {
   write(data: any): Promise<void> {
     return new Promise((resolve, reject) => {
       process.stdout.write(String(data), (error) => {
@@ -14,5 +13,4 @@ export class StdioWriter implements StreamWriter {
   close(): Promise<void> {
     throw new Error("Method not implemented.");
   }
-
 }

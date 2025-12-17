@@ -1,6 +1,6 @@
 import { loadYamlFile } from "@/utils/yaml.util";
 import { ProviderConfig } from "./provider";
-import { ToolConfigurationExtra } from "./tool";
+import { ToolConfigurationExtra } from "./extra";
 
 export class EndpointConfigurationExtra extends ToolConfigurationExtra {
 }
@@ -73,3 +73,4 @@ export class EndpointProviderConfiguration {
     return endpoints;
   }
 }
+

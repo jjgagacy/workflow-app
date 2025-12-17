@@ -15,9 +15,10 @@ oauth_schema:
 plugins:
   tools:
     - tools/telegraph.yaml
-  models:
-  endpoints:
-  agent_strategies:
+extra:
+  node:
+    module: provider/telegraph.js
+    class: TelegraphProvider
 credentials_for_provider:
   telegraph_access_token:
     type: secret-input

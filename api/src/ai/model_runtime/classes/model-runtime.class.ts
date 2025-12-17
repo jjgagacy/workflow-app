@@ -25,7 +25,7 @@ export class I18nObject {
 export class PriceConfig {
   input: number;
   @IsOptional()
-  ouput?: number;
+  output?: number;
   unit: number;
   currency: string;
 }

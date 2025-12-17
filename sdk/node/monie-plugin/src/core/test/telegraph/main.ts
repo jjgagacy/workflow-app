@@ -6,7 +6,7 @@ class TelegraphMain extends Plugin {
     super(__dirname)
   }
 
-  protected isCpuTask(message: StreamMessage): boolean {
+  protected isCPUTask(message: StreamMessage): boolean {
     return true;
   }
 }

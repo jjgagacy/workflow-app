@@ -15,13 +15,20 @@ export class StdioReader extends RequestReader {
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
+      // Disable terminal constrol sequence and line buffering
       terminal: false,
+      // Infinity: treat CR and LF as separate line endings (preserve original formatting)
       crlfDelay: Infinity,
     });
 
     this.setupEventListeners();
   }
 
+  // Passive reading: Only reads from readline interface
+  // Limitations:
+  // 1. Blocking: Must wait for readline even if messages are already available
+  // 2. Single-source: Cannot integrate with other event sources
+  // 3. No Flow Control: Consumer cannot signal backpressure
   // async *readStreamAsync(): AsyncGenerator<StreamMessage, void, unknown> {
   //   for await (const line of this.rl) {
   //     if (line.trim()) {
@@ -35,6 +42,11 @@ export class StdioReader extends RequestReader {
   //   }
   // }
 
+  // Active control: Manages multiple message sources (queue + real-time)
+  // Advantages:
+  // 1. Non-Blocking: Doesn't block on readline where there are queued messages
+  // 2. Memory efficient: Only buffers what's necessary (queues can be bounded)
+  // 3. Responsive: Can immediately yeild queued messages without I/O delay
   async *readStreamAsync(): AsyncGenerator<StreamMessage, void, unknown> {
     while (!this.isClosed || this.messageQueue.length > 0) {
       if (this.messageQueue.length > 0) {
@@ -42,7 +54,6 @@ export class StdioReader extends RequestReader {
         yield message;
         continue;
       }
-
       if (this.errorQueue.length > 0) {
         const error = this.errorQueue.shift()!;
         throw error;
@@ -55,25 +66,10 @@ export class StdioReader extends RequestReader {
       const nextMessage = await new Promise<IteratorResult<StreamMessage>>((resolve) => {
         this.resolveQueue = resolve;
       });
-
       if (nextMessage.done) {
         break;
       }
-
       yield nextMessage.value;
-    }
-  }
-
-  close(): void {
-    if (!this.isClosed) {
-      this.rl.close();
-      this.isClosed = true;
-
-      // 清理等待的 promise
-      if (this.resolveQueue) {
-        this.resolveQueue({ value: undefined, done: true });
-        this.resolveQueue = null;
-      }
     }
   }
 
@@ -96,8 +92,8 @@ export class StdioReader extends RequestReader {
         }
       } catch (error) {
         this.emit('stream.read.error', error);
-        // 如果有等待的消费者，传递错误
-        // 将错误加入错误队列
+        // If there are waiting consumers, propagate the error
+        // And the error to the error queue for later handling
         if (error instanceof Error) {
           this.errorQueue.push(error);
         }
@@ -122,5 +118,18 @@ export class StdioReader extends RequestReader {
         this.resolveQueue = null;
       }
     })
+  }
+
+  close(): void {
+    if (!this.isClosed) {
+      this.rl.close();
+      this.isClosed = true;
+
+      // Clear waiting promise
+      if (this.resolveQueue) {
+        this.resolveQueue({ value: undefined, done: true });
+        this.resolveQueue = null;
+      }
+    }
   }
 }

@@ -1,5 +1,6 @@
 import { CommonParameterType } from "../enums/form.enum";
 import { I18nObject } from "../i18n";
+import { ToolConfigurationExtra } from "./extra";
 import { ParameterOption } from "./parameter";
 import { Mapping } from "./provider";
 
@@ -95,36 +96,6 @@ export class ToolDescription {
   }
 }
 
-export class NodeConfig {
-  module: string;
-  class: string;
-  cpuBound: boolean;
-
-  constructor(data: Partial<NodeConfig> = {}) {
-    this.module = data.module || '';
-    this.class = data.class || '';
-    this.cpuBound = data.cpuBound || false;
-  }
-}
-
-export class PythonConfig {
-  module: string;
-
-  constructor(data: Partial<PythonConfig> = {}) {
-    this.module = data.module || '';
-  }
-}
-
-export class ToolConfigurationExtra {
-  node?: NodeConfig | undefined;
-  python?: PythonConfig | undefined;
-
-  constructor(data: Partial<ToolConfigurationExtra> = {}) {
-    this.node = data.node || undefined;
-    this.python = data.python || undefined;
-  }
-}
-
 export class ToolConfiguration {
   identity: ToolIdentity;
   parameters: ToolParameter[] = [];
@@ -165,5 +136,4 @@ export type ToolLabelType = typeof ToolLabel[keyof typeof ToolLabel];
 export function getToolLabel(label: ToolLabelType): string {
   return label;
 }
-
 

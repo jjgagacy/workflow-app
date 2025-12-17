@@ -4,6 +4,7 @@ import { EnvLoader } from "./config/env-loader";
 import { PluginConfig } from "./config/config";
 import { StreamFactory } from "./core/factory.class";
 import { StreamMessage } from "./core/dtos/stream.dto";
+import { StreamRequestEvent } from "./core/entities/event.enum";
 
 export class Plugin extends IOServer {
   private router: Router
@@ -15,6 +16,7 @@ export class Plugin extends IOServer {
     const { reader, writer } = StreamFactory.create(config);
     super(config, reader, writer);
 
+    this.setHandler(this.handleMessage.bind(this));
     this.router = new Router(reader, writer);
     this.registerRoutes();
   }
@@ -35,7 +37,22 @@ export class Plugin extends IOServer {
     // Register your routes here
   }
 
-  protected override isCpuTask(message: StreamMessage): boolean {
+  protected override isCPUTask(message: StreamMessage): boolean {
     return true;
+  }
+
+  async handleMessage(msg: StreamMessage): Promise<any> {
+    switch (msg.event) {
+      case StreamRequestEvent.REQUEST:
+        return this.handleRequestMessage(msg);
+      case StreamRequestEvent.INVOCATION_RESPONSE:
+        return {};
+      default:
+        return { error: "Unknown event type" };
+    }
+  }
+
+  protected async handleRequestMessage(msg: StreamMessage): Promise<any> {
+    return { ok: true, data: "default" };
   }
 }

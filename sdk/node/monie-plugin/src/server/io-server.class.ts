@@ -71,9 +71,17 @@ export class IOServer implements Server {
   }
 
   private async keepAlive(): Promise<never> {
-    // 创建永不完成的 Promise
-    return new Promise<never>(() => {
-      // 什么都不做，永远等待
+    // KeepAlive Promise
+    return new Promise<never>((_, reject) => {
+      const cleanup = () => {
+        this.isRunning = false;
+        this.cleanup();
+        reject(new Error('KeepAlive terminated'));
+      };
+
+      process.on('SIGINT', cleanup);
+      process.on('SIGTERM', cleanup);
+      // if (!this.isRunning) cleanup();
     });
   }
 
@@ -84,7 +92,6 @@ export class IOServer implements Server {
         console.log('Parent process died, shutting down...');
         this.isRunning = false;
         this.cleanup();
-        process.exit(-1);
       }
       await this.sleep(500);
     }
@@ -129,6 +136,7 @@ export class IOServer implements Server {
     this.reader.stop();
     this.writer?.close();
     await this.sleep(2000);
+    process.exit(-1);
   }
 
   private async restart(): Promise<void> {
@@ -196,24 +204,18 @@ export class IOServer implements Server {
     this.messageHandler = handler;
   }
 
-  protected isCpuTask(message: StreamMessage): boolean {
+  protected isCPUTask(message: StreamMessage): boolean {
     return false;
   }
 
   private async dispatchMessage(message: StreamMessage): Promise<void> {
-    if (!this.messageHandler) {
-      console.warn("No message Handler registered.");
-      return;
+    if (this.isCPUTask(message)) {
+      return this.handleCPUTask(message);
     }
-
-    if (this.isCpuTask(message)) {
-      return this.handleCpuTask(message);
-    } else {
-      return this.handleIoTask(message);
-    }
+    return this.handleIOTask(message);
   }
 
-  private async handleCpuTask(message: StreamMessage): Promise<void> {
+  private async handleCPUTask(message: StreamMessage): Promise<void> {
     try {
       const taskData: TaskData = {
         messageId: message.sessionId,
@@ -237,10 +239,14 @@ export class IOServer implements Server {
     }
   }
 
-  private async handleIoTask(message: StreamMessage): Promise<void> {
+  private async handleIOTask(message: StreamMessage): Promise<void> {
+    if (!this.messageHandler) {
+      console.warn("No message Handler registered.");
+      return;
+    }
+
     try {
       const result = await this.messageHandler!(message);
-
       if (this.writer) {
         this.writer.write(JSON.stringify({
           sessionId: message.sessionId, result
@@ -251,5 +257,4 @@ export class IOServer implements Server {
       // 发送错误响应
     }
   }
-
 }

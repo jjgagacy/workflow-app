@@ -1,4 +1,3 @@
-import { callbackify } from "util";
 import { StreamMessage } from "./dtos/stream.dto";
 import { StreamReader } from "./streams/stream";
 import { EventEmitter } from 'events';
@@ -22,10 +21,6 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
   }
 
   abstract readStreamAsync(): AsyncGenerator<StreamMessage, void, unknown>;
-
-  read(): Promise<any> {
-    throw new Error("Method not implemented.");
-  }
 
   async startEventLoop(): Promise<void> {
     if (this.isRunning) return;
@@ -82,7 +77,7 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
          */
         for await (const line of this.readStreamAsync()) {
           if (!this.isRunning) break;
-          this.processLine(line);
+          this.read(line);
           // 添加小延迟，避免处理太快
           if (this.pollInterval > 0) {
             await this.sleep(this.pollInterval);
@@ -95,7 +90,7 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
         await this.sleep(1000);
       }
     }
-    this.emit('stopped');
+    this.emit('reader.stopped');
   }
 
   async runEventLoopNonBlocking(): Promise<void> {
@@ -108,17 +103,16 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
         await this.sleep(1000);
       }
     }
-    this.emit('stopped');
+    this.emit('event.loop.stopped');
   }
 
   private async processMessagesNonBlocking(): Promise<void> {
     const iterator = this.readStreamAsync()[Symbol.asyncIterator]();
     let consecutiveEmpty = 0;
-    const maxEmptyIterations = 10; // 防止空转
+    // Limit empty iterations to avoid busy waiting (prevent idle/empty loops)
+    const maxEmptyIterations = 10;
 
-    // console.log('start processing message');
     while (this.isRunning && consecutiveEmpty < maxEmptyIterations) {
-      // console.log('running process message', consecutiveEmpty);
       try {
         // 使用 Promise.race 避免长时间阻塞
         const result = await Promise.race([
@@ -130,25 +124,18 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
             }
           })
         ]);
-
         if (result.done) {
           // console.log('Stream ended, will retry...');
           await this.sleep(1000); // 等待后重试
           consecutiveEmpty++;
           continue;
         }
-
         const message = result.value;
-        consecutiveEmpty = 0; // 重置空转计数
-
-        // 处理消息
-        // await this.processLineAsync(message);
-        // await this.processMessageWithSession(message);
-        this.handleMessageAsync(message).catch(error => {
-          console.error('Async message handling error:', error);
-        });
-
-        // 添加处理间隔
+        // reset empty loop counter
+        consecutiveEmpty = 0;
+        // handle messages
+        this.handleMessageAsync(message);
+        // add poll interval
         if (this.pollInterval > 0) {
           await this.sleep(this.pollInterval);
         }
@@ -161,7 +148,6 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
         throw error;
       }
     }
-
     if (consecutiveEmpty >= maxEmptyIterations) {
       console.warn('Too many empty iterations, restarting event loop');
     }
@@ -173,7 +159,7 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
       // 使用 setImmediate 确保不阻塞事件循环
       setImmediate(async () => {
         try {
-          this.processLine(data);
+          this.read(data);
         } catch (error) {
           console.error('Error processing message:', error);
           this.emit('message.process.error', { message: data, error });
@@ -182,10 +168,6 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
         }
       });
     });
-  }
-
-  private async processMessageWithSession(dta: StreamMessage): Promise<void> {
-
   }
 
   // 异步处理消息（不阻塞事件循环）
@@ -215,13 +197,13 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
             await callback(message);
           } catch (error) {
             console.error('Message callback error:', error);
-            this.emit('callback.error', { message, callback, error });
+            this.emit('reader.callback.error', { message, callback, error });
           }
         }),
       );
     }
 
-    await this.processLine(message);
+    await this.read(message);
   }
 
   public onMessage(callback: MessageCallback): void {
@@ -236,14 +218,13 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  private async processLine(data: StreamMessage): Promise<void> {
+  // 外部 IO Server 可以监听 'message.received' 事件
+  // 或者通过 onMessage 注册回调来处理
+  async read(data: StreamMessage): Promise<any> {
     console.log('process line: ', data);
-    // 外部 IO Server 可以监听 'message.received' 事件
-    // 或者通过 onMessage 注册回调来处理
   }
 
   async stop(): Promise<void> {
     this.isRunning = false;
   }
-
 }

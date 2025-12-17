@@ -2,7 +2,7 @@ import { RequestReader } from "../reader.class";
 import { ResponseWriter } from "../writer.class";
 
 export interface StreamReader {
-  read(): Promise<any>;
+  read(data: any): Promise<any>;
   stop(): Promise<void>;
 }
 

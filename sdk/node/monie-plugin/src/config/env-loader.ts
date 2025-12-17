@@ -39,7 +39,6 @@ export class EnvLoader {
       return `.env.${env}`;
     }
 
-    console.log('pp', getEnvPath())
     const result = dotenv.config({
       path: getEnvPath(),
       debug: process.env.NODE_ENV === 'development',

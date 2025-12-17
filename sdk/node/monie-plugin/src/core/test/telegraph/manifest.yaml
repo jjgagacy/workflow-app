@@ -27,10 +27,8 @@ resource:
       enabled: true
       size: 1048576
 plugins:
-  providers:
-    - provider/telegraph.yaml
   tools:
-    - tools/telegraph.yaml
+    - provider/telegraph.yaml
   models:
   endpoints:
   agent_strategies:

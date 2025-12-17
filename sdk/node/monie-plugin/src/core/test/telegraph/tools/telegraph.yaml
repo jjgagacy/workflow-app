@@ -13,5 +13,5 @@ parameters:
 extra:
   node:
     module: tools/telegraph.js
-    class: TelegraphHandler
+    class: TelegraphTool
     cpuBound: false

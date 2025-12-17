@@ -14,7 +14,7 @@ export interface Reader {
 }
 
 export interface Writer {
-  write(data: string): void;
-  close(): void;
+  write(data: string): Promise<void>;
+  close(): Promise<void>;
 }
 

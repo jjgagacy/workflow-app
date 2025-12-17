@@ -5,9 +5,9 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "npx jest",
-    "test:watch": "npx jest --watch",
-    "test:coverage": "npx jest --coverage",
+    "test": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" npx jest",
+    "test:watch": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" npx jest --watch",
+    "test:coverage": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" npx jest --coverage",
     "build": "tsc && tsc-alias",
     "dev": "tsc --watch",
     "test:telegraph": "tsc && tsc-alias && npm run copy-env-file && npm run copy-asset && NODE_ENV=development node dist/src/core/test/telegraph/main.js",
@@ -22,6 +22,7 @@
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.10.2",
     "copyfiles": "^2.4.1",
+    "cross-env": "^10.1.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
@@ -50,6 +51,9 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
+    "testEnvironmentOptions": {
+      "vmModules": true
+    },
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1"
     }

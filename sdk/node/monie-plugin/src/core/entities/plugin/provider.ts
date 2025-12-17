@@ -6,6 +6,7 @@ import { PluginFiles } from "./manifest";
 import { OauthSchema } from "./oauth";
 import { ParameterOption } from "./parameter";
 import { ToolProviderIdentity } from "./tool";
+import { ToolConfigurationExtra } from "./extra";
 
 export type Mapping<T = any> = Record<string, T>;
 
@@ -44,12 +45,14 @@ export class ToolProviderConfiguration {
   credentialsForProvider: ProviderConfig[] = [];
   oauthSchema?: OauthSchema | undefined;
   plugins: PluginFiles;
+  extra: ToolConfigurationExtra;
 
   constructor(data: Partial<ToolProviderConfiguration>) {
     this.identity = data.identity || new ToolProviderIdentity();
     this.credentialsForProvider = data.credentialsForProvider || [];
     this.oauthSchema = data.oauthSchema || undefined;
     this.plugins = data.plugins || new PluginFiles();
+    this.extra = data.extra || new ToolConfigurationExtra();
   }
 }
 

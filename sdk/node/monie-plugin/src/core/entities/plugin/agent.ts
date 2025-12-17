@@ -1,6 +1,7 @@
 import { I18nObject } from "../i18n";
 import { Mapping } from "./provider";
-import { ToolConfigurationExtra, ToolIdentity, ToolParameterOption, ToolProviderIdentity } from "./tool";
+import { ToolIdentity, ToolParameterOption, ToolProviderIdentity } from "./tool";
+import { ToolConfigurationExtra } from "./extra";
 
 export class AgentStrategyProviderIdentity extends ToolProviderIdentity { }
 
@@ -48,7 +49,7 @@ export class AgentStrategyConfiguration {
   outputSchema?: Mapping | undefined;
   features: AgentStrategyFeature[] = [];
 
-  constructor(data: Partial<AgentStrategyConfiguration>) {
+  constructor(data: Partial<AgentStrategyConfiguration> = {}) {
     this.identity = data.identity || new AgentStrategyIdentity();
     this.parameters = data.parameters || [];
     this.description = data.description || {};
@@ -58,3 +59,12 @@ export class AgentStrategyConfiguration {
   }
 }
 
+export class AgentStrategyProviderConfiguration {
+  identity: AgentStrategyProviderIdentity;
+  strategies: AgentStrategyConfiguration[] = [];
+
+  constructor(data: Partial<AgentStrategyProviderConfiguration> = {}) {
+    this.identity = data.identity || new AgentStrategyProviderIdentity();
+    this.strategies = data.strategies || [];
+  }
+}
