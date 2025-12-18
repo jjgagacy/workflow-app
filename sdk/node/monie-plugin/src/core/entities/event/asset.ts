@@ -11,3 +11,7 @@ export class AssetChunk {
   }
 }
 
+export interface PluginAsset {
+  filename: string;
+  data: Buffer;
+}

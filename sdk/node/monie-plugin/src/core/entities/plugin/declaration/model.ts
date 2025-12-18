@@ -1,8 +1,8 @@
-import { Provider } from "./provider"
+import { Provider } from "../provider"
 import { NodeConfig } from "./extra";
-import { ProviderBase } from "./provider-base";
-import { ModelType } from "../enums/model.enum";
-import { AIModel } from "./ai-model";
+import { ProviderBase } from "../provider-base";
+import { ModelType } from "../../enums/model.enum";
+import { AIModel } from "../ai-model";
 
 export class ModelPythonExtra {
   providerSource: string;

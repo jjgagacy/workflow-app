@@ -1,5 +1,5 @@
 import { loadYamlFile } from "@/utils/yaml.util";
-import { ProviderConfig } from "./provider";
+import { ProviderConfig } from "../provider";
 import { ToolConfigurationExtra } from "./extra";
 
 export class EndpointConfigurationExtra extends ToolConfigurationExtra {

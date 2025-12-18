@@ -19,4 +19,11 @@ export enum PluginProviderType {
   Endpoint = "endpoint",
 }
 
-
+export enum PluginInvokeType {
+  Tool = 'tool',
+  Model = 'model',
+  Endpoint = 'endpoint',
+  Agent = 'agent_strategy',
+  OAuth = 'oauth',
+  DynamicParameter = 'dynamic_parameter'
+}

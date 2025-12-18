@@ -1,5 +1,5 @@
 import { IOServer } from "./server/io-server.class";
-import { Router } from "./core/classes/router.class";
+import { Router } from "./server/route/router.class";
 import { EnvLoader } from "./config/env-loader";
 import { PluginConfig } from "./config/config";
 import { StreamFactory } from "./core/factory.class";
@@ -7,8 +7,6 @@ import { StreamMessage } from "./core/dtos/stream.dto";
 import { StreamRequestEvent } from "./core/entities/event.enum";
 
 export class Plugin extends IOServer {
-  private router: Router
-
   constructor(configPath?: string) {
     const envLoader = new EnvLoader();
     envLoader.load(configPath);
@@ -17,8 +15,6 @@ export class Plugin extends IOServer {
     super(config, reader, writer);
 
     this.setHandler(this.handleMessage.bind(this));
-    this.router = new Router(reader, writer);
-    this.registerRoutes();
   }
 
   async startServer(): Promise<void> {
@@ -31,10 +27,6 @@ export class Plugin extends IOServer {
 
   async run(): Promise<void> {
     await this.startServer();
-  }
-
-  private registerRoutes(): void {
-    // Register your routes here
   }
 
   protected override isCPUTask(message: StreamMessage): boolean {

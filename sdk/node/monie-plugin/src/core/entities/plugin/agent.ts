@@ -1,7 +1,9 @@
 import { I18nObject } from "../i18n";
 import { Mapping } from "./provider";
-import { ToolIdentity, ToolParameterOption, ToolProviderIdentity } from "./tool";
-import { ToolConfigurationExtra } from "./extra";
+import { ToolIdentity, ToolParameterOption, ToolProviderIdentity } from "./declaration/tool";
+import { ToolConfigurationExtra } from "./declaration/extra";
+import { InvokeMessage, TextInvokeMessage } from "@/core/dtos/invoke-message.dto";
+import { MessageType } from "@/core/dtos/message.dto";
 
 export class AgentStrategyProviderIdentity extends ToolProviderIdentity { }
 
@@ -67,4 +69,7 @@ export class AgentStrategyProviderConfiguration {
     this.identity = data.identity || new AgentStrategyProviderIdentity();
     this.strategies = data.strategies || [];
   }
+}
+
+export class AgentInvokeMessage extends TextInvokeMessage {
 }

@@ -1,5 +1,5 @@
 import { I18nObject } from "../i18n";
-import { PluginManifest } from "./manifest";
+import { PluginManifest } from "./declaration/manifest";
 import { PluginResourceRequirements } from "./permission";
 import { PluginType } from "../enums/plugin.type";
 import { PluginMeta, PluginRunner } from "./runner";

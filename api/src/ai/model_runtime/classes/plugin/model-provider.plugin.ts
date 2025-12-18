@@ -28,8 +28,6 @@ export class ModelProviderPlugin {
     throw new NotImplementedException();
   }
 
-
-
   async getAllProviderModels(tenantId: string): Promise<Map<string, ProviderModel[]>> {
     throw new NotImplementedException();
   }
@@ -37,7 +35,5 @@ export class ModelProviderPlugin {
   async getAllProviders(tenantId: string): Promise<Provider[]> {
     return [];
   }
-
-
 
 }

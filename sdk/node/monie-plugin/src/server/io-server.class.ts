@@ -9,6 +9,12 @@ import { DynamicThreadPool } from "poolifier";
 import { StreamRequestEvent } from "@/core/entities/event.enum";
 import { TaskData, TaskResult } from "./workers/worker.type";
 import { PluginRegistry } from "./plugin-registry";
+import { PluginExecutor } from "./plugin-executor";
+import { Router } from "./route/router.class";
+import { Route } from "./route/route-handler";
+import { PluginInvokeType } from "@/core/entities/enums/plugin.type";
+import { ToolActions } from "@/core/entities/plugin/request/request";
+import { ToolInvokeRequest } from "@/core/entities/plugin/request/tool.request";
 
 export class IOServer implements Server {
   private isRunning: boolean = false;
@@ -19,6 +25,9 @@ export class IOServer implements Server {
   private pool: DynamicThreadPool<TaskData, TaskResult>;
   private messageHandler?: (msg: StreamMessage) => Promise<any> | any;
   private registry: PluginRegistry;
+  private pluginExecutor: PluginExecutor;
+  private router: Router;
+  private routes: Route[] = [];
 
   constructor(
     protected config: PluginConfig,
@@ -37,6 +46,9 @@ export class IOServer implements Server {
         },
         onlineHandler: () => { },
       });
+    this.router = new Router(reader, writer);
+    this.pluginExecutor = new PluginExecutor(this.config, this.registry);
+    this.registerRoutes();
   }
 
   async start(): Promise<void> {
@@ -256,5 +268,23 @@ export class IOServer implements Server {
       console.error('Error io task processing message:', error);
       // 发送错误响应
     }
+  }
+
+  private registerRoutes() {
+    this.router.registerRoute<ToolInvokeRequest>(
+      (data: any) =>
+        data.type === PluginInvokeType.Tool &&
+        data.action === ToolActions.InvokeTool,
+      (data: any) => data as ToolInvokeRequest,
+      this.pluginExecutor.invokeTool.bind(this.pluginExecutor)
+    );
+
+    this.router.registerRoute<any>(
+      (data: any) =>
+        data.type === PluginInvokeType.Tool &&
+        data.action === ToolActions.ValidateCredentials,
+      (data: any) => data as any,
+      this.pluginExecutor.validateToolProviderCredentials.bind(this.pluginExecutor),
+    );
   }
 }

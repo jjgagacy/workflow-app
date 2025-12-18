@@ -2,7 +2,6 @@ import { BlobInvokeMessage, InvokeMessage, InvokeMessageMeta, JsonInvokeMessage,
 import { ToolLike } from "./tool-like";
 import { BlobMessage, InvokeMessagePayload, JsonMessage, MessageType, RetrieverResource, RetrieverResourceMessage, TextMessage, VariableMessage } from "@/core/dtos/message.dto";
 import { LogMessage, LogStatus } from "@/core/dtos/log-message.dto";
-import messageWorker from "@/server/workers/message.worker";
 
 export class ToolInvokeMessage implements InvokeMessage {
   type: MessageType;
@@ -182,4 +181,9 @@ export abstract class Tool extends ToolLike<ToolInvokeMessage> {
     super();
     this.responseType = ToolInvokeMessage;
   }
+
+  abstract invoke(toolParameters: Record<string, any>):
+    AsyncGenerator<ToolInvokeMessage> |
+    Iterable<ToolInvokeMessage> |
+    Promise<ToolInvokeMessage>;
 }

@@ -1,8 +1,8 @@
-import { CommonParameterType } from "../enums/form.enum";
-import { I18nObject } from "../i18n";
+import { CommonParameterType } from "../../enums/form.enum";
+import { I18nObject } from "../../i18n";
 import { ToolConfigurationExtra } from "./extra";
-import { ParameterOption } from "./parameter";
-import { Mapping } from "./provider";
+import { ParameterOption } from "../parameter";
+import { Mapping } from "../provider";
 
 export type ToolParameterOption = ParameterOption;
 
@@ -136,4 +136,3 @@ export type ToolLabelType = typeof ToolLabel[keyof typeof ToolLabel];
 export function getToolLabel(label: ToolLabelType): string {
   return label;
 }
-
