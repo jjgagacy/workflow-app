@@ -1,4 +1,4 @@
-import { PluginArch, PluginLanguage } from "../enums/plugin.type";
+import { PluginArch, PluginLanguage } from "../../enums/plugin.type";
 
 export class PluginRunner {
   language: PluginLanguage = PluginLanguage.NODE;

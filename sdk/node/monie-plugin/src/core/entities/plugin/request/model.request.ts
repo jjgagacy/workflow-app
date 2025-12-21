@@ -40,13 +40,13 @@ export class ModelInvokeLLMRequest extends PluginAccessModelRequest {
   }
 }
 
-export class ModelGetLLMNumTokens extends PluginAccessModelRequest {
+export class ModelGetLLMNumTokensRequest extends PluginAccessModelRequest {
   override action: ModelActions = ModelActions.GetLLMNumTokens;
 
   promptMessages: PromptMessage[] = [];
   tools: PromptMessageTool[] = [];
 
-  constructor(data?: Partial<ModelGetLLMNumTokens>) {
+  constructor(data?: Partial<ModelGetLLMNumTokensRequest>) {
     super(data);
     if (data) {
       Object.assign(this, data);
@@ -68,11 +68,11 @@ export class ModelInvokeTextEmbeddingRequest extends PluginAccessModelRequest {
   }
 }
 
-export class ModelGetTextEmbeddingNumTokens extends PluginAccessModelRequest {
+export class ModelGetTextEmbeddingNumTokensRequest extends PluginAccessModelRequest {
   override action: ModelActions = ModelActions.GetTextEmbeddingNumTokens;
   texts: string[] = [];
 
-  constructor(data: Partial<ModelGetTextEmbeddingNumTokens>) {
+  constructor(data: Partial<ModelGetTextEmbeddingNumTokensRequest>) {
     super(data);
     this.texts = data.texts || [];
   }
@@ -127,6 +127,16 @@ export class ModelInvokeModerationRequest extends PluginAccessModelRequest {
   }
 }
 
+export class ModelInvokeSpeech2TextRequest extends PluginAccessModelRequest {
+  override action: ModelActions = ModelActions.InvokeSpeech2Text;
+  file: string;
+
+  constructor(data: Partial<ModelInvokeSpeech2TextRequest>) {
+    super(data);
+    this.file = data.file || '';
+  }
+}
+
 export class ModelValidateProviderCredentialsRequest extends PluginAccessModelRequest {
   override type: PluginInvokeType = PluginInvokeType.Model;
   override action: ModelActions = ModelActions.ValidateProviderCredentials;
@@ -159,8 +169,6 @@ export class ModelValidateModelCredentialsRequest extends PluginAccessModelReque
   }
 }
 
-export class ModelGetAIModelSchemas extends PluginAccessModelRequest {
+export class ModelGetAIModelSchemasRequest extends PluginAccessModelRequest {
   override action: ModelActions = ModelActions.GetAIModelSchemas;
 }
-
-

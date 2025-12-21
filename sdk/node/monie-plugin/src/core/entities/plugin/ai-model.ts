@@ -2,7 +2,7 @@ import { ModelFeature } from "../enums/model.enum";
 import { PriceConfig } from "../pricing";
 import { ProviderBase } from "./provider-base";
 
-export class AIModel extends ProviderBase {
+export abstract class AIModel extends ProviderBase {
   pricing?: PriceConfig;
 
   constructor() {
@@ -17,4 +17,6 @@ export class AIModel extends ProviderBase {
       this.features.push(ModelFeature.STRUCTURED_OUTPUT);
     }
   }
+
+  abstract validateCredentials(model: string, credentials: Record<string, any>): Promise<void>;
 }

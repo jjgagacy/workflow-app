@@ -1,13 +1,12 @@
 import { PluginConfig } from "@/config/config";
-import { PluginDeclaration } from "@/core/entities/plugin/declaration";
 import { loadYamlFile } from "@/utils/yaml.util";
 import path from "path";
 import * as fs from 'fs';
 import { ToolConfiguration } from "@/core/entities/plugin/declaration/tool";
 import { ToolProviderConfiguration } from "@/core/entities/plugin/provider";
-import { ModelProvider, ModelProviderConfiguration } from "@/core/entities/plugin/declaration/model";
+import { ModelProviderConfiguration } from "@/core/entities/plugin/declaration/model";
 import { EndpointProviderConfiguration } from "@/core/entities/plugin/declaration/endpoint";
-import { AgentStrategyProviderConfiguration } from "@/core/entities/plugin/agent";
+import { AgentStrategyConfiguration, AgentStrategyProviderConfiguration } from "@/core/entities/plugin/agent";
 import { AnyConstructor, ClassInfo, ModuleClassScanner } from "@/core/classes/module-loader";
 import { ToolProvider } from "@/interfaces/tool/tool-provider";
 import { Tool } from "@/interfaces/tool/tool";
@@ -22,13 +21,22 @@ import { ModerationModel } from "@/interfaces/model/moderation.model";
 import { Endpoint } from "@/interfaces/endpoint/endpoint";
 import { AgentStrategy } from "@/interfaces/agent/agent-strategy";
 import { PluginAsset } from "@/core/entities/event/asset";
+import { PluginDeclaration } from "@/core/entities/plugin/declaration/declaration";
+import { ModelProvider } from "@/interfaces/model/model-provider";
+
+export interface ToolRegistration {
+  configuration: ToolConfiguration;
+  toolClassType: typeof Tool;
+  toolFilePath: string;
+  toolClassName?: string | undefined;
+}
 
 export interface ToolProviderRegistration {
   module: string;
   className: string;
   providerConfiguration: ToolProviderConfiguration;
   providerClass: ToolProvider | undefined;
-  tools: Map<string, [ToolConfiguration, Tool, string, string?]>;
+  tools: Map<string, ToolRegistration>;
 }
 
 export interface ModelProviderRegistration {
@@ -39,10 +47,15 @@ export interface ModelProviderRegistration {
 }
 
 export interface AgentStrategyProviderRegistration {
+  agentStrategyProvider: AgentStrategyProviderConfiguration;
+  strategies: Map<string, AgentStrategyRegistration>;
+}
+
+export interface AgentStrategyRegistration {
   module: string;
   className: string;
   providerConfiguration: AgentStrategyProviderConfiguration;
-  providerClass: AgentStrategy | undefined;
+  providerClassType: typeof AgentStrategy | undefined;
 }
 
 export interface EndpointRegistration {
@@ -62,7 +75,7 @@ export class PluginRegistry {
 
   toolsMapping: Map<string, ToolProviderRegistration> = new Map();
   modelMapping: Map<string, ModelProviderRegistration> = new Map();
-  strategyMapping: Map<string, AgentStrategyProviderRegistration> = new Map();
+  agentStrategyMapping: Map<string, AgentStrategyProviderRegistration> = new Map();
   endpoints: EndpointRegistration[] = [];
 
   files: PluginAsset[] = [];
@@ -184,7 +197,7 @@ export class PluginRegistry {
         )
       }
 
-      const tools = new Map();
+      const tools = new Map<string, ToolRegistration>();
       for (const toolPath of providerConfiguration.plugins.tools) {
         try {
           const toolConfiguration = await loadYamlFile<ToolConfiguration>(toolPath);
@@ -193,9 +206,15 @@ export class PluginRegistry {
           if (!toolFilePath) continue;
 
           const toolCls = await this.loadSingleSubclass(toolFilePath, Tool, toolClassName);
+          const toolRegistration: ToolRegistration = {
+            configuration: toolConfiguration,
+            toolClassType: toolCls.class,
+            toolFilePath: toolFilePath,
+            toolClassName: toolClassName,
+          };
           tools.set(
-            toolConfiguration.identity.name || toolClassName,
-            [toolConfiguration, toolCls.class, toolFilePath, toolClassName]
+            toolConfiguration.identity.name || toolClassName || '',
+            toolRegistration,
           );
         } catch (error) {
           throw new Error(`Error loading tool manifest: ${toolPath}: ${error}`);
@@ -226,7 +245,7 @@ export class PluginRegistry {
         ModelProvider,
       )
 
-      const models = new Map<ModelType, AIModel>;
+      const models = new Map<ModelType, AIModel>();
       if (provider.extra.node?.models) {
         for (const modelSource of provider.extra.node?.models) {
           const modelClasses = await this.loadMultiSubclasses(modelSource, AIModel);
@@ -240,7 +259,7 @@ export class PluginRegistry {
               Speech2TextModel,
               ModerationModel
             )) {
-              const modelInstance = new (modelCls.class as any)(provider.models);
+              const modelInstance = new (modelCls.class as any)(provider, provider.models);
               const modelType = (modelCls as any).modelType as ModelType;
               models.set(modelType, modelInstance);
             }
@@ -262,6 +281,7 @@ export class PluginRegistry {
   private async resolveAgentProviders(): Promise<void> {
     for (const provider of this.agentStrategyProviderConfigurations) {
       if (provider.strategies) {
+        const strategies = new Map<string, AgentStrategyRegistration>();
         for (const strategy of provider.strategies) {
           const module = strategy.extra.node?.module;
           if (!module) {
@@ -274,16 +294,19 @@ export class PluginRegistry {
             strategy.extra.node?.class,
           );
 
-          const strategyInstance = new (strategyCls.class as any)();
-          const registration: AgentStrategyProviderRegistration = {
+          const registration: AgentStrategyRegistration = {
             module: module,
             className: strategy.extra.node?.class || '',
             providerConfiguration: provider,
-            providerClass: strategyInstance,
+            providerClassType: strategyCls.class,
           };
-
-          this.strategyMapping.set(provider.identity.name, registration);
+          strategies.set(strategy.identity.name, registration);
         }
+        const providerRegistration: AgentStrategyProviderRegistration = {
+          agentStrategyProvider: provider,
+          strategies: strategies,
+        };
+        this.agentStrategyMapping.set(provider.identity.name, providerRegistration);
       }
     }
   }
@@ -357,26 +380,37 @@ export class PluginRegistry {
     return subClasses;
   }
 
-  getToolProviderCls(providerName: string): ToolProvider | undefined {
+  getToolProviderInstance(providerName: string): ToolProvider | undefined {
     const registration = this.toolsMapping.get(providerName);
     return registration?.providerClass;
   }
 
-  getToolCls(providerName: string, toolName: string): Tool | undefined {
+  getToolClassType(providerName: string, toolName: string): typeof Tool | undefined {
     const registration = this.toolsMapping.get(providerName);
     if (!registration) return undefined;
     const toolEntry = registration.tools.get(toolName);
-    return toolEntry ? toolEntry[1] : undefined;
+    return toolEntry ? toolEntry.toolClassType : undefined;
   }
 
-  getModelProviderCls(providerName: string): ModelProvider | undefined {
+  getModelProviderInstance(providerName: string): ModelProvider | undefined {
     const registration = this.modelMapping.get(providerName);
     return registration?.modelProviderClass;
   }
 
-  getAgentStrategyCls(strategyName: string): AgentStrategy | undefined {
-    const registration = this.strategyMapping.get(strategyName);
-    return registration?.providerClass;
+  getAgentStrategyClassType(strategyName: string, agent: string): typeof AgentStrategy | undefined {
+    const providerData = this.agentStrategyMapping.get(strategyName);
+    if (providerData) {
+      const strategies = providerData.strategies.get(agent);
+      return strategies?.providerClassType;
+    }
+    return undefined;
   }
 
+  getModelInstance(provider: string, modelType: ModelType): AIModel | undefined {
+    const providerData = this.modelMapping.get(provider);
+    if (providerData) {
+      return providerData.models.get(modelType);
+    }
+    return undefined;
+  }
 }

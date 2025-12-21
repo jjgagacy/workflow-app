@@ -13,8 +13,14 @@ import { PluginExecutor } from "./plugin-executor";
 import { Router } from "./route/router.class";
 import { Route } from "./route/route-handler";
 import { PluginInvokeType } from "@/core/entities/enums/plugin.type";
-import { ToolActions } from "@/core/entities/plugin/request/request";
-import { ToolInvokeRequest } from "@/core/entities/plugin/request/tool.request";
+import { AgentActions, EndpointActions, ModelActions, OAuthActions, ToolActions } from "@/core/entities/plugin/request/request";
+import { ToolInvokeRequest, ToolValidateCredentialsRequest } from "@/core/entities/plugin/request/tool.request";
+import { AgentInvokeMessage } from "@/core/entities/plugin/agent";
+import { AgentInvokeRequest } from "@/core/entities/plugin/request/agent.request";
+import { ModelGetAIModelSchemasRequest, ModelGetLLMNumTokensRequest, ModelGetTextEmbeddingNumTokensRequest, ModelInvokeLLMRequest, ModelInvokeRerankRequest, ModelInvokeSpeech2TextRequest, ModelInvokeTextEmbeddingRequest, ModelInvokeTTSRequest, ModelValidateModelCredentialsRequest, ModelValidateProviderCredentialsRequest } from "@/core/entities/plugin/request/model.request";
+import { EndpointInvokeRequest } from "@/core/entities/plugin/request/endpoint.request";
+import { DynamicParameterFetchParameterOptionsRequest } from "@/core/entities/plugin/request/dynamic-parameter";
+import { OAuthGetAuthorizationUrlRequest, OAuthRefreshCredentialsRequest } from "@/core/entities/plugin/request/oauth.request";
 
 export class IOServer implements Server {
   private isRunning: boolean = false;
@@ -279,12 +285,132 @@ export class IOServer implements Server {
       this.pluginExecutor.invokeTool.bind(this.pluginExecutor)
     );
 
-    this.router.registerRoute<any>(
+    this.router.registerRoute<ToolValidateCredentialsRequest>(
       (data: any) =>
         data.type === PluginInvokeType.Tool &&
         data.action === ToolActions.ValidateCredentials,
-      (data: any) => data as any,
+      (data: any) => data as ToolValidateCredentialsRequest,
       this.pluginExecutor.validateToolProviderCredentials.bind(this.pluginExecutor),
+    );
+
+    this.router.registerRoute<AgentInvokeRequest>(
+      (data: any) =>
+        data.type === PluginInvokeType.Agent &&
+        data.action === AgentActions.InvokeAgentStrategy,
+      (data: any) => data as AgentInvokeRequest,
+      this.pluginExecutor.invokeAgentStrategy.bind(this.pluginExecutor),
+    );
+
+    this.router.registerRoute<ModelInvokeLLMRequest>(
+      (data: any) =>
+        data.type === PluginInvokeType.Model &&
+        data.action === ModelActions.InvokeLLM,
+      (data: any) => data as ModelInvokeLLMRequest,
+      this.pluginExecutor.invokeLLM.bind(this.pluginExecutor),
+    );
+
+    this.router.registerRoute<ModelGetLLMNumTokensRequest>(
+      (data: any) =>
+        data.type === PluginInvokeType.Model &&
+        data.action === ModelActions.GetLLMNumTokens,
+      (data: any) => data as ModelGetLLMNumTokensRequest,
+      this.pluginExecutor.getLLMNumTokens.bind(this.pluginExecutor),
+    );
+
+    this.router.registerRoute<ModelInvokeTextEmbeddingRequest>(
+      (data: any) =>
+        data.type === PluginInvokeType.Model &&
+        data.action === ModelActions.InvokeTextEmbedding,
+      (data: any) => data as ModelInvokeTextEmbeddingRequest,
+      this.pluginExecutor.invokeTextEmbedding.bind(this.pluginExecutor),
+    );
+
+    this.router.registerRoute<ModelGetTextEmbeddingNumTokensRequest>(
+      (data: any) =>
+        data.type === PluginInvokeType.Model &&
+        data.action === ModelActions.GetTextEmbeddingNumTokens,
+      (data: any) => data as ModelGetTextEmbeddingNumTokensRequest,
+      this.pluginExecutor.getTextEmbeddingNumTokens.bind(this.pluginExecutor),
+    );
+
+    this.router.registerRoute<ModelInvokeRerankRequest>(
+      (data: any) =>
+        data.type === PluginInvokeType.Model &&
+        data.action === ModelActions.InvokeRerank,
+      (data: any) => data as ModelInvokeRerankRequest,
+      this.pluginExecutor.invokeRerank.bind(this.pluginExecutor),
+    );
+
+    this.router.registerRoute<ModelInvokeTTSRequest>(
+      (data: any) =>
+        data.type === PluginInvokeType.Model &&
+        data.action === ModelActions.InvokeRerank,
+      (data: any) => data as ModelInvokeTTSRequest,
+      this.pluginExecutor.invokeTTS.bind(this.pluginExecutor),
+    );
+
+    this.router.registerRoute<ModelInvokeSpeech2TextRequest>(
+      (data: any) =>
+        data.type === PluginInvokeType.Model &&
+        data.action === ModelActions.InvokeSpeech2Text,
+      (data: any) => data as ModelInvokeSpeech2TextRequest,
+      this.pluginExecutor.invokeSpeech2Text.bind(this.pluginExecutor),
+    );
+
+    this.router.registerRoute<ModelValidateProviderCredentialsRequest>(
+      (data: any) =>
+        data.type === PluginInvokeType.Model &&
+        data.action === ModelActions.ValidateProviderCredentials,
+      (data: any) => data as ModelValidateProviderCredentialsRequest,
+      this.pluginExecutor.validateModelProviderCredentials.bind(this.pluginExecutor),
+    );
+
+    this.router.registerRoute<ModelValidateModelCredentialsRequest>(
+      (data: any) =>
+        data.type === PluginInvokeType.Model &&
+        data.action === ModelActions.ValidateModelCredentials,
+      (data: any) => data as ModelValidateModelCredentialsRequest,
+      this.pluginExecutor.validateModelCredentials.bind(this.pluginExecutor),
+    );
+
+    this.router.registerRoute<ModelGetAIModelSchemasRequest>(
+      (data: any) =>
+        data.type === PluginInvokeType.Model &&
+        data.action === ModelActions.GetAIModelSchemas,
+      (data: any) => data as ModelGetAIModelSchemasRequest,
+      this.pluginExecutor.getAIModelSchemas.bind(this.pluginExecutor),
+    );
+
+    this.router.registerRoute<EndpointInvokeRequest>(
+      (data: any) =>
+        data.type === PluginInvokeType.Endpoint &&
+        data.action === EndpointActions.InvokeEndpoint,
+      (data: any) => data as EndpointInvokeRequest,
+      this.pluginExecutor.invokeEndpoint.bind(this.pluginExecutor),
+    );
+
+    this.router.registerRoute<DynamicParameterFetchParameterOptionsRequest>(
+      (data: any) =>
+        data.type === PluginInvokeType.DynamicParameter &&
+        data.action === EndpointActions.InvokeEndpoint,
+      (data: any) => data as DynamicParameterFetchParameterOptionsRequest,
+      this.pluginExecutor.fetchDynamicParameterOptions.bind(this.pluginExecutor),
+    );
+
+    this.router.registerRoute<OAuthGetAuthorizationUrlRequest>(
+      (data: any) =>
+        data.type === PluginInvokeType.OAuth &&
+        data.action === OAuthActions.GetAuthorizationUrl,
+      (data: any) => data as OAuthGetAuthorizationUrlRequest,
+      this.pluginExecutor.getOAuthAuthorizationUrl.bind(this.pluginExecutor),
+    );
+
+    this.router.registerRoute<OAuthRefreshCredentialsRequest>(
+      (data: any) =>
+        data.type === PluginInvokeType.OAuth &&
+        data.action === OAuthActions.RefreshCredentials,
+      (data: any) => data as OAuthRefreshCredentialsRequest,
+      this.pluginExecutor.refreshOAuthCredentials.bind(this.pluginExecutor),
     );
   }
 }
