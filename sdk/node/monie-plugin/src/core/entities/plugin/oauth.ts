@@ -1,6 +1,6 @@
 export enum CredentialType {
   API_KEY = 'api_key',
-  OAUTH = 'oauth',
+  OAUTH = 'oauth2',
   NONE = 'none',
 }
 
@@ -21,3 +21,4 @@ export class OauthSchema {
     Object.assign(this, data);
   }
 }
+

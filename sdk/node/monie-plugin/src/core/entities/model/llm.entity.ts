@@ -1,5 +1,10 @@
 import { AssistantPromptMessage, PromptMessage } from "../plugin/message/message";
 
+export enum LLMMode {
+  COMPLETION = 'completion',
+  CHAT = 'chat'
+}
+
 export class LLMResult {
   id?: string;
   model: string;

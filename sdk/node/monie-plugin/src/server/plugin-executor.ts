@@ -10,8 +10,16 @@ import { DynamicParameterFetchParameterOptionsRequest } from "@/core/entities/pl
 import { DynamicSelect } from "@/interfaces/dynamic-select/dynamic-select";
 import { AgentRuntime, AgentStrategy } from "@/interfaces/agent/agent-strategy";
 import { Tool, ToolRuntime } from "@/interfaces/tool/tool";
-import { ModelProvider } from "@/interfaces/model/model-provider";
 import { LargeLanguageModel } from "@/interfaces/model/llm.model";
+import { TextEmbeddingModel } from "@/interfaces/model/text-embedding.model";
+import { ModelType } from "@/core/entities/enums/model.enum";
+import { EmbeddingInputType } from "@/core/entities/model/text-embedding.entity";
+import { RerankModel } from "@/interfaces/model/rerank.model";
+import { TTSModel } from "@/interfaces/model/tts.model";
+import { bufferToHex } from "@/utils/buffer.util";
+import { Speech2TextModel } from "@/interfaces/model/speech2text.model";
+import { parseRawHttpRequest } from "@/core/entities/endpoint/endpoint.entity";
+import { OAuthProvider } from "@/interfaces/oauth/oauth-provider";
 
 export class PluginExecutor {
   constructor(
@@ -176,70 +184,219 @@ export class PluginExecutor {
     session: Session,
     request: ModelGetLLMNumTokensRequest,
   ): Promise<{ numTokens: number }> {
-    throw new Error(`Not impl`);
+    const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
+    if (!modelInstance || !this.isLargeLanguageModel(modelInstance)) {
+      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+    }
+    const numTokens = await modelInstance.getNumTokens(
+      request.model,
+      request.credentials,
+      request.promptMessages,
+      request.tools,
+    );
+    return { numTokens };
   }
 
   async invokeTextEmbedding(
     session: Session,
     request: ModelInvokeTextEmbeddingRequest,
   ): Promise<any> {
-    throw new Error(`Not impl`);
+    const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
+    if (!modelInstance || !this.isTextEmbeddingModel(modelInstance)) {
+      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+    }
+    return modelInstance.invoke(
+      request.model,
+      request.credentials,
+      request.texts,
+      request.userId,
+      EmbeddingInputType.DOCUMENT,
+    );
   }
 
   async getTextEmbeddingNumTokens(
     session: Session,
     request: ModelGetTextEmbeddingNumTokensRequest,
   ): Promise<{ numTokens: number }> {
-    throw new Error(`Not impl`);
+    const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
+    if (!modelInstance || !this.isTextEmbeddingModel(modelInstance)) {
+      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+    }
+    const numTokens = await modelInstance.getNumTokens(
+      request.model,
+      request.credentials,
+      request.texts,
+    );
+    return { numTokens };
   }
 
   async invokeRerank(
     session: Session,
     request: ModelInvokeRerankRequest
   ): Promise<any> {
-    throw new Error('Not impl');
+    const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
+    if (!modelInstance || !this.isRerankModel(modelInstance)) {
+      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+    }
+
+    return modelInstance.invoke(
+      request.model,
+      request.credentials,
+      request.query,
+      request.docs,
+      request.scoreThreshold,
+      request.topN,
+      request.userId,
+    );
   }
 
   async* invokeTTS(
     session: Session,
     request: ModelInvokeTTSRequest,
   ): AsyncGenerator<{ result: string }> {
-    throw new Error('Not impl');
+    const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
+    if (!modelInstance || !this.isTTSModel(modelInstance)) {
+      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+    }
+    const result = modelInstance.invoke(
+      request.model,
+      request.tenantId,
+      request.credentials,
+      request.contentText,
+      request.voice,
+      request.userId,
+    );
+    if (result instanceof Promise) {
+      const buffer = await result;
+      if (Buffer.isBuffer(buffer)) {
+        yield { result: bufferToHex(buffer) };
+      } else {
+        for (const chunk of buffer) {
+          if (Buffer.isBuffer(chunk)) {
+            yield { result: bufferToHex(chunk) };
+          }
+        }
+      }
+    } else if (Symbol.asyncIterator in result) {
+      for await (const chunk of result) {
+        if (Buffer.isBuffer(chunk)) {
+          yield { result: bufferToHex(chunk) };
+        }
+      }
+    } else if (Symbol.iterator in result) {
+      for (const chunk of result) {
+        if (Buffer.isBuffer(chunk)) {
+          yield { result: bufferToHex(chunk) };
+        }
+      }
+    } else {
+      if (Buffer.isBuffer(result)) {
+        yield { result: bufferToHex(result) };
+      }
+    }
   }
 
   async getTTSVoices(
     session: Session,
     request: ModelGetTTSVoicesRequest,
   ): Promise<{ voices: any[] }> {
-    throw new Error('Not impl');
+    const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
+    if (!modelInstance || !this.isTTSModel(modelInstance)) {
+      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+    }
+    const voices = modelInstance.getTTSModelVoices(
+      request.model,
+      request.credentials,
+      request.language,
+    );
+    return { voices: voices ? voices : [] };
   }
 
   async invokeSpeech2Text(
     session: Session,
     request: ModelInvokeSpeech2TextRequest,
   ): Promise<{ result: string; }> {
-    throw new Error('Not impl');
+    const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
+    if (!modelInstance || !this.isSpeech2TextModel(modelInstance)) {
+      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+    }
+    const result = await modelInstance.invoke(
+      request.model,
+      request.credentials,
+      request.file,
+      request.userId,
+    );
+    return { result };
   }
 
   async getAIModelSchemas(
     session: Session,
     request: ModelGetAIModelSchemasRequest,
   ): Promise<{ modelSchema: any }> {
-    throw new Error('Not impl');
+    const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
+    if (!modelInstance || !modelInstance.getModelSchema) {
+      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+    }
+    const modelSchema = await modelInstance.getModelSchema(
+      request.model,
+      request.credentials,
+    );
+    return { modelSchema: modelSchema || null };
   }
 
   async* invokeEndpoint(
     session: Session,
     request: EndpointInvokeRequest,
   ): AsyncGenerator<any> {
-    throw new Error('Not impl');
+    const requestParsed = parseRawHttpRequest(request.rawHttpRequest);
+
+    try {
+      const { endpoint: EndpointClass, values } = this.registry.dispatchEndpointRequest(requestParsed);
+      const endpointInstance = new (EndpointClass as any)(session);
+      const result = await endpointInstance.invoke(
+        requestParsed,
+        values,
+        request.settings,
+      );
+      if (result instanceof Promise) {
+        const resolved = await result;
+        if (Array.isArray(resolved)) {
+          for (const item of resolved) {
+            yield item;
+          }
+        } else {
+          yield resolved;
+        }
+      } else if (Symbol.asyncIterator in result) {
+        for await (const chunk of result) {
+          yield chunk;
+        }
+      } else if (Symbol.iterator in result) {
+        for (const chunk of result) {
+          yield chunk;
+        }
+      } else {
+        yield result;
+      }
+    } catch (err) {
+      throw err;
+    }
   }
 
   async getOAuthAuthorizationUrl(
     session: Session,
     request: OAuthGetAuthorizationUrlRequest,
   ): Promise<{ authorizationUrl: string }> {
-    throw new Error('Not impl');
+    const providerClassType = this.registry.getOAuthProviderClassType(request.provider);
+    if (!providerClassType) {
+      throw new Error(`OAuth provider not found: ${request.provider}`);
+    }
+    const providerInstance = new (providerClassType as any)() as OAuthProvider;
+    const authorizationUrl = providerInstance.oauthGetAuthorizationurl(
+      request.redirectUri,
+      request.systemCredentials,
+    );
+    return { authorizationUrl };
   }
 
   async getOAuthCredentials(
@@ -248,9 +405,24 @@ export class PluginExecutor {
   ): Promise<{
     metadata: Record<string, any>;
     credentials: Record<string, any>;
-    expireAt?: string | number;
+    expiresAt?: string | number | undefined
   }> {
-    throw new Error('Not impl');
+    const providerClassType = this.registry.getOAuthProviderClassType(request.provider);
+    if (!providerClassType) {
+      throw new Error(`OAuth provider not found: ${request.provider}`);
+    }
+    const providerInstance = new (providerClassType as any)() as OAuthProvider;
+    const requestParsed = parseRawHttpRequest(request.rawHttpRequest);
+    const credentials = await providerInstance.oauthGetCredentials(
+      request.redirectUri,
+      request.systemCredentials || {},
+      requestParsed,
+    );
+    return {
+      metadata: credentials.metadata || {},
+      credentials: credentials.credentials,
+      expiresAt: credentials.expiresAt
+    };
   }
 
   async refreshOAuthCredentials(
@@ -259,18 +431,78 @@ export class PluginExecutor {
   ): Promise<{
     metadata: Record<string, any>;
     credentials: Record<string, any>;
+    expiresAt?: string | number | undefined
   }> {
-    throw new Error('Not impl');
+    const providerClassType = this.registry.getOAuthProviderClassType(request.provider);
+    if (!providerClassType) {
+      throw new Error(`OAuth provider not found: ${request.provider}`);
+    }
+    const providerInstance = new (providerClassType as any)() as OAuthProvider;
+    const refreshed = await providerInstance.oauthRefreshCredentials(
+      request.redirectUri,
+      request.systemCredentials || {},
+      request.credentials,
+    );
+    return {
+      metadata: {},
+      credentials: refreshed.credentials,
+      expiresAt: refreshed.expiresAt,
+    };
   }
 
   async fetchDynamicParameterOptions(
     session: Session,
     request: DynamicParameterFetchParameterOptionsRequest,
-  ): Promise<DynamicSelect | null> {
-    throw new Error('Not impl');
+  ): Promise<any[] | null> {
+    const providerInstance = this.registry.getToolProviderInstance(request.provider);
+    if (!providerInstance) {
+      throw new Error(`Tool provider not found: ${request.provider}`);
+    }
+
+    const toolType = this.registry.getToolClassType(request.provider, request.provider);
+    if (!toolType) {
+      throw new Error(`Tool not found: ${request.providerAction} for provider: ${request.provider}`);
+    }
+
+    const runtime = new ToolRuntime(request.credentials, undefined, request.userId, session.sessionId);
+    const toolInstance = new (toolType as any)(runtime, session) as Tool;
+    if (!(toolInstance instanceof DynamicSelect)) {
+      throw new Error(`Tool '${request.providerAction}' is not a DynamicSelect tool`);
+    }
+    const toolInstanceDynamicSelect = toolInstance as DynamicSelect;
+    const options = await toolInstanceDynamicSelect.fetchParameterOptions(request.parameter);
+    return options;
   }
 
   private isLargeLanguageModel(obj: any): obj is LargeLanguageModel {
-    return obj && typeof obj.invoke === 'function' && typeof obj.getNumTokens === 'function';
+    return obj &&
+      typeof obj.invoke === 'function' &&
+      typeof obj.getNumTokens === 'function' &&
+      obj.modelType === ModelType.LLM;
+  }
+
+  private isTextEmbeddingModel(obj: any): obj is TextEmbeddingModel {
+    return obj &&
+      typeof obj.invoke === 'function' &&
+      typeof obj.getNumTokens === 'function' &&
+      obj.modelType === ModelType.TEXT_EMBEDDING;
+  }
+
+  private isRerankModel(obj: any): obj is RerankModel {
+    return obj &&
+      typeof obj.invoke === 'function' &&
+      obj.modelType === ModelType.RERANK;
+  }
+
+  private isTTSModel(obj: any): obj is TTSModel {
+    return obj &&
+      typeof obj.invoke === 'function' &&
+      obj.modelType === ModelType.TTS;
+  }
+
+  private isSpeech2TextModel(obj: any): obj is Speech2TextModel {
+    return obj &&
+      typeof obj.invoke === 'function' &&
+      obj.modelType === ModelType.SPEECH2TEXT;
   }
 }

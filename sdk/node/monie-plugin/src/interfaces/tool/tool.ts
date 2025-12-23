@@ -29,6 +29,7 @@ export abstract class Tool extends ToolLike<ToolInvokeMessage> {
     Promise<ToolInvokeMessage>;
 
   validateCredentials(credentials: Record<string, any>): void { }
+
   abstract getRuntimeParameters(): Promise<ToolParameter[]>;
 }
 

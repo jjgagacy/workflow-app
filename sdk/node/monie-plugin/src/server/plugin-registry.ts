@@ -23,6 +23,8 @@ import { AgentStrategy } from "@/interfaces/agent/agent-strategy";
 import { PluginAsset } from "@/core/entities/event/asset";
 import { PluginDeclaration } from "@/core/entities/plugin/declaration/declaration";
 import { ModelProvider } from "@/interfaces/model/model-provider";
+import { matchMethods, matchPath, Request } from "@/core/entities/endpoint/endpoint.entity";
+import { OAuthProvider } from "@/interfaces/oauth/oauth-provider";
 
 export interface ToolRegistration {
   configuration: ToolConfiguration;
@@ -63,7 +65,7 @@ export interface EndpointRegistration {
   className: string;
   path: string;
   methods: string[];
-  endpointClass: typeof Endpoint | undefined;
+  endpointClassType: typeof Endpoint | undefined;
 }
 
 export class PluginRegistry {
@@ -326,18 +328,75 @@ export class PluginRegistry {
             endpoint.extra.node?.class,
           );
 
-          const endpointInstance = new (endpointCls.class as any)();
           const registration: EndpointRegistration = {
             module: module,
             className: endpoint.extra.node?.class || '',
             path: endpoint.path,
             methods: [endpoint.method],
-            endpointClass: endpointInstance,
+            endpointClassType: endpointCls.class,
           };
           this.endpoints.push(registration);
         }
       }
     }
+  }
+
+  dispatchEndpointRequest(request: Request): {
+    endpoint: EndpointRegistration | undefined;
+    values: Record<string, any>;
+  } {
+    const requestMethod = request.method;
+    const requestPath = request.path;
+
+    // 按路径长度排序，确保精确匹配优先
+    const sortedEndpoints = [...this.endpoints].sort((a, b) => {
+      // 更具体的路径优先（参数少的优先）
+      const aParamCount = (a.path.match(/:[^\/]+/g) || []).length;
+      const bParamCount = (b.path.match(/:[^\/]+/g) || []).length;
+
+      if (aParamCount !== bParamCount) {
+        return aParamCount - bParamCount;
+      }
+
+      // 路径长的优先
+      return b.path.length - a.path.length;
+    });
+
+
+    // 遍历所有端点，寻找匹配
+    for (const endpoint of sortedEndpoints) {
+      // 1. 检查方法是否匹配
+      if (!matchMethods(requestMethod, endpoint.methods)) {
+        continue;
+      }
+
+      // 2. 检查路径是否匹配
+      const { matched, params } = matchPath(requestPath, endpoint.path);
+      if (!matched) {
+        continue;
+      }
+
+      // 3. 检查端点类是否存在
+      if (!endpoint.endpointClassType) {
+        throw new Error(`Endpoint class for ${endpoint.className} is undefined`);
+      }
+
+      // 4. 返回匹配的端点和参数
+      return {
+        endpoint: endpoint,
+        values: params
+      };
+    }
+
+    throw new Error(`No endpoint found for ${requestMethod} ${requestPath}`);
+  }
+
+  getOAuthProviderClassType(provider: string): typeof OAuthProvider | undefined {
+    const registration = this.toolsMapping.get(provider);
+    if (registration && registration.providerClass instanceof OAuthProvider) {
+      return registration.providerClass.constructor as typeof OAuthProvider;
+    }
+    return undefined;
   }
 
   private isStrictSubclasses(cls: any, ...parentCls: any[]): boolean {

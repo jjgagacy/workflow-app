@@ -12,6 +12,11 @@ export class PriceConfig {
   }
 }
 
+export enum PriceType {
+  INPUT = 'input',
+  OUTPUT = 'output',
+}
+
 export class PriceInfo {
   unit_price: number;
   unit: number;
