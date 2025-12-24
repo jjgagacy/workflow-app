@@ -1,5 +1,5 @@
 export interface ServerInfo {
-  [key: string]: string;
+  [key: string]: any;
 }
 
 export interface Server {

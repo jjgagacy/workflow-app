@@ -1,10 +1,13 @@
-import type { RouterContract } from "../../interfaces/router.interface";
 import { RequestReader } from "../../core/reader.class";
 import { ResponseWriter } from "../../core/writer.class";
-import { Route, RouteFilter } from "./route-handler";
+import { HandleResult, Route, RouteFilter, RouteHandler } from "./route.handler";
 import { Session } from "@/core/classes/runtime";
 
-export class Router implements RouterContract {
+export interface IRouter {
+  dispatch(session: Session, data: any): void;
+}
+
+export class Router implements IRouter {
   private routes: Route[] = [];
 
   constructor(
@@ -15,12 +18,12 @@ export class Router implements RouterContract {
   registerRoute<T>(
     filter: RouteFilter,
     decoder: (raw: any) => T,
-    handler: (session: Session, data: T) => any
+    handler: RouteHandler
   ) {
-    const wrapped = async (session: Session, raw: any) => {
+    const wrapped = (session: Session, raw: any) => {
       try {
         const data = decoder(raw);
-        return await handler(session, data);
+        return handler(session, data);
       } catch (e: any) {
         if (this.responseWriter) {
           this.responseWriter.error(session.sessionId, {
@@ -28,13 +31,14 @@ export class Router implements RouterContract {
             message: e.message,
           });
         }
+        throw new Error(`Failed to call handler: ${e}`);
       }
     };
 
     this.routes.push({ filter, handler: wrapped });
   }
 
-  async dispatch(session: Session, data: any): Promise<any> {
+  async dispatch(session: Session, data: any) {
     for (const route of this.routes) {
       if (route.filter(data)) {
         return await route.handler(session, data);

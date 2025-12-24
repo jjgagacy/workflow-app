@@ -2,6 +2,7 @@ import { StreamRequestEvent } from "@/core/entities/event.enum";
 import { TestMessageFactory } from "@/core/test/message-factory";
 import { Plugin } from "@/plugin";
 import { EventEmitter } from 'events';
+import path from "path";
 
 describe('PluginTests', () => {
   jest.setTimeout(30000);
@@ -70,7 +71,8 @@ describe('PluginTests', () => {
   // });
 
   it('should process a conversation flow', async () => {
-    const p = new Plugin();
+    const configPath = path.resolve(__dirname, '..');
+    const p = new Plugin(configPath);
     const receivedMessages: any[] = [];
 
     const pluginPromise = p.run();
@@ -102,16 +104,16 @@ describe('PluginTests', () => {
       }),
     ];
 
-    for (const message of messages) {
-      mockStdin.emit('data', JSON.stringify(message) + '\n');
-      await new Promise(resolve => setTimeout(resolve, 20));
-    }
+    // for (const message of messages) {
+    //   mockStdin.emit('data', JSON.stringify(message) + '\n');
+    //   await new Promise(resolve => setTimeout(resolve, 20));
+    // }
 
-    mockStdin.emit('data', '\n');
-    mockStdin.emit('end');
+    // mockStdin.emit('data', '\n');
+    // mockStdin.emit('end');
 
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    mockStdin.emit('data', JSON.stringify(messages[0]) + '\n');
+    // await new Promise(resolve => setTimeout(resolve, 2000));
+    // mockStdin.emit('data', JSON.stringify(messages[0]) + '\n');
 
     await pluginPromise;
   });

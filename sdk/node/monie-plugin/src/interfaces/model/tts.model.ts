@@ -2,8 +2,11 @@ import { ModelType } from "@/core/entities/enums/model.enum";
 import { TTSVoice } from "@/core/entities/model/tts.entity";
 import { AIModel } from "@/core/entities/plugin/ai-model";
 import { PriceInfo, PriceType } from "@/core/entities/pricing";
+import { ClassWithMarker } from "../marker.class";
 
+export const TTS_SYMBOL = Symbol.for('plugin.tts.model');
 export abstract class TTSModel extends AIModel {
+  static [TTS_SYMBOL] = true;
   modelType: ModelType = ModelType.TTS
 
   constructor() {
@@ -36,3 +39,7 @@ export abstract class TTSModel extends AIModel {
   }
 }
 
+export type TTSModelClassType = ClassWithMarker<TTSModel, typeof TTS_SYMBOL>;
+export function isTTSModelClass(cls: any): cls is TTSModelClassType {
+  return Boolean(cls?.[TTS_SYMBOL]);
+}

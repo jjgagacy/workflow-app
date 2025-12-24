@@ -104,12 +104,13 @@ export class ModuleClassScanner {
     includeAbstract: boolean = false,
   ): Promise<Array<ClassInfo<T>>> {
     const allClasses = await this.scanClasses<T>(module);
-
     return allClasses.filter(({ class: Class }) => {
+      if (!Class || typeof Class !== 'function') return false;
       // exlude parent self
       if (Class === (parentClass as unknown as T))
         return false;
 
+      console.log('-----', module, Class, Class.prototype instanceof parentClass, parentClass)
       const isSubclass = Class.prototype instanceof parentClass;
       if (!includeAbstract) {
         return isSubclass && !this.isAbstractClass(Class);

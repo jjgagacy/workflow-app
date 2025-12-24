@@ -16,6 +16,9 @@ export class RawEnvConfig {
 
   MAX_REQUEST_TIMEOUT: string | undefined;
   PLUGIN_DAEMON_URL: string | undefined;
+
+  BASE_DIR: string | undefined;
+  DISABLE_WORKER: string | undefined;
 }
 
 export class EnvLoader {
@@ -24,7 +27,7 @@ export class EnvLoader {
   load(configPath?: string): NodeJS.ProcessEnv {
     const getEnvPath = () => {
       if (configPath) {
-        const env = process.env.NODE_ENV || 'development';
+        const env = process.env.NODE_ENV || 'dev';
         const envSpecificFile = `.env.${env}`;
         const separator = path.sep;
 
@@ -35,13 +38,13 @@ export class EnvLoader {
         return path.join(configPath, envSpecificFile);
       }
 
-      const env = process.env.NODE_ENV || 'development';
+      const env = process.env.NODE_ENV || 'dev';
       return `.env.${env}`;
     }
 
     const result = dotenv.config({
       path: getEnvPath(),
-      debug: process.env.NODE_ENV === 'development',
+      debug: process.env.NODE_ENV === 'dev',
     })
 
     if (result.parsed) {
@@ -65,6 +68,8 @@ export class EnvLoader {
       SERVERLESS_THREADS: this.loadedEnv.SERVERLESS_THREADS,
       MAX_REQUEST_TIMEOUT: this.loadedEnv.MAX_REQUEST_TIMEOUT,
       PLUGIN_DAEMON_URL: this.loadedEnv.PLUGIN_DAEMON_URL,
+      BASE_DIR: this.loadedEnv.BASE_DIR,
+      DISABLE_WORKER: this.loadedEnv.DISABLE_WORKER,
     }
   }
 }

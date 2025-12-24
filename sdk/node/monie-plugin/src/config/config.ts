@@ -1,9 +1,9 @@
 import { EnumUtils } from "@/utils/enum.util";
 import { InstallMethod } from "./config.enum";
-import { PluginConfigContract } from "./base";
+import { IPluginConfig } from "./base";
 import { EnvLoader, RawEnvConfig } from "./env-loader";
 
-export class PluginConfig implements PluginConfigContract {
+export class PluginConfig implements IPluginConfig {
   installMethod: InstallMethod;
 
   remoteInstallUrl: string | undefined;
@@ -19,6 +19,9 @@ export class PluginConfig implements PluginConfigContract {
   maxRequestTimeout: number;
   pluginDaemonUrl: string;
 
+  disableWorker!: boolean;
+  baseDir!: string;
+
   constructor(private envLoader: EnvLoader) {
     const rawEnv = this.envLoader.getRawEnv();
     console.log(rawEnv);
@@ -29,6 +32,8 @@ export class PluginConfig implements PluginConfigContract {
   }
 
   private transformAndValidate(rawEnv: RawEnvConfig) {
+    this.baseDir = rawEnv.BASE_DIR || '';
+    this.disableWorker = rawEnv.DISABLE_WORKER === '1' || rawEnv.DISABLE_WORKER === 'true';
     this.remoteInstallUrl = rawEnv.REMOTE_INSTALL_URL;
     this.remoteInstallHost = rawEnv.REMOTE_INSTALL_HOST;
     this.remoteInstallPort = this.parseNumber(rawEnv.REMOTE_INSTALL_PORT)

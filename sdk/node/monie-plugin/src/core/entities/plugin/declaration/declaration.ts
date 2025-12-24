@@ -1,8 +1,8 @@
-import { I18nObject } from "../i18n";
-import { PluginManifest } from "./declaration/manifest";
-import { PluginResourceRequirements } from "./permission";
-import { PluginType } from "../enums/plugin.type";
 import { PluginMeta, PluginRunner } from "./runner";
+import { I18nObject } from "../../i18n";
+import { PluginResourceRequirements } from "../permission";
+import { PluginType } from "../../enums/plugin.type";
+import { PluginManifest } from "./manifest";
 
 export class PluginDeclaration {
   version: string = "";

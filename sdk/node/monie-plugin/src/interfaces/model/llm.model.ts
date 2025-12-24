@@ -4,8 +4,12 @@ import { AIModel } from "@/core/entities/plugin/ai-model";
 import { PromptMessage, PromptMessageTool } from "@/core/entities/plugin/message/message";
 import { ParameterRule } from "@/core/entities/plugin/parameter";
 import { PriceInfo, PriceType } from "@/core/entities/pricing";
+import { ClassWithMarker } from "../marker.class";
+
+export const LARGE_LANGUAGE_SYMBOL = Symbol.for('plugin.largelanguage.model');
 
 export abstract class LargeLanguageModel extends AIModel {
+  static [LARGE_LANGUAGE_SYMBOL] = true;
   modelType: ModelType = ModelType.LLM;
 
   constructor() {
@@ -85,4 +89,9 @@ export abstract class LargeLanguageModel extends AIModel {
   private isAsyncGenerator(obj: any): obj is AsyncGenerator<LLMChunkResult> {
     throw new Error(`Not impl`);
   }
+}
+
+export type LargeLanguageModelClassType = ClassWithMarker<LargeLanguageModel, typeof LARGE_LANGUAGE_SYMBOL>;
+export function isLargeLanguageModelClass(cls: any): cls is LargeLanguageModelClassType {
+  return Boolean(cls?.[LARGE_LANGUAGE_SYMBOL]);
 }

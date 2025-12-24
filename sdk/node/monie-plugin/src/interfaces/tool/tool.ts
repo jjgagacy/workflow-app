@@ -2,6 +2,7 @@ import { ToolLike } from "./tool-like";
 import { ToolInvokeMessage } from "./invoke-message";
 import { Session } from "@/core/classes/runtime";
 import { ToolParameter } from "@/core/entities/plugin/declaration/tool";
+import { ClassWithMarker } from "../marker.class";
 
 export class ToolRuntime {
   constructor(
@@ -12,7 +13,10 @@ export class ToolRuntime {
   ) { }
 }
 
+export const TOOL_SYMBOL = Symbol.for('plugin.tool');
+
 export abstract class Tool extends ToolLike<ToolInvokeMessage> {
+  static [TOOL_SYMBOL] = true;
   runtime: ToolRuntime;
   session: Session;
 
@@ -33,3 +37,7 @@ export abstract class Tool extends ToolLike<ToolInvokeMessage> {
   abstract getRuntimeParameters(): Promise<ToolParameter[]>;
 }
 
+export type ToolClassType = ClassWithMarker<Tool, typeof TOOL_SYMBOL>;
+export function isToolClass(cls: any): cls is ToolClassType {
+  return Boolean(cls?.[TOOL_SYMBOL]);
+}

@@ -15,7 +15,7 @@ export class StdioReader extends RequestReader {
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
-      // Disable terminal constrol sequence and line buffering
+      // Disable terminal control sequence and line buffering
       terminal: false,
       // Infinity: treat CR and LF as separate line endings (preserve original formatting)
       crlfDelay: Infinity,
@@ -46,7 +46,7 @@ export class StdioReader extends RequestReader {
   // Advantages:
   // 1. Non-Blocking: Doesn't block on readline where there are queued messages
   // 2. Memory efficient: Only buffers what's necessary (queues can be bounded)
-  // 3. Responsive: Can immediately yeild queued messages without I/O delay
+  // 3. Responsive: Can immediately yield queued messages without I/O delay
   async *readStreamAsync(): AsyncGenerator<StreamMessage, void, unknown> {
     while (!this.isClosed || this.messageQueue.length > 0) {
       if (this.messageQueue.length > 0) {
@@ -54,11 +54,11 @@ export class StdioReader extends RequestReader {
         yield message;
         continue;
       }
+
       if (this.errorQueue.length > 0) {
         const error = this.errorQueue.shift()!;
         throw error;
       }
-
       if (this.isClosed) {
         break;
       }
@@ -107,6 +107,8 @@ export class StdioReader extends RequestReader {
         this.resolveQueue({ value: undefined, done: true });
         this.resolveQueue = null;
       }
+
+      this.restartStream();
     });
 
     this.rl.on('error', (error: Error) => {
@@ -131,5 +133,31 @@ export class StdioReader extends RequestReader {
         this.resolveQueue = null;
       }
     }
+  }
+
+  // TODO: restarts not implements, do not close readline
+  // async stop(): Promise<void> {
+  //   super.stop();
+  //   this.close();
+  // }
+
+  private restartStream(): void {
+    if (!this.isClosed) return;
+
+    this.isClosed = false;
+    this.messageQueue = [];
+    this.errorQueue = [];
+    this.resolveQueue = null;
+
+    this.rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+      // Disable terminal control sequence and line buffering
+      terminal: false,
+      // Infinity: treat CR and LF as separate line endings (preserve original formatting)
+      crlfDelay: Infinity,
+    });
+
+    this.setupEventListeners();
   }
 }

@@ -7,7 +7,7 @@ class TelegraphMain extends Plugin {
   }
 
   protected isCPUTask(message: StreamMessage): boolean {
-    return true;
+    return false;
   }
 }
 

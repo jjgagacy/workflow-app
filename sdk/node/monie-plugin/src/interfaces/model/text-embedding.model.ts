@@ -2,8 +2,11 @@ import { ModelType } from "@/core/entities/enums/model.enum";
 import { EmbeddingInputType, TextEmbeddingResult } from "@/core/entities/model/text-embedding.entity";
 import { AIModel } from "@/core/entities/plugin/ai-model";
 import { PriceInfo, PriceType } from "@/core/entities/pricing";
+import { ClassWithMarker } from "../marker.class";
 
+export const TEXT_EMBEDDING_SYMBOL = Symbol.for('plugin.textembedding.model');
 export abstract class TextEmbeddingModel extends AIModel {
+  static [TEXT_EMBEDDING_SYMBOL] = true;
   modelType: ModelType = ModelType.TEXT_EMBEDDING;
 
   constructor() {
@@ -30,5 +33,9 @@ export abstract class TextEmbeddingModel extends AIModel {
     priceType: PriceType,
     tokens: number
   ): PriceInfo;
+}
 
+export type TextEmbeddingModelClassType = ClassWithMarker<TextEmbeddingModel, typeof TEXT_EMBEDDING_SYMBOL>;
+export function isTextEmbeddingModelClass(cls: any): cls is TextEmbeddingModelClassType {
+  return Boolean(cls?.[TEXT_EMBEDDING_SYMBOL]);
 }

@@ -2,7 +2,10 @@ import { ModelFeature, ModelType } from "../enums/model.enum";
 import { PriceConfig } from "../pricing";
 import { ProviderBase } from "./provider-base";
 
+export const AIMODEL_SYMBOL = Symbol.for('plugin.ai-model');
+
 export abstract class AIModel extends ProviderBase {
+  static [AIMODEL_SYMBOL] = true;
   modelType: ModelType = ModelType.LLM;
   pricing?: PriceConfig;
 

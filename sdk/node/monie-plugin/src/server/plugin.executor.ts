@@ -1,5 +1,5 @@
 import { PluginConfig } from "@/config/config";
-import { PluginRegistry } from "./plugin-registry";
+import { PluginRegistry } from "./plugin.registry";
 import { Session } from "@/core/classes/runtime";
 import { ToolGetRuntimeParametersRequest, ToolInvokeRequest, ToolValidateCredentialsRequest } from "@/core/entities/plugin/request/tool.request";
 import { AgentInvokeRequest } from "@/core/entities/plugin/request/agent.request";
@@ -20,6 +20,7 @@ import { bufferToHex } from "@/utils/buffer.util";
 import { Speech2TextModel } from "@/interfaces/model/speech2text.model";
 import { parseRawHttpRequest } from "@/core/entities/endpoint/endpoint.entity";
 import { OAuthProvider } from "@/interfaces/oauth/oauth-provider";
+import { HandleResult, TaskType } from "./route/route.handler";
 
 export class PluginExecutor {
   constructor(
@@ -27,16 +28,31 @@ export class PluginExecutor {
     private registry: PluginRegistry
   ) { }
 
+  private wrapIOResult<T>(
+    value: T,
+  ): HandleResult {
+    return {
+      taskType: TaskType.IO,
+      result: value,
+    };
+  }
+
   async* invokeTool(
     session: Session,
     request: ToolInvokeRequest
-  ): AsyncGenerator<any> {
+  ): AsyncGenerator<any> | Promise<HandleResult> {
     const providerInstance = this.registry.getToolProviderInstance(request.provider);
     if (!providerInstance) {
       throw new Error(`Tool provider not found: ${request.provider}`);
     }
 
-    const toolType = this.registry.getToolClassType(request.provider, request.tool);
+    const toolRegistration = this.registry.getToolClassRegistration(request.provider, request.tool);
+    const toolType = toolRegistration?.toolClassType;
+    const cpuBound = toolRegistration?.cpuBound;
+    if (cpuBound) {
+      return { taskType: TaskType.CPU };
+    }
+
     if (!toolType) {
       throw new Error(`Tool not found: ${request.tool} for provider: ${request.provider}`);
     }
@@ -69,7 +85,7 @@ export class PluginExecutor {
   async validateToolProviderCredentials(
     session: Session,
     request: ToolValidateCredentialsRequest,
-  ): Promise<{ result: boolean; }> {
+  ): Promise<any> {
     const providerInstance = this.registry.getToolProviderInstance(request.provider);
     if (!providerInstance) {
       throw new Error(`Tool provider not found: ${request.provider}`);
@@ -81,8 +97,12 @@ export class PluginExecutor {
   async *invokeAgentStrategy(
     session: Session,
     request: AgentInvokeRequest,
-  ): AsyncGenerator<any> {
-    const agentClass = this.registry.getAgentStrategyClassType(request.agentStrategyProvider, request.agentStrategy);
+  ): AsyncGenerator<any> | Promise<HandleResult> {
+    const agentRegistration = this.registry.getAgentStrategyRegistration(request.agentStrategyProvider, request.agentStrategy);
+    if (agentRegistration?.cpuBound) {
+      return { taskType: TaskType.CPU };
+    }
+    const agentClass = agentRegistration?.providerClassType;
     if (!agentClass) {
       throw new Error(`Agent '${request.agentStrategy}' not found for provider '${request.agentStrategyProvider}'`);
     }
@@ -115,13 +135,17 @@ export class PluginExecutor {
   async getToolRuntimeParameters(
     session: Session,
     request: ToolGetRuntimeParametersRequest,
-  ): Promise<{ parameters: any[] }> {
+  ): Promise<HandleResult> {
     const providerInstance = this.registry.getToolProviderInstance(request.provider);
     if (!providerInstance) {
       throw new Error(`Tool provider not found: ${request.provider}`);
     }
 
-    const toolType = this.registry.getToolClassType(request.provider, request.tool);
+    const toolRegistration = this.registry.getToolClassRegistration(request.provider, request.tool);
+    if (toolRegistration?.cpuBound) {
+      return { taskType: TaskType.CPU };
+    }
+    const toolType = toolRegistration?.toolClassType;
     if (!toolType) {
       throw new Error(`Tool not found: ${request.tool} for provider: ${request.provider}`);
     }
@@ -129,13 +153,13 @@ export class PluginExecutor {
     const runtime = new ToolRuntime(request.credentials, undefined, request.userId, session.sessionId);
     const toolInstance = new (toolType as any)(runtime, session) as Tool;
     const parameters = await toolInstance.getRuntimeParameters();
-    return { parameters };
+    return this.wrapIOResult({ parameters });
   }
 
   async validateModelProviderCredentials(
     session: Session,
     request: ModelValidateProviderCredentialsRequest,
-  ): Promise<{ result: boolean; credentials: Record<string, any> }> {
+  ): Promise<any> {
     const modelProviderInstance = this.registry.getModelProviderInstance(request.provider);
     if (!modelProviderInstance) {
       throw new Error(`ModelProvider instance not found: ${request.provider}`);
@@ -147,7 +171,7 @@ export class PluginExecutor {
   async validateModelCredentials(
     session: Session,
     request: ModelValidateModelCredentialsRequest,
-  ): Promise<{ result: boolean; credentials: Record<string, any> }> {
+  ): Promise<any> {
     const modelProviderInstance = this.registry.getModelProviderInstance(request.provider);
     if (!modelProviderInstance) {
       throw new Error(`ModelProvider instance not found: ${request.provider}`);
@@ -183,7 +207,7 @@ export class PluginExecutor {
   async getLLMNumTokens(
     session: Session,
     request: ModelGetLLMNumTokensRequest,
-  ): Promise<{ numTokens: number }> {
+  ): Promise<any> {
     const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
     if (!modelInstance || !this.isLargeLanguageModel(modelInstance)) {
       throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
@@ -217,7 +241,7 @@ export class PluginExecutor {
   async getTextEmbeddingNumTokens(
     session: Session,
     request: ModelGetTextEmbeddingNumTokensRequest,
-  ): Promise<{ numTokens: number }> {
+  ): Promise<any> {
     const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
     if (!modelInstance || !this.isTextEmbeddingModel(modelInstance)) {
       throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
@@ -315,7 +339,7 @@ export class PluginExecutor {
   async invokeSpeech2Text(
     session: Session,
     request: ModelInvokeSpeech2TextRequest,
-  ): Promise<{ result: string; }> {
+  ): Promise<any> {
     const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
     if (!modelInstance || !this.isSpeech2TextModel(modelInstance)) {
       throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
@@ -332,7 +356,7 @@ export class PluginExecutor {
   async getAIModelSchemas(
     session: Session,
     request: ModelGetAIModelSchemasRequest,
-  ): Promise<{ modelSchema: any }> {
+  ): Promise<any> {
     const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
     if (!modelInstance || !modelInstance.getModelSchema) {
       throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
@@ -386,7 +410,7 @@ export class PluginExecutor {
   async getOAuthAuthorizationUrl(
     session: Session,
     request: OAuthGetAuthorizationUrlRequest,
-  ): Promise<{ authorizationUrl: string }> {
+  ): Promise<any> {
     const providerClassType = this.registry.getOAuthProviderClassType(request.provider);
     if (!providerClassType) {
       throw new Error(`OAuth provider not found: ${request.provider}`);
@@ -428,11 +452,7 @@ export class PluginExecutor {
   async refreshOAuthCredentials(
     session: Session,
     request: OAuthRefreshCredentialsRequest,
-  ): Promise<{
-    metadata: Record<string, any>;
-    credentials: Record<string, any>;
-    expiresAt?: string | number | undefined
-  }> {
+  ): Promise<any> {
     const providerClassType = this.registry.getOAuthProviderClassType(request.provider);
     if (!providerClassType) {
       throw new Error(`OAuth provider not found: ${request.provider}`);
@@ -453,13 +473,14 @@ export class PluginExecutor {
   async fetchDynamicParameterOptions(
     session: Session,
     request: DynamicParameterFetchParameterOptionsRequest,
-  ): Promise<any[] | null> {
+  ): Promise<any> {
     const providerInstance = this.registry.getToolProviderInstance(request.provider);
     if (!providerInstance) {
       throw new Error(`Tool provider not found: ${request.provider}`);
     }
 
-    const toolType = this.registry.getToolClassType(request.provider, request.provider);
+    const toolRegistration = this.registry.getToolClassRegistration(request.provider, request.providerAction);
+    const toolType = toolRegistration?.toolClassType;
     if (!toolType) {
       throw new Error(`Tool not found: ${request.providerAction} for provider: ${request.provider}`);
     }

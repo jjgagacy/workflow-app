@@ -5,7 +5,7 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" npx jest",
+    "test": "tsc && tsc-alias && npm run copy-env-file && npm run copy-asset && cross-env NODE_OPTIONS=\"--experimental-vm-modules\" npx jest",
     "test:watch": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" npx jest --watch",
     "test:coverage": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" npx jest --coverage",
     "build": "tsc && tsc-alias",

@@ -13,8 +13,8 @@ export class SessionContext {
 export class Session {
   sessionId: string;
 
-  reader: RequestReader;
-  writer: ResponseWriter;
+  reader?: RequestReader | undefined;
+  writer?: ResponseWriter | undefined;
 
   conversationId: string | null = null;
   messageId: string | null = null;
@@ -27,8 +27,8 @@ export class Session {
 
   constructor(
     sessionId: string,
-    reader: RequestReader,
-    writer: ResponseWriter,
+    reader?: RequestReader | undefined,
+    writer?: ResponseWriter | undefined,
     conversationId?: string,
     messageId?: string,
     appId?: string,

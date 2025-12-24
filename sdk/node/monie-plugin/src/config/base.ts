@@ -1,6 +1,6 @@
 import type { InstallMethod } from "./config.enum";
 
-export interface PluginConfigContract {
+export interface IPluginConfig {
   installMethod: InstallMethod;
 
   remoteInstallUrl?: string | undefined;

@@ -6,10 +6,10 @@ import { ToolConfiguration } from "@/core/entities/plugin/declaration/tool";
 import { ToolProviderConfiguration } from "@/core/entities/plugin/provider";
 import { ModelProviderConfiguration } from "@/core/entities/plugin/declaration/model";
 import { EndpointProviderConfiguration } from "@/core/entities/plugin/declaration/endpoint";
-import { AgentStrategyConfiguration, AgentStrategyProviderConfiguration } from "@/core/entities/plugin/agent";
+import { AgentStrategyProviderConfiguration } from "@/core/entities/plugin/agent";
 import { AnyConstructor, ClassInfo, ModuleClassScanner } from "@/core/classes/module-loader";
 import { ToolProvider } from "@/interfaces/tool/tool-provider";
-import { Tool } from "@/interfaces/tool/tool";
+import { isToolClass, Tool, ToolClassType } from "@/interfaces/tool/tool";
 import { ModelType } from "@/core/entities/enums/model.enum";
 import { AIModel } from "@/core/entities/plugin/ai-model";
 import { TextEmbeddingModel } from "@/interfaces/model/text-embedding.model";
@@ -18,8 +18,8 @@ import { RerankModel } from "@/interfaces/model/rerank.model";
 import { TTSModel } from "@/interfaces/model/tts.model";
 import { Speech2TextModel } from "@/interfaces/model/speech2text.model";
 import { ModerationModel } from "@/interfaces/model/moderation.model";
-import { Endpoint } from "@/interfaces/endpoint/endpoint";
-import { AgentStrategy } from "@/interfaces/agent/agent-strategy";
+import { Endpoint, EndpointClassType, isEndpointClass } from "@/interfaces/endpoint/endpoint";
+import { AgentStrategy, AgentStrategyClassType, isAgentStrategyClass } from "@/interfaces/agent/agent-strategy";
 import { PluginAsset } from "@/core/entities/event/asset";
 import { PluginDeclaration } from "@/core/entities/plugin/declaration/declaration";
 import { ModelProvider } from "@/interfaces/model/model-provider";
@@ -28,9 +28,10 @@ import { OAuthProvider } from "@/interfaces/oauth/oauth-provider";
 
 export interface ToolRegistration {
   configuration: ToolConfiguration;
-  toolClassType: typeof Tool;
+  toolClassType: ToolClassType;
   toolFilePath: string;
   toolClassName?: string | undefined;
+  cpuBound: boolean;
 }
 
 export interface ToolProviderRegistration {
@@ -39,6 +40,7 @@ export interface ToolProviderRegistration {
   providerConfiguration: ToolProviderConfiguration;
   providerClass: ToolProvider | undefined;
   tools: Map<string, ToolRegistration>;
+  cpuBound: boolean;
 }
 
 export interface ModelProviderRegistration {
@@ -46,6 +48,7 @@ export interface ModelProviderRegistration {
   modelProviderConfiguration: ModelProviderConfiguration;
   modelProviderClass: ModelProvider | undefined;
   models: Map<ModelType, AIModel>;
+  cpuBound: boolean;
 }
 
 export interface AgentStrategyProviderRegistration {
@@ -57,7 +60,8 @@ export interface AgentStrategyRegistration {
   module: string;
   className: string;
   providerConfiguration: AgentStrategyProviderConfiguration;
-  providerClassType: typeof AgentStrategy | undefined;
+  providerClassType: AgentStrategyClassType | undefined;
+  cpuBound: boolean;
 }
 
 export interface EndpointRegistration {
@@ -65,7 +69,8 @@ export interface EndpointRegistration {
   className: string;
   path: string;
   methods: string[];
-  endpointClassType: typeof Endpoint | undefined;
+  endpointClassType: EndpointClassType | undefined;
+  cpuBound: boolean;
 }
 
 export class PluginRegistry {
@@ -82,8 +87,15 @@ export class PluginRegistry {
 
   files: PluginAsset[] = [];
 
+  private initPromise: Promise<void> | null = null;
+  manifestFilePath: string;
+
   constructor(private config: PluginConfig) {
-    this.initialize();
+    this.manifestFilePath = path.resolve(process.cwd(), this.config.baseDir, 'manifest.yaml');
+    this.initPromise = this.initialize();
+    this.initPromise.catch(err => {
+      console.error(`Failed to initialize: ${err}`);
+    });
   }
 
   private async initialize(): Promise<void> {
@@ -91,6 +103,7 @@ export class PluginRegistry {
       await this.loadPluginConfiguration();
       await this.resolvePluginHandlers();
       await this.loadPluginAssets();
+      await this.loadManifestLog();
       this.logRegistry();
     } catch (error) {
       throw new Error(`Failed to initialize plugin: ${error}`);
@@ -98,10 +111,9 @@ export class PluginRegistry {
   }
 
   async loadManifestLog() {
-    const manifestPath = path.resolve(process.cwd(), 'manifest.yaml');
-    console.log('Current working directory: ', process.cwd());
-    console.log('Looking for manifest at: ', manifestPath);
-    console.log('File exists: ', fs.existsSync(manifestPath));
+    console.log('Current working directory: ', path.dirname(this.manifestFilePath));
+    console.log('Looking for manifest at: ', this.manifestFilePath);
+    console.log('File exists: ', fs.existsSync(this.manifestFilePath));
 
     console.log('Files in current directory');
     fs.readdirSync(process.cwd()).forEach(file => {
@@ -122,34 +134,35 @@ export class PluginRegistry {
     for (const agent of this.agentStrategyProviderConfigurations) {
       console.log(`Installed agent strategy: ${agent.identity.name}`);
     }
+    console.log('files: ', this.files.map(f => f.filename));
   }
 
   private async loadPluginConfiguration(): Promise<void> {
     try {
-      const pluginDeclaration = await loadYamlFile<PluginDeclaration>("manifest.yaml");
+      const pluginDeclaration = await loadYamlFile<PluginDeclaration>(this.manifestFilePath);
       this.declaration = pluginDeclaration;
 
       if (this.declaration.plugins.tools) {
         for (const toolFilePath of this.declaration.plugins.tools) {
-          const toolProviderConfiguration = await loadYamlFile<ToolProviderConfiguration>(toolFilePath);
+          const toolProviderConfiguration = await loadYamlFile<ToolProviderConfiguration>(resolveFrom(this.manifestFilePath, toolFilePath));
           this.toolProviderConfigurations.push(toolProviderConfiguration);
         }
       }
       if (this.declaration.plugins.models) {
         for (const modelFilePath of this.declaration.plugins.models) {
-          const model = await loadYamlFile<ModelProviderConfiguration>(modelFilePath);
+          const model = await loadYamlFile<ModelProviderConfiguration>(resolveFrom(this.manifestFilePath, modelFilePath));
           this.modelProviderConfigurations.push(model);
         }
       }
       if (this.declaration.plugins.endpoints) {
         for (const endpointFilePath of this.declaration.plugins.endpoints) {
-          const endpoint = await loadYamlFile<EndpointProviderConfiguration>(endpointFilePath);
+          const endpoint = await loadYamlFile<EndpointProviderConfiguration>(resolveFrom(this.manifestFilePath, endpointFilePath));
           this.endpointProviderConfigurations.push(endpoint);
         }
       }
       if (this.declaration.plugins.agentStrategies) {
         for (const agentStrategyFilePath of this.declaration.plugins.agentStrategies) {
-          const agentStrategy = await loadYamlFile<AgentStrategyProviderConfiguration>(agentStrategyFilePath);
+          const agentStrategy = await loadYamlFile<AgentStrategyProviderConfiguration>(resolveFrom(this.manifestFilePath, agentStrategyFilePath));
           this.agentStrategyProviderConfigurations.push(agentStrategy);
         }
       }
@@ -167,12 +180,12 @@ export class PluginRegistry {
 
   private async loadPluginAssets(): Promise<void> {
     const assetsDir = '_assets';
-
-    if (!fs.existsSync(assetsDir)) {
+    const assetsFilePath = path.resolve(process.cwd(), this.config.baseDir, assetsDir);
+    if (!fs.existsSync(assetsFilePath)) {
       return;
     }
 
-    const entries = fs.readdirSync(assetsDir, { withFileTypes: true });
+    const entries = fs.readdirSync(assetsFilePath, { withFileTypes: true });
     for (const entry of entries) {
       if (entry.isFile()) {
         const filePath = path.join(assetsDir, entry.name);
@@ -183,7 +196,7 @@ export class PluginRegistry {
         });
       }
     }
-    console.log('files: ', this.files);
+    // console.log('files: ', this.files);
   }
 
   private async resolveToolProviders(): Promise<void> {
@@ -193,7 +206,7 @@ export class PluginRegistry {
       let providerCls: ClassInfo<new (...args: any[]) => any> | undefined;
       if (providerFilePath) {
         providerCls = await this.loadSingleSubclass(
-          providerFilePath,
+          resolveFrom(this.manifestFilePath, providerFilePath),
           ToolProvider,
           providerConfiguration.extra.node?.class,
         )
@@ -207,12 +220,16 @@ export class PluginRegistry {
           const toolClassName = toolConfiguration.extra.node?.class;
           if (!toolFilePath) continue;
 
-          const toolCls = await this.loadSingleSubclass(toolFilePath, Tool, toolClassName);
+          const toolCls = await this.loadSingleSubclass(resolveFrom(this.manifestFilePath, toolFilePath), Tool, toolClassName);
+          if (!isToolClass(toolCls.class)) {
+            throw new Error('Invalid tool class');
+          }
           const toolRegistration: ToolRegistration = {
             configuration: toolConfiguration,
             toolClassType: toolCls.class,
             toolFilePath: toolFilePath,
             toolClassName: toolClassName,
+            cpuBound: toolConfiguration.extra.node?.cpuBound || false,
           };
           tools.set(
             toolConfiguration.identity.name || toolClassName || '',
@@ -230,6 +247,7 @@ export class PluginRegistry {
         providerConfiguration,
         providerClass: providerInstance,
         tools: tools,
+        cpuBound: providerConfiguration.extra.node?.cpuBound || false,
       };
 
       this.toolsMapping.set(providerName, registration);
@@ -243,14 +261,14 @@ export class PluginRegistry {
         continue
       }
       const providerModelCls = await this.loadSingleSubclass(
-        providerFilePath,
+        resolveFrom(this.manifestFilePath, providerFilePath),
         ModelProvider,
       )
 
       const models = new Map<ModelType, AIModel>();
       if (provider.extra.node?.models) {
         for (const modelSource of provider.extra.node?.models) {
-          const modelClasses = await this.loadMultiSubclasses(modelSource, AIModel);
+          const modelClasses = await this.loadMultiSubclasses(resolveFrom(this.manifestFilePath, modelSource), AIModel);
           for (const modelCls of modelClasses) {
             if (this.isStrictSubclasses(
               modelCls,
@@ -275,6 +293,7 @@ export class PluginRegistry {
         modelProviderConfiguration: provider,
         modelProviderClass: providerModelInstance,
         models: models,
+        cpuBound: provider.extra.node?.cpuBound || false,
       };
       this.modelMapping.set(provider.provider, registration);
     }
@@ -291,16 +310,21 @@ export class PluginRegistry {
           }
 
           const strategyCls = await this.loadSingleSubclass(
-            module,
+            resolveFrom(this.manifestFilePath, module),
             AgentStrategy,
             strategy.extra.node?.class,
           );
+
+          if (!isAgentStrategyClass(strategyCls.class)) {
+            throw new Error('Invalid agent strategy class');
+          }
 
           const registration: AgentStrategyRegistration = {
             module: module,
             className: strategy.extra.node?.class || '',
             providerConfiguration: provider,
             providerClassType: strategyCls.class,
+            cpuBound: strategy.extra.node?.cpuBound || false,
           };
           strategies.set(strategy.identity.name, registration);
         }
@@ -323,10 +347,14 @@ export class PluginRegistry {
           }
 
           const endpointCls = await this.loadSingleSubclass(
-            module,
+            resolveFrom(this.manifestFilePath, module),
             Endpoint,
             endpoint.extra.node?.class,
           );
+
+          if (!isEndpointClass(endpointCls.class)) {
+            throw new Error('Invalid endpoint class');
+          }
 
           const registration: EndpointRegistration = {
             module: module,
@@ -334,6 +362,7 @@ export class PluginRegistry {
             path: endpoint.path,
             methods: [endpoint.method],
             endpointClassType: endpointCls.class,
+            cpuBound: endpoint.extra.node?.cpuBound || false,
           };
           this.endpoints.push(registration);
         }
@@ -353,15 +382,12 @@ export class PluginRegistry {
       // 更具体的路径优先（参数少的优先）
       const aParamCount = (a.path.match(/:[^\/]+/g) || []).length;
       const bParamCount = (b.path.match(/:[^\/]+/g) || []).length;
-
       if (aParamCount !== bParamCount) {
         return aParamCount - bParamCount;
       }
-
       // 路径长的优先
       return b.path.length - a.path.length;
     });
-
 
     // 遍历所有端点，寻找匹配
     for (const endpoint of sortedEndpoints) {
@@ -369,25 +395,21 @@ export class PluginRegistry {
       if (!matchMethods(requestMethod, endpoint.methods)) {
         continue;
       }
-
       // 2. 检查路径是否匹配
       const { matched, params } = matchPath(requestPath, endpoint.path);
       if (!matched) {
         continue;
       }
-
       // 3. 检查端点类是否存在
       if (!endpoint.endpointClassType) {
         throw new Error(`Endpoint class for ${endpoint.className} is undefined`);
       }
-
       // 4. 返回匹配的端点和参数
       return {
         endpoint: endpoint,
         values: params
       };
     }
-
     throw new Error(`No endpoint found for ${requestMethod} ${requestPath}`);
   }
 
@@ -444,11 +466,10 @@ export class PluginRegistry {
     return registration?.providerClass;
   }
 
-  getToolClassType(providerName: string, toolName: string): typeof Tool | undefined {
+  getToolClassRegistration(providerName: string, toolName: string): ToolRegistration | undefined {
     const registration = this.toolsMapping.get(providerName);
     if (!registration) return undefined;
-    const toolEntry = registration.tools.get(toolName);
-    return toolEntry ? toolEntry.toolClassType : undefined;
+    return registration.tools.get(toolName);
   }
 
   getModelProviderInstance(providerName: string): ModelProvider | undefined {
@@ -456,11 +477,10 @@ export class PluginRegistry {
     return registration?.modelProviderClass;
   }
 
-  getAgentStrategyClassType(strategyName: string, agent: string): typeof AgentStrategy | undefined {
+  getAgentStrategyRegistration(strategyName: string, agent: string): AgentStrategyRegistration | undefined {
     const providerData = this.agentStrategyMapping.get(strategyName);
     if (providerData) {
-      const strategies = providerData.strategies.get(agent);
-      return strategies?.providerClassType;
+      return providerData.strategies.get(agent);
     }
     return undefined;
   }
@@ -472,4 +492,9 @@ export class PluginRegistry {
     }
     return undefined;
   }
+
+}
+
+function resolveFrom(baseFile: string, relativePath: string): string {
+  return path.resolve(path.dirname(baseFile), relativePath);
 }

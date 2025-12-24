@@ -8,19 +8,19 @@ import path from "path";
 import { DynamicThreadPool } from "poolifier";
 import { StreamRequestEvent } from "@/core/entities/event.enum";
 import { TaskData, TaskResult } from "./workers/worker.type";
-import { PluginRegistry } from "./plugin-registry";
-import { PluginExecutor } from "./plugin-executor";
-import { Router } from "./route/router.class";
-import { Route } from "./route/route-handler";
+import { PluginRegistry } from "./plugin.registry";
+import { PluginExecutor } from "./plugin.executor";
+import { Router } from "./route/router";
 import { PluginInvokeType } from "@/core/entities/enums/plugin.type";
 import { AgentActions, EndpointActions, ModelActions, OAuthActions, ToolActions } from "@/core/entities/plugin/request/request";
 import { ToolInvokeRequest, ToolValidateCredentialsRequest } from "@/core/entities/plugin/request/tool.request";
-import { AgentInvokeMessage } from "@/core/entities/plugin/agent";
 import { AgentInvokeRequest } from "@/core/entities/plugin/request/agent.request";
 import { ModelGetAIModelSchemasRequest, ModelGetLLMNumTokensRequest, ModelGetTextEmbeddingNumTokensRequest, ModelInvokeLLMRequest, ModelInvokeRerankRequest, ModelInvokeSpeech2TextRequest, ModelInvokeTextEmbeddingRequest, ModelInvokeTTSRequest, ModelValidateModelCredentialsRequest, ModelValidateProviderCredentialsRequest } from "@/core/entities/plugin/request/model.request";
 import { EndpointInvokeRequest } from "@/core/entities/plugin/request/endpoint.request";
 import { DynamicParameterFetchParameterOptionsRequest } from "@/core/entities/plugin/request/dynamic-parameter";
 import { OAuthGetAuthorizationUrlRequest, OAuthRefreshCredentialsRequest } from "@/core/entities/plugin/request/oauth.request";
+import { Session } from "@/core/classes/runtime";
+import { HandleResult, TaskType } from "./route/route.handler";
 
 export class IOServer implements Server {
   private isRunning: boolean = false;
@@ -28,12 +28,11 @@ export class IOServer implements Server {
   private heartbeatPromise?: Promise<void>;
   private parentCheckPromise?: Promise<void>;
   private maxWorkers: number = Math.max(2, Math.floor(os.cpus().length / 2));
-  private pool: DynamicThreadPool<TaskData, TaskResult>;
+  private pool: DynamicThreadPool<TaskData, TaskResult> | null = null;
   private messageHandler?: (msg: StreamMessage) => Promise<any> | any;
   private registry: PluginRegistry;
   private pluginExecutor: PluginExecutor;
   private router: Router;
-  private routes: Route[] = [];
 
   constructor(
     protected config: PluginConfig,
@@ -42,16 +41,18 @@ export class IOServer implements Server {
   ) {
     this.isRunning = false;
     this.registry = new PluginRegistry(config);
-    this.pool = new DynamicThreadPool(
-      2,
-      this.maxWorkers * 2,
-      path.resolve(__dirname, 'workers/message.worker.js'),
-      {
-        errorHandler: (e) => {
-          console.log('worker error: ', e);
-        },
-        onlineHandler: () => { },
-      });
+    if (!this.config.disableWorker) {
+      this.pool = new DynamicThreadPool(
+        2,
+        this.maxWorkers * 2,
+        path.resolve(__dirname, 'workers/message.worker.js'),
+        {
+          errorHandler: (e) => {
+            console.log('worker error: ', e);
+          },
+          onlineHandler: () => { },
+        });
+    }
     this.router = new Router(reader, writer);
     this.pluginExecutor = new PluginExecutor(this.config, this.registry);
     this.registerRoutes();
@@ -80,6 +81,8 @@ export class IOServer implements Server {
       await this.keepAlive();
     } catch (error) {
       console.error('Service error:', error);
+      console.error('Restarting...');
+      await this.sleep(3000);
       await this.restart();
     }
   }
@@ -143,7 +146,9 @@ export class IOServer implements Server {
   }
 
   getServerInfo(): ServerInfo {
-    throw new Error("Method not implemented.");
+    return {
+      workers: this.pool?.info
+    };
   }
 
   private sleep(ms: number): Promise<void> {
@@ -197,7 +202,7 @@ export class IOServer implements Server {
 
       switch (message.event) {
         case StreamRequestEvent.REQUEST:
-          const result = await this.pool.execute(taskData);
+          const result = await this.pool?.execute(taskData);
           if (this.writer) {
             const response = { sessionId: message.sessionId, result };
             this.writer.write(JSON.stringify(response));
@@ -212,12 +217,6 @@ export class IOServer implements Server {
     }
   }
 
-  status() {
-    return {
-      workers: this.pool.info
-    }
-  }
-
   setHandler(handler: (msg: StreamMessage) => Promise<any>) {
     this.messageHandler = handler;
   }
@@ -227,10 +226,46 @@ export class IOServer implements Server {
   }
 
   private async dispatchMessage(message: StreamMessage): Promise<void> {
+    const session = new Session(
+      message.sessionId,
+      this.reader,
+      this.writer,
+      message.conversationId,
+      message.messageId,
+      message.appId,
+      message.endpointId,
+      message.context,
+      this.config.pluginDaemonUrl,
+    );
+
     if (this.isCPUTask(message)) {
       return this.handleCPUTask(message);
     }
+
+    const handleResult = await this.router.dispatch(session, message.data);
+
+    let result: unknown;
+    if (handleResult) {
+      if (handleResult instanceof Promise) {
+        const resolved = (await handleResult) as HandleResult;
+        if (resolved.taskType === TaskType.CPU) {
+          return this.handleCPUTask(message);
+        }
+        result = resolved.result;
+        await this.processAndSendMessage(session, result);
+      } else if (Symbol.asyncIterator in handleResult) {
+        for await (const item of handleResult) {
+          await this.processAndSendMessage(session, item.result);
+        }
+      }
+    }
+
     return this.handleIOTask(message);
+  }
+
+  private async processAndSendMessage(session: Session, result: any) {
+    console.log("output message", result);
+
   }
 
   private async handleCPUTask(message: StreamMessage): Promise<void> {
@@ -242,7 +277,7 @@ export class IOServer implements Server {
 
       switch (message.event) {
         case StreamRequestEvent.REQUEST:
-          const result = await this.pool.execute(taskData);
+          const result = await this.pool?.execute(taskData);
           if (this.writer) {
             const response = { sessionId: message.sessionId, result };
             this.writer.write(JSON.stringify(response));
