@@ -4,6 +4,7 @@ import { AIModel } from "@/core/entities/plugin/ai-model";
 import { ClassWithMarker } from "../marker.class";
 
 export const RERANK_MODEL_SYMBOL = Symbol.for('plugin.rerank.model');
+
 export abstract class RerankModel extends AIModel {
   static [RERANK_MODEL_SYMBOL] = true;
   modelType: ModelType = ModelType.RERANK;

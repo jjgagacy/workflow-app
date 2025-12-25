@@ -4,9 +4,10 @@ import { AIModel } from "@/core/entities/plugin/ai-model";
 import { PriceInfo, PriceType } from "@/core/entities/pricing";
 import { ClassWithMarker } from "../marker.class";
 
-export const TTS_SYMBOL = Symbol.for('plugin.tts.model');
+export const TTS_MODEL_SYMBOL = Symbol.for('plugin.tts.model');
+
 export abstract class TTSModel extends AIModel {
-  static [TTS_SYMBOL] = true;
+  static [TTS_MODEL_SYMBOL] = true;
   modelType: ModelType = ModelType.TTS
 
   constructor() {
@@ -39,7 +40,7 @@ export abstract class TTSModel extends AIModel {
   }
 }
 
-export type TTSModelClassType = ClassWithMarker<TTSModel, typeof TTS_SYMBOL>;
+export type TTSModelClassType = ClassWithMarker<TTSModel, typeof TTS_MODEL_SYMBOL>;
 export function isTTSModelClass(cls: any): cls is TTSModelClassType {
-  return Boolean(cls?.[TTS_SYMBOL]);
+  return Boolean(cls?.[TTS_MODEL_SYMBOL]);
 }

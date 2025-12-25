@@ -1,13 +1,29 @@
-import { StreamRequestEvent } from "@/core/entities/event.enum";
 import { TestMessageFactory } from "@/core/test/message-factory";
 import { Plugin } from "@/plugin";
 import { EventEmitter } from 'events';
 import path from "path";
+import { PassThrough } from "stream";
+
 
 describe('PluginTests', () => {
   jest.setTimeout(30000);
   let originStdin: NodeJS.ReadStream;
+  let originStdout: NodeJS.WriteStream;
   let mockStdin: any;
+  let mockStdout: PassThrough;
+  let stdoutChunks: Buffer[];
+
+  function getStdoutText() {
+    return Buffer.concat(stdoutChunks).toString('utf-8');
+  }
+
+  function parseStdoutLines(text: string): any[] {
+    return text
+      .split('\n')
+      .map(line => line.trim())
+      .filter(Boolean)
+      .map(line => JSON.parse(line));
+  }
 
   beforeEach(() => {
     originStdin = process.stdin;
@@ -22,11 +38,28 @@ describe('PluginTests', () => {
       value: mockStdin,
       writable: false,
     });
+
+    originStdout = process.stdout;
+    mockStdout = new PassThrough();
+    stdoutChunks = [];
+
+    mockStdout.on('data', (chunk) => {
+      stdoutChunks.push(Buffer.from(chunk));
+    });
+
+    Object.defineProperty(process, 'stdout', {
+      value: mockStdout,
+      writable: false,
+    })
   });
 
   afterEach(() => {
     Object.defineProperty(process, 'stdin', {
       value: originStdin,
+      writable: true,
+    });
+    Object.defineProperty(process, 'stdout', {
+      value: originStdout,
       writable: true,
     });
   });
@@ -88,8 +121,15 @@ describe('PluginTests', () => {
           pamaters: { location: "New York" },
         }
       }),
+      TestMessageFactory.createRequestMessage({
+        sessionId: "session-2",
+        data: {
+          query: "What is the weather today?",
+          pamaters: { location: "New York" },
+        }
+      }),
       TestMessageFactory.createInvocationResponseMessage({
-        sessionId,
+        sessionId: "session-3",
         data: {
           response: 'The weather in New York is sunny, 25°C.',
           result: {
@@ -104,17 +144,55 @@ describe('PluginTests', () => {
       }),
     ];
 
-    // for (const message of messages) {
-    //   mockStdin.emit('data', JSON.stringify(message) + '\n');
-    //   await new Promise(resolve => setTimeout(resolve, 20));
-    // }
+    for (const message of messages) {
+      mockStdin.emit('data', JSON.stringify(message) + '\n');
+      await new Promise(resolve => setTimeout(resolve, 20));
+    }
 
     // mockStdin.emit('data', '\n');
     // mockStdin.emit('end');
 
     // await new Promise(resolve => setTimeout(resolve, 2000));
-    // mockStdin.emit('data', JSON.stringify(messages[0]) + '\n');
+    const last = TestMessageFactory.createRequestMessage({
+      sessionId: "session-last",
+      data: {
+        query: "What is the weather today?",
+        pamaters: { location: "New York" },
+      }
+    })
+    mockStdin.emit('data', JSON.stringify(last) + '\n');
+    mockStdin.emit('data', '\n');
 
-    await pluginPromise;
+    mockStdin.emit('data', JSON.stringify({ sessionId: 'end', event: '__shutdown__', data: {} }) + '\n');
+
+    function waitForStdout(
+      matcher: (text: string) => boolean,
+      timeout = 2000
+    ): Promise<string> {
+      return new Promise((resolve, reject) => {
+        const start = Date.now();
+
+        const interval = setInterval(() => {
+          const text = getStdoutText();
+          console.log('text:', text);
+          if (matcher(text)) {
+            clearInterval(interval);
+            resolve(text);
+          }
+          if (Date.now() - start > timeout) {
+            clearInterval(interval);
+            reject(new Error('stdout wait timeout'));
+          }
+        }, 20);
+      });
+    }
+
+    const output = await waitForStdout(
+      text => text.includes('"event":"session"')
+    );
+
+    expect(output).toContain('"sessionId":"session-flow-test"');
+    expect(output).toContain('"sessionId":"session-2"');
+    await new Promise(resolve => setTimeout(resolve, 2000));
   });
 });

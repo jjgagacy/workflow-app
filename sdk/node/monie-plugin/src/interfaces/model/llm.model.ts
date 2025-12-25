@@ -6,10 +6,10 @@ import { ParameterRule } from "@/core/entities/plugin/parameter";
 import { PriceInfo, PriceType } from "@/core/entities/pricing";
 import { ClassWithMarker } from "../marker.class";
 
-export const LARGE_LANGUAGE_SYMBOL = Symbol.for('plugin.largelanguage.model');
+export const LARGE_LANGUAGE_MODEL_SYMBOL = Symbol.for('plugin.largelanguage.model');
 
 export abstract class LargeLanguageModel extends AIModel {
-  static [LARGE_LANGUAGE_SYMBOL] = true;
+  static [LARGE_LANGUAGE_MODEL_SYMBOL] = true;
   modelType: ModelType = ModelType.LLM;
 
   constructor() {
@@ -91,7 +91,7 @@ export abstract class LargeLanguageModel extends AIModel {
   }
 }
 
-export type LargeLanguageModelClassType = ClassWithMarker<LargeLanguageModel, typeof LARGE_LANGUAGE_SYMBOL>;
+export type LargeLanguageModelClassType = ClassWithMarker<LargeLanguageModel, typeof LARGE_LANGUAGE_MODEL_SYMBOL>;
 export function isLargeLanguageModelClass(cls: any): cls is LargeLanguageModelClassType {
-  return Boolean(cls?.[LARGE_LANGUAGE_SYMBOL]);
+  return Boolean(cls?.[LARGE_LANGUAGE_MODEL_SYMBOL]);
 }

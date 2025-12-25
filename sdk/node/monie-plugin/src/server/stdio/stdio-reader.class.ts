@@ -145,7 +145,6 @@ export class StdioReader extends RequestReader {
     if (!this.isClosed) return;
 
     this.isClosed = false;
-    this.messageQueue = [];
     this.errorQueue = [];
     this.resolveQueue = null;
 

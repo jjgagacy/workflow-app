@@ -10,7 +10,6 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
   private processingPromise: Promise<void> | null = null;
   protected useNonBlocking: boolean = true;
   private messageCallbacks: Set<MessageCallback> = new Set();
-  private isProcessingQueue: boolean = false;
 
   constructor(
     type: string,
@@ -78,14 +77,14 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
         for await (const line of this.readStreamAsync()) {
           if (!this.isRunning) break;
           this.read(line);
-          // 添加小延迟，避免处理太快
+          // Add a small delay to avoid processing too quickly
           if (this.pollInterval > 0) {
             await this.sleep(this.pollInterval);
           }
         }
       } catch (error) {
         console.error("Error in event loop", error);
-        // 错误后等待更长时间
+        // Wait longer after en error
         this.emit('event.loop.error', error);
         await this.sleep(1000);
       }
@@ -114,7 +113,7 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
 
     while (this.isRunning && consecutiveEmpty < maxEmptyIterations) {
       try {
-        // 使用 Promise.race 避免长时间阻塞
+        // Use Promise.race to avoid long-term blocking
         const result = await Promise.race([
           iterator.next(),
           // 添加一个检查 running 状态的 Promise
@@ -154,9 +153,8 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
   }
 
   private async processLineAsync(data: StreamMessage): Promise<void> {
-    // 使用微任务或 setImmediate 避免阻塞
+    // Use microtasks or setImmediate to avoid blocking
     await new Promise<void>(resolve => {
-      // 使用 setImmediate 确保不阻塞事件循环
       setImmediate(async () => {
         try {
           this.read(data);
@@ -170,7 +168,7 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
     });
   }
 
-  // 异步处理消息（不阻塞事件循环）
+  // Process messages asynchronously (without blocking the event loop)
   private async handleMessageAsync(data: StreamMessage): Promise<void> {
     return new Promise<void>((resolve) => {
       queueMicrotask(async () => {
@@ -218,10 +216,9 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  // 外部 IO Server 可以监听 'message.received' 事件
-  // 或者通过 onMessage 注册回调来处理
+  // External IO Server can listen 'message.received' event 
+  // Or register a callback vir onMessage to handle it
   async read(data: StreamMessage): Promise<any> {
-    console.log('process line: ', data);
   }
 
   async stop(): Promise<void> {

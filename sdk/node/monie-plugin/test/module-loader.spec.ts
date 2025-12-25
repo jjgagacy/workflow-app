@@ -18,7 +18,10 @@ class Dog extends AnimalBase {
   }
 }
 
+const ANIMAL_BASE_SYMBOL = Symbol.for('animal.base');
+
 class Cat extends AnimalBase {
+  static [ANIMAL_BASE_SYMBOL] = true;
   speak(): string {
     return "Meow!";
   }
@@ -28,7 +31,10 @@ class Cat extends AnimalBase {
   }
 }
 
+const CAR_SYMBOL = Symbol.for('car');
+
 class Car {
+  static [CAR_SYMBOL] = true;
   drive(): void {
     console.log('Driving...');
   }
@@ -39,7 +45,7 @@ function Injectable(target: any) {
 }
 
 function Controller(path: string) {
-  return function(target: any) {
+  return function (target: any) {
     target.controllerPath = path;
   };
 }
@@ -144,7 +150,7 @@ describe('ModuleClassScanner', () => {
 
     describe('findSubClasses', () => {
       it('should find all direct and indirect subclass of parent class', async () => {
-        const subClasses = await ModuleClassScanner.findSubClasses(mockModule, AnimalBase);
+        const subClasses = await ModuleClassScanner.findSubClasses(mockModule, ANIMAL_BASE_SYMBOL);
 
         expect(subClasses).toHaveLength(2);
         expect(subClasses.map(c => c.name)).toEqual(
@@ -154,7 +160,7 @@ describe('ModuleClassScanner', () => {
         expect(subClasses.find(c => c.name === 'AnimalBase')).toBeUndefined();
         expect(subClasses.find(c => c.name === 'Car')).toBeUndefined();
 
-        const subClassesNop = await ModuleClassScanner.findSubClasses(mockModule, Car);
+        const subClassesNop = await ModuleClassScanner.findSubClasses(mockModule, CAR_SYMBOL);
         expect(subClassesNop).toHaveLength(0);
       });
     });

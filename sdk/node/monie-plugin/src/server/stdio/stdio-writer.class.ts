@@ -10,7 +10,6 @@ export class StdioWriter extends ResponseWriter {
     });
   }
 
-  close(): Promise<void> {
-    throw new Error("Method not implemented.");
+  async close(): Promise<void> {
   }
 }

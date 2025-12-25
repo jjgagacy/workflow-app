@@ -11,7 +11,7 @@
     "build": "tsc && tsc-alias",
     "dev": "tsc --watch",
     "test:telegraph": "tsc && tsc-alias && npm run copy-env-file && npm run copy-asset && NODE_ENV=development node dist/src/core/test/telegraph/main.js",
-    "copy-env-file": "cp src/core/test/telegraph/.env.development dist/src/core/test/telegraph 2>/dev/null",
+    "copy-env-file": "cp src/core/test/telegraph/.env.dev dist/src/core/test/telegraph 2>/dev/null",
     "copy-asset": "npx copyfiles -u 0 \"src/**/*.{yaml,yml,json,svg}\" dist/"
   },
   "files": [

@@ -36,6 +36,9 @@ export class Plugin extends IOServer {
     switch (msg.event) {
       case StreamRequestEvent.REQUEST:
         return this.handleRequestMessage(msg);
+      case StreamRequestEvent.SHUTDOWN:
+        await this.stopServer();
+        break;
       case StreamRequestEvent.INVOCATION_RESPONSE:
         return {};
       default:
@@ -44,6 +47,6 @@ export class Plugin extends IOServer {
   }
 
   protected async handleRequestMessage(msg: StreamMessage): Promise<any> {
-    return { ok: true, data: "default" };
+    return "response...";
   }
 }

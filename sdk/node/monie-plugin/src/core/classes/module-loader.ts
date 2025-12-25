@@ -1,3 +1,5 @@
+import { isEndpointClass } from "@/interfaces/endpoint/endpoint";
+import { isToolProviderClass } from "@/interfaces/tool/tool-provider";
 import path from "path";
 import { fileURLToPath, pathToFileURL } from "url";
 
@@ -12,7 +14,7 @@ export interface InterfaceDefinition {
   [methodName: string]: any;
 }
 
-export type AnyConstructor = abstract new (...args: any[]) => any;
+export type AnyConstructor = new (...args: any[]) => any;
 
 export class ModuleClassScanner {
   /**
@@ -96,22 +98,16 @@ export class ModuleClassScanner {
    * Find all subclasses inheriting from speficied parent class
    */
   static async findSubClasses<
-    T extends new (...args: any[]) => any,
-    P extends AnyConstructor,
+    T extends AnyConstructor,
   >(
     module: string | Record<string, any>,
-    parentClass: P,
+    requiredSymbol: symbol,
     includeAbstract: boolean = false,
   ): Promise<Array<ClassInfo<T>>> {
     const allClasses = await this.scanClasses<T>(module);
     return allClasses.filter(({ class: Class }) => {
       if (!Class || typeof Class !== 'function') return false;
-      // exlude parent self
-      if (Class === (parentClass as unknown as T))
-        return false;
-
-      console.log('-----', module, Class, Class.prototype instanceof parentClass, parentClass)
-      const isSubclass = Class.prototype instanceof parentClass;
+      const isSubclass = Boolean((Class as any)[requiredSymbol]);
       if (!includeAbstract) {
         return isSubclass && !this.isAbstractClass(Class);
       }
@@ -122,7 +118,6 @@ export class ModuleClassScanner {
   static isAbstractClass(Class: any): boolean {
     // TypeScript 抽象类编译后通常会添加检查
     const classString = Class.toString();
-
     return (
       // 检查构造函数中的抽象类保护
       classString.includes('Cannot instantiate abstract class') ||

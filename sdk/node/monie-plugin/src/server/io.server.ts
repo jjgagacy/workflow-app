@@ -21,6 +21,7 @@ import { DynamicParameterFetchParameterOptionsRequest } from "@/core/entities/pl
 import { OAuthGetAuthorizationUrlRequest, OAuthRefreshCredentialsRequest } from "@/core/entities/plugin/request/oauth.request";
 import { Session } from "@/core/classes/runtime";
 import { HandleResult, TaskType } from "./route/route.handler";
+import { SessionMessageType } from "@/core/entities/event/message";
 
 export class IOServer implements Server {
   private isRunning: boolean = false;
@@ -65,7 +66,14 @@ export class IOServer implements Server {
     this.isRunning = true;
 
     const callback: MessageCallback = async (message) => {
-      await this.dispatchMessage(message);
+      switch (message.event) {
+        case StreamRequestEvent.REQUEST:
+          await this.dispatchMessage(message);
+          break;
+        case StreamRequestEvent.SHUTDOWN:
+          await this.stop();
+          return;
+      }
     };
     this.reader.onMessage(callback);
 
@@ -77,7 +85,7 @@ export class IOServer implements Server {
       if (this.reader.type === 'stdio') {
         this.parentCheckPromise = this.parentAliveCheck();
       }
-      // 创建一个永不完成的 Promise，保持服务运行
+      // Create a never-resolve Promise to keep the service running.
       await this.keepAlive();
     } catch (error) {
       console.error('Service error:', error);
@@ -108,7 +116,6 @@ export class IOServer implements Server {
 
   private async parentAliveCheck(): Promise<void> {
     while (this.isRunning) {
-      console.log('check parent alive');
       if (process.ppid === 1) { // 父进程退出
         console.log('Parent process died, shutting down...');
         this.isRunning = false;
@@ -122,18 +129,16 @@ export class IOServer implements Server {
     while (this.isRunning) {
       try {
         await this.send_heartbeat();
-        await this.sleep(2000);
+        await this.sleep(this.config.heartbeatInterval * 1000);
       } catch (error) {
         console.error('Heartbeat error:', error);
-        await this.sleep(1000);
+        await this.sleep(2000);
       }
     }
   }
 
   private async send_heartbeat(): Promise<void> {
-    console.log('Sending heartbeat...', new Date().toISOString());
-    // 实际心跳逻辑
-    await this.sleep(500); // 模拟网络延迟
+    this.writer?.heartbeat();
   }
 
   async stop(): Promise<void> {
@@ -158,8 +163,8 @@ export class IOServer implements Server {
   private async cleanup() {
     this.reader.stop();
     this.writer?.close();
-    await this.sleep(2000);
-    process.exit(-1);
+    await this.sleep(1000);
+    process.exit(0);
   }
 
   private async restart(): Promise<void> {
@@ -213,7 +218,7 @@ export class IOServer implements Server {
       }
     } catch (error) {
       console.error('Error processing message:', error);
-      // 发送错误响应
+      // Send an error response
     }
   }
 
@@ -238,7 +243,7 @@ export class IOServer implements Server {
       this.config.pluginDaemonUrl,
     );
 
-    if (this.isCPUTask(message)) {
+    if (this.isCPUTask(message) && !this.config.disableWorker) {
       return this.handleCPUTask(message);
     }
 
@@ -248,24 +253,33 @@ export class IOServer implements Server {
     if (handleResult) {
       if (handleResult instanceof Promise) {
         const resolved = (await handleResult) as HandleResult;
-        if (resolved.taskType === TaskType.CPU) {
+        if (resolved.taskType === TaskType.CPU && !this.config.disableWorker) {
           return this.handleCPUTask(message);
         }
         result = resolved.result;
-        await this.processAndSendMessage(session, result);
+        await this.processAndSendMessage(result, session);
       } else if (Symbol.asyncIterator in handleResult) {
         for await (const item of handleResult) {
-          await this.processAndSendMessage(session, item.result);
+          await this.processAndSendMessage(item.result, session);
         }
       }
     }
 
-    return this.handleIOTask(message);
+    return this.handleIOTask(session, message);
   }
 
-  private async processAndSendMessage(session: Session, result: any) {
-    console.log("output message", result);
+  private async processAndSendMessage(message: any, session: Session) {
+    // Check if it is a blob message
+    if (message.type === 'blob_message' && message.message?.blob) {
+      await this.sendBlobChunks(message, session.sessionId);
+    } else {
+      this.writer?.sessionMessage(session.sessionId, this.writer.streamObject(message));
+    }
+  }
 
+  // Send the blob in chunks
+  private async sendBlobChunks(blobMessage: any, sessionId: string): Promise<void> {
+    // TODO:
   }
 
   private async handleCPUTask(message: StreamMessage): Promise<void> {
@@ -292,7 +306,7 @@ export class IOServer implements Server {
     }
   }
 
-  private async handleIOTask(message: StreamMessage): Promise<void> {
+  private async handleIOTask(session: Session, message: StreamMessage): Promise<void> {
     if (!this.messageHandler) {
       console.warn("No message Handler registered.");
       return;
@@ -301,13 +315,18 @@ export class IOServer implements Server {
     try {
       const result = await this.messageHandler!(message);
       if (this.writer) {
-        this.writer.write(JSON.stringify({
-          sessionId: message.sessionId, result
-        }));
+        this.processAndSendMessage(result, session);
       }
     } catch (error) {
       console.error('Error io task processing message:', error);
       // 发送错误响应
+      if (this.writer) {
+        const streamError = this.writer.streamObject({
+          data: error instanceof Error ? error.message : 'Unknown error',
+          type: SessionMessageType.ERROR
+        });
+        this.writer.error(session.sessionId, streamError);
+      }
     }
   }
 

@@ -4,6 +4,7 @@ import { IPluginConfig } from "./base";
 import { EnvLoader, RawEnvConfig } from "./env-loader";
 
 export class PluginConfig implements IPluginConfig {
+  heartbeatInterval: number;
   installMethod: InstallMethod;
 
   remoteInstallUrl: string | undefined;
@@ -25,6 +26,7 @@ export class PluginConfig implements IPluginConfig {
   constructor(private envLoader: EnvLoader) {
     const rawEnv = this.envLoader.getRawEnv();
     console.log(rawEnv);
+    this.heartbeatInterval = this.parseNumber(rawEnv.HEARTBEAT_INTERVAL, 10)!;
     this.installMethod = this.parseInstallMethod(rawEnv.INSTALL_METHOD);
     this.maxRequestTimeout = this.parseNumber(rawEnv.MAX_REQUEST_TIMEOUT, 300)!;
     this.pluginDaemonUrl = this.parseUrl(rawEnv.PLUGIN_DAEMON_URL, 'http://localhost:50002');
@@ -58,7 +60,6 @@ export class PluginConfig implements IPluginConfig {
 
   private parseUrl(value: string | undefined, defaultValue: string): string {
     const url = this.parseString(value, defaultValue);
-
     try {
       new URL(url);
       return url;

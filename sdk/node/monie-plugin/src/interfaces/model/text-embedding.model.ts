@@ -4,9 +4,10 @@ import { AIModel } from "@/core/entities/plugin/ai-model";
 import { PriceInfo, PriceType } from "@/core/entities/pricing";
 import { ClassWithMarker } from "../marker.class";
 
-export const TEXT_EMBEDDING_SYMBOL = Symbol.for('plugin.textembedding.model');
+export const TEXT_EMBEDDING_MODEL_SYMBOL = Symbol.for('plugin.textembedding.model');
+
 export abstract class TextEmbeddingModel extends AIModel {
-  static [TEXT_EMBEDDING_SYMBOL] = true;
+  static [TEXT_EMBEDDING_MODEL_SYMBOL] = true;
   modelType: ModelType = ModelType.TEXT_EMBEDDING;
 
   constructor() {
@@ -35,7 +36,7 @@ export abstract class TextEmbeddingModel extends AIModel {
   ): PriceInfo;
 }
 
-export type TextEmbeddingModelClassType = ClassWithMarker<TextEmbeddingModel, typeof TEXT_EMBEDDING_SYMBOL>;
+export type TextEmbeddingModelClassType = ClassWithMarker<TextEmbeddingModel, typeof TEXT_EMBEDDING_MODEL_SYMBOL>;
 export function isTextEmbeddingModelClass(cls: any): cls is TextEmbeddingModelClassType {
-  return Boolean(cls?.[TEXT_EMBEDDING_SYMBOL]);
+  return Boolean(cls?.[TEXT_EMBEDDING_MODEL_SYMBOL]);
 }

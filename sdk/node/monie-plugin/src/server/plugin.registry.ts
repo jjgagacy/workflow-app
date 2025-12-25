@@ -8,23 +8,24 @@ import { ModelProviderConfiguration } from "@/core/entities/plugin/declaration/m
 import { EndpointProviderConfiguration } from "@/core/entities/plugin/declaration/endpoint";
 import { AgentStrategyProviderConfiguration } from "@/core/entities/plugin/agent";
 import { AnyConstructor, ClassInfo, ModuleClassScanner } from "@/core/classes/module-loader";
-import { ToolProvider } from "@/interfaces/tool/tool-provider";
-import { isToolClass, Tool, ToolClassType } from "@/interfaces/tool/tool";
+import { TOOL_PROVIDER_SYMBOL, ToolProvider } from "@/interfaces/tool/tool-provider";
+import { isToolClass, Tool, TOOL_SYMBOL, ToolClassType } from "@/interfaces/tool/tool";
 import { ModelType } from "@/core/entities/enums/model.enum";
-import { AIModel } from "@/core/entities/plugin/ai-model";
-import { TextEmbeddingModel } from "@/interfaces/model/text-embedding.model";
-import { LargeLanguageModel } from "@/interfaces/model/llm.model";
-import { RerankModel } from "@/interfaces/model/rerank.model";
-import { TTSModel } from "@/interfaces/model/tts.model";
-import { Speech2TextModel } from "@/interfaces/model/speech2text.model";
-import { ModerationModel } from "@/interfaces/model/moderation.model";
-import { Endpoint, EndpointClassType, isEndpointClass } from "@/interfaces/endpoint/endpoint";
-import { AgentStrategy, AgentStrategyClassType, isAgentStrategyClass } from "@/interfaces/agent/agent-strategy";
+import { AIModel, AIMODEL_SYMBOL } from "@/core/entities/plugin/ai-model";
+import { TEXT_EMBEDDING_MODEL_SYMBOL, TextEmbeddingModel } from "@/interfaces/model/text-embedding.model";
+import { LARGE_LANGUAGE_MODEL_SYMBOL, LargeLanguageModel } from "@/interfaces/model/llm.model";
+import { RERANK_MODEL_SYMBOL, RerankModel } from "@/interfaces/model/rerank.model";
+import { TTS_MODEL_SYMBOL, TTSModel } from "@/interfaces/model/tts.model";
+import { SPEECH2TEXT_MODEL_SYMBOL, Speech2TextModel } from "@/interfaces/model/speech2text.model";
+import { MODERATION_MODEL_SYMBOL, ModerationModel } from "@/interfaces/model/moderation.model";
+import { Endpoint, ENDPOINT_SYMBOL, EndpointClassType, isEndpointClass } from "@/interfaces/endpoint/endpoint";
+import { AGENT_STATEGY_SYMBOL, AgentStrategy, AgentStrategyClassType, isAgentStrategyClass } from "@/interfaces/agent/agent-strategy";
 import { PluginAsset } from "@/core/entities/event/asset";
 import { PluginDeclaration } from "@/core/entities/plugin/declaration/declaration";
-import { ModelProvider } from "@/interfaces/model/model-provider";
+import { MODEL_PROVIDER_SYMBOL, ModelProvider } from "@/interfaces/model/model-provider";
 import { matchMethods, matchPath, Request } from "@/core/entities/endpoint/endpoint.entity";
 import { OAuthProvider } from "@/interfaces/oauth/oauth-provider";
+import { hasStaticMarker } from "@/interfaces/marker.class";
 
 export interface ToolRegistration {
   configuration: ToolConfiguration;
@@ -180,15 +181,14 @@ export class PluginRegistry {
 
   private async loadPluginAssets(): Promise<void> {
     const assetsDir = '_assets';
-    const assetsFilePath = path.resolve(process.cwd(), this.config.baseDir, assetsDir);
-    if (!fs.existsSync(assetsFilePath)) {
+    if (!fs.existsSync(resolveFrom(this.manifestFilePath, assetsDir))) {
       return;
     }
 
-    const entries = fs.readdirSync(assetsFilePath, { withFileTypes: true });
+    const entries = fs.readdirSync(resolveFrom(this.manifestFilePath, assetsDir), { withFileTypes: true });
     for (const entry of entries) {
       if (entry.isFile()) {
-        const filePath = path.join(assetsDir, entry.name);
+        const filePath = path.join(resolveFrom(this.manifestFilePath, assetsDir), entry.name);
         const data = fs.readFileSync(filePath);
         this.files.push({
           filename: entry.name,
@@ -196,7 +196,6 @@ export class PluginRegistry {
         });
       }
     }
-    // console.log('files: ', this.files);
   }
 
   private async resolveToolProviders(): Promise<void> {
@@ -207,7 +206,7 @@ export class PluginRegistry {
       if (providerFilePath) {
         providerCls = await this.loadSingleSubclass(
           resolveFrom(this.manifestFilePath, providerFilePath),
-          ToolProvider,
+          TOOL_PROVIDER_SYMBOL,
           providerConfiguration.extra.node?.class,
         )
       }
@@ -215,12 +214,12 @@ export class PluginRegistry {
       const tools = new Map<string, ToolRegistration>();
       for (const toolPath of providerConfiguration.plugins.tools) {
         try {
-          const toolConfiguration = await loadYamlFile<ToolConfiguration>(toolPath);
+          const toolConfiguration = await loadYamlFile<ToolConfiguration>(resolveFrom(this.manifestFilePath, toolPath));
           const toolFilePath = toolConfiguration.extra.node?.module;
           const toolClassName = toolConfiguration.extra.node?.class;
           if (!toolFilePath) continue;
 
-          const toolCls = await this.loadSingleSubclass(resolveFrom(this.manifestFilePath, toolFilePath), Tool, toolClassName);
+          const toolCls = await this.loadSingleSubclass(resolveFrom(this.manifestFilePath, toolFilePath), TOOL_SYMBOL, toolClassName);
           if (!isToolClass(toolCls.class)) {
             throw new Error('Invalid tool class');
           }
@@ -262,22 +261,22 @@ export class PluginRegistry {
       }
       const providerModelCls = await this.loadSingleSubclass(
         resolveFrom(this.manifestFilePath, providerFilePath),
-        ModelProvider,
+        MODEL_PROVIDER_SYMBOL,
       )
 
       const models = new Map<ModelType, AIModel>();
       if (provider.extra.node?.models) {
         for (const modelSource of provider.extra.node?.models) {
-          const modelClasses = await this.loadMultiSubclasses(resolveFrom(this.manifestFilePath, modelSource), AIModel);
+          const modelClasses = await this.loadMultiSubclasses(resolveFrom(this.manifestFilePath, modelSource), AIMODEL_SYMBOL);
           for (const modelCls of modelClasses) {
             if (this.isStrictSubclasses(
               modelCls,
-              LargeLanguageModel,
-              TextEmbeddingModel,
-              RerankModel,
-              TTSModel,
-              Speech2TextModel,
-              ModerationModel
+              LARGE_LANGUAGE_MODEL_SYMBOL,
+              TEXT_EMBEDDING_MODEL_SYMBOL,
+              RERANK_MODEL_SYMBOL,
+              TTS_MODEL_SYMBOL,
+              SPEECH2TEXT_MODEL_SYMBOL,
+              MODERATION_MODEL_SYMBOL
             )) {
               const modelInstance = new (modelCls.class as any)(provider, provider.models);
               const modelType = (modelCls as any).modelType as ModelType;
@@ -311,7 +310,7 @@ export class PluginRegistry {
 
           const strategyCls = await this.loadSingleSubclass(
             resolveFrom(this.manifestFilePath, module),
-            AgentStrategy,
+            AGENT_STATEGY_SYMBOL,
             strategy.extra.node?.class,
           );
 
@@ -348,7 +347,7 @@ export class PluginRegistry {
 
           const endpointCls = await this.loadSingleSubclass(
             resolveFrom(this.manifestFilePath, module),
-            Endpoint,
+            ENDPOINT_SYMBOL,
             endpoint.extra.node?.class,
           );
 
@@ -421,16 +420,14 @@ export class PluginRegistry {
     return undefined;
   }
 
-  private isStrictSubclasses(cls: any, ...parentCls: any[]): boolean {
-    return parentCls.some(parent =>
-      cls.prototype instanceof parent && cls !== parent);
+  private isStrictSubclasses(cls: any, ...parentMarkers: symbol[]): boolean {
+    return parentMarkers.some(parent => hasStaticMarker(cls, parent));
   }
 
   private async loadSingleSubclass<
-    T extends new (...args: any[]) => any,
-    P extends AnyConstructor,
-  >(filePath: string, parentClass: P, className: string = ''): Promise<ClassInfo<T>> {
-    const subClasses = await ModuleClassScanner.findSubClasses<T, P>(filePath, parentClass);
+    T extends AnyConstructor,
+  >(filePath: string, requiredSymbol: symbol, className: string = ''): Promise<ClassInfo<T>> {
+    const subClasses = await ModuleClassScanner.findSubClasses<T>(filePath, requiredSymbol);
     if (!subClasses) {
       throw new Error(`Failed to find subclass: ${filePath}`);
     }
@@ -451,10 +448,9 @@ export class PluginRegistry {
   }
 
   private async loadMultiSubclasses<
-    T extends new (...args: any[]) => any,
-    P extends AnyConstructor,
-  >(filePath: string, parentClass: P): Promise<ClassInfo<T>[]> {
-    const subClasses = await ModuleClassScanner.findSubClasses<T, P>(filePath, parentClass);
+    T extends AnyConstructor
+  >(filePath: string, requiredSymbol: symbol): Promise<ClassInfo<T>[]> {
+    const subClasses = await ModuleClassScanner.findSubClasses<T>(filePath, requiredSymbol);
     if (!subClasses) {
       throw new Error(`Failed to find subclass: ${filePath}`);
     }

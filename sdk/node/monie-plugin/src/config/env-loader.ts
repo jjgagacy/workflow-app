@@ -19,6 +19,8 @@ export class RawEnvConfig {
 
   BASE_DIR: string | undefined;
   DISABLE_WORKER: string | undefined;
+
+  HEARTBEAT_INTERVAL: string | undefined; // seconds
 }
 
 export class EnvLoader {
@@ -70,6 +72,7 @@ export class EnvLoader {
       PLUGIN_DAEMON_URL: this.loadedEnv.PLUGIN_DAEMON_URL,
       BASE_DIR: this.loadedEnv.BASE_DIR,
       DISABLE_WORKER: this.loadedEnv.DISABLE_WORKER,
+      HEARTBEAT_INTERVAL: this.loadedEnv.HEARTBEAT_INTERVAL,
     }
   }
 }
