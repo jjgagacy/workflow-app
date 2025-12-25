@@ -1,3 +1,4 @@
+import { StreamRequestEvent } from "@/core/entities/event.enum";
 import { TestMessageFactory } from "@/core/test/message-factory";
 import { Plugin } from "@/plugin";
 import { EventEmitter } from 'events';
@@ -64,44 +65,45 @@ describe('PluginTests', () => {
     });
   });
 
-  // it('should start plugin and receive request message', async () => {
-  //   const p = new Plugin();
-  //   const pluginPromise = p.run();
+  it('should start plugin and receive request message', async () => {
+    const p = new Plugin();
+    const pluginPromise = p.run();
 
-  //   // 给插件一些时间初始化
-  //   await new Promise(resolve => setTimeout(resolve, 100));
+    // 给插件一些时间初始化
+    await new Promise(resolve => setTimeout(resolve, 100));
 
-  //   const requestMessage = {
-  //     sessionId: 'test-session-123',
-  //     event: StreamRequestEvent.REQUEST,
-  //     data: {
-  //       query: 'Hello world',
-  //       parameters: {
-  //         temperature: 0.7,
-  //         maxTokens: 100
-  //       }
-  //     },
-  //     conversationId: 'conv-456',
-  //     messageId: 'msg-789',
-  //     appId: 'test-app',
-  //     endpointId: 'chat-endpoint',
-  //     context: {
-  //       userId: 'user-001',
-  //       timestamp: Date.now()
-  //     },
-  //     // 注意：reader 和 writer 会在 StreamMessage 构造函数中设置
-  //     // 但 JSON.parse 不会包含这些，所以我们需要在测试中单独处理
-  //   };
+    const requestMessage = {
+      sessionId: 'test-session-123',
+      event: StreamRequestEvent.REQUEST,
+      data: {
+        query: 'Hello world',
+        parameters: {
+          temperature: 0.7,
+          maxTokens: 100
+        }
+      },
+      conversationId: 'conv-456',
+      messageId: 'msg-789',
+      appId: 'test-app',
+      endpointId: 'chat-endpoint',
+      context: {
+        userId: 'user-001',
+        timestamp: Date.now()
+      },
+      // 注意：reader 和 writer 会在 StreamMessage 构造函数中设置
+      // 但 JSON.parse 不会包含这些，所以我们需要在测试中单独处理
+    };
 
-  //   mockStdin.emit('data', JSON.stringify(requestMessage) + '\n');
-  //   await new Promise(resolve => setTimeout(resolve, 50));
+    mockStdin.emit('data', JSON.stringify(requestMessage) + '\n');
+    await new Promise(resolve => setTimeout(resolve, 50));
 
-  //   // 发送结束信号
-  //   mockStdin.emit('data', '\n');
-  //   mockStdin.emit('end');
+    // 发送结束信号
+    mockStdin.emit('data', '\n');
+    mockStdin.emit('end');
 
-  //   await pluginPromise;
-  // });
+    // await pluginPromise;
+    await new Promise(resolve => setTimeout(resolve, 3000));
+  });
 
   it('should process a conversation flow', async () => {
     const configPath = path.resolve(__dirname, '..');

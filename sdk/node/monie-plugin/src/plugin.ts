@@ -12,7 +12,6 @@ export class Plugin extends IOServer {
     const config = new PluginConfig(envLoader);
     const { reader, writer } = StreamFactory.create(config);
     super(config, reader, writer);
-
     this.setHandler(this.handleMessage.bind(this));
   }
 
@@ -29,7 +28,7 @@ export class Plugin extends IOServer {
   }
 
   protected override isCPUTask(message: StreamMessage): boolean {
-    return true;
+    return false;
   }
 
   async handleMessage(msg: StreamMessage): Promise<any> {

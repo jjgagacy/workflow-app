@@ -12,7 +12,12 @@ export interface HandleResult {
 }
 
 export type RouteFilter = (data: any) => boolean;
-export type RouteHandler = (session: Session, data: any) => Promise<HandleResult> | AsyncGenerator<any> | undefined;
+export type RouteHandlerResult =
+  | Promise<HandleResult>
+  | AsyncGenerator<any>
+  | undefined;
+
+export type RouteHandler = (session: Session, data: any) => RouteHandlerResult;
 
 export interface Route {
   filter: RouteFilter;

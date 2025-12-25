@@ -20,7 +20,7 @@ export class TelegraphTool extends Tool {
     });
   }
 
-  getRuntimeParameters(): Promise<ToolParameter[]> {
-    throw new Error("Method not implemented.");
+  async getRuntimeParameters(): Promise<ToolParameter[]> {
+    return [];
   }
 }

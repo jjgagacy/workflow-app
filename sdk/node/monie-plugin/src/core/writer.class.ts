@@ -17,7 +17,6 @@ export abstract class ResponseWriter extends EventEmitter implements StreamWrite
     this.write("\n\n");
   }
 
-
   error(
     sessionId: string | null = null,
     data: Record<string, any> | null = null,

@@ -20,8 +20,11 @@ import { EndpointInvokeRequest } from "@/core/entities/plugin/request/endpoint.r
 import { DynamicParameterFetchParameterOptionsRequest } from "@/core/entities/plugin/request/dynamic-parameter";
 import { OAuthGetAuthorizationUrlRequest, OAuthRefreshCredentialsRequest } from "@/core/entities/plugin/request/oauth.request";
 import { Session } from "@/core/classes/runtime";
-import { HandleResult, TaskType } from "./route/route.handler";
+import { HandleResult, RouteHandlerResult, TaskType } from "./route/route.handler";
 import { SessionMessageType } from "@/core/entities/event/message";
+import * as ctypto from 'crypto';
+import { ToolInvokeMessage } from "@/interfaces/tool/invoke-message";
+import { BlobChunkMessage, MessageType } from "@/core/dtos/message.dto";
 
 export class IOServer implements Server {
   private isRunning: boolean = false;
@@ -146,8 +149,7 @@ export class IOServer implements Server {
     this.cleanup();
   }
 
-  handleRequest(request: any): Promise<any> {
-    throw new Error("Method not implemented.");
+  async handleRequest(request: any): Promise<any> {
   }
 
   getServerInfo(): ServerInfo {
@@ -247,7 +249,13 @@ export class IOServer implements Server {
       return this.handleCPUTask(message);
     }
 
-    const handleResult = await this.router.dispatch(session, message.data);
+    let handleResult: HandleResult | AsyncGenerator<any, any, any> | undefined;
+    try {
+      handleResult = await this.router.dispatch(session, message.data);
+    } catch (err) {
+      console.error(`Dispatch message error: ${err}`);
+      throw err;
+    }
 
     let result: unknown;
     if (handleResult) {
@@ -260,7 +268,7 @@ export class IOServer implements Server {
         await this.processAndSendMessage(result, session);
       } else if (Symbol.asyncIterator in handleResult) {
         for await (const item of handleResult) {
-          await this.processAndSendMessage(item.result, session);
+          await this.processAndSendMessage(item, session);
         }
       }
     }
@@ -279,7 +287,38 @@ export class IOServer implements Server {
 
   // Send the blob in chunks
   private async sendBlobChunks(blobMessage: any, sessionId: string): Promise<void> {
-    // TODO:
+    const id = ctypto.randomBytes(16).toString('hex');
+    const blob = blobMessage.message.blob;
+
+    const chunkSize = 8192;
+    const chunks: Buffer[] = [];
+    const totalLength = blob.length;
+    const totalChunks = Math.ceil(totalLength / chunkSize);
+
+    console.log(`Sending blob ${id}, size: ${totalLength}, chunks: ${totalChunks}`);
+
+    // Convert Uint8Array to Buffer (if needed).
+    const buffer = Buffer.isBuffer(blob) ? blob : Buffer.from(blob);
+
+    for (let sequence = 0; sequence < chunks.length; sequence++) {
+      const start = sequence * chunkSize;
+      const end = Math.min(start + chunkSize, totalLength);
+      const chunk = buffer.subarray(start, end);
+      const isLastChunk = sequence === totalChunks - 1;
+
+      const blobChunkMessage: BlobChunkMessage = {
+        id,
+        sequence,
+        totalLength,
+        blob: chunk,
+        end: isLastChunk,
+      };
+      const invokeMessage = new ToolInvokeMessage({
+        type: MessageType.BLOB_CHUNK,
+        message: blobChunkMessage,
+      });
+      this.writer?.sessionMessage(sessionId, this.writer.streamObject(invokeMessage));
+    }
   }
 
   private async handleCPUTask(message: StreamMessage): Promise<void> {
