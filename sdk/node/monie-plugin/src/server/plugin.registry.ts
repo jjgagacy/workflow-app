@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import { ToolConfiguration } from "@/core/entities/plugin/declaration/tool";
 import { ToolProviderConfiguration } from "@/core/entities/plugin/provider";
 import { ModelProviderConfiguration } from "@/core/entities/plugin/declaration/model";
-import { EndpointProviderConfiguration } from "@/core/entities/plugin/declaration/endpoint";
+import { EndpointConfiguration, EndpointProviderConfiguration } from "@/core/entities/plugin/declaration/endpoint";
 import { AgentStrategyProviderConfiguration } from "@/core/entities/plugin/agent";
 import { AnyConstructor, ClassInfo, ModuleClassScanner } from "@/core/classes/module-loader";
 import { TOOL_PROVIDER_SYMBOL, ToolProvider } from "@/interfaces/tool/tool-provider";
@@ -339,7 +339,8 @@ export class PluginRegistry {
   private async resolveEndpoints(): Promise<void> {
     for (const endpointProvider of this.endpointProviderConfigurations) {
       if (endpointProvider.endpoints) {
-        for (const endpoint of endpointProvider.endpoints) {
+        for (const endpointFilePath of endpointProvider.endpoints) {
+          const endpoint = await loadYamlFile<EndpointConfiguration>(resolveFrom(this.manifestFilePath, endpointFilePath));
           const module = endpoint.extra.node?.module;
           if (!module) {
             continue;
@@ -488,7 +489,6 @@ export class PluginRegistry {
     }
     return undefined;
   }
-
 }
 
 function resolveFrom(baseFile: string, relativePath: string): string {

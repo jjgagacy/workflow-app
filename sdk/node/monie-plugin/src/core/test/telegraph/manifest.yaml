@@ -31,6 +31,7 @@ plugins:
     - provider/telegraph.yaml
   models:
   endpoints:
+    - provider/tts.yaml
   agent_strategies:
 meta:
   version: 0.0.1

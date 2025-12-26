@@ -1,4 +1,5 @@
-import { Request, Response } from "@/core/entities/endpoint/endpoint.entity";
+import { Request } from "@/core/entities/endpoint/endpoint.entity";
+import { Response } from "@/core/entities/endpoint/response.entity";
 import { SessionMessage } from "@/core/entities/event/message";
 import { ClassWithMarker } from "../marker.class";
 

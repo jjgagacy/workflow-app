@@ -327,7 +327,6 @@ export class IOServer implements Server {
         messageId: message.sessionId,
         payload: message,
       };
-
       switch (message.event) {
         case StreamRequestEvent.REQUEST:
           const result = await this.pool?.execute(taskData);

@@ -21,6 +21,7 @@ import { Speech2TextModel } from "@/interfaces/model/speech2text.model";
 import { parseRawHttpRequest } from "@/core/entities/endpoint/endpoint.entity";
 import { OAuthProvider } from "@/interfaces/oauth/oauth-provider";
 import { HandleResult, TaskType } from "./route/route.handler";
+import { Endpoint } from "@/interfaces/endpoint/endpoint";
 
 export class PluginExecutor {
   constructor(
@@ -375,12 +376,12 @@ export class PluginExecutor {
     const requestParsed = parseRawHttpRequest(request.rawHttpRequest);
 
     try {
-      const { endpoint: EndpointClass, values } = this.registry.dispatchEndpointRequest(requestParsed);
-      const endpointInstance = new (EndpointClass as any)(session);
+      const { endpoint, values } = this.registry.dispatchEndpointRequest(requestParsed);
+      const endpointInstance = new (endpoint?.endpointClassType as any)(session) as Endpoint;
       const result = await endpointInstance.invoke(
         requestParsed,
         values,
-        request.settings,
+        request.settings || {},
       );
       if (result instanceof Promise) {
         const resolved = await result;

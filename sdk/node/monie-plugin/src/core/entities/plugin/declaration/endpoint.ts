@@ -25,17 +25,11 @@ export class EndpointConfiguration {
 
 export class EndpointProviderConfiguration {
   settings: ProviderConfig[] = [];
-  endpoints: EndpointConfiguration[] = [];
+  endpoints: string[] = [];
 
   constructor(data: Partial<EndpointProviderConfiguration>) {
     this.settings = data.settings || [];
     this.endpoints = data.endpoints || [];
-  }
-
-  static async create(data?: { settings?: ProviderConfig[]; endpoints?: Array<EndpointConfiguration | object | string> }) {
-    const settings = data?.settings || [];
-    const endpoints = await this.validateEndpoints(data?.endpoints || []);
-    return new EndpointProviderConfiguration({ settings, endpoints });
   }
 
   static async validateEndpoints(value: any): Promise<EndpointConfiguration[]> {

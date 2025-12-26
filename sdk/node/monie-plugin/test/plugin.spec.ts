@@ -67,7 +67,7 @@ describe('PluginTests', () => {
 
   it('should start plugin and receive request message', async () => {
     const p = new Plugin();
-    const pluginPromise = p.run();
+    p.run();
 
     // 给插件一些时间初始化
     await new Promise(resolve => setTimeout(resolve, 100));
@@ -108,9 +108,8 @@ describe('PluginTests', () => {
   it('should process a conversation flow', async () => {
     const configPath = path.resolve(__dirname, '..');
     const p = new Plugin(configPath);
-    const receivedMessages: any[] = [];
 
-    const pluginPromise = p.run();
+    p.run();
     await new Promise(resolve => setTimeout(resolve, 100));
 
     const sessionId = 'session-flow-test';
