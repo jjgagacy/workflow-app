@@ -1,11 +1,6 @@
-import { BlobInvokeMessage } from "@/core/dtos/invoke-message.dto";
-import { BlobChunkMessage, JsonMessage, TextMessage } from "@/core/dtos/message.dto";
+import { ToolInvokeMessage } from "@/interfaces/tool/invoke-message";
 
-export type ResponseMessage =
-  | BlobInvokeMessage
-  | BlobChunkMessage
-  | TextMessage
-  | JsonMessage;
+export type ResponseMessage = ToolInvokeMessage
 
 export type GeneratorResponse<T = ResponseMessage> =
   | Generator<T>

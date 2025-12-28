@@ -22,9 +22,10 @@ import { OAuthGetAuthorizationUrlRequest, OAuthRefreshCredentialsRequest } from 
 import { Session } from "@/core/classes/runtime";
 import { HandleResult, RouteHandlerResult, TaskType } from "./route/route.handler";
 import { SessionMessageType } from "@/core/entities/event/message";
-import * as ctypto from 'crypto';
+import * as crypto from 'crypto';
 import { ToolInvokeMessage } from "@/interfaces/tool/invoke-message";
 import { BlobChunkMessage, MessageType } from "@/core/dtos/message.dto";
+import { BlobInvokeMessage } from "@/core/dtos/invoke-message.dto";
 
 export class IOServer implements Server {
   private isRunning: boolean = false;
@@ -271,6 +272,7 @@ export class IOServer implements Server {
           await this.processAndSendMessage(item, session);
         }
       }
+      return;
     }
 
     return this.handleIOTask(session, message);
@@ -278,7 +280,7 @@ export class IOServer implements Server {
 
   private async processAndSendMessage(message: any, session: Session) {
     // Check if it is a blob message
-    if (message.type === 'blob_message' && message.message?.blob) {
+    if (message.type === MessageType.BLOB && message.message?.blob) {
       await this.sendBlobChunks(message, session.sessionId);
     } else {
       this.writer?.sessionMessage(session.sessionId, this.writer.streamObject(message));
@@ -286,8 +288,8 @@ export class IOServer implements Server {
   }
 
   // Send the blob in chunks
-  private async sendBlobChunks(blobMessage: any, sessionId: string): Promise<void> {
-    const id = ctypto.randomBytes(16).toString('hex');
+  private async sendBlobChunks(blobMessage: BlobInvokeMessage, sessionId: string): Promise<void> {
+    const id = crypto.randomBytes(16).toString('hex');
     const blob = blobMessage.message.blob;
 
     const chunkSize = 8192;
@@ -295,12 +297,12 @@ export class IOServer implements Server {
     const totalLength = blob.length;
     const totalChunks = Math.ceil(totalLength / chunkSize);
 
-    console.log(`Sending blob ${id}, size: ${totalLength}, chunks: ${totalChunks}`);
+    // console.log(`Sending blob ${id}, size: ${totalLength}, chunks: ${totalChunks}`);
 
     // Convert Uint8Array to Buffer (if needed).
     const buffer = Buffer.isBuffer(blob) ? blob : Buffer.from(blob);
 
-    for (let sequence = 0; sequence < chunks.length; sequence++) {
+    for (let sequence = 0; sequence < totalChunks; sequence++) {
       const start = sequence * chunkSize;
       const end = Math.min(start + chunkSize, totalLength);
       const chunk = buffer.subarray(start, end);

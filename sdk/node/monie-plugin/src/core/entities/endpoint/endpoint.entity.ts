@@ -3,6 +3,7 @@ export interface Request {
   path: string;
   headers: Record<string, string>;
   query: Record<string, string>;
+  body: Record<string, string>;
   [key: string]: any;
 }
 
@@ -20,6 +21,7 @@ export function parseRawHttpRequest(rawRequest: string): Request {
       }
       return headers;
     }, {} as Record<string, string>),
+    body: {},
     query: {}
   };
 }
