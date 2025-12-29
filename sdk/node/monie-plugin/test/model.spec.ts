@@ -77,6 +77,7 @@ describe('ModelTests', () => {
           openai_api_key: '',
           openai_organization: '',
         },
+
         stream: false,
         promptMessages: [
           new PromptMessage({ role: PromptMessageRole.USER, content: 'hello ai' }),
