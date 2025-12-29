@@ -79,4 +79,11 @@ export class LLMUsage extends ModelUsage {
   totalPrice: number = 0;
   currency: string = 'USD';
   latency: number = 0;
+
+  constructor(data?: Partial<LLMUsage>) {
+    super();
+    if (data) {
+      Object.assign(this, data);
+    }
+  }
 }
