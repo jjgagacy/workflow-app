@@ -74,8 +74,8 @@ describe('ModelTests', () => {
         model: 'gpt-3.5-turbo-instruct',
         modelType: ModelType.LLM,
         credentials: {
-          openai_api_key: '',
-          openai_organization: '',
+          openai_api_key: process.env.OPENAI_API_KEY,
+          openai_organization: process.env.OPENAI_ORGANIZATION,
         },
 
         stream: false,
