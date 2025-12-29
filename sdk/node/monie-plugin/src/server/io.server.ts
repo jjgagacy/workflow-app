@@ -253,8 +253,8 @@ export class IOServer implements Server {
     let handleResult: HandleResult | AsyncGenerator<any, any, any> | undefined;
     try {
       handleResult = await this.router.dispatch(session, message.data);
-    } catch (err) {
-      console.error(`Dispatch message error: ${err}`);
+    } catch (err: any) {
+      console.error(`Dispatch message error: ${err.message}`);
       throw err;
     }
 

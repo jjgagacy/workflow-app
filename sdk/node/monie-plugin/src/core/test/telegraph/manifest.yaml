@@ -30,6 +30,7 @@ plugins:
   tools:
     - provider/telegraph.yaml
   models:
+    - provider/openai.yaml
   endpoints:
     - provider/tts.yaml
   agent_strategies:

@@ -262,15 +262,17 @@ export class PluginRegistry {
       const providerModelCls = await this.loadSingleSubclass(
         resolveFrom(this.manifestFilePath, providerFilePath),
         MODEL_PROVIDER_SYMBOL,
-      )
+        provider.extra.node?.class,
+      );
 
       const models = new Map<ModelType, AIModel>();
       if (provider.extra.node?.models) {
         for (const modelSource of provider.extra.node?.models) {
           const modelClasses = await this.loadMultiSubclasses(resolveFrom(this.manifestFilePath, modelSource), AIMODEL_SYMBOL);
+
           for (const modelCls of modelClasses) {
             if (this.isStrictSubclasses(
-              modelCls,
+              modelCls.class,
               LARGE_LANGUAGE_MODEL_SYMBOL,
               TEXT_EMBEDDING_MODEL_SYMBOL,
               RERANK_MODEL_SYMBOL,
@@ -278,15 +280,15 @@ export class PluginRegistry {
               SPEECH2TEXT_MODEL_SYMBOL,
               MODERATION_MODEL_SYMBOL
             )) {
-              const modelInstance = new (modelCls.class as any)(provider, provider.models);
-              const modelType = (modelCls as any).modelType as ModelType;
+              const modelInstance = new (modelCls.class as any)();
+              const modelType = modelInstance.modelType as ModelType;
               models.set(modelType, modelInstance);
             }
           }
         }
       }
 
-      const providerModelInstance = new (providerModelCls.class as any)(provider, provider.models);
+      const providerModelInstance = new (providerModelCls.class as any)(provider, models);
       const registration: ModelProviderRegistration = {
         module: providerFilePath,
         modelProviderConfiguration: provider,
@@ -445,7 +447,7 @@ export class PluginRegistry {
       return defaultExportClass;
     }
 
-    throw new Error(`Error loading single subclass: ${filePath}, please check the file data.`);
+    throw new Error(`Error loading single subclass: ${filePath}, your file must have a default export if do not provider className.`);
   }
 
   private async loadMultiSubclasses<

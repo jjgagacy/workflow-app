@@ -12,10 +12,6 @@ export abstract class LargeLanguageModel extends AIModel {
   static [LARGE_LANGUAGE_MODEL_SYMBOL] = true;
   modelType: ModelType = ModelType.LLM;
 
-  constructor() {
-    super();
-  }
-
   abstract invoke(
     model: string,
     credentials: Record<string, any>,
@@ -25,7 +21,7 @@ export abstract class LargeLanguageModel extends AIModel {
     stop?: string[] | undefined,
     stream?: boolean,
     user?: string | undefined
-  ): LLMResult | AsyncGenerator<LLMChunkResult>;
+  ): Promise<LLMResult | AsyncGenerator<LLMChunkResult>>;
 
   abstract getNumTokens(
     model: string,

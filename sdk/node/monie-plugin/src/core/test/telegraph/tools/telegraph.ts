@@ -4,7 +4,6 @@ import { ToolInvokeMessage } from "@/interfaces/tool/invoke-message";
 import { Tool } from "@/interfaces/tool/tool";
 
 export class TelegraphTool extends Tool {
-
   async invoke(toolParameters: Record<string, any>): Promise<ToolInvokeMessage> {
     const { content, title } = toolParameters;
     if (!content) {

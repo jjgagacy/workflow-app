@@ -44,6 +44,10 @@ export class ToolPromptMessage extends PromptMessage {
 
 export class SystemPromptMessage extends PromptMessage {
   type: PromptMessageRole = PromptMessageRole.SYSTEM;
+
+  constructor(data: Partial<SystemPromptMessage> = {}) {
+    super(data);
+  }
 }
 
 export class AssistantPromptMessageToolCallFunction {
@@ -73,6 +77,10 @@ export class AssistantPromptMessage extends PromptMessage {
   role: PromptMessageRole = PromptMessageRole.ASSISTANT;
 
   tool_calls: AssistantPromptMessageToolCall[] = [];
+
+  constructor(data: Partial<AssistantPromptMessage> = {}) {
+    super(data);
+  }
 
   isEmpty(): boolean {
     if (!super.isEmpty() || this.tool_calls.length > 0) {

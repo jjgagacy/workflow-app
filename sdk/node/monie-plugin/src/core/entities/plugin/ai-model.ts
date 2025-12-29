@@ -9,8 +9,8 @@ export abstract class AIModel extends ProviderBase {
   modelType: ModelType = ModelType.LLM;
   pricing?: PriceConfig;
 
-  constructor() {
-    super();
+  constructor(data: Partial<AIModel> = {}) {
+    super(data);
     this.validateModel();
   }
 

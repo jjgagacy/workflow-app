@@ -150,7 +150,7 @@ export class Provider {
   configurateMethod: ConfigurateMethod[] = [];
 
   providerCredentialSchema?: ProviderCredentialSchema | undefined;
-  modeScredentialSchema?: ModelCredentialSchema | undefined;
+  modelCredentialSchema?: ModelCredentialSchema | undefined;
 
   models: AIModel[] = [];
   position?: Record<string, string[]>;
