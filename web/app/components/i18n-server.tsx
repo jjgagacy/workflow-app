@@ -8,9 +8,8 @@ export type I18nServerProps = {
 
 const I18nServer = async ({ children }: I18nServerProps) => {
     const locale = await getServerLocale();
-
     return (
-        <I18n { ...{ locale } }>
+        <I18n {...{ locale }}>
             {children}
         </I18n>
     );

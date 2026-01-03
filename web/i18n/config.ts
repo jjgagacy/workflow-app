@@ -14,7 +14,7 @@ export type I18nText = {
     'zh-Hans': string;
 }
 
-const NAMESPACE = ['app','login'] as const;
+const NAMESPACE = ['app', 'login'] as const;
 
 type NameSpace = typeof NAMESPACE[number];
 type Translations = Record<string, any>;
@@ -37,11 +37,11 @@ const requireLanguage = async (language: string, namespace: string) => {
     } catch (error) {
         // Fallback to English if the requested language fails
         try {
-            const fallbackModule = await import(`../i18n/languages/zh-Hans/${namespace}`);
+            const fallbackModule = await import(`../i18n/languages/en-US/${namespace}`);
             return fallbackModule.default;
         } catch (fallbackError) {
             // If both fail, return an empty object to prevent crashes
-            console.error(`Failed to load i18n namespace "${namespace}" for both ${language} and zh-HANS`);
+            console.error(`Failed to load i18n namespace "${namespace}" for languge ${language}`);
             return {};
         }
     }
@@ -59,19 +59,21 @@ export const loadLanguageResources = async (language: string) => {
 export const changeLanguage = async (language?: string) => {
     if (!language) return;
     const resources = await loadLanguageResources(language);
-    if (!i18next.hasResourceBundle(language, 'common')) {
-        i18next.addResourceBundle(language, 'common', resources, true, true);
+    if (!i18next.hasResourceBundle(language, 'translation')) {
+        i18next.addResourceBundle(language, 'translation', resources, true, true);
     }
     await i18next.loadLanguages(language);
+    await i18next.changeLanguage(language);
 }
 
-const getInitialTranslations = () => {
+const getInitialTranslations = async () => {
     // Helper function to load resources for a specific language
-    const load = (language: string): Translations => {
+    const load = async (language: string): Promise<Translations> => {
+        const resources = await loadLanguageResources(language);
         return NAMESPACE.reduce((acc, ns) => {
             const moduleName = camelCase(ns);
             try {
-                acc[moduleName] = require(`../i18n/languages/${language}/${ns}`).deault;
+                acc[moduleName] = resources[moduleName] || {};
             } catch (error) {
                 console.error(`Failed to load ${language} translations for namespace ${ns}:`, error);
                 acc[moduleName] = {};  // Fallback to empty object if loading fails
@@ -81,8 +83,8 @@ const getInitialTranslations = () => {
     }
 
     return {
-        'en-US': { translation: load('en-US') },
-        'zh-Hans': { translation: load('zh-Hans') },
+        'en-US': { translation: await load('en-US') },
+        'zh-Hans': { translation: await load('zh-Hans') },
     }
 }
 
@@ -91,10 +93,10 @@ if (!i18next.isInitialized) {
         .use(initReactI18next)
         .init({
             lng: undefined,
-            fallbackLng: 'zh-Hans',
-            resources: getInitialTranslations(),
-            ns: ['common'],
-            defaultNS: 'common'
+            fallbackLng: 'en-US',
+            resources: await getInitialTranslations(),
+            ns: ['translation'],
+            defaultNS: 'translation'
         });
 }
 

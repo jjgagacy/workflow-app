@@ -1,16 +1,13 @@
 'use client';
 
-import { ErrorAlert, WarningAlert } from "@/app/components/base/alert";
+import { ErrorAlert } from "@/app/components/base/alert";
 import Button from "@/app/components/base/button";
 import { useAuth } from "@/hooks/use-auth";
 import usePageTitle from "@/hooks/use-page-title";
-import { getServerLocale } from "@/i18n/server";
-import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import { IconLock, IconMail } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
-import Head from "next/head";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/api";
 import { getErrorMessage } from "@/utils/errors";
@@ -119,7 +116,7 @@ export default function Page() {
                 </Link>
 
                 {/* Login Button */}
-                <Button 
+                <Button
                     type="submit"
                     loading={isLoading}
                     disabled={isLoading}

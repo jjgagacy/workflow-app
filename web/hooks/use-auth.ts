@@ -28,9 +28,9 @@ export function useAuth() {
         name: string;
         roles: string[];
         is_super: boolean;
-        avatar?: string;
+        avatar?: string | undefined;
     }>(() =>
-        getSessionData('session:userinfo', { name: '', roles: [], is_super: false })
+        getSessionData('session:userinfo', { name: '', roles: [], is_super: false, avatar: undefined })
     );
 
     // 登录方法
@@ -38,18 +38,19 @@ export function useAuth() {
         access_token: string,
         name: string,
         roles: string[],
-        is_super: boolean
+        is_super: boolean,
+        avatar?: string,
     ) => {
-        const userInfo = { name, roles, is_super };
+        const userInfo = { name, roles, is_super, avatar };
         const tokenData = { access_token };
 
         localStorage.setItem("session:token", JSON.stringify(tokenData));
         localStorage.setItem("session:userinfo", JSON.stringify(userInfo));
 
         setIsAuthenticated(true);
-        setUser({ name, roles, is_super });
+        setUser({ name, roles, is_super, avatar });
         setAccessToken(access_token);
-    }, []);
+    }, [setIsAuthenticated, setUser, setAccessToken]);
 
     // 登出方法
     const logout = useCallback(() => {
@@ -57,10 +58,10 @@ export function useAuth() {
             localStorage.removeItem(key);
         });
         setIsAuthenticated(false);
-        setUser({ name: '', roles: [], is_super: false });
+        setUser({ name: '', roles: [], is_super: false, avatar: undefined });
         setAccessToken('');
         setRoutes([]);
-    }, []);
+    }, [setIsAuthenticated, setUser, setAccessToken, setRoutes]);
 
     // 同步状态与 localStorage
     useEffect(() => {
@@ -88,10 +89,11 @@ export function useAuth() {
     const getUserName = useCallback(() => user.name, [user]);
     const getRoles = useCallback(() => [...user.roles], [user]); // 返回副本避免外部修改
     const isSuper = useCallback(() => user.is_super, [user]);
+    const getUserAvatar = useCallback(() => user.avatar, [user]);
     const removeToken = useCallback(() => {
         setAccessToken('');
         localStorage.removeItem('session:token');
-    }, []);
+    }, [setAccessToken]);
 
     return {
         isAuthenticated,
@@ -99,6 +101,7 @@ export function useAuth() {
         logout,
         user,
         getUserName,
+        getUserAvatar,
         accessToken,
         routes,
         getRoles,

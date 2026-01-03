@@ -8,14 +8,15 @@ import { match } from "@formatjs/intl-localematcher";
 
 const initI18next = async (locale: Locale, ns: string) => {
     const obj = createInstance();
-    await obj
+    obj
         .use(initReactI18next)
         .use(resourcesToBackend((lang: string, ns: string) => import(`./languages/${lang}/${ns}.ts`)))
-        .init({
-            lng: locale === 'zh-Hans' ? 'zh-Hans' : locale,
-            ns,
-            fallbackLng: 'zh-Hans'
-        });
+        .on('failedLoading', (lng, ns, msg) => console.error(`Failed to init i18next ${msg}`));
+    await obj.init({
+        lng: locale === 'zh-Hans' ? 'zh-Hans' : locale,
+        ns,
+        fallbackLng: 'en-US'
+    });
     return obj;
 }
 
@@ -33,7 +34,6 @@ export const getServerLocale = async (): Promise<Locale> => {
     // get locale from cookie
     const cookieVal = (await cookies()).get('locale');
     languages = cookieVal?.value ? [cookieVal.value] : [];
-
     if (!languages.length) {
         const negotiatorHeaders: Record<string, string> = {};
         (await headers()).forEach((value, key) => (negotiatorHeaders[key] = value));
@@ -45,6 +45,5 @@ export const getServerLocale = async (): Promise<Locale> => {
     if (!Array.isArray(languages) || languages.length === 0 || !languages.every(lang => typeof lang === 'string' && /^[\w-]+$/.test(lang))) {
         languages = [i18n.defaultLocale];
     }
-
     return match(languages, locales, i18n.defaultLocale) as Locale;
 }
