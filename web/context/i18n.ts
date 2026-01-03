@@ -10,7 +10,7 @@ type I18nContextType = {
 }
 
 const I18nContext = createContext<I18nContextType>({
-    locale: 'zh-Hans',
+    locale: 'en-US',
     i18n: {},
     setClientLocale: async (locale: Locale, reloadPage?: boolean): Promise<void> => {
         noop();

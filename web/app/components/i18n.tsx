@@ -11,14 +11,14 @@ export type I18nProps = {
     children: React.ReactNode;
 }
 
-const I18n: FC<I18nProps> = ({locale, children}) => {
+const I18n: FC<I18nProps> = ({ locale, children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         setClientLocale(locale, false).then(() => {
             setLoading(false);
-        })
-    }, [locale]);
+        });
+    }, [locale, setClientLocale, setLoading]);
 
     if (loading) {
         return <div className='flex h-screen w-screen items-center justify-center'><Loading type='app' /></div>

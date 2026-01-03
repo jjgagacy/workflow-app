@@ -3,7 +3,7 @@ import { changeLanguage, LanguagesSupported } from "./config";
 import { LOCALE_COOKIE_NAME } from "@/config";
 
 export const i18n = {
-    defaultLocale: 'zh-Hans',
+    defaultLocale: 'en-US',
     locales: LanguagesSupported
 } as const;
 
