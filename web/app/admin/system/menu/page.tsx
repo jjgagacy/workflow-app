@@ -10,7 +10,7 @@ import Loading from "../../loading";
 import MenuListPage from "@/features/menu/menu-list";
 
 export const metadata = {
-    title: 'Dashboard: 菜单列表' 
+    title: 'Dashboard: 菜单列表'
 };
 
 export default function Page() {

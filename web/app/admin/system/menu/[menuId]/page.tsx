@@ -3,7 +3,7 @@ import { PageContainer } from "@/app/components/layout/page-container";
 import MenuViewPage from "@/features/menu/menu-view";
 import { Suspense } from "react";
 
-type PageProps = { params: Promise<{menuId: string}>};
+type PageProps = { params: Promise<{ menuId: string }> };
 
 export default async function Page(props: PageProps) {
     const params = await props.params;

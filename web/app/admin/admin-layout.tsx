@@ -115,9 +115,9 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
         }
         return isCollapsed ? 'ml-32' : 'ml-64';
     }, [isCollapsed, isMobile]);
-    
+
     // theme-xx replace xx to your theme
-    
+
     return (
         <div className="flex theme-xx min-h-screen bg-gradient-to-br from-gray-100 to-gray-50 dark:bg-black dark:from-black dark:to-black">
             {/* 桌面端侧边栏 */}
@@ -141,7 +141,7 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
                 </div>
             )}
             <div className={`flex-1 flex flex-col overflow-x-auto transition-all ${sidebarWidth}`}>
-                <Navbar 
+                <Navbar
                     routes={mergeRoutes}
                     onMenuClick={isMobile ? toggleMobileSidebar : undefined}
                 />

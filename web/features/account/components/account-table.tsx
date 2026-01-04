@@ -70,8 +70,8 @@ export function AccountTable<TData, TValue>({
     const onToggleStatus = async (account: Account) => {
         const newStatus = account.status === 0 ? 1 : 0;
         await toggleStatusMutation(account.id);
-        setData(prev => 
-            prev.map((item) => item.id === account.id ? { ...item, status: newStatus} : item)
+        setData(prev =>
+            prev.map((item) => item.id === account.id ? { ...item, status: newStatus } : item)
         );
     }
 

@@ -16,13 +16,13 @@ export function ModuleLayout() {
 }
 
 export function ModulePage() {
-    const {openModal, resetModalData} = useModalContext();
+    const { openModal, resetModalData } = useModalContext();
 
     const handleAddModule = () => {
         resetModalData();
         openModal('module');
     }
-    
+
     return (
         <div className="flex flex-1 flex-col space-y-4">
             <div className="flex items-start justify-between">

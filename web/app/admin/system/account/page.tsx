@@ -10,7 +10,7 @@ import Loading from "../../loading";
 import AccountListPage from "@/features/account/account-list";
 
 export const metadata = {
-  title: 'Dashboard: 账户列表'
+    title: 'Dashboard: 账户列表'
 };
 
 export default function Page() {

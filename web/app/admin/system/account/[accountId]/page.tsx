@@ -7,7 +7,7 @@ type PageProps = { params: Promise<{ accountId: string }> };
 
 export default async function Page(props: PageProps) {
     const params = await props.params;
-    
+
     return (
         <PageContainer>
             <div className='flex-1 space-y-4'>

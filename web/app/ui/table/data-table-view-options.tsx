@@ -15,12 +15,12 @@ export function DataTableViewOptions<TData>({
     table
 }: DataTableViewOptionsProps<TData>) {
     const columns = React.useMemo(
-        () => 
+        () =>
             table.getAllColumns()
-            .filter(
-                (column) =>
+                .filter(
+                    (column) =>
                         typeof column.accessorFn !== 'undefined' && column.getCanHide()
-            ),
+                ),
         [table]
     );
 
@@ -40,10 +40,10 @@ export function DataTableViewOptions<TData>({
                     <span>View</span>
                 </Button>
             </PopoverButton>
-            <PopoverPanel anchor={{ to: 'bottom', gap: '4px'}} className={'flex flex-col bg-background z-50 divide-y divide-[var(--border)] rounded-md transition duration-200 [--anchor-gap:--spacing(5)] data-closed:-translate-y-1 data-closed:opacity-0 border border-[var(--border)]'}>
+            <PopoverPanel anchor={{ to: 'bottom', gap: '4px' }} className={'flex flex-col bg-background z-50 divide-y divide-[var(--border)] rounded-md transition duration-200 [--anchor-gap:--spacing(5)] data-closed:-translate-y-1 data-closed:opacity-0 border border-[var(--border)]'}>
                 {columns.map(column => (
-                    <div 
-                        key={column.id} 
+                    <div
+                        key={column.id}
                         className='flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white cursor-default select-none'
                         onClick={() => column.toggleVisibility(!column.getIsVisible())}
                     >

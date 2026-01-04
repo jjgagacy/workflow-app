@@ -63,10 +63,10 @@ export function ModuleForm({
         try {
             setIsLoading(true);
             if (currentModule) {
-                await updateModule({...values, id: currentModule.id});
+                await updateModule({ ...values, id: currentModule.id });
                 toast.success('编辑成功');
             } else {
-                await createModule({...values});
+                await createModule({ ...values });
                 toast.success('添加成功');
             }
             // 关闭模态框并通知父组件刷新

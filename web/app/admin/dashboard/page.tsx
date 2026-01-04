@@ -128,7 +128,7 @@ export default function Page() {
                 <Button variant={'secondary'} onClick={() => toast.error('this is an error message')}>error</Button>
                 <Button variant={'secondary'} onClick={() => { toast.loading(); setTimeout(() => toast.dismiss(), 3000); }}>loading</Button>
             </div>
-            
+
             <h1 className="mt-4">dialog</h1>
             <div className="flex gap-2">
                 <Button variant={'secondary'} onClick={() => setOpenDialog(true)}>show dialog</Button>
@@ -141,7 +141,7 @@ export default function Page() {
             <div className="flex flex-col gap-2">
                 <Input type="text" placeholder="please input..." />
                 <Textarea placeholder="a simple description" />
-                <Select onChange={(arg) => console.log(arg.target.value) }>
+                <Select onChange={(arg) => console.log(arg.target.value)}>
                     <option>Canada</option>
                     <option>Mexico</option>
                     <option>United States</option>

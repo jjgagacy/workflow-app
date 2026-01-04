@@ -55,7 +55,7 @@ export function DepartmentTable<TData, TValue>({
                     : undefined;
                 // 检查当前部门或子部门是否匹配搜索
                 const matchesSearch = department.name.toLowerCase().includes(searchItem.toLowerCase())
-                    || department.remarks?.toLowerCase().includes(searchItem.toLowerCase()) 
+                    || department.remarks?.toLowerCase().includes(searchItem.toLowerCase())
                     || (filteredChildren && filteredChildren.length > 0);
                 if (matchesSearch) {
                     return {
@@ -134,7 +134,7 @@ export function DepartmentTable<TData, TValue>({
         getExpandedRowModel: getExpandedRowModel(),
     });
 
-    const onReset = useCallback(async() => {
+    const onReset = useCallback(async () => {
         setQueryStates({ search: null });
         setDebouncedSearch('');
         table.resetColumnFilters();

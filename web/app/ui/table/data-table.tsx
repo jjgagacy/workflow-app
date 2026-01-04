@@ -16,7 +16,7 @@ export interface ExtendedColumnSort<TData> extends Omit<ColumnSort, 'id'> {
 }
 
 export interface ExtendedColumnFilter<TData> extends FilterItemSchema {
-  id: Extract<keyof TData, string>;
+    id: Extract<keyof TData, string>;
 }
 
 
@@ -51,38 +51,38 @@ export function DataTable<TData>({ table, actionBar, children }: DataTableProps<
                                 ))}
                             </TableHeader>
                             <TableBody>
-                               {table.getRowModel().rows?.length ? (
-                                table.getRowModel().rows.map(row => (
-                                    <TableRow
-                                        key={row.id}
-                                        data-state={row.getIsSelected() && 'selected'}
-                                    >
-                                        {row.getVisibleCells().map(cell => (
+                                {table.getRowModel().rows?.length ? (
+                                    table.getRowModel().rows.map(row => (
+                                        <TableRow
+                                            key={row.id}
+                                            data-state={row.getIsSelected() && 'selected'}
+                                        >
+                                            {row.getVisibleCells().map(cell => (
+                                                <TableCell
+                                                    key={cell.id}
+                                                    style={{
+                                                        ...getCommonPinningStyles({ column: cell.column })
+                                                    }}
+                                                >
+                                                    {flexRender(
+                                                        cell.column.columnDef.cell,
+                                                        cell.getContext()
+                                                    )}
+                                                </TableCell>
+                                            ))}
+                                        </TableRow>
+                                    ))
+                                )
+                                    : (
+                                        <TableRow>
                                             <TableCell
-                                                key={cell.id}
-                                                style={{
-                                                    ...getCommonPinningStyles({ column: cell.column })
-                                                }}
+                                                colSpan={table.getAllColumns().length}
+                                                className='h-24 text-center'
                                             >
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext()
-                                                )}
+                                                No results.
                                             </TableCell>
-                                        ))}
-                                    </TableRow>
-                                ))
-                               )
-                                : (
-                                <TableRow>
-                                    <TableCell
-                                        colSpan={table.getAllColumns().length}
-                                        className='h-24 text-center'
-                                    >
-                                        No results.
-                                    </TableCell>
-                                </TableRow>
-                               )}
+                                        </TableRow>
+                                    )}
                             </TableBody>
                         </Table>
                     </ScrollArea>

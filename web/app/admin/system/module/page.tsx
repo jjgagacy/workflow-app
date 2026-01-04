@@ -6,7 +6,7 @@ import { ModuleLayout } from "@/features/module/module-layout";
 export default function Page() {
     return (
         <PageContainer>
-            <Suspense   
+            <Suspense
                 fallback={<Loading />}
             >
                 <ModuleLayout />

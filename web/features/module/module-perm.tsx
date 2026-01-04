@@ -38,13 +38,13 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
 
     // 处理输入变化
     const handleInputChange = (field: keyof ModulePerm, value: string | number) => {
-        setForm(prev => ({...prev, [field]: value}));
+        setForm(prev => ({ ...prev, [field]: value }));
     }
 
     // 添加新模块
     const handleAdd = () => {
         setIsAdding(true);
-        setForm({ key: '', name: '', restrictLevel: 1});
+        setForm({ key: '', name: '', restrictLevel: 1 });
     }
 
     // 保存模块
@@ -78,9 +78,9 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
                     name: name || '',
                     restrictLevel: restrictLevel || 1
                 });
-                setModulePerms(prev => 
-                    prev.map(m => 
-                        m.key === editingId     
+                setModulePerms(prev =>
+                    prev.map(m =>
+                        m.key === editingId
                             ? { ...m, key, name, restrictLevel }
                             : m
                     )
@@ -113,7 +113,7 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
     // 开始编辑
     const startEdit = (module: ModulePerm) => {
         setEditingId(module.key);
-        setForm({...module});
+        setForm({ ...module });
     }
 
     // 取消编辑/添加

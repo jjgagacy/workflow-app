@@ -8,10 +8,23 @@ import { match } from "@formatjs/intl-localematcher";
 
 const initI18next = async (locale: Locale, ns: string) => {
     const obj = createInstance();
+    const langMap: Record<string, string> = {
+        'zh-Hans': 'zh-Hans',
+        'zh-hans': 'zh-Hans',
+        'zh': 'zh-Hans', // 默认简体中文
+        'zh-CN': 'zh-Hans',
+        'zh-TW': 'zh-Hant',
+        'zh-HK': 'zh-Hant',
+        'zh-MO': 'zh-Hant',
+        'zh-SG': 'zh-Hans',
+    };
     obj
         .use(initReactI18next)
-        .use(resourcesToBackend((lang: string, ns: string) => import(`./languages/${lang}/${ns}.ts`)))
-        .on('failedLoading', (lng, ns, msg) => console.error(`Failed to init i18next ${msg}`));
+        .use(resourcesToBackend((lang: string, ns: string) => {
+            const mappedLang = langMap[lang] || lang;
+            return import(`./languages/${mappedLang}/${ns}.ts`)
+        }))
+        .on('failedLoading', (lng, ns, msg) => console.error(`Failed to init i18next for language: ${lng}, ns: ${ns}, error: ${msg}`));
     await obj.init({
         lng: locale === 'zh-Hans' ? 'zh-Hans' : locale,
         ns,

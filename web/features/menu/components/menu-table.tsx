@@ -101,8 +101,8 @@ export function MenuTable<TData, TValue>({
 
     const onToggleStatus = async (menu: Menu) => {
         const newStatus = menu.status === 0 ? 1 : 0;
-        await updateMenu({ key: menu.key, name: menu.name, status: newStatus});
-        setData(prev => 
+        await updateMenu({ key: menu.key, name: menu.name, status: newStatus });
+        setData(prev =>
             prev.map((item) => item.id === menu.id ? { ...item, status: newStatus } : item)
         );
     }
@@ -150,7 +150,7 @@ export function MenuTable<TData, TValue>({
         data,
         columns: [...columns, ...operatorColumn] as ColumnDef<Menu, any>[],
         pageCount: 1,
-        shallow: false, 
+        shallow: false,
         debounceMs: DEBOUNCE_MS,
         getSubRows: row => row.children,
         getExpandedRowModel: getExpandedRowModel()
@@ -179,7 +179,7 @@ export function MenuTable<TData, TValue>({
                     variant={'ghost'}
                     size={'large'}
                     onClick={() => onReset()}
-                    >Reset</Button>
+                >Reset</Button>
             </DataTableToolbar>
         </DataTable>
     );

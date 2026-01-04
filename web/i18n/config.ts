@@ -14,7 +14,7 @@ export type I18nText = {
     'zh-Hans': string;
 }
 
-const NAMESPACE = ['app', 'login'] as const;
+const NAMESPACE = ['app', 'login', 'home'] as const;
 
 type NameSpace = typeof NAMESPACE[number];
 type Translations = Record<string, any>;

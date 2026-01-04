@@ -2,6 +2,7 @@
 
 import { Dialog } from "@/app/ui/dialog";
 import { createContext, ReactNode, useCallback, useContext, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface DialogOptions {
     title: string;
@@ -27,14 +28,15 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [options, setOptions] = useState<DialogOptions | null>(null);
     const [resolvePromise, setResolvePromise] = useState<((value: boolean) => void) | null>(null);
+    const { t } = useTranslation();
 
     const showDialog = useCallback((opts: DialogOptions): Promise<boolean> => {
         return new Promise(resolve => {
             setOptions(opts);
             setResolvePromise(() => resolve);
             setIsOpen(true);
-        })
-    }, []);
+        });
+    }, [setOptions, setResolvePromise, setIsOpen]);
 
     const handleConfirm = async () => {
         if (options?.onConfirm) {
@@ -60,9 +62,9 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
         await showDialog({
             title,
             description: message,
-            confirmText: '确定',
+            confirmText: t('app.actions.confirm'),
             cancelText: null,
-            onConfirm: () => {},
+            onConfirm: () => { },
             className: '!w-[260px]'
         });
     }, [showDialog]);
@@ -71,12 +73,12 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
         return await showDialog({
             title,
             description: message,
-            confirmText: "确定",
-            cancelText: "取消"
+            confirmText: t('app.actions.confirm'),
+            cancelText: t('app.actions.cancel')
         });
     }, [showDialog]);
 
-    const store: DialogContextType = { 
+    const store: DialogContextType = {
         showDialog,
         showAlert,
         showConfirm
@@ -109,4 +111,3 @@ export const useDialog = (): DialogContextType => {
     }
     return context;
 }
-

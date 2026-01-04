@@ -58,7 +58,7 @@ export function ModuleTable<TData, TValue>({
     const onDelete = async (module: Module) => {
         if (confirm('确认删除吗？')) {
             await deleteModuleMutation(module.id);
-            setData(prev => 
+            setData(prev =>
                 prev.filter(item => item.id !== module.id)
             );
         }
@@ -123,7 +123,7 @@ export function ModuleTable<TData, TValue>({
     });
 
     const onReset = useCallback(async () => {
-        setQueryStates({ page: null, search: null});
+        setQueryStates({ page: null, search: null });
         setDebouncedSearch('');
         table.resetColumnFilters();
     }, [table]);
@@ -164,6 +164,6 @@ export function ModuleTable<TData, TValue>({
                 onSubmitSuccess={handleModuleForm}
             />
         </>
-        
+
     );
 }

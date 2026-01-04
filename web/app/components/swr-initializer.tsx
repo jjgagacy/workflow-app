@@ -18,7 +18,10 @@ const SwrInitializer = ({ children }: SwrInitializerProps) => {
         ? (
             <SWRConfig value={{
                 shouldRetryOnError: false,
-                revalidateOnFocus: false
+                revalidateOnFocus: false,
+                onError: (err) => {
+                    console.error('SWR Error:', err)
+                },
             }}>
                 {children}
             </SWRConfig>

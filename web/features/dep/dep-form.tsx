@@ -44,7 +44,7 @@ export default function DepartmentForm({
     const router = useRouter();
     let department: Department | null = null;
     if (updateDepKey) {
-        const { dep } = api.dep.useGetDepInfo({key: updateDepKey});
+        const { dep } = api.dep.useGetDepInfo({ key: updateDepKey });
         department = dep;
     }
 
@@ -71,10 +71,10 @@ export default function DepartmentForm({
         try {
             setIsLoading(true);
             if (updateDepKey) {
-                await updateDepartment({...values});
+                await updateDepartment({ ...values });
                 toast.success('编辑成功');
             } else {
-                await createDepartment({...values});
+                await createDepartment({ ...values });
                 toast.success('添加成功');
             }
             router.push('/admin/system/dep');
@@ -98,7 +98,7 @@ export default function DepartmentForm({
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                         <div className="grid grid-cols-12 gap-4 mb-8">
                             <div className="col-span-6 p-4 space-y-4 rounded">
-                                
+
                                 <FormField
                                     control={form.control}
                                     name='parent'

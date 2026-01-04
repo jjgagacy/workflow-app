@@ -88,10 +88,10 @@ export default function MenuForm({
         try {
             setIsLoading(true);
             if (updateMenuId) {
-                await updateMenu({...values});
+                await updateMenu({ ...values });
                 toast.success('编辑成功');
             } else {
-                await createMenu({...values});
+                await createMenu({ ...values });
                 toast.success('添加成功');
             }
             router.push('/admin/system/menu');
@@ -121,121 +121,121 @@ export default function MenuForm({
                         <div className="grid grid-cols-12 gap-4 mb-8">
                             <div className="col-span-6 p-4 space-y-4 rounded">
 
-                            <FormField
-                                control={form.control}
-                                name='parent'
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>上级菜单</FormLabel>
-                                        <FormControl>
-                                            <TreeSelect
-                                                options={parentMenus}
-                                                idKey="key"
-                                                labelKey="name"
-                                                multiple={false}
-                                                search={false}
-                                                selectedIdKey={currentMenu?.parent}
-                                                onChange={(e) => field.onChange(e?.key)}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                <FormField
+                                    control={form.control}
+                                    name='parent'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>上级菜单</FormLabel>
+                                            <FormControl>
+                                                <TreeSelect
+                                                    options={parentMenus}
+                                                    idKey="key"
+                                                    labelKey="name"
+                                                    multiple={false}
+                                                    search={false}
+                                                    selectedIdKey={currentMenu?.parent}
+                                                    onChange={(e) => field.onChange(e?.key)}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                            <FormField
-                                control={form.control}
-                                name='key'
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>菜单Key</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                disabled={!!updateMenuId}
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                <FormField
+                                    control={form.control}
+                                    name='key'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>菜单Key</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    disabled={!!updateMenuId}
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                            <FormField
-                                control={form.control}
-                                name='name'
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>菜单名称</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                <FormField
+                                    control={form.control}
+                                    name='name'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>菜单名称</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                            <FormField
-                                control={form.control}
-                                name='sort'
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>排序值</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="number"
-                                                {...field}
-                                                onChange={e => field.onChange(parseInt(e.target.value)||0)}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                <FormField
+                                    control={form.control}
+                                    name='sort'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>排序值</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    {...field}
+                                                    onChange={e => field.onChange(parseInt(e.target.value) || 0)}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                            <FormField
-                                control={form.control}
-                                name="status"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>状态</FormLabel>
-                                        <RadioGroup
-                                            name='status'
-                                            defaultValue={field.value}
-                                            value={field.value}
-                                            onValueChange={(e) => field.onChange(e)}
-                                            orientation='horizontal'
-                                        >
-                                            <RadioGroupItem value={1}>启用</RadioGroupItem>
-                                            <RadioGroupItem value={0}>禁用</RadioGroupItem>
-                                        </RadioGroup>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                <FormField
+                                    control={form.control}
+                                    name="status"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>状态</FormLabel>
+                                            <RadioGroup
+                                                name='status'
+                                                defaultValue={field.value}
+                                                value={field.value}
+                                                onValueChange={(e) => field.onChange(e)}
+                                                orientation='horizontal'
+                                            >
+                                                <RadioGroupItem value={1}>启用</RadioGroupItem>
+                                                <RadioGroupItem value={0}>禁用</RadioGroupItem>
+                                            </RadioGroup>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                            <FormField
-                                control={form.control}
-                                name='moduleId'
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>选择权限组</FormLabel>
-                                        <FormControl>
-                                            <TreeSelect
-                                                options={modules}
-                                                idKey="id"
-                                                labelKey="name"
-                                                multiple={false}
-                                                search={false}
-                                                selectedIdKey={currentMenu?.module?.id}
-                                                onChange={(e) => field.onChange(e?.id)}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                <FormField
+                                    control={form.control}
+                                    name='moduleId'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>选择权限组</FormLabel>
+                                            <FormControl>
+                                                <TreeSelect
+                                                    options={modules}
+                                                    idKey="id"
+                                                    labelKey="name"
+                                                    multiple={false}
+                                                    search={false}
+                                                    selectedIdKey={currentMenu?.module?.id}
+                                                    onChange={(e) => field.onChange(e?.id)}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
                             </div>
                         </div>

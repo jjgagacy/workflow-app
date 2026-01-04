@@ -23,7 +23,7 @@ const formSchema = z.object({
         error: '账户名至少需要2个字符'
     }),
     password: z.union([
-            z.string().min(4, {
+        z.string().min(4, {
             error: '密码至少需要4个字符',
         }),
         z.string().min(0)
@@ -57,7 +57,7 @@ export default function AccountForm({
     // get account info if accountId is not empty, and set default values
     let account: any = {};
     if (updateAccountId) {
-        const { accounts } = api.account.useGetAccounts({ id: updateAccountId});
+        const { accounts } = api.account.useGetAccounts({ id: updateAccountId });
         account = accounts?.data[0] || {};
     }
     const defaultValues: z.infer<typeof formSchema> = {
@@ -143,7 +143,7 @@ export default function AccountForm({
     const roles = rolesResult?.data as Role[];
 
     useEffect(() => {
-        setRoleSelectList(arrayToTree(roles||[], { idKey: 'key', parentKey: 'parent' }));
+        setRoleSelectList(arrayToTree(roles || [], { idKey: 'key', parentKey: 'parent' }));
     }, [roles]);
 
     return (
@@ -157,13 +157,13 @@ export default function AccountForm({
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 
-                         <div className="grid grid-cols-12 gap-4 mb-8">
+                        <div className="grid grid-cols-12 gap-4 mb-8">
                             <div className="col-span-6 p-4 space-y-4 rounded">
 
                                 <FormField
                                     control={form.control}
                                     name="username"
-                                    render={({field}) => (
+                                    render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>账户名</FormLabel>
                                             <FormControl>
@@ -179,7 +179,7 @@ export default function AccountForm({
                                 <FormField
                                     control={form.control}
                                     name="password"
-                                    render={({field}) => (
+                                    render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>密码</FormLabel>
                                             <FormControl>
@@ -196,7 +196,7 @@ export default function AccountForm({
                                 <FormField
                                     control={form.control}
                                     name="realName"
-                                    render={({field}) => (
+                                    render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>姓名</FormLabel>
                                             <FormControl>
@@ -212,7 +212,7 @@ export default function AccountForm({
                                 <FormField
                                     control={form.control}
                                     name="mobile"
-                                    render={({field}) => (
+                                    render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>手机号</FormLabel>
                                             <FormControl>
@@ -228,7 +228,7 @@ export default function AccountForm({
                                 <FormField
                                     control={form.control}
                                     name="email"
-                                    render={({field}) => (
+                                    render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>邮箱</FormLabel>
                                             <FormControl>
@@ -252,11 +252,11 @@ export default function AccountForm({
                                         <FormItem>
                                             <FormLabel>角色</FormLabel>
                                             <FormControl>
-                                                <TreeSelect 
-                                                    options={roleSelectList} 
-                                                    idKey="key" 
-                                                    labelKey="name" 
-                                                    multiple={true} 
+                                                <TreeSelect
+                                                    options={roleSelectList}
+                                                    idKey="key"
+                                                    labelKey="name"
+                                                    multiple={true}
                                                     search={false}
                                                     selectedIdKey={account?.roleKeys}
                                                     onChange={(e) => field.onChange(e)}
@@ -273,9 +273,9 @@ export default function AccountForm({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>状态</FormLabel>
-                                            <RadioGroup 
-                                                name='status' 
-                                                defaultValue={field.value} 
+                                            <RadioGroup
+                                                name='status'
+                                                defaultValue={field.value}
                                                 value={field.value}
                                                 onValueChange={(e) => field.onChange(e)}
                                                 orientation='horizontal'
