@@ -1,186 +1,8 @@
-'use client';
-
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import {
-  Sun,
-  Moon,
-  Globe,
-  Menu,
-  X,
-  ChevronDown,
-  Zap,
-  Workflow,
-  Brain,
-  Bot,
-  MessageSquare,
-  Palette,
-  Download,
-  FileText,
-  Users,
-  CreditCard,
-  BookOpen,
-  Smartphone,
-  Shield,
-  ArrowRight,
-  Sparkles,
-  CheckCircle,
-  BarChart,
-  Cloud,
-  Lock,
-  Server,
-  Code,
-  Package,
-  Layers,
-  Cpu
-} from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import Link from "next/link";
-import NavigationItem from "./navigationItem";
-import { useMobileMenu } from "@/context/mobileMenuContext";
-
-export default function Navigation() {
-  const { t, i18n } = useTranslation();
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const { isMobileMenuOpen, setIsMobileMenuOpen } = useMobileMenu();
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
-
-  // 顶部菜单数据
-  const navItems = [
-    {
-      label: t('home.nav.products'),
-      href: '#',
-      dropdown: [
-        {
-          title: t('home.nav.agents'),
-          description: t('home.nav.agents_desc'),
-          icon: <Bot className="w-6 h-6" />,
-          items: [
-            { text: t('home.nav.ai_agents'), icon: <MessageSquare className="w-4 h-4" />, href: '#' },
-            { text: t('home.nav.creative_agents'), icon: <Palette className="w-4 h-4" />, href: '#' },
-            { text: t('home.nav.analytics_agents'), icon: <BarChart className="w-4 h-4" />, href: '#' }
-          ]
-        },
-        {
-          title: t('home.nav.workflows'),
-          description: t('home.nav.workflows_desc'),
-          icon: <Workflow className="w-6 h-6" />,
-          items: [
-            { text: t('home.nav.automation'), icon: <Zap className="w-4 h-4" />, href: '#' },
-            { text: t('home.nav.data_processing'), icon: <Layers className="w-4 h-4" />, href: '#' },
-            { text: t('home.nav.model_orchestration'), icon: <Cpu className="w-4 h-4" />, href: '#' }
-          ]
-        },
-        {
-          title: t('home.nav.features'),
-          description: t('home.nav.features_desc'),
-          icon: <Sparkles className="w-6 h-6" />,
-          items: [
-            { text: t('home.nav.visual_editor'), icon: <Palette className="w-4 h-4" />, href: '#' },
-            { text: t('home.nav.multi_model'), icon: <Brain className="w-4 h-4" />, href: '#' },
-            { text: t('home.nav.private_deployment'), icon: <Lock className="w-4 h-4" />, href: '#' }
-          ]
-        }
-      ]
-    },
-    {
-      label: t('home.nav.solutions'),
-      href: '#',
-      dropdown: [
-        {
-          title: t('home.nav.enterprise_solutions'),
-          description: t('home.nav.enterprise_solutions_desc'),
-          icon: <Server className="w-6 h-6" />,
-          items: [
-            { text: t('home.nav.customer_service'), icon: <MessageSquare className="w-4 h-4" />, href: '#' },
-            { text: t('home.nav.data_analytics'), icon: <BarChart className="w-4 h-4" />, href: '#' },
-            { text: t('home.nav.office_automation'), icon: <Zap className="w-4 h-4" />, href: '#' }
-          ]
-        },
-        {
-          title: t('home.nav.developer_tools'),
-          description: t('home.nav.developer_tools_desc'),
-          icon: <Code className="w-6 h-6" />,
-          items: [
-            { text: t('home.nav.api_integration'), icon: <Cloud className="w-4 h-4" />, href: '#' },
-            { text: t('home.nav.sdk'), icon: <Package className="w-4 h-4" />, href: '#' },
-            { text: t('home.nav.documentation'), icon: <BookOpen className="w-4 h-4" />, href: '#' }
-          ]
-        },
-        {
-          title: t('home.nav.personal_creation'),
-          description: t('home.nav.personal_creation_desc'),
-          icon: <Users className="w-6 h-6" />,
-          items: [
-            { text: t('home.nav.content_generation'), icon: <Palette className="w-4 h-4" />, href: '#' },
-            { text: t('home.nav.creative_assistant'), icon: <Sparkles className="w-4 h-4" />, href: '#' },
-            { text: t('home.nav.learning_partner'), icon: <BookOpen className="w-4 h-4" />, href: '#' }
-          ]
-        }
-      ]
-    },
-    { label: t('home.nav.pricing'), href: '#' },
-    { label: t('home.nav.docs'), href: '#' },
-    { label: t('home.nav.blog'), href: '#' },
-  ];
-
-  const toggleItemExpanded = (itemLabel: string) => {
-    const newExpanded = new Set(expandedItems);
-    if (newExpanded.has(itemLabel)) {
-      newExpanded.delete(itemLabel);
-    } else {
-      newExpanded.add(itemLabel);
-    }
-    setExpandedItems(newExpanded);
-  };
-
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-    setExpandedItems(new Set());
-  };
-
-  // 阻止 body 滚动当菜单打开时
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isMobileMenuOpen]);
-
-  const mobileMenuItems = navItems.slice();
-
-  return (
-    <>
-      <nav className="hidden md:flex items-center space-x-8">
-        {navItems.map((item) => (
-          <div
-            key={item.label}
-            className="relative"
-            onMouseEnter={() => item.dropdown && setActiveDropdown(item.label)}
-            onMouseLeave={() => setActiveDropdown(null)}
-          >
-            <NavigationItem item={item} />
-          </div>
-        ))}
-      </nav>
-      {/* 移动端菜单 */}
-      <MobileMenu
-        isOpen={isMobileMenuOpen}
-        onClose={closeMobileMenu}
-        menuItems={mobileMenuItems}
-        expandedItems={expandedItems}
-        toggleItemExpanded={toggleItemExpanded}
-        t={t}
-      />
-    </>
-  );
-}
 
 // 移动端菜单组件
-function MobileMenu({
+export default function MobileMenu({
   isOpen,
   onClose,
   menuItems,
@@ -217,7 +39,7 @@ function MobileMenu({
         {/* 标题栏 */}
         <div className="sticky top-0 bg-white dark:bg-gray-900 z-10 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between p-4">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('home.common.nav_title')}</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('app.common.nav_title')}</h2>
             <button
               onClick={onClose}
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
@@ -347,7 +169,6 @@ function MobileMenu({
             ))}
           </div>
         </div>
-
       </div>
     </>
   );

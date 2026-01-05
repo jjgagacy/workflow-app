@@ -1,24 +1,12 @@
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { JSX, useEffect, useRef, useState } from "react";
-
-interface NavigationItemDropDown {
-  title: string;
-  description: string;
-  icon: JSX.Element;
-  items: {
-    text: string;
-    icon: JSX.Element;
-  }[];
-}
+import { NavItem } from "../navItems";
 
 interface NavigationitemProps {
-  item: {
-    label: string;
-    href: string;
-    dropdown?: NavigationItemDropDown[];
-  }
+  item: NavItem;
 }
+
 export default function NavigationItem({ item }: NavigationitemProps) {
   const [isOpen, setIsOpen] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);

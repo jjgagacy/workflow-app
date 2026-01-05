@@ -1,14 +1,4 @@
 const translation = {
-  // 通用
-  common: {
-    view_all_features: '查看所有功能',
-    switch_to_english: '切换到英文',
-    switch_to_chinese: '切换到中文',
-    switch_to_dark: '切换深色模式',
-    switch_to_light: '切换浅色模式',
-    nav_title: '菜单',
-  },
-
   // 导航
   nav: {
     products: '产品',

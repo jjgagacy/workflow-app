@@ -6,7 +6,6 @@ import { ThemeProvider } from "next-themes";
 import { cookies } from "next/headers";
 import Providers from "./components/layout/providers";
 import { generateMetadata as Metadata } from "./components/layout/metadata";
-import { MobileMenuProvider } from "@/context/mobileMenuContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,9 +41,7 @@ export default async function RootLayout({
         >
           <I18nServer>
             <Providers activeThemeValue={activeThemeValue || 'Default'}>
-              <MobileMenuProvider>
-                {children}
-              </MobileMenuProvider>
+              {children}
             </Providers>
           </I18nServer>
         </ThemeProvider>

@@ -1,226 +1,216 @@
 const translation = {
-  // 通用
-  common: {
-    view_all_features: '查看所有功能',
-    switch_to_english: '切换到英文',
-    switch_to_chinese: '切换到中文',
-    switch_to_dark: '切换深色模式',
-    switch_to_light: '切换浅色模式',
-    nav_title: '菜单',
-  },
-
-  // 导航
+  // Navigation
   nav: {
-    products: '产品',
-    agents: '智能体',
-    agents_desc: '多种智能体满足不同场景需求',
-    ai_agents: '对话智能体',
-    creative_agents: '创作智能体',
-    analytics_agents: '分析智能体',
+    products: 'Products',
+    agents: 'Agents',
+    agents_desc: 'Various agents to meet different scenario needs',
+    ai_agents: 'Conversational Agents',
+    creative_agents: 'Creative Agents',
+    analytics_agents: 'Analytics Agents',
 
-    workflows: '工作流',
-    workflows_desc: '可视化拖拽式工作流编辑器',
-    automation: '自动化任务',
-    data_processing: '数据处理流',
-    model_orchestration: '多模型编排',
+    workflows: 'Workflows',
+    workflows_desc: 'Visual drag-and-drop workflow editor',
+    automation: 'Automation Tasks',
+    data_processing: 'Data Processing Flow',
+    model_orchestration: 'Multi-model Orchestration',
 
-    features: '功能特性',
-    features_desc: '核心平台功能展示',
-    visual_editor: '可视化编辑',
-    multi_model: '多模型支持',
-    private_deployment: '私有化部署',
+    features: 'Features',
+    features_desc: 'Core platform features showcase',
+    visual_editor: 'Visual Editor',
+    multi_model: 'Multi-model Support',
+    private_deployment: 'Private Deployment',
 
-    solutions: '解决方案',
-    enterprise_solutions: '企业应用',
-    enterprise_solutions_desc: '为企业提供定制化AI解决方案',
-    developer_tools: '开发者工具',
-    developer_tools_desc: 'API和SDK支持快速集成',
-    personal_creation: '个人创作',
-    personal_creation_desc: '助力个人创作者提升效率',
+    solutions: 'Solutions',
+    enterprise_solutions: 'Enterprise Applications',
+    enterprise_solutions_desc: 'Custom AI solutions for enterprises',
+    developer_tools: 'Developer Tools',
+    developer_tools_desc: 'API and SDK for quick integration',
+    personal_creation: 'Personal Creation',
+    personal_creation_desc: 'Boost efficiency for individual creators',
 
-    customer_service: '智能客服系统',
-    data_analytics: '数据分析平台',
-    office_automation: '自动化办公',
-    api_integration: 'API接口',
-    sdk: 'SDK开发包',
-    documentation: '文档中心',
-    content_generation: '内容生成',
-    creative_assistant: '创意助手',
-    learning_partner: '学习伙伴',
+    customer_service: 'Customer Service System',
+    data_analytics: 'Data Analytics Platform',
+    office_automation: 'Office Automation',
+    api_integration: 'API Integration',
+    sdk: 'SDK Development Kit',
+    documentation: 'Documentation Center',
+    content_generation: 'Content Generation',
+    creative_assistant: 'Creative Assistant',
+    learning_partner: 'Learning Partner',
 
-    pricing: '定价',
-    docs: '文档',
-    blog: '博客',
+    pricing: 'Pricing',
+    docs: 'Documentation',
+    blog: 'Blog',
   },
 
-  // 认证
+  // Authentication
   auth: {
-    login: '登录',
-    register: '注册',
+    login: 'Login',
+    register: 'Register',
   },
 
-  // Hero区域
+  // Hero Section
   hero: {
-    title: 'Monie（萌艺）',
-    subtitle: '智能体应用平台',
-    description: '一个开放、灵活的智能体应用平台，致力于让每个人都能轻松构建属于自己的AI驱动应用。无论您是开发者、创作者还是企业，Monie 都为您提供了一站式的智能体设计、部署与管理体验。',
-    cta_primary: '免费开始使用',
-    cta_secondary: '查看功能演示',
+    title: 'Monie',
+    subtitle: 'Agent Application Platform',
+    description: 'An open and flexible agent application platform dedicated to enabling everyone to easily build their own AI-driven applications. Whether you are a developer, creator, or enterprise, Monie provides you with a one-stop agent design, deployment, and management experience.',
+    cta_primary: 'Get Started for Free',
+    cta_secondary: 'View Demo',
   },
 
-  // 功能特性
+  // Features
   features: {
-    title: '平台特色',
-    subtitle: '为您提供全方位的AI应用开发与管理能力',
+    title: 'Platform Features',
+    subtitle: 'Comprehensive AI application development and management capabilities',
 
     multi_model_agents: {
-      title: '多模型智能体',
-      description: '支持 Gemini、DeepSeek、OpenAI 等主流大模型，灵活切换满足不同场景需求',
+      title: 'Multi-model Agents',
+      description: 'Supports mainstream large models including Gemini, DeepSeek, OpenAI, etc., with flexible switching to meet different scenario needs',
       highlights: {
-        intelligent_dialogue: '智能对话',
-        content_creation: '内容创作',
-        code_generation: '代码生成',
+        intelligent_dialogue: 'Intelligent Dialogue',
+        content_creation: 'Content Creation',
+        code_generation: 'Code Generation',
       }
     },
 
     visual_workflow: {
-      title: '可视化工作流',
-      description: '拖拽式编辑器构建复杂自动化任务，连接外部工具与API，实现智能化工作流',
+      title: 'Visual Workflow',
+      description: 'Drag-and-drop editor to build complex automation tasks, connect external tools and APIs, and implement intelligent workflows',
       highlights: {
-        automation: '自动化任务',
-        data_processing: '数据处理',
-        report_generation: '报告生成',
+        automation: 'Automation Tasks',
+        data_processing: 'Data Processing',
+        report_generation: 'Report Generation',
       }
     },
 
     task_automation: {
-      title: '任务自动化',
-      description: '创建多种自动化任务流程，自动完成重复性工作，大幅提升工作效率',
+      title: 'Task Automation',
+      description: 'Create various automated task flows to automatically complete repetitive work and greatly improve work efficiency',
       highlights: {
-        intelligent_scheduling: '智能调度',
-        conditional_triggers: '条件触发',
-        batch_processing: '批量处理',
+        intelligent_scheduling: 'Intelligent Scheduling',
+        conditional_triggers: 'Conditional Triggers',
+        batch_processing: 'Batch Processing',
       }
     },
 
     creative_generation: {
-      title: '创意生成',
-      description: '一键生成图像、视频、网站等内容，释放创作潜能，激发无限创意',
+      title: 'Creative Generation',
+      description: 'One-click generation of images, videos, websites, and more to unleash creative potential and inspire unlimited creativity',
       highlights: {
-        ai_drawing: 'AI绘图',
-        video_generation: '视频生成',
-        website_creation: '网站制作',
+        ai_drawing: 'AI Drawing',
+        video_generation: 'Video Generation',
+        website_creation: 'Website Creation',
       }
     }
   },
 
-  // 为什么选择 Monie
+  // Why Choose Monie
   why_choose: {
-    title: '🚀 为什么选择 Monie？',
+    title: '🚀 Why Choose Monie?',
 
     low_threshold: {
-      title: '低门槛上手',
-      description: '无需编码基础，通过可视化界面快速上手，让AI应用开发变得简单',
+      title: 'Low Barrier to Entry',
+      description: 'No coding background required, quickly get started through visual interface, making AI application development simple',
     },
 
     high_scalability: {
-      title: '高扩展性',
-      description: '支持集成外部工具与自定义逻辑，持续拓展应用边界，满足复杂需求',
+      title: 'High Scalability',
+      description: 'Supports integration of external tools and custom logic, continuously expanding application boundaries to meet complex needs',
     },
 
     private_deployment: {
-      title: '私有化部署',
-      description: '保障数据安全，支持企业级定制与本地化部署，完全掌控您的数据',
+      title: 'Private Deployment',
+      description: 'Ensures data security, supports enterprise-level customization and local deployment, giving you complete control over your data',
     },
 
     community_sharing: {
-      title: '社区共享',
-      description: '探索他人创建的智能体应用，激发灵感，协作创新，共同成长',
+      title: 'Community Sharing',
+      description: 'Explore agent applications created by others, inspire ideas, collaborate on innovation, and grow together',
     }
   },
 
-  // 应用场景
+  // Use Cases
   use_cases: {
-    title: '多样化应用场景',
+    title: 'Diverse Application Scenarios',
 
     intelligent_dialogue: {
-      title: '智能会话',
-      description: '打造个性化对话助手',
+      title: 'Intelligent Dialogue',
+      description: 'Create personalized conversational assistants',
     },
 
     creative_generation: {
-      title: '创意生成',
-      description: '一键生成各类创意内容',
+      title: 'Creative Generation',
+      description: 'One-click generation of various creative content',
     },
 
     task_automation: {
-      title: '任务自动化',
-      description: '自动完成重复性工作',
+      title: 'Task Automation',
+      description: 'Automatically complete repetitive work',
     },
 
     app_factory: {
-      title: '应用工厂',
-      description: '自由组合设计专属应用',
+      title: 'App Factory',
+      description: 'Freely combine and design exclusive applications',
     }
   },
 
   // Footer
   footer: {
-    description: 'Monie（萌艺）是一个开放、灵活的智能体应用平台，致力于让每个人都能轻松构建属于自己的AI驱动应用。',
+    description: 'Monie is an open and flexible agent application platform dedicated to enabling everyone to easily build their own AI-driven applications.',
 
     sections: {
-      product: '产品',
-      solutions: '解决方案',
-      resources: '资源',
-      company: '公司',
-      legal: '法律',
+      product: 'Product',
+      solutions: 'Solutions',
+      resources: 'Resources',
+      company: 'Company',
+      legal: 'Legal',
     },
 
     product: {
-      agent_platform: '智能体平台',
-      workflow_engine: '工作流引擎',
-      api: 'API接口',
-      app_store: '应用商店',
+      agent_platform: 'Agent Platform',
+      workflow_engine: 'Workflow Engine',
+      api: 'API',
+      app_store: 'App Store',
     },
 
     solutions: {
-      enterprise: '企业解决方案',
-      developer_tools: '开发者工具',
-      education: '教育机构',
-      startups: '初创公司',
+      enterprise: 'Enterprise Solutions',
+      developer_tools: 'Developer Tools',
+      education: 'Educational Institutions',
+      startups: 'Startups',
     },
 
     resources: {
-      docs: '文档中心',
-      blog: '技术博客',
-      tutorials: '使用教程',
-      api_reference: 'API参考',
+      docs: 'Documentation Center',
+      blog: 'Technical Blog',
+      tutorials: 'Tutorials',
+      api_reference: 'API Reference',
     },
 
     company: {
-      about: '关于我们',
-      careers: '加入我们',
-      contact: '联系我们',
-      media: '媒体报道',
+      about: 'About Us',
+      careers: 'Careers',
+      contact: 'Contact Us',
+      media: 'Media Coverage',
     },
 
     legal: {
-      terms: '服务条款',
-      privacy: '隐私政策',
-      agreement: '使用协议',
-      cookie: 'Cookie政策',
+      terms: 'Terms of Service',
+      privacy: 'Privacy Policy',
+      agreement: 'User Agreement',
+      cookie: 'Cookie Policy',
     },
 
     bottom: {
-      download_app: '下载 App',
-      documentation: '文档',
-      community: '社区',
-      pricing: '定价',
+      download_app: 'Download App',
+      documentation: 'Documentation',
+      community: 'Community',
+      pricing: 'Pricing',
     },
 
-    copyright: '© {{year}} Monie（萌艺）. 保留所有权利。',
-    vision_part1: '无论是搭建企业智能客服系统、开发个人创作助手，还是设计自动化任务流水线，Monie 都为您提供强大而易用的工具。我们相信，AI 不应只是技术专家的专利，而应成为每个人实现想法的伙伴。',
-    vision_part2: 'Monie（萌艺） —— 在这里，每一个创意都能被智能赋能，每一份想象皆可化为现实。',
+    copyright: '© {{year}} Monie. All rights reserved.',
+    vision_part1: 'Whether building enterprise customer service systems, developing personal creative assistants, or designing automated task pipelines, Monie provides you with powerful yet easy-to-use tools. We believe AI should not be the exclusive domain of technical experts, but should become a partner for everyone to realize their ideas.',
+    vision_part2: 'Monie — Where every idea can be empowered by intelligence, and every imagination can become reality.',
   }
 };
 

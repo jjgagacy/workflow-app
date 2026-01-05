@@ -14,12 +14,17 @@ export type I18nText = {
     'zh-Hans': string;
 }
 
-const NAMESPACE = ['app', 'login', 'home'] as const;
+const NAMESPACE = ['app', 'account', 'home'] as const;
 
 type NameSpace = typeof NAMESPACE[number];
 type Translations = Record<string, any>;
 
 export const languages = data.languages;
+
+export function getLanguageNameByValue(value: string): string | undefined {
+    const language = languages.find(lang => lang.value === value);
+    return language?.name;
+}
 
 export const LanguagesSupported = languages.filter(item => item.supported).map(item => item.value);
 

@@ -3,45 +3,12 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Logo from "./logo";
-import {
-  Sun,
-  Moon,
-  Globe,
-  Menu,
-  X,
-  ChevronDown,
-  Zap,
-  Workflow,
-  Brain,
-  Bot,
-  MessageSquare,
-  Palette,
-  Download,
-  FileText,
-  Users,
-  CreditCard,
-  BookOpen,
-  Smartphone,
-  Shield,
-  ArrowRight,
-  Sparkles,
-  CheckCircle,
-  BarChart,
-  Cloud,
-  Lock,
-  Server,
-  Code,
-  Package,
-  Layers,
-  Cpu
-} from "lucide-react";
 import Navigation from "./navigation";
 import Actions from "./actions";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const { t, i18n } = useTranslation();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -50,7 +17,6 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
