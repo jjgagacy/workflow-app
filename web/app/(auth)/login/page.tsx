@@ -35,7 +35,7 @@ export default function Login() {
     verificationCode: '',
   });
 
-  usePageTitle(t('login.login_title'));
+  usePageTitle(t('account.login_title'));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

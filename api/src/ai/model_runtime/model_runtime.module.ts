@@ -26,7 +26,12 @@ import { EncryptionModule } from '@/encryption/encryption.module';
     ProviderService,
     ProviderManager
   ],
-  exports: [ModelTypeService, ProviderListService, ModelProviderPlugin]
+  exports: [
+    ModelTypeService,
+    ProviderListService,
+    ModelProviderPlugin,
+    ProviderCredentialsCacheService
+  ]
 })
 export class ModelRuntimeModule { }
 

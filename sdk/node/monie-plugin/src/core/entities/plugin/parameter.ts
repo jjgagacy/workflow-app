@@ -1,6 +1,6 @@
 import { I18nObject } from "../i18n";
 
-enum ParameterType {
+export enum ParameterType {
   INT = 'INT',
   FLOAT = 'FLOAT',
   BOOLEAN = 'BOOLEAN',

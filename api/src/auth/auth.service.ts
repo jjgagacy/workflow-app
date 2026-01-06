@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { AccountService } from "@/account/account.service";
 import * as bcypt from 'bcrypt';
-import { LoginResponse } from "@/graphql/types/login-response.type";
+import { LoginResponse } from "@/graphql/account/account/types/login-response.type";
 import { JWT_CONSTANTS } from "@/config/constants";
 import { I18n, I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";

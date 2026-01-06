@@ -37,7 +37,7 @@ export default function Actions() {
 
         <Button variant={'primary'}>
           <Link
-            href="/register"
+            href="/signup"
             className="transition-opacity font-medium"
           >
             {t('home.auth.register')}

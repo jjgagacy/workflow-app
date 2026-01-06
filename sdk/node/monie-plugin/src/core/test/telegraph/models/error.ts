@@ -1,13 +1,5 @@
+import { InvokeError, InvokeConnectionError, InvokeServerUnavailableError, InvokeRateLimitError, InvokeAuthorizationError, InvokeBadRequestError } from "@/core/errors/model.error";
 import OpenAI from "openai";
-
-export class InvokeError extends Error { }
-
-export class InvokeConnectionError extends InvokeError { }
-export class InvokeServerUnavailableError extends InvokeError { }
-export class InvokeRateLimitError extends InvokeError { }
-export class InvokeAuthorizationError extends InvokeError { }
-export class InvokeBadRequestError extends InvokeError { }
-
 
 export const invokeErrorMapping: Map<
   new (...args: any[]) => InvokeError,

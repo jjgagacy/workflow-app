@@ -29,7 +29,6 @@ export enum ModelPropertyKey {
 
 export type ConfigurateMethod = FetchFrom;
 
-
 export enum ModelFeature {
   TOOL_CALL = 'tool-call',
   MULTI_TOOL_CALL = 'multi-tool-call',

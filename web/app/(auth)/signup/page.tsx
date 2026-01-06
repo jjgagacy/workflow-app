@@ -1,9 +1,12 @@
 'use client';
 
+import api from "@/api";
 import { ErrorAlert } from "@/app/components/base/alert";
 import Button from "@/app/components/base/button";
 import usePageTitle from "@/hooks/use-page-title";
-import { CheckCircle, User, AlertCircle, Mail } from "lucide-react";
+import { getClientLocale } from "@/i18n";
+import { getErrorMessage } from "@/utils/errors";
+import { CheckCircle, User, AlertCircle, Mail, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -18,13 +21,15 @@ export default function SignUp() {
   const [countdown, setCountdown] = useState(0);
   const [showVerification, setShowVerification] = useState(false);
   const [showEmailCodeSended, setShowEmailCodeSended] = useState(false);
+  const validateUsernameMutation = api.account.useValidateUsername();
+  const sendEmailCodeMutation = api.account.useEmailCodeSignupSend();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     verificationCode: '',
   });
 
-  usePageTitle(t('login.signup_title'));
+  usePageTitle(t('account.signup_title'));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,17 +51,20 @@ export default function SignUp() {
     setIsLoading(true);
 
     try {
-      // 模拟API调用，保存用户名
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const result = await validateUsernameMutation({ username: formData.username });
+      if (!result) {
+        setErrors({ username: t('account.registration_failed') });
+        return;
+      }
       setShowVerification(true);
-    } catch (err) {
-      setErrors({ username: t('account.registration_failed') });
+    } catch (err: any) {
+      setErrors({ username: getErrorMessage(err) });
     } finally {
       setIsLoading(false);
     }
   }
 
-  const getErrorMessage = (errors: Record<string, string>): string => {
+  const getErrorString = (errors: Record<string, string>): string => {
     if (Object.keys(errors).length === 0) return '';
     // 返回第一个错误信息
     return Object.values(errors)[0];
@@ -69,7 +77,7 @@ export default function SignUp() {
     window.location.href = '/api/auth/google';
   };
 
-  const returnSetEmail = () => {
+  const returnSetUsername = () => {
     setShowVerification(false);
     setErrors({});
     setShowEmailCodeSended(false);
@@ -81,6 +89,15 @@ export default function SignUp() {
       setErrors({ email: t('account.enter_email_first') });
       return;
     }
+
+    try {
+      await sendEmailCodeMutation({ input: { email: formData.email, language: getClientLocale() } })
+      setShowEmailCodeSended(true);
+    } catch (error) {
+      setErrors({ submit: t('account.send_code_failed') });
+      return;
+    }
+
     // 开始倒计时
     setCountdown(60);
     const timer = setInterval(() => {
@@ -92,14 +109,6 @@ export default function SignUp() {
         return prev - 1;
       });
     }, 1000);
-
-    try {
-      // 模拟发送验证码
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setShowEmailCodeSended(true);
-    } catch (error) {
-      setErrors({ submit: t('account.send_code_failed') });
-    }
   };
 
   return (
@@ -107,9 +116,6 @@ export default function SignUp() {
       <main className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md">
           <div className="text-center mb-10">
-            {getErrorMessage(errors) !== '' && (
-              <ErrorAlert message={getErrorMessage(errors)} />
-            )}
             {/* 欢迎消息 */}
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
               {t('account.welcome_to_monie')}
@@ -159,13 +165,13 @@ export default function SignUp() {
                             maxLength={6}
                           />
                         </div>
-                        {errors.verificationCode && (
-                          <p className="mt-2 text-sm text-red-600 flex items-center">
-                            <AlertCircle className="w-4 h-4 mr-1" />
-                            {errors.verificationCode}
-                          </p>
-                        )}
                       </div>
+                      {errors.verificationCode && (
+                        <p className="mt-2 text-sm text-red-600 flex items-center">
+                          <AlertCircle className="w-4 h-4 mr-1" />
+                          {errors.verificationCode}
+                        </p>
+                      )}
                       <button
                         type="button"
                         onClick={handleSendVerificationCode}
@@ -207,21 +213,23 @@ export default function SignUp() {
                 )}
 
                 {/* 用户名提示 */}
-                <div className="mt-2 space-y-1">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {t('account.username_tip1')}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {t('account.username_tip2')}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {t('account.username_tip3')}
-                  </p>
-                </div>
+                {!showVerification && (
+                  <div className="mt-2 space-y-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {t('account.username_tip1')}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {t('account.username_tip2')}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {t('account.username_tip3')}
+                    </p>
+                  </div>
+                )}
 
                 {/* 错误提示 */}
                 {errors.submit && (
-                  <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                  <div className="mt-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                     <p className="text-sm text-red-600 dark:text-red-400 flex items-center">
                       <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />
                       {errors.submit}
@@ -230,7 +238,7 @@ export default function SignUp() {
                 )}
 
                 {/* 用户名可用性检查 */}
-                {formData.username.length >= 2 && !errors && (
+                {!showVerification && formData.username.length >= 2 && !errors && (
                   <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg animate-in fade-in duration-300">
                     <p className="text-sm text-green-600 dark:text-green-400 flex items-center">
                       <CheckCircle className="w-4 h-4 mr-2 flex-shrink-0" />
@@ -254,31 +262,42 @@ export default function SignUp() {
               </Button>
             </form>
 
-            {/* Divider */}
-            <div className="mt-8 mb-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300 dark:border-gray-600" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
-                    {t('account.or_choose_other_way')}
-                  </span>
-                </div>
+            {showVerification ? (
+              <div className="flex items-center justify-center mt-5">
+                <Link href="#" onClick={returnSetUsername} className="inline-flex items-center group text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                  <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+                  {t('account.go_back')}
+                </Link>
               </div>
-            </div>
+            ) : (
+              <>
+                {/* Divider */}
+                < div className="mt-8 mb-6">
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gray-300 dark:border-gray-600" />
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                      <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                        {t('account.or_choose_other_way')}
+                      </span>
+                    </div>
+                  </div>
+                </div>
 
-            {/* Alternative Options */}
-            <button
-              onClick={handleGoogleLogin}
-              className="w-full flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 group"
-            >
-              <FcGoogle className="w-5 h-5 mr-3" />
-              <span className="font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">
-                {t('account.login_with_google')}
-              </span>
-            </button>
-          </div >
+                {/* Alternative Options */}
+                <button
+                  onClick={handleGoogleLogin}
+                  className="w-full flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 group"
+                >
+                  <FcGoogle className="w-5 h-5 mr-3" />
+                  <span className="font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">
+                    {t('account.login_with_google')}
+                  </span>
+                </button>
+              </>
+            )}
+          </div>
 
           {/* Already have account */}
           < div className="mt-8 text-center" >

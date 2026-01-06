@@ -238,4 +238,42 @@ export class AccountService {
     }
     throw new InvalidInputGraphQLException(this.i18n.t('auth.PASSWORD_VALIDATE_ERROR'));
   }
+
+  async validateSignupUsername(username: string): Promise<UsernameValidationResult> {
+    if (username.length < 2 || username.length > 20) {
+      return {
+        valid: false,
+        error: this.i18n.t('auth.USERNAME_VALIDATE_LEGNTH', { args: { minLength: 2, maxLength: 20 } }),
+      };
+    }
+
+    // Regular expression: Supports Chinese, English, numbers and underscores
+    // Chinese unicode range: \u4e00-\u9fa
+    // English (uppercase and lowercase) a-zA-Z
+    // Numbers: 0-9
+    // Underscore: _
+    const usernameRegex = /^[\u4e00-\u9fa5a-zA-Z0-9_]+$/;
+    if (!usernameRegex.test(username)) {
+      return {
+        valid: false,
+        error: this.i18n.t('auth.USERNAME_INVALID_CHARS'),
+      }
+    }
+
+    const usernameExisting = await this.getByUserName(username);
+    if (usernameExisting) {
+      return {
+        valid: false,
+        error: this.i18n.t('account.ACCOUNT_EXIST', { args: { name: username } }),
+      }
+    }
+
+    return { valid: true };
+  }
 }
+
+interface UsernameValidationResult {
+  valid: boolean;
+  error?: string;
+}
+

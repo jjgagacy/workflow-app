@@ -20,6 +20,7 @@ import { ModelRuntimeModule } from "@/ai/model_runtime/model_runtime.module";
 import { ModelProviderService } from "./model-provider.service";
 import { ProviderManager } from "@/ai/model_runtime/services/provider-manager";
 import { ProviderService } from "@/ai/model_runtime/services/provider.service";
+import { HostConfiguration } from "@/ai/plugin/services/host-configuration";
 
 @Global()
 @Module({
@@ -42,6 +43,7 @@ import { ProviderService } from "@/ai/model_runtime/services/provider.service";
     ProviderManager,
     ProviderService,
     ModelProviderService,
+    HostConfiguration,
   ],
   exports: [
     AuthAccountService,

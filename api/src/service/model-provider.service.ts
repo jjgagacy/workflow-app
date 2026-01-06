@@ -5,7 +5,7 @@ import { CustomConfigurationStatus } from "@/ai/model_runtime/enums/quota.enum";
 import { ProviderService } from "@/ai/model_runtime/services/provider.service";
 import { EnumConverter } from "@/common/utils/enums";
 import { DEFAULT_LANG } from "@/config/constants";
-import { CustomConfiguration, ProviderInfo, ProviderList, QuotaInfo, RestrictModel, SystemConfiguration } from "@/graphql/types/model_provider/provider.type";
+import { CustomConfiguration, ProviderInfo, ProviderList, QuotaInfo, RestrictModel, SystemConfiguration } from "@/graphql/model/model_provider/types/provider.type";
 import { Injectable } from "@nestjs/common";
 
 @Injectable()

@@ -1,14 +1,14 @@
-import * as user from './modules/user';
-import * as account from './modules/account';
-import * as dep from './modules/dep';
-import * as menu from './modules/menu';
-import * as module from './modules/module';
-import * as role from './modules/role';
+import * as user from './graphql/account/modules/user';
+import * as account from './graphql/account/modules/account';
+import * as dep from './graphql/account/modules/dep';
+import * as menu from './graphql/account/modules/menu';
+import * as module from './graphql/account/modules/module';
+import * as role from './graphql/account/modules/role';
 import { useGraphQLQuery } from '@/hooks/use-graphql';
 import { GET_ROUTES } from './graphql/queries';
 
 const getRoutes = async () => {
-    const {data, error, isLoading} = useGraphQLQuery<{ routes: any }, {}>(
+    const { data, error, isLoading } = useGraphQLQuery<{ routes: any }, {}>(
         GET_ROUTES,
         {},
         {

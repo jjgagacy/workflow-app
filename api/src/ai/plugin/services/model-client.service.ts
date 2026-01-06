@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { BasePluginClient } from "../classes/base-plugin-client";
+import { BasePluginClient } from "../../../monie/classes/base-plugin-client";
 
 @Injectable()
 export class PluginModelClientService {

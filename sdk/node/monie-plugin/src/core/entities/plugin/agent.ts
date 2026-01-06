@@ -2,8 +2,7 @@ import { I18nObject } from "../i18n";
 import { Mapping } from "./provider";
 import { ToolIdentity, ToolParameterOption, ToolProviderIdentity } from "./declaration/tool";
 import { ToolConfigurationExtra } from "./declaration/extra";
-import { InvokeMessage, TextInvokeMessage } from "@/core/dtos/invoke-message.dto";
-import { MessageType } from "@/core/dtos/message.dto";
+import { TextInvokeMessage } from "@/core/dtos/invoke-message.dto";
 
 export class AgentStrategyProviderIdentity extends ToolProviderIdentity { }
 

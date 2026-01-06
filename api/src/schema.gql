@@ -18,6 +18,7 @@ type Account {
 
 input AccountInput {
   email: String
+  emailCode: String
   id: Float
   mobile: String
   password: String
@@ -138,6 +139,7 @@ type ModuleResponse {
 }
 
 type Mutation {
+  checkSignUpUsername(username: String!): Boolean!
   createAccount(input: AccountInput!): AccountResponse!
   createDep(input: DepInput!): DepResponse!
   createMenu(input: MenuInput!): MenuResponse!
@@ -152,9 +154,10 @@ type Mutation {
   deleteRole(id: Int!): Boolean!
   emailCodeLogin(input: EmailCodeLoginInput!): LoginResponse!
   emailCodeLoginSendEmail(input: EmailCodeLoginSendEmail!): String!
+  emailCodeSignupSendEmail(input: EmailCodeLoginSendEmail!): String!
   login(input: LoginInput!): LoginResponse!
   resetPasswordSendEmail(input: ResetPasswordSendEmailInput!): String!
-  setRolePerms(key: String!, menus: [RoleSetPermMenu!]!): Boolean!
+  setRolePerms(input: RoleSetPermInput!): Boolean!
   switchWorkspace(tenant_id: String!): Boolean!
   toggleAccountStatus(id: Int!): Boolean!
   updateAccount(input: AccountInput!): AccountResponse!
@@ -194,7 +197,7 @@ type Query {
   accounts(email: String, id: Int, limit: Int, mobile: String, page: Int, realName: String, roleId: Int, username: String): AccountList!
   currentUser: UserInfoResponse!
   depInfo(key: String!): Dep!
-  deps(key: String, name: String, parent: String): [Dep!]!
+  deps: [Dep!]!
   hello: String!
   menuInfo(id: Int!): Menu!
   menus(key: String, module: Boolean, modulePerm: Boolean, name: String, parent: String, scope: Boolean, status: Int): [Menu!]!
@@ -242,6 +245,11 @@ type RolePerms {
 
 type RoleResponse {
   id: Int!
+}
+
+input RoleSetPermInput {
+  key: String!
+  menus: [RoleSetPermMenu!]!
 }
 
 input RoleSetPermMenu {

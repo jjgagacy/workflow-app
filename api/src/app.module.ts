@@ -13,32 +13,8 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { JWT_CONSTANTS } from './config/constants';
 import { FooModule } from './foo/foo.module';
-import { ModuleResolver } from './graphql/resolvers/module.resolver';
-import { UpdateModuleResolver } from './graphql/resolvers/update-module.resolver';
-import { CreateModuleResolver } from './graphql/resolvers/create-module.resolver';
-import { DeleteModuleResolver } from './graphql/resolvers/delete-module.resolver';
 import { ModuleService } from './account/module.service';
-import { AccountResolver } from './graphql/resolvers/account.resolver';
-import { CreateAccountResolver } from './graphql/resolvers/create-account.resolver';
-import { CreateDepResolver } from './graphql/resolvers/create-dep.resolver';
-import { CreateMenuResolver } from './graphql/resolvers/create-menu.resolver';
-import { CreatePermResolver } from './graphql/resolvers/create-perm.resolver';
-import { CreateRoleResolver } from './graphql/resolvers/create-role.resolver';
-import { DeleteAccountResolver } from './graphql/resolvers/delete-account.resolver';
-import { DeleteDepResolver } from './graphql/resolvers/delete-dep.resolver';
-import { DeleteMenuResolver } from './graphql/resolvers/delete-menu.resolver';
-import { DeletePermResolver } from './graphql/resolvers/delete-perm.resolver';
-import { DeleteRoleResolver } from './graphql/resolvers/delete-role.resolver';
-import { DepResolver } from './graphql/resolvers/dep.resolver';
-import { MenuResolver } from './graphql/resolvers/menu.resolver';
-import { RoleResolver } from './graphql/resolvers/role.resolver';
-import { RoutesResolver } from './graphql/resolvers/routes.resolver';
-import { SetRolePermsResolver } from './graphql/resolvers/set-role-perms.resolver';
-import { UpdateAccountResolver } from './graphql/resolvers/update-account.resolver';
-import { UpdateDepResolver } from './graphql/resolvers/update-dep.resolver';
-import { UpdateMenuResolver } from './graphql/resolvers/update-menu.resolver';
-import { UpdatePermResolver } from './graphql/resolvers/update-perm.resolver';
-import { UpdateRoleResolver } from './graphql/resolvers/update-role.resolver';
+import { RoutesResolver } from './graphql/account/routes/routes.resolver';
 import { AccountModule } from './account/account.module';
 import { DepService } from './account/dep.service';
 import { MenuService } from './account/menu.service';
@@ -51,7 +27,6 @@ import { FooService } from './foo/foo.service';
 import { JwtStrategy } from './auth/strategies/jwt.strategy';
 import { LocalStrategy } from './auth/strategies/local.strategy';
 import { AuthModule } from './auth/auth.module';
-import { LoginResolver } from './graphql/resolvers/login.resolver';
 import { AgentModule } from './ai/agent/agent.module';
 import { ModelRuntimeModule } from './ai/model_runtime/model_runtime.module';
 import { McpModule } from './ai/mcp/mcp.module';
@@ -86,13 +61,39 @@ import { BullModule } from '@nestjs/bull';
 import { MailService } from './mail/mail.service';
 import { MailModule } from './mail/mail.module';
 import { EnableEmailPasswordLoginGuard } from './common/guards/auth/enable-email-password-login.guard';
-import { UpdateAccountFieldsResolver } from './graphql/resolvers/update-account-fields.resolver';
 import { DateScalar } from './common/graphql/scalars/date.scalar';
-import { WorkspaceResolver } from './graphql/resolvers/workspace/workspace.resolver';
-import { ModelProviderResolver } from './graphql/resolvers/workspace/model-provider.resolver';
+import { WorkspaceResolver } from './graphql/workspace/resolvers/workspace.resolver';
+import { ModelProviderResolver } from './graphql/workspace/resolvers/model-provider.resolver';
 import { PluginModule } from './ai/plugin/plugin.module';
-import { BasePluginClient } from './ai/plugin/classes/base-plugin-client';
+import { BasePluginClient } from './monie/classes/base-plugin-client';
 import { PluginModelClientService } from './ai/plugin/services/model-client.service';
+import { AccountResolver } from './graphql/account/account/resolvers/account.resolver';
+import { CreateAccountResolver } from './graphql/account/account/resolvers/create-account.resolver';
+import { DeleteAccountResolver } from './graphql/account/account/resolvers/delete-account.resolver';
+import { LoginResolver } from './graphql/account/account/resolvers/login.resolver';
+import { UpdateAccountFieldsResolver } from './graphql/account/account/resolvers/update-account-fields.resolver';
+import { UpdateAccountResolver } from './graphql/account/account/resolvers/update-account.resolver';
+import { CreateDepResolver } from './graphql/account/dep/resolvers/create-dep.resolver';
+import { DeleteDepResolver } from './graphql/account/dep/resolvers/delete-dep.resolver';
+import { DepResolver } from './graphql/account/dep/resolvers/dep.resolver';
+import { UpdateDepResolver } from './graphql/account/dep/resolvers/update-dep.resolver';
+import { CreateMenuResolver } from './graphql/account/menu/resolvers/create-menu.resolver';
+import { DeleteMenuResolver } from './graphql/account/menu/resolvers/delete-menu.resolver';
+import { MenuResolver } from './graphql/account/menu/resolvers/menu.resolver';
+import { UpdateMenuResolver } from './graphql/account/menu/resolvers/update-menu.resolver';
+import { CreateModuleResolver } from './graphql/account/module/resolvers/create-module.resolver';
+import { DeleteModuleResolver } from './graphql/account/module/resolvers/delete-module.resolver';
+import { ModuleResolver } from './graphql/account/module/resolvers/module.resolver';
+import { UpdateModuleResolver } from './graphql/account/module/resolvers/update-module.resolver';
+import { CreatePermResolver } from './graphql/account/perm/resolvers/create-perm.resolver';
+import { DeletePermResolver } from './graphql/account/perm/resolvers/delete-perm.resolver';
+import { SetRolePermsResolver } from './graphql/account/role/resolvers/set-role-perms.resolver';
+import { UpdatePermResolver } from './graphql/account/perm/resolvers/update-perm.resolver';
+import { CreateRoleResolver } from './graphql/account/role/resolvers/create-role.resolver';
+import { DeleteRoleResolver } from './graphql/account/role/resolvers/delete-role.resolver';
+import { RoleResolver } from './graphql/account/role/resolvers/role.resolver';
+import { UpdateRoleResolver } from './graphql/account/role/resolvers/update-role.resolver';
+import { SignUpResolver } from './graphql/account/account/resolvers/signup.resolver';
 
 @Module({
   imports: [
@@ -126,7 +127,7 @@ import { PluginModelClientService } from './ai/plugin/services/model-client.serv
           // 隐藏内部错误详情
           if (formattedError.extensions?.code === 'INTERNAL_SERVER_ERROR') {
             return {
-              message: 'Internal server error',
+              message: 'Internal Server Error',
               path: formattedError.path,
               extensions: {
                 code: 'INTERNAL_SERVER_ERROR'
@@ -321,6 +322,7 @@ import { PluginModelClientService } from './ai/plugin/services/model-client.serv
     ModelProviderResolver,
     BasePluginClient,
     PluginModelClientService,
+    SignUpResolver,
   ],
 })
 export class AppModule implements NestModule {

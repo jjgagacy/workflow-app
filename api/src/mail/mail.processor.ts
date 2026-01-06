@@ -1,7 +1,6 @@
 import { Process, Processor } from "@nestjs/bull";
 import { MailService } from "./mail.service";
 import { Job } from "bull";
-import { EmailContent } from "./interfaces/client.interface";
 import { MailI18nService, EmailLanguage, EmailType } from "./mail-i18n.service";
 import { GlobalLogger } from "@/logger/logger.service";
 import { ConfigService } from "@nestjs/config";

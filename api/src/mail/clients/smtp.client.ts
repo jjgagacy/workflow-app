@@ -1,6 +1,5 @@
 import { MailClient, SendEmailDto } from "../interfaces/client.interface";
 import * as nodemailer from 'nodemailer';
-import { join } from "path";
 
 interface SMTPOptions {
     host: string;
