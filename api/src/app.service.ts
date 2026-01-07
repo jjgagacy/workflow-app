@@ -6,21 +6,20 @@ import { RoleService } from './account/role.service';
 import { AccountEntity } from './account/entities/account.entity';
 import { PASSWORD_SALT } from './config/constants';
 import * as bcrypt from 'bcrypt';
+import { MonieConfig } from './monie/monie.config';
 
 @Injectable()
 export class AppService {
-
   constructor(
     private readonly dataSource: DataSource,
     private readonly fooService: FooService,
     private readonly accountService: AccountService,
-    private readonly roleService: RoleService
+    private readonly roleService: RoleService,
   ) {}
 
   async onApplicationBootstrap() {
     // console.log('Application has started successfully [' + (process.env.NODE_ENV || 'dev') + ']');
     // console.log('Database connected:', this.dataSource.isInitialized);
-    
     // 测试插入account和dep，插入后会自动更新account中的dep字段是新创建的部门id
     // const accountRepository = this.dataSource.getRepository(AccountEntity);
     // const account = new AccountEntity();
@@ -48,14 +47,10 @@ export class AppService {
     // await accountRepository.save(account);
     // await this.dataSource.manager.save();
     // console.log('Default admin account created:', account);
-
     // 测试删除dep，删除dep后会更新account中的dep字段为null
-    
     // const depRepository = this.dataSource.getRepository(DepEntity);
     // await depRepository.delete(7); // Clear existing departments
-
     // 测试角色级联删除
-
     // const accountRepository = this.dataSource.getRepository(AccountEntity);
     // const account = new AccountEntity();
     // account.username = 'admin';
@@ -94,14 +89,11 @@ export class AppService {
     //     .from(RoleEntity)
     //     .where("id = :id", { id: role1.id })
     //     .execute();
-
-
     // module级联删除测试
     // const moduleRepository = this.dataSource.getRepository(ModuleEntity);
     // const module = new ModuleEntity();
     // module.name = 'Test Modules';
     // module.key = 'test_modules';
-
     // // // 创建一些权限
     // const perm1 = new ModulePermEntity();
     // perm1.key = 'perm1';
@@ -121,7 +113,6 @@ export class AppService {
     //   .from(ModuleEntity)
     //   .where("id = :id", { id: module.id })
     //   .execute();
-
     // // 创建一些菜单
     // const menuRepository = this.dataSource.getRepository(MenuEntity);
     // const menu = new MenuEntity();
@@ -132,17 +123,15 @@ export class AppService {
     // menu.sort = 1;
     // menu.status = 0; // 0 for active
     // const menu2 = new MenuEntity();
-    // menu2.key = 'test_menu2';   
+    // menu2.key = 'test_menu2';
     // menu2.name = 'Test Menu 2';
     // menu2.parent = 'test_menu';
     // menu2.icon = 'test-icon-2';
     // menu2.sort = 2;
     // menu2.status = 0; // 0 for active
     // module.menus = [menu, menu2];
-
     // await moduleRepository.save(module);
     // // await moduleRepository.delete(module.id); // 删除module时会自动删除menus
-
     // const level1 = new PermEntity();
     // level1.key = 'level1';
     // level1.name = 'Level 1 Permission';
@@ -155,13 +144,11 @@ export class AppService {
     // perm2.perms = [level1]; // 级联关系，perm1和perm2都包含level1权限
     // await this.dataSource.manager.save([level1, level2]);
     // await this.dataSource.manager.save([perm1, perm2]);
-
     // await this.dataSource.createQueryBuilder()
     //   .delete()
     //   .from(PermEntity)
     //   .where("id = :id", { id: level1.id })
     //   .execute(); // 删除perm1时会自动删除level1和level2，因为它
-
     // 创建role
     // const roleRepository = this.dataSource.getRepository(RoleEntity);
     // const role = new RoleEntity();
@@ -178,14 +165,14 @@ export class AppService {
     // await roleRepository.save(role);
     // const role2 = new RoleEntity();
     // role2.name = 'Test Role 2';
-    // role2.key = 'test_role_2';  
+    // role2.key = 'test_role_2';
     // role2.status = 0; // 0 for active
     // role2.parent = '';
     // role2.operate = {
     //   createdAt: new Date(),
     //   updatedAt: new Date(),
     //   createdBy: 'system',
-    //   updatedBy: 'system',    
+    //   updatedBy: 'system',
     // };
     // await roleRepository.save(role2);
     // // 测试账户创建和角色关联
@@ -203,7 +190,6 @@ export class AppService {
     //   updatedBy: 'system',
     // });
     // console.log('Account created:', account);
-
     // 测试添加管理员
     // const role = await this.roleService.create({
     //   key: 'admin',

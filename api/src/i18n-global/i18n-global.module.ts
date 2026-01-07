@@ -2,33 +2,35 @@ import { Global, Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { AcceptLanguageResolver, HeaderResolver, I18nModule, QueryResolver } from "nestjs-i18n";
 import { join } from 'path';
+import { I18nHelperService } from "./i18n.service";
 
 @Global()
 @Module({
-    imports: [
-        I18nModule.forRootAsync({
-            useFactory: (configService: ConfigService) => ({
-                fallbackLanguage: configService.getOrThrow('FALLBACK_LANGUAGE'),
-                fallbacks: {
-                    'zh': 'zh-Hans',
-                    'zh-*': 'zh-Hans',
-                    'zh-CN': 'zh-Hans',
-                    'zh-TW': 'zh-Hans',
-                },
-                loaderOptions: {
-                    path: join(process.cwd(), 'src/i18n/'),
-                    watch: true,
-                },
-                typesOutputPath: join(process.cwd(), 'src/generated/i18n.generated.ts'),
-            }),
-            resolvers: [
-                { use: QueryResolver, options: ['lang'] },
-                AcceptLanguageResolver,
-                new HeaderResolver(['x-lang']),
-            ],
-            inject: [ConfigService],
-        })
-    ],
-    exports: [I18nModule]
+  imports: [
+    I18nModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        fallbackLanguage: configService.getOrThrow('FALLBACK_LANGUAGE'),
+        fallbacks: {
+          'zh': 'zh-Hans',
+          'zh-*': 'zh-Hans',
+          'zh-CN': 'zh-Hans',
+          'zh-TW': 'zh-Hans',
+        },
+        loaderOptions: {
+          path: join(process.cwd(), 'src/i18n/'),
+          watch: true,
+        },
+        typesOutputPath: join(process.cwd(), 'src/generated/i18n.generated.ts'),
+      }),
+      resolvers: [
+        { use: QueryResolver, options: ['lang'] },
+        AcceptLanguageResolver,
+        new HeaderResolver(['x-lang']),
+      ],
+      inject: [ConfigService],
+    })
+  ],
+  providers: [I18nHelperService],
+  exports: [I18nModule, I18nHelperService]
 })
 export class I18nGlobalModule { }

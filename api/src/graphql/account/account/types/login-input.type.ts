@@ -35,10 +35,9 @@ export class ResetPasswordSendEmailInput {
 export class EmailCodeLoginSendEmail {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  @Length(1, 2, { message: 'validation.NOT_EMPTY' })
   @Matches(
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-    { message: 'validation.NOT_EMPTY' }
+    { message: 'auth.INVALID_EMAIL' }
   )
   email: string;
 

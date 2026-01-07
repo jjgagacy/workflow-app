@@ -243,7 +243,7 @@ export class AccountService {
     if (username.length < 2 || username.length > 20) {
       return {
         valid: false,
-        error: this.i18n.t('auth.USERNAME_VALIDATE_LEGNTH', { args: { minLength: 2, maxLength: 20 } }),
+        error: this.i18n.t('auth.USERNAME_VALIDATE_LENGTH', { args: { minLength: 2, maxLength: 20 } }),
       };
     }
 

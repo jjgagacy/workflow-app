@@ -35,7 +35,7 @@ export type I18nTranslations = {
         "FORGET_PASSWORD_ERROR_RATE_LIMIT": string;
         "PASSWORD_MISMATCH": string;
         "PASSWORD_VALIDATE_ERROR": string;
-        "USERNAME_VALIDATE_LEGNTH": string;
+        "USERNAME_VALIDATE_LENGTH": string;
         "USERNAME_INVALID_CHARS": string;
     };
     "billing": {

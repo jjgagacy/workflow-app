@@ -1,16 +1,17 @@
 {
-    "PASSWORD_INVALID": "密码错误",
-    "PASSWORD_NOT_EMPTY": "密码不能为空",
-    "PASSWORD_NEW_NOT_EMPTY": "新密码不能为空",
-    "PASSWORD_FORMAT_INVALID": "密码格式不正确",
-    "PASSWORD_UPDATE_FAILED": "密码更新失败",
-    "ACCOUNT_NOT_FOUND": "账户未找到",
-    "ACCOUNT_NOT_EXIST": "账户不存在, {name}",
-    "ACCOUNT_EXIST": "账户已存在, {name}",
-    "ACCOUNT_NOT_INITIALIZED": "账户未初始化完成",
-    "ACCOUNT_ID_NOT_EXISTS": "登录账户ID不存在",
-    "EMAIL_NOT_EMPTY": "邮箱不能为空",
-    "EMAIL_NOT_EXIST": "邮箱不存在, {email}",
-    "EMAIL_EXIST": "邮箱已存在",
-    "EMAIL_IN_FREEZE": "您的邮箱账号暂时不可用"
+  "PASSWORD_INVALID": "密码错误",
+  "PASSWORD_NOT_EMPTY": "密码不能为空",
+  "PASSWORD_NEW_NOT_EMPTY": "新密码不能为空",
+  "PASSWORD_FORMAT_INVALID": "密码格式不正确",
+  "PASSWORD_UPDATE_FAILED": "密码更新失败",
+  "ACCOUNT_NOT_FOUND": "账户未找到",
+  "ACCOUNT_NOT_EXIST": "账户不存在, {name}",
+  "ACCOUNT_EXIST": "账户已存在, {name}",
+  "ACCOUNT_NOT_INITIALIZED": "账户未初始化完成",
+  "ACCOUNT_ID_NOT_EXISTS": "登录账户ID不存在",
+  "EMAIL_NOT_EMPTY": "邮箱不能为空",
+  "EMAIL_NOT_EXIST": "邮箱不存在, {email}",
+  "EMAIL_EXIST": "邮箱已存在",
+  "EMAIL_IN_FREEZE": "您的邮箱账号暂时不可用"
 }
+

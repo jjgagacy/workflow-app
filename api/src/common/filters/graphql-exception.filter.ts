@@ -1,20 +1,22 @@
 import { GlobalLogger } from "@/logger/logger.service";
 import { ArgumentsHost, BadRequestException, Catch } from "@nestjs/common";
-import { GqlContextType, GqlExceptionFilter } from "@nestjs/graphql";
+import { GqlArgumentsHost, GqlContextType, GqlExceptionFilter } from "@nestjs/graphql";
 import { GraphQLException } from "../exceptions/graphql.exception";
 import { GraphqlErrorCodes } from "../constants/graphql-error-codes";
 import { Response } from 'express';
 import { getErrorDetails } from "../utils/error";
+import { I18nHelperService } from "@/i18n-global/i18n.service";
+import { I18nValidationException } from "nestjs-i18n";
 
 @Catch()
 export class GraphQLExceptionFilter implements GqlExceptionFilter {
   constructor(
-    private readonly logger: GlobalLogger
+    private readonly logger: GlobalLogger,
+    private readonly i18nHelper: I18nHelperService,
   ) { }
 
-  catch(exception: any, host: ArgumentsHost) {
+  async catch(exception: any, host: ArgumentsHost) {
     if (exception instanceof Error) {
-      console.log('--', exception);
       this.logger.error('GraphQLExceptionFilter', getErrorDetails(exception));
     } else {
       // todo 其他类型的错误
@@ -25,6 +27,17 @@ export class GraphQLExceptionFilter implements GqlExceptionFilter {
     if (contextType === "graphql") {
       if (exception instanceof BadRequestException) {
         return this.transformBadRequest(exception);
+      }
+
+      if (exception instanceof I18nValidationException) {
+        const gqlHost = GqlArgumentsHost.create(host);
+        const context = gqlHost.getContext();
+        const request = context?.req;
+        const message = await this.i18nHelper.translateValidationErrors(exception.errors, request)
+        return new GraphQLException(
+          message[0] && message[0].translatedMessages?.[0] ? message[0].translatedMessages[0] : 'Validation error',
+          GraphqlErrorCodes.VALIDATION_ERROR,
+        );
       }
 
       return new GraphQLException(

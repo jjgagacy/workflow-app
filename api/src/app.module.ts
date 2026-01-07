@@ -55,7 +55,7 @@ import { EncryptionService } from './encryption/encryption.service';
 import { StorageModule } from './storage/storage.module';
 import { LocalFileStorage } from './storage/implements/local-file.storage';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { UniversalThrottlerGuard } from './common/guards/universal-throttler.guard';
 import { BullModule } from '@nestjs/bull';
 import { MailService } from './mail/mail.service';
@@ -94,6 +94,7 @@ import { DeleteRoleResolver } from './graphql/account/role/resolvers/delete-role
 import { RoleResolver } from './graphql/account/role/resolvers/role.resolver';
 import { UpdateRoleResolver } from './graphql/account/role/resolvers/update-role.resolver';
 import { SignUpResolver } from './graphql/account/account/resolvers/signup.resolver';
+import { GraphQLExceptionFilter } from './common/filters/graphql-exception.filter';
 
 @Module({
   imports: [
@@ -323,6 +324,7 @@ import { SignUpResolver } from './graphql/account/account/resolvers/signup.resol
     BasePluginClient,
     PluginModelClientService,
     SignUpResolver,
+    { provide: APP_FILTER, useClass: GraphQLExceptionFilter },
   ],
 })
 export class AppModule implements NestModule {
