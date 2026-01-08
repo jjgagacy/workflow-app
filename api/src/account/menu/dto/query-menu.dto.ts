@@ -8,6 +8,7 @@ export class QueryMenuDto extends QueryDto {
   parent?: string;
   order?: { [P in 'name' | 'status' | 'id' | 'sort']?: 'ASC' | 'DESC' };
   relations?: { module?: boolean; roles?: boolean; }
+  tenantId: string;
 
   setQueryArgs(args?: GetMenuArgs) {
     if (!args) return;
@@ -15,7 +16,8 @@ export class QueryMenuDto extends QueryDto {
       key,
       name,
       parent,
-      status
+      status,
+      tenantId,
     } = args;
 
     Object.assign(this, {
@@ -23,6 +25,7 @@ export class QueryMenuDto extends QueryDto {
       ...(notEmpty(args.name) && { name }),
       ...(notEmpty(args.parent) && { parent }),
       ...(validNumber(args.status) && { status }),
+      ...{ tenantId }
     });
   }
 }

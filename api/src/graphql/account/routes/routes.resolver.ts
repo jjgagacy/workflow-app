@@ -5,34 +5,35 @@ import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { CurrentUser } from "@/common/decorators/current-user";
 import { MenuService } from "@/account/menu.service";
 import { MenuInterface } from "@/account/menu/interfaces/menu.interface";
+import { CurrentTenent } from "@/common/decorators/current-tenant";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
 export class RoutesResolver {
-    constructor(private readonly menuService: MenuService) { }
+  constructor(private readonly menuService: MenuService) { }
 
-    @Query(() => [Route])
-    // @UseGuards(RolesGuard)
-    // @Roles(Role.Admin)
-    async routes(@CurrentUser() user): Promise<Route[]> {
-        const menus = await this.menuService.getMenus();
-        const routeList: Route[] = [];
-        const mapTree = (tree: MenuInterface[]) => {
-            tree.map((leaf) => {
-                const route: Route = {
-                    key: leaf.key,
-                    label: leaf.name,
-                    roles: leaf.roles?.map((role) => role.key),
-                    parent: leaf.parent,
-                    sort: leaf.sort || 0,
-                };
-                routeList.push(route);
-                if (leaf.children && leaf.children.length > 0) {
-                    mapTree(leaf.children);
-                }
-            });
+  @Query(() => [Route])
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.Admin)
+  async routes(@CurrentUser() user: any, @CurrentTenent() tenant: any): Promise<Route[]> {
+    const menus = await this.menuService.getMenus(tenant.id);
+    const routeList: Route[] = [];
+    const mapTree = (tree: MenuInterface[]) => {
+      tree.map((leaf) => {
+        const route: Route = {
+          key: leaf.key,
+          label: leaf.name,
+          roles: leaf.roles?.map((role) => role.key),
+          parent: leaf.parent,
+          sort: leaf.sort || 0,
         };
-        mapTree(menus);
-        return routeList;
-    }
+        routeList.push(route);
+        if (leaf.children && leaf.children.length > 0) {
+          mapTree(leaf.children);
+        }
+      });
+    };
+    mapTree(menus);
+    return routeList;
+  }
 }

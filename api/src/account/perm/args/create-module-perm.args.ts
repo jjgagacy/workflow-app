@@ -1,4 +1,6 @@
 type CreateModulePermArgs = {
+  tenantId: string;
+
   module: string;
   // module perm key
   key: string;

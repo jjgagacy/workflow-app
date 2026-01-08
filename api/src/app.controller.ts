@@ -66,8 +66,9 @@ export class AppController {
     // console.log('cahce value:', value);
     // console.log('cahce value:', await this.cacheManager.get('foo'));
     // console.log(this.cacheManager.stores);
-    // const redisClient = await this.cacheService.getRedisClient();
-    // console.log('client', redisClient)
+    const redisClient = await this.cacheService.getRedisClient();
+    this.cacheService.ping();
+    console.log('client', redisClient)
     // console.log(await this.generalCache.findAll());
     // console.log(await GeneralCacheService.findItem());
     // this.eventEmitter.emit('order.created', new OrderCreatedEvent({
@@ -89,6 +90,7 @@ export class AppController {
     // await this.locationService.getLocationFromIp('113.108.81.189');
     const deviceInfo = this.deviceService.getDeviceInfo(userAgent);
     console.log(deviceInfo);
+    console.log(await this.i18n.t('common.TIME.SECONDS', { args: { count: 1 } }));
     return await this.i18n.t("hello.HELLO");
   }
 

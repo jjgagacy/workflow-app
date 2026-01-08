@@ -95,6 +95,7 @@ import { RoleResolver } from './graphql/account/role/resolvers/role.resolver';
 import { UpdateRoleResolver } from './graphql/account/role/resolvers/update-role.resolver';
 import { SignUpResolver } from './graphql/account/account/resolvers/signup.resolver';
 import { GraphQLExceptionFilter } from './common/filters/graphql-exception.filter';
+import { AllExceptionsFilter } from './common/filters/all-exception.filter';
 
 @Module({
   imports: [
@@ -324,7 +325,8 @@ import { GraphQLExceptionFilter } from './common/filters/graphql-exception.filte
     BasePluginClient,
     PluginModelClientService,
     SignUpResolver,
-    { provide: APP_FILTER, useClass: GraphQLExceptionFilter },
+    //    { provide: APP_FILTER, useClass: GraphQLExceptionFilter },
+    // { provide: APP_FILTER, useClass: AllExceptionsFilter },
   ],
 })
 export class AppModule implements NestModule {

@@ -1,0 +1,8 @@
+{
+  "TIME": {
+    "SECONDS": "{{count}}秒",
+    "MINUTES": "{{count}}分钟",
+    "HOURS": "{{count}}小时",
+    "DAYS": "{{count}}天"
+  }
+}

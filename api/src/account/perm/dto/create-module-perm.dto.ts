@@ -6,4 +6,6 @@ export class CreateModulePermDto extends BaseModulePermDto {
   name: string;
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   moduleId: number;
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  tenantId: string;
 }

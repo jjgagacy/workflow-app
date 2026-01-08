@@ -7,31 +7,31 @@ import { Role } from "@/common/types/enums/role.enum";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-    constructor(
-        private reflector: Reflector,
-        private readonly accountRoleService: AccountRoleService,
-    ) { }
+  constructor(
+    private reflector: Reflector,
+    private readonly accountRoleService: AccountRoleService,
+  ) { }
 
-    async canActivate(context: ExecutionContext) {
-        const ctx = GqlExecutionContext.create(context);
-        const user = ctx.getContext().req.user;
-        if (!user) {
-            return false;
-        }
-        const userId = user.id;
-        if (!userId) {
-            return false;
-        }
-        const allowedRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
-            context.getHandler(),
-            context.getClass()
-        ]);
-        // 没有角色则不需要验证
-        if (!allowedRoles) {
-            return true;
-        }
-        const userRoles = await this.accountRoleService.getRoles({ id: userId });
-        const roles = userRoles.map(userRole => userRole.key);
-        return allowedRoles.some((role) => roles.indexOf(role) !== -1);
+  async canActivate(context: ExecutionContext) {
+    const ctx = GqlExecutionContext.create(context);
+    const user = ctx.getContext().req.user;
+    if (!user) {
+      return false;
     }
+    const userId = user.id;
+    if (!userId) {
+      return false;
+    }
+    const allowedRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass()
+    ]);
+    // 没有角色则不需要验证
+    if (!allowedRoles) {
+      return true;
+    }
+    const userRoles = await this.accountRoleService.getRoles({ id: userId });
+    const roles = userRoles.map(userRole => userRole.key);
+    return allowedRoles.some((role) => roles.indexOf(role) !== -1);
+  }
 }

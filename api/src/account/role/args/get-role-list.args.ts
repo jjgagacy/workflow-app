@@ -6,4 +6,5 @@ type GetRoleListArgs = Pagination & {
   status: number;
   hasMenus?: boolean;
   hasRolePerms?: boolean;
+  tenantId: string;
 };

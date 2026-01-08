@@ -72,6 +72,13 @@ input EmailCodeLoginSendEmail {
   language: String!
 }
 
+input EmailCodeSignUpInput {
+  code: String!
+  email: String!
+  token: String!
+  username: String!
+}
+
 input LoginInput {
   password: String!
   username: String!
@@ -154,6 +161,7 @@ type Mutation {
   deleteRole(id: Int!): Boolean!
   emailCodeLogin(input: EmailCodeLoginInput!): LoginResponse!
   emailCodeLoginSendEmail(input: EmailCodeLoginSendEmail!): String!
+  emailCodeSignUp(input: EmailCodeSignUpInput!): LoginResponse!
   emailCodeSignupSendEmail(input: EmailCodeLoginSendEmail!): String!
   login(input: LoginInput!): LoginResponse!
   resetPasswordSendEmail(input: ResetPasswordSendEmailInput!): String!

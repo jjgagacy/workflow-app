@@ -42,6 +42,14 @@ export type I18nTranslations = {
         "GET_PAYMENT_LINK_ERROR": string;
         "GET_PAYMENT_INFO_ERROR": string;
     };
+    "common": {
+        "TIME": {
+            "SECONDS": string;
+            "MINUTES": string;
+            "HOURS": string;
+            "DAYS": string;
+        };
+    };
     "hello": {
         "HELLO": string;
     };

@@ -9,6 +9,7 @@ const translation = {
   your_email_placeholder: 'your@email.com',
   enter_password_placeholder: 'Please enter password',
   enter_6_digit_code_placeholder: 'Please enter 6-digit verification code',
+  request_verification_code: 'Please request verification code first',
   // Buttons and actions
   login_button: 'Login',
   send_verification_code: 'Send verification code',

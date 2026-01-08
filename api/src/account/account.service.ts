@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { AccountEntity } from "./entities/account.entity";
 import { EntityManager, FindManyOptions, FindOptionsOrder, FindOptionsWhere, Like, Repository } from "typeorm";
@@ -11,10 +11,10 @@ import { UpdateAccountDto } from "./account/dto/update-account.dto";
 import { QueryAccountDto } from "./account/dto/query-account.dto";
 import { throwIfDtoValidateFail } from "@/common/utils/validation";
 import { I18nService } from "nestjs-i18n";
-import { BadRequestGraphQLException, InvalidInputGraphQLException } from "@/common/exceptions";
+import { InvalidInputGraphQLException } from "@/common/exceptions";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { MonieConfig } from "@/monie/monie.config";
-import { getSafeTimezone, getSupportedTimezones, getTimezoneByLanguage } from "@/common/constants/timezone";
+import { getSafeTimezone } from "@/common/constants/timezone";
 import { EditionType } from "@/monie/enums/version.enum";
 import authConfig from "@/config/auth.config";
 import { getPaginationOptions } from "@/common/database/dto/query.dto";
@@ -32,7 +32,7 @@ export class AccountService {
 
   async getByUserName(username: string, roles: boolean = false): Promise<AccountEntity | null> {
     return await this.accountRepository.findOne({
-      where: { username },
+      where: { username, },
       relations: { roles: roles }
     });
   }
@@ -58,23 +58,26 @@ export class AccountService {
     const errors = await this.i18n.validate(validateObj);
     throwIfDtoValidateFail(errors);
 
+    if (dto.username !== '') {
+      const existingAccount = await this.getByUserName(dto.username!);
+      if (existingAccount) {
+        throw new BadRequestException(this.i18n.t('account.ACCOUNT_EXIST', { args: { name: dto.username } }));
+      }
+    }
+
     const edition = this.monieConifg.edition();
     if (edition === EditionType.SELF_HOSTED) {
       if (dto.username === '')
-        throw new BadRequestGraphQLException(this.i18n.t('system.EMPTY_PARAM', { args: { name: 'username' } }));
+        throw new BadRequestException(this.i18n.t('system.EMPTY_PARAM', { args: { name: 'username' } }));
       if (dto.password === '')
-        throw new BadRequestGraphQLException(this.i18n.t('account.PASSWORD_NOT_EMPTY'));
+        throw new BadRequestException(this.i18n.t('account.PASSWORD_NOT_EMPTY'));
 
-      const existingAccount = await this.getByUserName(dto.username!);
-      if (existingAccount) {
-        throw new BadRequestGraphQLException(this.i18n.t('account.ACCOUNT_EXIST', { args: { name: dto.username } }));
-      }
     } else if (edition === EditionType.CLOUD) {
       if (dto.email === '')
-        throw new BadRequestGraphQLException(this.i18n.t('account.EMAIL_NOT_EMPTY'));
+        throw new BadRequestException(this.i18n.t('account.EMAIL_NOT_EMPTY'));
       const existingAccount = await this.getByEmail(dto.email || '');
       if (existingAccount) {
-        throw new BadRequestGraphQLException(this.i18n.t('account.EMAIL_EXIST', { args: { name: dto.email } }));
+        throw new BadRequestException(this.i18n.t('account.EMAIL_EXIST', { args: { name: dto.email } }));
       }
     }
 
@@ -107,7 +110,7 @@ export class AccountService {
     if (dto.username && dto.username !== account.username) {
       const accountWithSameUsername = await this.getByUserName(dto.username);
       if (accountWithSameUsername) {
-        throw new BadRequestGraphQLException(this.i18n.t('account.ACCOUNT_EXIST', { args: { name: dto.username } }))
+        throw new BadRequestException(this.i18n.t('account.ACCOUNT_EXIST', { args: { name: dto.username } }))
       }
     }
 

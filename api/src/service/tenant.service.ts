@@ -1,12 +1,11 @@
 import { I18nTranslations } from "@/generated/i18n.generated";
-import { ConflictException, Injectable } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable } from "@nestjs/common";
 import { I18nService } from "nestjs-i18n";
 import { CreateTenantDto } from "./dto/tenant.dto";
 import { DataSource, EntityManager, In } from "typeorm";
 import { plainToInstance } from "class-transformer";
 import { throwIfDtoValidateFail } from "@/common/utils/validation";
 import { SystemService } from "@/monie/system.service";
-import { BadRequestGraphQLException } from "@/common/exceptions";
 import { TenantEntity } from "@/account/entities/tenant.entity";
 import { AccountRole } from "@/account/account.enums";
 import { AccountEntity } from "@/account/entities/account.entity";
@@ -38,7 +37,7 @@ export class TenantService {
     throwIfDtoValidateFail(errors);
 
     if (!this.systemService.allowCreateWorkspace && !isSetup) {
-      throw new BadRequestGraphQLException(this.i18n.t('tenant.WORKSPACE_CREATE_NOT_ALLOWD'));
+      throw new BadRequestException(this.i18n.t('tenant.WORKSPACE_CREATE_NOT_ALLOWD'));
     }
     const workManager = entityManager ? entityManager : this.dataSource.manager;
     const tenant = workManager.create(TenantEntity, {
@@ -74,7 +73,7 @@ export class TenantService {
     if (tenant) return
 
     if (!this.systemService.allowCreateWorkspace && !isSetup) {
-      throw new BadRequestGraphQLException(this.i18n.t('tenant.WORKSPACE_CREATE_NOT_ALLOWD'));
+      throw new BadRequestException(this.i18n.t('tenant.WORKSPACE_CREATE_NOT_ALLOWD'));
     }
 
     const licenseWorkspace = (await this.featureService.getFeatures()).license.workspaces
@@ -110,7 +109,7 @@ export class TenantService {
     const workManager = entityManager ? entityManager : this.dataSource.manager;
     if (role == AccountRole.OWNER) {
       if (await this.hasRoles(tenant, [AccountRole.OWNER], entityManager)) {
-        throw new BadRequestGraphQLException('Tenant already has an owner');
+        throw new BadRequestException('Tenant already has an owner');
       }
     }
 

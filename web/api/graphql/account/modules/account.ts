@@ -1,7 +1,7 @@
 import { createMutationHook, useGraphQLMutation, useGraphQLQuery } from "@/hooks/use-graphql";
 import { GET_ACCOUNTS } from "../../queries";
-import { CREATE_ACCOUNT, DELETE_ACCOUNT, EMAIL_CODE_SIGNUP_SEND, TOGGLE_ACCOUNT_STATUS, UPDATE_ACCOUNT, VALIDATE_USERNAME } from '../mutations/account-mutations';
-import { EmailCodeSendInput } from "../types";
+import { CREATE_ACCOUNT, DELETE_ACCOUNT, EMAIL_CODE_LOGIN, EMAIL_CODE_SIGNUP, EMAIL_CODE_SIGNUP_SEND, TOGGLE_ACCOUNT_STATUS, UPDATE_ACCOUNT, VALIDATE_USERNAME } from '../mutations/account-mutations';
+import { EmailCodeLoginInput, EmailCodeSendInput, EmailCodeSignUpInput } from "../types";
 
 // 获取账户列表
 export const useGetAccounts = (params: {
@@ -93,5 +93,27 @@ export const useEmailCodeSignupSend = createMutationHook<
   EMAIL_CODE_SIGNUP_SEND,
   {
     transform: (data) => data.emailCodeSignupSendEmail
+  }
+)
+
+export const useEmailCodeLogin = createMutationHook<
+  { emailCodeLogin: any },
+  { input: EmailCodeLoginInput },
+  any
+>(
+  EMAIL_CODE_LOGIN,
+  {
+    transform: (data) => data.emailCodeLogin
+  }
+)
+
+export const useEmailCodeSignUp = createMutationHook<
+  { emailCodeSignUp: any },
+  { input: EmailCodeSignUpInput },
+  any
+>(
+  EMAIL_CODE_SIGNUP,
+  {
+    transform: (data) => data.emailCodeSignUp
   }
 )

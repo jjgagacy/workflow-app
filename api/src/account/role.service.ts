@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   EntityManager,
@@ -24,7 +24,6 @@ import { UpdateRoleDto } from './role/dto/update-role.dto';
 import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '@/generated/i18n.generated';
 import { throwIfDtoValidateFail } from '@/common/utils/validation';
-import { BadRequestGraphQLException } from '@/common/exceptions';
 import { isPaginator } from '@/common/database/utils/pagination';
 import { getPaginationOptions } from '@/common/database/dto/query.dto';
 
@@ -63,20 +62,21 @@ export class RoleService {
 
     // 并行检查唯一性
     const [existingByKey, existingByName] = await Promise.all([
-      this.roleRepository.findOneBy({ key: dto.key }),
+      this.roleRepository.findOneBy({ key: dto.key, tenant: { id: dto.tenantId } }),
       this.roleRepository.findOneBy({
         parent: dto.parent,
         name: dto.name,
+        tenant: { id: dto.tenantId },
       }),
     ]);
 
     if (existingByKey) {
-      throw new BadRequestGraphQLException(
+      throw new BadRequestException(
         this.i18n.t('system.ROLE_KEY_EXISTS', { args: { key: dto.key } }),
       );
     }
     if (existingByName) {
-      throw new BadRequestGraphQLException(
+      throw new BadRequestException(
         this.i18n.t('system.CHILD_DUPLICATE', { args: { name: dto.name } }),
       );
     }
@@ -86,6 +86,7 @@ export class RoleService {
       name: dto.name,
       parent: dto.parent,
       status: dto.status,
+      tenant: { id: dto.tenantId },
       operate: this.mapOperateFields(dto),
     });
 
@@ -108,43 +109,44 @@ export class RoleService {
     throwIfDtoValidateFail(errors);
 
     if (!dto.id) {
-      throw new BadRequestGraphQLException(
+      throw new BadRequestException(
         this.i18n.t('system.EMPTY_PARAM', {
           args: { name: 'id', value: dto.id },
         }),
       );
     }
     if (!dto.key) {
-      throw new BadRequestGraphQLException(
+      throw new BadRequestException(
         this.i18n.t('system.EMPTY_PARAM', {
           args: { name: 'key', value: dto.key },
         }),
       );
     }
     const where = dto.id ? { id: dto.id } : { key: dto.key };
-    const role = await this.roleRepository.findOneBy(where);
+    const role = await this.roleRepository.findOneBy({ ...where, tenant: { id: dto.tenantId } });
     if (!role) {
-      throw new BadRequestGraphQLException(
+      throw new BadRequestException(
         this.i18n.t('system.ROLE_NOT_FOUND'),
       );
     }
     // 检查key唯一性
     // 检查name唯一性
     const [existKey, existName] = await Promise.all([
-      this.roleRepository.findOneBy({ key: dto.key, id: Not(role.id) }),
+      this.roleRepository.findOneBy({ key: dto.key, id: Not(role.id), tenant: { id: dto.tenantId } }),
       await this.roleRepository.existsBy({
         name: dto.name,
         parent: role.parent,
         id: Not(role.id),
+        tenant: { id: dto.tenantId },
       }),
     ]);
     if (existKey) {
-      throw new BadRequestGraphQLException(
+      throw new BadRequestException(
         this.i18n.t('system.ROLE_KEY_EXISTS', { args: { key: dto.key } }),
       );
     }
     if (existName) {
-      throw new BadRequestGraphQLException(
+      throw new BadRequestException(
         this.i18n.t('system.ROLE_NAME_EXISTS', { args: { name: dto.name } }),
       );
     }
@@ -167,10 +169,10 @@ export class RoleService {
   /**
    * 删除角色
    */
-  async deleteById(id: number): Promise<void> {
-    const role = await this.roleRepository.findOneBy({ id });
+  async deleteById(id: number, tenantId: string): Promise<void> {
+    const role = await this.roleRepository.findOneBy({ id, tenant: { id: tenantId } });
     if (!role) {
-      throw new BadRequestGraphQLException(
+      throw new BadRequestException(
         this.i18n.t('system.ROLE_ID_NOT_EXIST', { args: { id } }),
       );
     }
@@ -180,10 +182,10 @@ export class RoleService {
   /**
    * 删除角色
    */
-  async deleteByKey(key: string, parent: string): Promise<void> {
-    const role = await this.roleRepository.findOneBy({ key, parent });
+  async deleteByKey(key: string, parent: string, tenantId: string): Promise<void> {
+    const role = await this.roleRepository.findOneBy({ key, parent, tenant: { id: tenantId } });
     if (!role) {
-      throw new BadRequestGraphQLException(
+      throw new BadRequestException(
         this.i18n.t('system.ROLE_NOT_EXIST', { args: { name: key } }),
       );
     }
@@ -205,6 +207,7 @@ export class RoleService {
     }
 
     const where: FindOptionsWhere<RoleEntity> = {
+      tenant: { id: dto.tenantId },
       ...(dto.name && { name: Like(`%${dto.name}%`) }),
       ...(dto.id && { id: dto.id }),
       ...(dto.status !== undefined && { status: dto.status }),
@@ -234,8 +237,8 @@ export class RoleService {
   /**
    * 获取角色详情
    */
-  async getRoleByKey(key: string): Promise<RoleEntity | null> {
-    return this.roleRepository.findOneBy({ key });
+  async getRoleByKey(key: string, tenantId: string): Promise<RoleEntity | null> {
+    return this.roleRepository.findOneBy({ key, tenant: { id: tenantId } });
   }
 
   /**
@@ -246,9 +249,9 @@ export class RoleService {
     const errors = await this.i18n.validate(validateObj);
     throwIfDtoValidateFail(errors);
 
-    const role = await this.getRoleByKey(dto.key);
+    const role = await this.getRoleByKey(dto.key, dto.tenantId);
     if (!role) {
-      throw new BadRequestGraphQLException(
+      throw new BadRequestException(
         this.i18n.t('system.ROLE_NOT_EXIST', { args: { name: dto.key } }),
       );
     }
@@ -260,14 +263,14 @@ export class RoleService {
       // 批量设置新权限
       for (const menuItem of dto.menus) {
         if (menuItem.scope.length === 0) {
-          throw new BadRequestGraphQLException(
+          throw new BadRequestException(
             this.i18n.t('system.MENU_ROLE_SCOPE_NOT_EMPTY'),
           );
         }
 
         const menu = await this.menuRepository.findOneBy({ key: menuItem.key });
         if (!menu) {
-          throw new BadRequestGraphQLException(
+          throw new BadRequestException(
             this.i18n.t('system.MENU_NOT_EXIST', {
               args: { key: menuItem.key },
             }),
@@ -347,7 +350,7 @@ export class RoleService {
     });
 
     if (!role) {
-      throw new BadRequestGraphQLException(
+      throw new BadRequestException(
         this.i18n.t('system.ROLE_NOT_EXIST', { args: { name: key } }),
       );
     }

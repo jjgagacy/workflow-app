@@ -1,1 +1,1 @@
-type DeleteModulePermArgs = Pick<CreateModulePermArgs, 'module' | 'key'>;
+type DeleteModulePermArgs = Pick<CreateModulePermArgs, 'module' | 'key' | 'tenantId'>;

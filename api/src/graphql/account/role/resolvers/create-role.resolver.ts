@@ -6,24 +6,30 @@ import { UseGuards } from "@nestjs/common";
 import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 import { RoleInput } from "../types/role.input.args";
+import { CurrentTenent } from "@/common/decorators/current-tenant";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
 @UseGuards(EditionSelfHostedGuard)
 export class CreateRoleResolver {
-    constructor(private readonly roleService: RoleService) { }
+  constructor(private readonly roleService: RoleService) { }
 
-    @Mutation(() => RoleResponse)
-    async createRole(@Args('input') input: RoleInput, @CurrentUser() user): Promise<RoleResponse> {
-        const dto = {
-            key: input.key || '',
-            name: input.name || '',
-            parent: input.parent || '',
-            status: input.status || 0,
-            createdBy: user.name as string
-        };
-        const createRes = await this.roleService.create(dto);
-        const id = createRes.id;
-        return { id };
-    }
+  @Mutation(() => RoleResponse)
+  async createRole(
+    @Args('input') input: RoleInput,
+    @CurrentUser() user: any,
+    @CurrentTenent() tenant: any,
+  ): Promise<RoleResponse> {
+    const dto = {
+      key: input.key || '',
+      name: input.name || '',
+      parent: input.parent || '',
+      status: input.status || 0,
+      createdBy: user.name as string,
+      tenantId: tenant.id,
+    };
+    const createRes = await this.roleService.create(dto);
+    const id = createRes.id;
+    return { id };
+  }
 }

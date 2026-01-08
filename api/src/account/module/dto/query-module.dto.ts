@@ -6,6 +6,7 @@ export class QueryModuleDto extends QueryDto {
   name?: string;
   relations?: { perms?: boolean, menus?: boolean };
   order?: { [P in 'key' | 'name' | 'id']?: 'ASC' | 'DESC' };
+  tenantId: string;
 
   setQueryArgs(args?: GetModuleListArgs) {
     if (!args) return;

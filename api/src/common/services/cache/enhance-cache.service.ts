@@ -1,4 +1,4 @@
-import { Inject, Injectable, InternalServerErrorException } from "@nestjs/common";
+import { Inject, Injectable, InternalServerErrorException, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Keyv } from "cacheable";
@@ -6,23 +6,146 @@ import KeyvRedis, { RedisClientType } from "@keyv/redis";
 import { GlobalLogger } from "@/logger/logger.service";
 
 @Injectable()
-export class EnhanceCacheService {
+export class EnhanceCacheService implements OnModuleInit, OnModuleDestroy {
+  private redisClient: any;
+  private _isConnected = false;
+  private heartbeatInterval: NodeJS.Timeout | null = null;
+  private readonly HEARTBEAT_INTERVAL = 30000; // 30seconds
+  private readonly RECONNECT_DELAY = 5000; // 5seconds
+
   constructor(
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     private readonly logger: GlobalLogger,
-  ) {
-    // this.getRedisClient().then(store => {
-    //     if (store) {
-    //         console.log(',,,,,', store)
-    //         store.on('connect', () => {
-    //             this.logger.log(`### redis client connected`);
-    //         });
-    //     }
-    // });
-    // 触发连接redis
-    // setTimeout(async () => {
-    //     await this.get('foo');
-    // }, 1000);
+  ) { }
+
+  async onModuleDestroy() {
+    this.stopHeartbeat();
+    await this.disconnect();
+  }
+
+  async onModuleInit() {
+    await this.initializeConnection();
+    this.startHeartbeat();
+  }
+
+  private async initializeConnection(): Promise<void> {
+    try {
+      this.redisClient = await this.getRedisClient();
+      if (this.redisClient) {
+        this.setupEventListeners();
+        await this.testConnection();
+        this._isConnected = true;
+        this.logger.log("Redis connection initialized");
+      }
+    } catch (error) {
+      this.logger.error(`Initial connection failed: ${error.message}`);
+      await this.scheduleReconnect();
+    }
+  }
+
+  private setupEventListeners(): void {
+    if (!this.redisClient) return;
+
+    this.redisClient.on('connect', () => {
+      this._isConnected = true;
+      this.logger.log('Redis connected');
+    });
+
+    this.redisClient.on('ready', () => {
+      this._isConnected = true;
+    });
+
+    this.redisClient.on('error', (err: Error) => {
+      this.logger.error(`Redis error: ${err.message}`);
+      this._isConnected = false;
+    });
+
+    this.redisClient.on('end', () => {
+      this.logger.warn('Redis disconnected');
+      this._isConnected = false;
+      this.scheduleReconnect();
+    });
+
+    this.redisClient.on('reconnecting', () => {
+      this.logger.log('Redis reconnecting');
+    });
+  }
+
+  private startHeartbeat(): void {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+    }
+
+    this.heartbeatInterval = setInterval(async () => {
+      await this.sendHeartbeat();
+    }, this.HEARTBEAT_INTERVAL);
+  }
+
+  private stopHeartbeat(): void {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = null;
+    }
+  }
+
+  private async sendHeartbeat(): Promise<void> {
+    if (!this.redisClient || !this._isConnected) {
+      this.logger.log('Redis not connected');
+      return;
+    }
+
+    try {
+      await this.redisClient.ping?.();
+    } catch (error) {
+      this.logger.warn(`Heartbeat failed: ${error.message}`);
+      this._isConnected = false;
+      await this.reconnect();
+    }
+  }
+
+  private async reconnect(): Promise<void> {
+    try {
+      await this.disconnect();
+      await this.initializeConnection();
+    } catch (error) {
+      this.logger.error(`Reconnect failed: ${error.message}`);
+      await this.scheduleReconnect();
+    }
+  }
+
+  private async testConnection() {
+    const maxAttempt = 5;
+    for (let attempt = 1; attempt <= maxAttempt; attempt++) {
+      try {
+        await this.get('__test_connection__');
+        return;
+      } catch (error) {
+        if (attempt <= maxAttempt) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+          continue;
+        }
+        this.logger.error(`Connection test failed: ${error.message}`);
+      }
+    }
+  }
+
+  private async scheduleReconnect() {
+    setTimeout(async () => {
+      await this.reconnect();
+    }, this.RECONNECT_DELAY);
+  }
+
+  private async disconnect() {
+    try {
+      if (this.redisClient) {
+        await this.redisClient.quit?.();
+      }
+    } catch (error) {
+      this.logger.error(`Error disconnect redis: ${error.message}`);
+    } finally {
+      this.redisClient = null;
+      this._isConnected = false;
+    }
   }
 
   private getRedisStore(): any {
@@ -245,9 +368,8 @@ export class EnhanceCacheService {
     return allKeys;
   }
 
-  async isConnected(): Promise<boolean> {
-    const redisClient = await this.getRedisClient();
-    return redisClient?.isOpen === true;
+  get isConnected(): boolean {
+    return this._isConnected;
   }
 
   async ping(): Promise<void> {

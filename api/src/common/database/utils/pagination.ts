@@ -1,5 +1,5 @@
-import { BadRequestGraphQLException } from "@/common/exceptions";
 import { PAGE_LIMIT_MAX } from "@/config/constants";
+import { BadRequestException } from "@nestjs/common";
 import { FindManyOptions, ObjectLiteral, Repository } from "typeorm";
 
 export interface PaginationResult<T> {
@@ -15,7 +15,7 @@ export async function paginateRepository<T extends ObjectLiteral>(
   try {
     if (paginate) {
       if (typeof options.take !== undefined && options.take! > PAGE_LIMIT_MAX) {
-        throw new BadRequestGraphQLException(`The max page number allowed is ${PAGE_LIMIT_MAX}.`);
+        throw new BadRequestException(`The max page number allowed is ${PAGE_LIMIT_MAX}.`);
       }
       const [data, total] = await repository.findAndCount(options);
       return { data, total };

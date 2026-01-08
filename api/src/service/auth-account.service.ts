@@ -9,7 +9,7 @@ import { EnhanceCacheService } from "../common/services/cache/enhance-cache.serv
 import { BillingService } from "./billing/billing.service";
 import { AccountSignUpDto } from "./dto/account.dto";
 import { CreateAccountDto } from "@/account/account/dto/create-account.dto";
-import { BadRequestGraphQLException, DatabaseGraphQLException } from "@/common/exceptions";
+import { DatabaseGraphQLException } from "@/common/exceptions";
 import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { AccountIntegrateEntity } from "@/account/entities/account-integrate.entity";
@@ -35,6 +35,8 @@ import { EmailInFreezeError } from "./exceptions/account.error";
 import { GlobalLogger } from "@/logger/logger.service";
 import { FeatureService } from "./feature.service";
 import authConfig from "@/config/auth.config";
+import { TimeConverter } from "./libs/time-converter.service";
+import { RoleEntity } from "@/account/entities/role.entity";
 
 @Injectable()
 export class AuthAccountService {
@@ -70,7 +72,8 @@ export class AuthAccountService {
 
     const isRateLimited = await this.emailRateLimiter.isRateLimited(accountEmail, EMAIL_RATE_LIMITER_CONFIGS['reset_password']);
     if (isRateLimited) {
-      throw AccountResetPasswordRateLimitError.create(this.i18n);
+      const timeWindowMinutes = TimeConverter.secondsToMinutes(EMAIL_RATE_LIMITER_CONFIGS['reset_password'].timeWindow);
+      throw AccountResetPasswordRateLimitError.create(this.i18n, timeWindowMinutes);
     }
 
     // generate code token
@@ -95,7 +98,8 @@ export class AuthAccountService {
     const isRateLimited = await this.emailRateLimiter.isRateLimited(accountEmail, EMAIL_RATE_LIMITER_CONFIGS['email_code_account_deletion']);
 
     if (isRateLimited) {
-      throw AccountDeletionRateLimitError.create(this.i18n);
+      const timeWindowMinutes = TimeConverter.secondsToMinutes(EMAIL_RATE_LIMITER_CONFIGS['email_code_account_deletion'].timeWindow);
+      throw AccountDeletionRateLimitError.create(this.i18n, timeWindowMinutes);
     }
 
     // generate code token
@@ -120,7 +124,8 @@ export class AuthAccountService {
     language = language || EmailLanguage.ZH_HANS;
     const isRateLimited = await this.emailRateLimiter.isRateLimited(accountEmail, EMAIL_RATE_LIMITER_CONFIGS['change_email']);
     if (isRateLimited) {
-      throw AccountChangeEmailRateLimitError.create(this.i18n);
+      const timeWindowMinutes = TimeConverter.secondsToMinutes(EMAIL_RATE_LIMITER_CONFIGS['change_email'].timeWindow);
+      throw AccountChangeEmailRateLimitError.create(this.i18n, timeWindowMinutes);
     }
 
     // generate code
@@ -144,7 +149,8 @@ export class AuthAccountService {
     language = language || EmailLanguage.ZH_HANS;
     const isRateLimited = await this.emailRateLimiter.isRateLimited(email, EMAIL_RATE_LIMITER_CONFIGS['email_code_login']);
     if (isRateLimited) {
-      throw EmailCodeLoginRateLimitError.create(this.i18n);
+      const timeWindowMinutes = TimeConverter.secondsToMinutes(EMAIL_RATE_LIMITER_CONFIGS['email_code_login'].timeWindow);
+      throw EmailCodeLoginRateLimitError.create(this.i18n, timeWindowMinutes);
     }
 
     // generate code
@@ -167,28 +173,24 @@ export class AuthAccountService {
     return token;
   }
 
-  async validateEmailCodeLogin(email: string, token: string, code: string, language: string, entityManager?: EntityManager): Promise<AccountEntity> {
-    if (email == "" || token == "" || code == "") {
-      throw new BadRequestException('Email and token and code cannot be empty');
-    }
-
+  async validateEmailCodeLogin(email: string, token: string, code: string, language: string, username?: string, entityManager?: EntityManager): Promise<AccountEntity> {
     const tokenData = await this.tokenManagerService.validateToken(token, TOKEN_TYPES.EMAIL_VERIFICATION);
-    if (!tokenData) {
-      throw InvalidTokenError.create(this.i18n);
-    }
-    if (tokenData.email != email) {
-      throw InvalidEmailError.create(this.i18n);
-    }
-    if (tokenData.code != code) {
-      throw VerifyCodeError.create(this.i18n);
-    }
+    // if (!tokenData) {
+    //   throw InvalidTokenError.create(this.i18n);
+    // }
+    // if (tokenData.email != email) {
+    //   throw InvalidEmailError.create(this.i18n);
+    // }
+    // if (tokenData.code != code) {
+    //   throw VerifyCodeError.create(this.i18n);
+    // }
 
     await this.tokenManagerService.removeToken(token, TOKEN_TYPES.EMAIL_VERIFICATION);
     const account = await this.accountService.getByEmail(email);
     if (!account) {
       const dto: AccountSignUpDto = {
         email,
-        name: email,
+        name: username ?? email,
         createWorkspaceRequired: true,
         language,
       }
@@ -253,7 +255,7 @@ export class AuthAccountService {
     const workManager = entityManager ? entityManager : this.dataSource.manager;
 
     if (!this.systemService.allowRegister && !isSetup) {
-      throw new BadRequestGraphQLException(this.i18n.t('account.ACCOUNT_NOT_FOUND'));
+      throw new BadRequestException(this.i18n.t('account.ACCOUNT_NOT_FOUND'));
     }
 
     const createAccount: CreateAccountDto = {
@@ -277,6 +279,8 @@ export class AuthAccountService {
 
     let tenant: TenantEntity | undefined = undefined;
 
+
+
     if (this.systemService.allowCreateWorkspace
       && dto.createWorkspaceRequired
       && (await this.featureService.getFeatures()).license.workspaces.isAvailable()
@@ -287,6 +291,25 @@ export class AuthAccountService {
         tenantAccount.current = true;
         workManager.save(tenantAccount);
       }
+    }
+
+    // add admin role
+    if (tenant) {
+      const oper = {
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: 'SignUp',
+        updatedBy: 'SignUp',
+      }
+      const role1 = new RoleEntity();
+      role1.name = 'Admin';
+      role1.key = 'admin';
+      role1.status = 0; // 0 for active
+      role1.parent = '';
+      role1.operate = oper;
+      role1.tenant = tenant;
+      createdAccount.roles = [role1];
+      workManager.save(createdAccount);
     }
 
     return { account: createdAccount, tenant, linkIntegrate }
@@ -599,7 +622,7 @@ export const EMAIL_RATE_LIMITER_CONFIGS: Record<EMAIL_RATE_CONFIG_KEYS, EmailRat
   'reset_password': {
     type: EmailRateLimitType.RESET_PASSWORD,
     maxAttempts: 1,
-    timeWindow: 60,
+    timeWindow: 60, // seconds
   },
   'change_email': {
     type: EmailRateLimitType.CHANGE_EMAIL,

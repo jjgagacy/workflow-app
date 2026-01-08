@@ -9,4 +9,7 @@ export abstract class BaseDepDto {
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   name: string;
   remarks?: string;
+
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  tenantId: string;
 }

@@ -9,6 +9,7 @@ export class QueryRoleDto extends QueryDto {
   parent?: string;
   order?: { [P in 'name' | 'status' | 'id']?: 'ASC' | 'DESC' };
   relations?: { menus: boolean; };
+  tenantId: string;
 
   setQueryArgs(args?: GetRoleListArgs) {
     if (!args) return;

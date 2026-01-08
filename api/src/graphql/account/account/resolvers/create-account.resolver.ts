@@ -10,23 +10,23 @@ import { AccountInput } from "../types/account-input.type";
 @UseGuards(GqlAuthGuard)
 @Resolver()
 export class CreateAccountResolver {
-    constructor(private readonly accountService: AccountService) { }
+  constructor(private readonly accountService: AccountService) { }
 
-    @Mutation(() => AccountResponse)
-    @UseGuards(EditionSelfHostedGuard)
-    async createAccount(@Args('input') input: AccountInput, @CurrentUser() user: any): Promise<AccountResponse> {
-        const dto = {
-            username: input.username,
-            realName: input.realName,
-            password: input.password,
-            email: input.email,
-            status: input.status,
-            mobile: input.mobile,
-            createdBy: user.name,
-            roles: input.roles
-        };
-        const createRes = await this.accountService.create(dto);
-        const id = createRes.id;
-        return { id };
-    }
+  @Mutation(() => AccountResponse)
+  @UseGuards(EditionSelfHostedGuard)
+  async createAccount(@Args('input') input: AccountInput, @CurrentUser() user: any): Promise<AccountResponse> {
+    const dto = {
+      username: input.username,
+      realName: input.realName,
+      password: input.password,
+      email: input.email,
+      status: input.status,
+      mobile: input.mobile,
+      createdBy: user.name,
+      roles: input.roles
+    };
+    const createRes = await this.accountService.create(dto);
+    const id = createRes.id;
+    return { id };
+  }
 }

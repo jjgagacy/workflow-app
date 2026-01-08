@@ -9,6 +9,7 @@ const translation = {
   your_email_placeholder: 'your@email.com',
   enter_password_placeholder: '请输入密码',
   enter_6_digit_code_placeholder: '请输入6位验证码',
+  request_verification_code: '请重新请求验证码',
   // Buttons and actions
   login_button: '登录',
   send_verification_code: '发送验证码',
@@ -52,7 +53,6 @@ const translation = {
   username_min_length: '用户名至少需要2个字符',
   username_max_length: '用户名不能超过20个字符',
   registration_failed: '注册失败，请稍后重试',
-  send_code_failed: '发送验证码失败',
   // Alternative options
   or_choose_other_way: '或选择其他方式',
   // Account status

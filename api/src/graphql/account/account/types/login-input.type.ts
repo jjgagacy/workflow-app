@@ -13,12 +13,19 @@ export class LoginInput {
 @InputType('EmailCodeLoginInput')
 export class EmailCodeLoginInput {
   @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  @Matches(
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    { message: 'auth.INVALID_EMAIL' }
+  )
   email: string;
 
   @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   code: string;
 
   @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   token: string;
 }
 
@@ -43,4 +50,28 @@ export class EmailCodeLoginSendEmail {
 
   @Field()
   language: string;
+}
+
+
+@InputType('EmailCodeSignUpInput')
+export class EmailCodeSignUpInput {
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  username: string;
+
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  @Matches(
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    { message: 'auth.INVALID_EMAIL' }
+  )
+  email: string;
+
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  code: string;
+
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  token: string;
 }

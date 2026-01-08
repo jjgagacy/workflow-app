@@ -13,6 +13,17 @@ export class EmailInFreezeError extends ForbiddenException {
   }
 }
 
+export class EmailExistingError extends BadRequestException {
+  constructor(message: string) {
+    super(message);
+    this.name = 'EmailExistingError';
+  }
+
+  static create(i18n: I18nService<I18nTranslations>): EmailExistingError {
+    return new EmailExistingError(i18n.t('account.EMAIL_EXIST'));
+  }
+}
+
 export class AccountNotFoundError extends NotFoundException {
   constructor(message: string) {
     super(message);

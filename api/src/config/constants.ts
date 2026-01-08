@@ -6,6 +6,7 @@ export const JWT_CONSTANTS = {
 };
 export const PASSWORD_SALT = '$2b$10$/mPO8XPZKGXUegJVXusa9.';
 export const PAGE_LIMIT_MAX = 1000;
+// Token default times
 export const DEFAULT_TOKEN_TYPE_EXPIRY: Record<TokenType, number> = {
   'change_email': Number(process.env.CHANGE_EMAIL_TOKEN_EXPIRY_MINUTES || 5), // minutes
   'account_deletion': Number(process.env.ACCOUNT_DELETION_TOKEN_EXPIRY_MINUTES || 60), // minutes

@@ -7,4 +7,5 @@ type GetMenuArgs = {
   withModulePerm?: boolean;
   withRoles?: boolean;
   withScope?: boolean;
+  tenantId?: string;
 };

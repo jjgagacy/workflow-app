@@ -1,0 +1,8 @@
+{
+  "TIME": {
+    "SECONDS": "{count} second(s)",
+    "MINUTES": "{count} minute(s)",
+    "HOURS": "{count} hour(s)",
+    "DAYS": "{count} day(s)"
+  }
+}

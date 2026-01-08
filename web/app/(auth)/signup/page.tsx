@@ -1,76 +1,40 @@
 'use client';
 
-import api from "@/api";
-import { ErrorAlert } from "@/app/components/base/alert";
 import Button from "@/app/components/base/button";
 import usePageTitle from "@/hooks/use-page-title";
-import { getClientLocale } from "@/i18n";
-import { getErrorMessage } from "@/utils/errors";
+import { useRegistrationForm } from "@/hooks/use-registrationForm";
 import { CheckCircle, User, AlertCircle, Mail, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FcGoogle } from "react-icons/fc";
 
 export default function SignUp() {
   const { t } = useTranslation();
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [countdown, setCountdown] = useState(0);
-  const [showVerification, setShowVerification] = useState(false);
-  const [showEmailCodeSended, setShowEmailCodeSended] = useState(false);
-  const validateUsernameMutation = api.account.useValidateUsername();
-  const sendEmailCodeMutation = api.account.useEmailCodeSignupSend();
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    verificationCode: '',
-  });
-
   usePageTitle(t('account.signup_title'));
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // 验证用户名
-    if (!formData.username.trim()) {
-      setErrors({ username: t('account.enter_username') });
-      return;
-    }
-    if (formData.username.length < 2) {
-      setErrors({ username: t('account.username_min_length') });
-      return;
-    }
-    if (formData.username.length > 20) {
-      setErrors({ username: t('account.username_max_length') });
-      return;
-    }
+  const {
+    formData,
+    setFormData,
+    errors,
+    setErrors,
+    isLoading,
+    setIsLoading,
+    showVerification,
+    setShowVerification,
+    showEmailCodeSended,
+    setShowEmailCodeSended,
+    countdown,
+    setCountdown,
+    handleSendVerificationCode,
+    handleSubmit,
+  } = useRegistrationForm();
 
-    setErrors({});
-    setIsLoading(true);
-
-    try {
-      const result = await validateUsernameMutation({ username: formData.username });
-      if (!result) {
-        setErrors({ username: t('account.registration_failed') });
-        return;
-      }
-      setShowVerification(true);
-    } catch (err: any) {
-      setErrors({ username: getErrorMessage(err) });
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  const getErrorString = (errors: Record<string, string>): string => {
-    if (Object.keys(errors).length === 0) return '';
-    // 返回第一个错误信息
-    return Object.values(errors)[0];
-    // 或者连接所有错误信息
-    // return Object.values(errors).join('。');
-  };
+  // const getErrorString = (errors: Record<string, string>): string => {
+  //   if (Object.keys(errors).length === 0) return '';
+  //   return Object.values(errors)[0]; // 返回第一个错误信息
+  // };
 
   const handleGoogleLogin = () => {
     // 模拟 Google 登录
@@ -82,33 +46,6 @@ export default function SignUp() {
     setErrors({});
     setShowEmailCodeSended(false);
     // setCountdown(0);
-  };
-
-  const handleSendVerificationCode = async () => {
-    if (!formData.email) {
-      setErrors({ email: t('account.enter_email_first') });
-      return;
-    }
-
-    try {
-      await sendEmailCodeMutation({ input: { email: formData.email, language: getClientLocale() } })
-      setShowEmailCodeSended(true);
-    } catch (error) {
-      setErrors({ submit: t('account.send_code_failed') });
-      return;
-    }
-
-    // 开始倒计时
-    setCountdown(60);
-    const timer = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
   };
 
   return (
@@ -147,6 +84,12 @@ export default function SignUp() {
                           placeholder={t('account.email_placeholder')}
                         />
                       </div>
+                      {errors.email && (
+                        <p className="mt-2 text-sm text-red-600 flex items-center">
+                          <AlertCircle className="w-4 h-4 mr-1" />
+                          {errors.email}
+                        </p>
+                      )}
                     </div>
                     <div className="flex space-x-3">
                       <div className="flex-1">
@@ -166,12 +109,6 @@ export default function SignUp() {
                           />
                         </div>
                       </div>
-                      {errors.verificationCode && (
-                        <p className="mt-2 text-sm text-red-600 flex items-center">
-                          <AlertCircle className="w-4 h-4 mr-1" />
-                          {errors.verificationCode}
-                        </p>
-                      )}
                       <button
                         type="button"
                         onClick={handleSendVerificationCode}
@@ -184,6 +121,12 @@ export default function SignUp() {
                         {countdown > 0 ? `${countdown}s` : t('account.send_verification_code')}
                       </button>
                     </div>
+                    {errors.verificationCode && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center">
+                        <AlertCircle className="w-4 h-4 mr-1" />
+                        {errors.verificationCode}
+                      </p>
+                    )}
                     {showEmailCodeSended && (
                       <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                         {t('account.verification_code_sent_to')} {formData.email}

@@ -5,4 +5,6 @@ export abstract class BaseRoleDto {
   key: string;
   parent: string;
   status?: number;
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  tenantId: string;
 }

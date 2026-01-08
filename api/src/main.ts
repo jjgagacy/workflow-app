@@ -11,6 +11,7 @@ import { I18nService, I18nValidationExceptionFilter, I18nValidationPipe } from '
 import { setModuleRef } from './common/modules/global';
 import { ValidationPipe } from '@nestjs/common';
 import { I18nHelperService } from './i18n-global/i18n.service';
+import { AllExceptionsFilter } from './common/filters/all-exception.filter';
 
 async function bootstrap() {
   process.env.APP_ROOT = resolve(__dirname, '..');
@@ -34,7 +35,7 @@ async function bootstrap() {
   app.useGlobalFilters(
     new I18nValidationExceptionFilter({ detailedErrors: true }),
   );
-  app.useGlobalFilters(new GraphQLExceptionFilter(app.get(GlobalLogger), app.get(I18nHelperService)));
+  app.useGlobalFilters(new AllExceptionsFilter(app.get(GlobalLogger), app.get(I18nHelperService)));
   const logger = new WinstonLogger(
     app.get(ConfigService),
     app.get(MonieConfig),

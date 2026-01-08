@@ -16,4 +16,7 @@ export abstract class BaseMenuDto {
   status?: number;
 
   moduleId?: number;
+
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  tenantId: string;
 }

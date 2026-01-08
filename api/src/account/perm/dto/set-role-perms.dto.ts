@@ -15,4 +15,7 @@ export class SetRolePermsDto {
 
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   menus: MenuItem[];
+
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  tenantId: string;
 }

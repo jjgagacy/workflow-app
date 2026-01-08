@@ -68,3 +68,27 @@ export const EMAIL_CODE_RESET_PASSWORD_SEND = gql`
     resetPasswordSendEmail(input: $input)
   }
 `
+
+export const EMAIL_CODE_LOGIN = gql`
+  mutation EmailCodeLogin($input: EmailCodeLoginInput!) {
+    emailCodeLogin(input: $input) {
+      access_token,
+      name,
+      roles,
+      isSuper,
+      expiresIn
+    }
+  }
+`
+
+export const EMAIL_CODE_SIGNUP = gql`
+  mutation EmailCodeSignUp($input: EmailCodeSignUpInput!) {
+    emailCodeSignUp(input: $input) {
+      access_token,
+      name,
+      roles,
+      isSuper,
+      expiresIn
+    }
+  }
+`

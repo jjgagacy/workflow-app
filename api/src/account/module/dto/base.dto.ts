@@ -5,4 +5,6 @@ export abstract class BaseModuleDto {
   key: string;
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   name: string;
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  tenantId: string;
 }
