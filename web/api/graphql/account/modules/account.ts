@@ -1,7 +1,7 @@
 import { createMutationHook, useGraphQLMutation, useGraphQLQuery } from "@/hooks/use-graphql";
 import { GET_ACCOUNTS } from "../../queries";
-import { CREATE_ACCOUNT, DELETE_ACCOUNT, EMAIL_CODE_LOGIN, EMAIL_CODE_SIGNUP, EMAIL_CODE_SIGNUP_SEND, TOGGLE_ACCOUNT_STATUS, UPDATE_ACCOUNT, VALIDATE_USERNAME } from '../mutations/account-mutations';
-import { EmailCodeLoginInput, EmailCodeSendInput, EmailCodeSignUpInput } from "../types";
+import { CREATE_ACCOUNT, DELETE_ACCOUNT, EMAIL_CODE_LOGIN, EMAIL_CODE_LOGIN_SEND, EMAIL_CODE_RESET_PASSWORD_SEND, EMAIL_CODE_SIGNUP, EMAIL_CODE_SIGNUP_SEND, FORGOT_PASSWORD_CHECK, FORGOT_PASSWORD_RESET, TOGGLE_ACCOUNT_STATUS, UPDATE_ACCOUNT, VALIDATE_EMAIL, VALIDATE_USERNAME } from '../mutations/account-mutations';
+import { EmailCodeLoginInput, EmailCodeSendInput, EmailCodeSignUpInput, ForgotPasswordCheckInput, ForgotPasswordCheckOutput, ForgotPasswordResetInput } from "../types";
 
 // 获取账户列表
 export const useGetAccounts = (params: {
@@ -71,7 +71,7 @@ export const useToggleAccountStatus = () => {
     const response = await mutation({ id });
     return response.toggleAccountStatus;
   };
-}
+};
 
 // validate username
 export const useValidateUsername = createMutationHook<
@@ -83,7 +83,18 @@ export const useValidateUsername = createMutationHook<
   {
     transform: (data) => data.checkSignUpUsername
   }
-)
+);
+
+export const useValidateEmail = createMutationHook<
+  { checkLoginEmail: boolean },
+  { email: string },
+  boolean
+>(
+  VALIDATE_EMAIL,
+  {
+    transform: (data) => data.checkLoginEmail
+  }
+);
 
 export const useEmailCodeSignupSend = createMutationHook<
   { emailCodeSignupSendEmail: string },
@@ -94,7 +105,29 @@ export const useEmailCodeSignupSend = createMutationHook<
   {
     transform: (data) => data.emailCodeSignupSendEmail
   }
-)
+);
+
+export const useEmailCodeLoginSend = createMutationHook<
+  { emailCodeLoginSendEmail: string },
+  { input: EmailCodeSendInput },
+  string
+>(
+  EMAIL_CODE_LOGIN_SEND,
+  {
+    transform: (data) => data.emailCodeLoginSendEmail
+  }
+);
+
+export const useEmailCodeResetPasswordSend = createMutationHook<
+  { resetPasswordSendEmail: string },
+  { input: EmailCodeSendInput },
+  string
+>(
+  EMAIL_CODE_RESET_PASSWORD_SEND,
+  {
+    transform: (data) => data.resetPasswordSendEmail
+  }
+);
 
 export const useEmailCodeLogin = createMutationHook<
   { emailCodeLogin: any },
@@ -105,7 +138,7 @@ export const useEmailCodeLogin = createMutationHook<
   {
     transform: (data) => data.emailCodeLogin
   }
-)
+);
 
 export const useEmailCodeSignUp = createMutationHook<
   { emailCodeSignUp: any },
@@ -116,4 +149,26 @@ export const useEmailCodeSignUp = createMutationHook<
   {
     transform: (data) => data.emailCodeSignUp
   }
-)
+);
+
+export const useForgotPasswordCheck = createMutationHook<
+  { forgetPasswordTokenCheck: any },
+  { input: ForgotPasswordCheckInput },
+  ForgotPasswordCheckOutput
+>(
+  FORGOT_PASSWORD_CHECK,
+  {
+    transform: (data) => data.forgetPasswordTokenCheck
+  }
+);
+
+export const useForgotPasswordReset = createMutationHook<
+  { forgetPasswordReset: any },
+  { input: ForgotPasswordResetInput },
+  boolean
+>(
+  FORGOT_PASSWORD_RESET,
+  {
+    transform: (data) => data.forgetPasswordReset
+  }
+);

@@ -133,8 +133,6 @@ export default function MainContent() {
     <main className="pt-16">
       {/* Hero Section */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 relative overflow-hidden">
-        {/* 动态渐变背景 */}
-        <div className="absolute inset-0 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-900 dark:via-emerald-900/10 dark:to-teal-900/10 animate-[fadeIn_2s_ease-out]" />
         {/* 内容 */}
         <div className="relative z-10">
           <div className="max-w-4xl mx-auto text-center">

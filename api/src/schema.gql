@@ -79,6 +79,25 @@ input EmailCodeSignUpInput {
   username: String!
 }
 
+type ForgetPasswordCheckResponse {
+  email: String!
+  isValid: Boolean!
+  token: String!
+}
+
+input ForgetPasswordInput {
+  code: String!
+  email: String!
+  language: String
+  token: String!
+}
+
+input ForgetPasswordResetInput {
+  confirmPassword: String!
+  newPassword: String!
+  token: String!
+}
+
 input LoginInput {
   password: String!
   username: String!
@@ -146,6 +165,7 @@ type ModuleResponse {
 }
 
 type Mutation {
+  checkLoginEmail(email: String!): Boolean!
   checkSignUpUsername(username: String!): Boolean!
   createAccount(input: AccountInput!): AccountResponse!
   createDep(input: DepInput!): DepResponse!
@@ -163,6 +183,9 @@ type Mutation {
   emailCodeLoginSendEmail(input: EmailCodeLoginSendEmail!): String!
   emailCodeSignUp(input: EmailCodeSignUpInput!): LoginResponse!
   emailCodeSignupSendEmail(input: EmailCodeLoginSendEmail!): String!
+  forgetPasswordReset(input: ForgetPasswordResetInput!): Boolean!
+  forgetPasswordSendEmail(input: ForgetPasswordInput!): String!
+  forgetPasswordTokenCheck(input: ForgetPasswordInput!): ForgetPasswordCheckResponse!
   login(input: LoginInput!): LoginResponse!
   resetPasswordSendEmail(input: ResetPasswordSendEmailInput!): String!
   setRolePerms(input: RoleSetPermInput!): Boolean!

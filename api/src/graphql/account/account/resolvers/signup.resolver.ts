@@ -11,7 +11,7 @@ import { getMappedLang } from '@/i18n-global/langmap';
 import { convertLanguageCode } from '@/mail/mail-i18n.service';
 import { GqlRequest } from '@/common/decorators/gql-request';
 import { LoginResponse } from '../types/login-response.type';
-import { AccountNotFoundError, EmailExistingError, EmailInFreezeError } from '@/service/exceptions/account.error';
+import { EmailExistingError, EmailInFreezeError } from '@/service/exceptions/account.error';
 import { AuthService } from '@/auth/auth.service';
 
 @Resolver()

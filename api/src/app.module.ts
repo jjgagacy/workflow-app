@@ -96,6 +96,7 @@ import { UpdateRoleResolver } from './graphql/account/role/resolvers/update-role
 import { SignUpResolver } from './graphql/account/account/resolvers/signup.resolver';
 import { GraphQLExceptionFilter } from './common/filters/graphql-exception.filter';
 import { AllExceptionsFilter } from './common/filters/all-exception.filter';
+import { ForgetPasswordResolver } from './graphql/account/account/resolvers/forget-password.resolver';
 
 @Module({
   imports: [
@@ -325,6 +326,7 @@ import { AllExceptionsFilter } from './common/filters/all-exception.filter';
     BasePluginClient,
     PluginModelClientService,
     SignUpResolver,
+    ForgetPasswordResolver,
     //    { provide: APP_FILTER, useClass: GraphQLExceptionFilter },
     // { provide: APP_FILTER, useClass: AllExceptionsFilter },
   ],

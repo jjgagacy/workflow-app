@@ -1,105 +1,44 @@
 'use client';
 
-import { ErrorAlert } from "@/app/components/base/alert";
 import Button from "@/app/components/base/button";
-import { useAuth } from "@/hooks/use-auth";
 import usePageTitle from "@/hooks/use-page-title";
-import { IconLock, IconMail } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import api from "@/api";
-import { getErrorMessage } from "@/utils/errors";
-import { AlertCircle, ArrowLeft, ArrowRight, CheckCircle, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
+import { AlertCircle, ArrowLeft, CheckCircle, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { FcGoogle } from 'react-icons/fc';
+import { useLoginForm } from "@/hooks/account/use-loginForm";
 
 export default function Login() {
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [showVerification, setShowVerification] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [usePassword, setUsePassword] = useState(false);
   const { t } = useTranslation();
-  const router = useRouter();
-  const loginMutation = api.user.useLogin();
-  const [countdown, setCountdown] = useState(0);
-
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    verificationCode: '',
-  });
+  const {
+    countdown,
+    setCountdown,
+    showVerification,
+    setShowEmailCodeSended,
+    errors,
+    setErrors,
+    isLoading,
+    formData,
+    setFormData,
+    setShowVerification,
+    handleSubmit,
+    handleSendVerificationCode,
+    usePassword,
+    showPassword,
+    setShowPassword,
+    setUsePassword
+  } = useLoginForm();
 
   usePageTitle(t('account.login_title'));
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrors({});
-    // 如果邮箱账户不存在显示注册
-    // 注册需要验证邮箱
-    const emailCheckOk = true;
-    const emailExisting = false;
-    if (!emailCheckOk) {
-      setErrors({ submit: t('account.email_check_error') });
-      return;
-    }
-    if (emailExisting) {
-      setUsePassword(true);
-    } else {
-      setIsLoading(true);
-      await handleSendVerificationCode();
-      setShowVerification(true);
-      setIsLoading(false);
-    }
-  }
-
-  const getErrorMessage = (errors: Record<string, string>): string => {
-    if (Object.keys(errors).length === 0) return '';
-    // 返回第一个错误信息
-    return Object.values(errors)[0];
-    // 或者连接所有错误信息
-    // return Object.values(errors).join('。');
-  };
 
   const handleGoogleLogin = () => {
     // 模拟 Google 登录
     window.location.href = '/api/auth/google';
   };
 
-  const returnSetEmail = () => {
+  const goBack = () => {
     setShowVerification(false);
     setErrors({});
-    // setCountdown(0);
-  };
-
-  const handleSendVerificationCode = async () => {
-    if (!formData.email) {
-      setErrors({ email: t('account.enter_email_first') });
-      return;
-    }
-    // 开始倒计时
-    setCountdown(60);
-    const timer = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    try {
-      // 模拟发送验证码
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    } catch (error) {
-      setErrors({ submit: t('account.send_verification_code_failed') });
-    }
   };
 
   return (
@@ -107,9 +46,6 @@ export default function Login() {
       <main className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            {getErrorMessage(errors) !== '' && (
-              <ErrorAlert message={getErrorMessage(errors)} />
-            )}
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
               {t('account.welcome_back')}
             </h1>
@@ -137,6 +73,12 @@ export default function Login() {
                     placeholder={t('account.your_email_placeholder')}
                   />
                 </div>
+                {errors.email && (
+                  <p className="mt-2 text-sm text-red-600 flex items-center">
+                    <AlertCircle className="w-4 h-4 mr-1" />
+                    {errors.email}
+                  </p>
+                )}
               </div>
 
               {usePassword && (
@@ -258,7 +200,7 @@ export default function Login() {
 
             {showVerification ? (
               <div className="flex items-center justify-center mt-5">
-                <Link href="#" onClick={returnSetEmail} className="inline-flex items-center group text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                <Link href="#" onClick={goBack} className="inline-flex items-center group text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors">
                   <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
                   {t('account.go_back')}
                 </Link>
@@ -278,9 +220,22 @@ export default function Login() {
                     </div>
                   </div>
                 </div>
+
+                {usePassword && (
+                  <button
+                    onClick={() => setUsePassword(false)}
+                    className="w-full mt-2 flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 group"
+                  >
+                    <Mail className="w-5 h-5 mr-3" />
+                    <span className="font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">
+                      {t('account.use_email_code_login')}
+                    </span>
+                  </button>
+                )}
+
                 <button
                   onClick={handleGoogleLogin}
-                  className="w-full flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 group"
+                  className="w-full mt-2 flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 group"
                 >
                   <FcGoogle className="w-5 h-5 mr-3" />
                   <span className="font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">
@@ -288,17 +243,6 @@ export default function Login() {
                   </span>
                 </button>
 
-                <div className="mt-8 text-center">
-                  <p className="text-gray-600 dark:text-gray-400">
-                    {t('account.no_account_yet')}
-                    <Link
-                      href="/signup"
-                      className="ml-2 font-medium text-green-600 hover:text-green-500 transition-colors"
-                    >
-                      {t('account.signup_now')}
-                    </Link>
-                  </p>
-                </div>
 
                 <div className="mt-8 text-center">
                   <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -315,10 +259,10 @@ export default function Login() {
               </div>
             )}
 
-          </div >
+          </div>
 
-        </div >
-      </main >
+        </div>
+      </main>
     </>
   );
 }

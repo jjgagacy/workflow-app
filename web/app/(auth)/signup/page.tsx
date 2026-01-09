@@ -1,17 +1,15 @@
 'use client';
 
 import Button from "@/app/components/base/button";
+import { useRegistrationForm } from "@/hooks/account/use-registrationForm";
 import usePageTitle from "@/hooks/use-page-title";
-import { useRegistrationForm } from "@/hooks/use-registrationForm";
 import { CheckCircle, User, AlertCircle, Mail, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { FcGoogle } from "react-icons/fc";
 
 export default function SignUp() {
   const { t } = useTranslation();
-  const router = useRouter();
   usePageTitle(t('account.signup_title'));
 
   const {
@@ -20,21 +18,14 @@ export default function SignUp() {
     errors,
     setErrors,
     isLoading,
-    setIsLoading,
     showVerification,
     setShowVerification,
     showEmailCodeSended,
     setShowEmailCodeSended,
     countdown,
-    setCountdown,
     handleSendVerificationCode,
     handleSubmit,
   } = useRegistrationForm();
-
-  // const getErrorString = (errors: Record<string, string>): string => {
-  //   if (Object.keys(errors).length === 0) return '';
-  //   return Object.values(errors)[0]; // 返回第一个错误信息
-  // };
 
   const handleGoogleLogin = () => {
     // 模拟 Google 登录
@@ -45,7 +36,6 @@ export default function SignUp() {
     setShowVerification(false);
     setErrors({});
     setShowEmailCodeSended(false);
-    // setCountdown(0);
   };
 
   return (
@@ -134,24 +124,32 @@ export default function SignUp() {
                     )}
                   </div>
                 ) : (
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <User className="h-5 w-5 text-gray-400" />
+                  <div>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <User className="h-5 w-5 text-gray-400" />
+                      </div>
+                      <input
+                        id="username"
+                        type="text"
+                        value={formData.username}
+                        onChange={(e) => {
+                          setFormData({ ...formData, username: e.target.value });
+                          setErrors({});
+                        }}
+                        className={`block w-full pl-10 pr-3 py-3 border ${errors.username ? 'border-red-300' : 'border-gray-300 dark:border-gray-600'
+                          } rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-500 focus:border-transparent transition-all`}
+                        placeholder={t('account.username_placeholder')}
+                        autoComplete="off"
+                        autoFocus
+                      />
                     </div>
-                    <input
-                      id="username"
-                      type="text"
-                      value={formData.username}
-                      onChange={(e) => {
-                        setFormData({ ...formData, username: e.target.value });
-                        setErrors({});
-                      }}
-                      className={`block w-full pl-10 pr-3 py-3 border ${errors.username ? 'border-red-300' : 'border-gray-300 dark:border-gray-600'
-                        } rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-500 focus:border-transparent transition-all`}
-                      placeholder={t('account.username_placeholder')}
-                      autoComplete="off"
-                      autoFocus
-                    />
+                    {errors.username && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center">
+                        <AlertCircle className="w-4 h-4 mr-1" />
+                        {errors.username}
+                      </p>
+                    )}
                   </div>
                 )}
 
@@ -253,7 +251,7 @@ export default function SignUp() {
                 {t('account.login_now')}
               </Link>
             </p>
-          </div >
+          </div>
 
           <div className="mt-8 text-center">
             <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -268,7 +266,7 @@ export default function SignUp() {
             </p>
           </div>
 
-        </div >
+        </div>
       </main >
     </>
   );

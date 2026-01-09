@@ -81,9 +81,9 @@ export class AuthAccountService {
     // send email
     await this.mailService.queue.sendResetPassword({
       to: accountEmail,
-      resetUrl: '', // todo
       expiryMinutes: this.monieConfig.resetPasswordTokenExpiryMinutes(),
       language,
+      code,
     });
 
     await this.emailRateLimiter.incrementRateLimited(accountEmail, EMAIL_RATE_LIMITER_CONFIGS['reset_password']);
@@ -175,18 +175,18 @@ export class AuthAccountService {
 
   async validateEmailCodeLogin(email: string, token: string, code: string, language: string, username?: string, entityManager?: EntityManager): Promise<AccountEntity> {
     const tokenData = await this.tokenManagerService.validateToken(token, TOKEN_TYPES.EMAIL_VERIFICATION);
-    // if (!tokenData) {
-    //   throw InvalidTokenError.create(this.i18n);
-    // }
-    // if (tokenData.email != email) {
-    //   throw InvalidEmailError.create(this.i18n);
-    // }
-    // if (tokenData.code != code) {
-    //   throw VerifyCodeError.create(this.i18n);
-    // }
+    if (!tokenData) {
+      throw InvalidTokenError.create(this.i18n);
+    }
+    if (tokenData.email != email) {
+      throw InvalidEmailError.create(this.i18n);
+    }
+    if (tokenData.code != code) {
+      throw VerifyCodeError.create(this.i18n);
+    }
 
     await this.tokenManagerService.removeToken(token, TOKEN_TYPES.EMAIL_VERIFICATION);
-    const account = await this.accountService.getByEmail(email);
+    const account = await this.accountService.getByEmail(email, true);
     if (!account) {
       const dto: AccountSignUpDto = {
         email,

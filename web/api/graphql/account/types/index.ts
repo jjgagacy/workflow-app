@@ -1,6 +1,6 @@
 export interface EmailCodeSendInput {
   email: string;
-  language: string;
+  language?: string;
 }
 
 export interface EmailCodeLoginInput {
@@ -13,3 +13,20 @@ export interface EmailCodeSignUpInput extends EmailCodeLoginInput {
   username: string;
 }
 
+export interface ForgotPasswordCheckInput {
+  email: string;
+  token: string;
+  code: string;
+  language?: string;
+}
+
+export interface ForgotPasswordCheckOutput {
+  isValid: boolean;
+  token: string; // new token
+}
+
+export interface ForgotPasswordResetInput {
+  newPassword: string;
+  confirmPassword: string;
+  token: string;
+}

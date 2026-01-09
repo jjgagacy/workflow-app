@@ -51,6 +51,12 @@ export const VALIDATE_USERNAME = gql`
   }
 `
 
+export const VALIDATE_EMAIL = gql`
+  mutation ValidateEmailMutation($email: String!) {
+    checkLoginEmail(email: $email)
+  }
+`
+
 export const EMAIL_CODE_SIGNUP_SEND = gql`
   mutation EmailCodeSignupSend($input: EmailCodeLoginSendEmail!) {
     emailCodeSignupSendEmail(input: $input)
@@ -90,5 +96,20 @@ export const EMAIL_CODE_SIGNUP = gql`
       isSuper,
       expiresIn
     }
+  }
+`
+
+export const FORGOT_PASSWORD_CHECK = gql`
+  mutation ForgotPasswordCheck($input: ForgetPasswordInput!) {
+    forgetPasswordTokenCheck(input: $input) {
+      isValid,
+      token
+    }
+  }
+`
+
+export const FORGOT_PASSWORD_RESET = gql`
+  mutation ForgotPasswordReset($input: ForgetPasswordResetInput!) {
+    forgetPasswordReset(input: $input)
   }
 `

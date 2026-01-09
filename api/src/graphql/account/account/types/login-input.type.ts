@@ -1,3 +1,4 @@
+import { EMAIL_REGEX } from '@/common/constants/regex.constants';
 import { Field, InputType, PickType } from '@nestjs/graphql';
 import { IsNotEmpty, Length, Matches } from 'class-validator';
 
@@ -14,10 +15,7 @@ export class LoginInput {
 export class EmailCodeLoginInput {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  @Matches(
-    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-    { message: 'auth.INVALID_EMAIL' }
-  )
+  @Matches(EMAIL_REGEX, { message: 'auth.INVALID_EMAIL' })
   email: string;
 
   @Field()
@@ -32,6 +30,8 @@ export class EmailCodeLoginInput {
 @InputType('ResetPasswordSendEmailInput')
 export class ResetPasswordSendEmailInput {
   @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  @Matches(EMAIL_REGEX, { message: 'auth.INVALID_EMAIL' })
   email: string;
 
   @Field()
@@ -42,10 +42,7 @@ export class ResetPasswordSendEmailInput {
 export class EmailCodeLoginSendEmail {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  @Matches(
-    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-    { message: 'auth.INVALID_EMAIL' }
-  )
+  @Matches(EMAIL_REGEX, { message: 'auth.INVALID_EMAIL' })
   email: string;
 
   @Field()
