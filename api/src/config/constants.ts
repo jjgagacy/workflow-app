@@ -5,6 +5,7 @@ export const JWT_CONSTANTS = {
   expiresIn: '24h' // Token expiration time
 };
 export const PASSWORD_SALT = '$2b$10$/mPO8XPZKGXUegJVXusa9.';
+export const BCRYPT_SALT_ROUNDS = 12;
 export const PAGE_LIMIT_MAX = 1000;
 // Token default times
 export const DEFAULT_TOKEN_TYPE_EXPIRY: Record<TokenType, number> = {

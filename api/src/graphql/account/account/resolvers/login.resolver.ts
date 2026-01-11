@@ -13,7 +13,6 @@ import { EmailInFreezeError } from "@/service/exceptions/account.error";
 import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { FeatureService } from "@/service/feature.service";
-import { EnumConverter } from "@/common/utils/enums";
 import { convertLanguageCode, EmailLanguage } from "@/mail/mail-i18n.service";
 import { getMappedLang } from "@/i18n-global/langmap";
 import { GqlRequest } from "@/common/decorators/gql-request";
@@ -62,6 +61,11 @@ export class LoginResolver {
       });
   }
 
+  @Mutation(() => LoginResponse)
+  async passwordLogin(): Promise<LoginResponse> {
+    throw new Error('Not impl');
+  }
+
   @Mutation(() => String)
   async emailCodeLoginSendEmail(@Args('input') input: EmailCodeLoginSendEmail, @GqlRequest() req: Request): Promise<string> {
     const language = this.deviceService.getLanguageFromHeader(req.headers['accept-language']);
@@ -107,4 +111,5 @@ export class LoginResolver {
     }
     return true;
   }
+
 }

@@ -4,7 +4,7 @@ import { AccountEntity } from "./entities/account.entity";
 import { EntityManager, FindManyOptions, FindOptionsOrder, FindOptionsWhere, Like, Repository } from "typeorm";
 import { CreateAccountDto } from "./account/dto/create-account.dto";
 import * as bcrypt from 'bcrypt';
-import { PASSWORD_SALT } from "@/config/constants";
+import { BCRYPT_SALT_ROUNDS, PASSWORD_SALT } from "@/config/constants";
 import { RoleService } from "@/account/role.service";
 import { plainToInstance } from "class-transformer";
 import { UpdateAccountDto } from "./account/dto/update-account.dto";
@@ -85,9 +85,11 @@ export class AccountService {
       this.validPassword(dto.password);
     }
 
+    const salt = dto.password !== '' ? await this.generateSaltString() : '';
     const accountEntity = this.accountRepository.create({
       ...this.mapBaseFields(validateObj),
-      password: dto.password !== '' ? await this.hashPassword(dto.password) : '',
+      salt,
+      password: dto.password !== '' ? await this.hashPassword(dto.password, salt) : '',
       operate: this.mapOperateFields(validateObj),
       roles: await this.roleService.resolveRoles(dto.roles)
     });
@@ -121,7 +123,9 @@ export class AccountService {
 
     if (dto.password) {
       this.validPassword(dto.password);
-      updatedFields.password = await this.hashPassword(dto.password);
+      const salt = await this.generateSaltString();
+      updatedFields.password = await this.hashPassword(dto.password, salt);
+      updatedFields.salt = salt;
     }
 
     await this.accountRepository.update(account.id, updatedFields);
@@ -174,8 +178,20 @@ export class AccountService {
     }
   }
 
-  private async hashPassword(password: string): Promise<string> {
-    return bcrypt.hash(password, PASSWORD_SALT);
+  private async hashPassword(password: string, salt: string = ''): Promise<string> {
+    return bcrypt.hash(password, salt ?? PASSWORD_SALT);
+  }
+
+  private getSaltRounds(): number {
+    return BCRYPT_SALT_ROUNDS;
+  }
+
+  async generateSaltString(): Promise<string> {
+    return bcrypt.genSalt(this.getSaltRounds());
+  }
+
+  async verifyPassword(password: string, hash: string): Promise<boolean> {
+    return await bcrypt.compare(password, hash);
   }
 
   async query(queryParams: Partial<QueryAccountDto> | GetAccountListArgs): Promise<{ data: AccountEntity[]; total: number }> {
@@ -189,6 +205,7 @@ export class AccountService {
 
     // 构建查询条件
     const where: FindOptionsWhere<AccountEntity> = {
+      ...{ tenant: { id: dto.tenantId } },
       ...(dto.id !== undefined && { id: dto.id }),
       ...(dto.username !== undefined && { username: Like(`%${dto.username}%`) }),
       ...(dto.realName !== undefined && { realName: Like(`%${dto.realName}%`) }),

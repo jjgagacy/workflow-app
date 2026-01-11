@@ -5,101 +5,107 @@ import { BaseEntity, Column, Entity, Index, JoinTable, ManyToMany, ManyToOne, Pr
 
 @Entity({ name: 'account' })
 export class AccountEntity extends BaseEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({
-        nullable: false,
-        unique: false,
-    })
-    @Index()
-    username: string;
+  @Column({
+    nullable: false,
+    unique: false,
+  })
+  @Index()
+  username: string;
 
-    @Column({
-        nullable: false,
-        default: '',
-    })
-    password: string;
+  @Column({
+    nullable: false,
+    default: '',
+  })
+  password: string;
 
-    @Column({
-        nullable: false,
-        default: '',
-    })
-    realName: string;
+  @Column({
+    nullable: false,
+    default: '',
+  })
+  salt: string;
 
-    @Column({
-        nullable: false,
-        default: '',
-    })
-    @Index()
-    email: string;
+  @Column({
+    nullable: false,
+    default: '',
+  })
+  realName: string;
 
-    @Column({
-        nullable: false,
-        default: '',
-    })
-    mobile: string;
+  @Column({
+    nullable: false,
+    default: '',
+  })
+  @Index()
+  email: string;
 
-    @Column({
-        nullable: false,
-        default: '',
-    })
-    avatar: string;
+  @Column({
+    nullable: false,
+    default: '',
+  })
+  mobile: string;
 
-    @Column({
-        nullable: false,
-        default: '',
-    })
-    prefer_language: string;
+  @Column({
+    nullable: false,
+    default: '',
+  })
+  avatar: string;
 
-    @Column({
-        nullable: false,
-        default: '',
-    })
-    theme: string;
+  @Column({
+    nullable: false,
+    default: '',
+  })
+  prefer_language: string;
 
-    @Column({
-        nullable: false,
-        default: '',
-    })
-    timezone: string;
+  @Column({
+    nullable: false,
+    default: '',
+  })
+  theme: string;
 
-    // 0开启 1关闭
-    @Column({
-        nullable: false,
-        type: 'int',
-        default: 0,
-    })
-    status: number;
+  @Column({
+    nullable: false,
+    default: '',
+  })
+  timezone: string;
 
-    @Column({
-        nullable: false,
-        default: '',
-    })
-    lastIp: string;
+  // 0开启 1关闭
+  @Column({
+    nullable: false,
+    type: 'int',
+    default: 0,
+  })
+  status: number;
 
-    @Column(() => Operate, { prefix: false })
-    operate: Operate;
+  @Column({
+    nullable: false,
+    default: '',
+  })
+  lastIp: string;
 
-    @ManyToMany(() => RoleEntity, {
-        cascade: true
-    })
-    @JoinTable({
-        name: 'account_role',
-        joinColumn: {
-            name: 'account_id',
-            referencedColumnName: 'id',
-        },
-        inverseJoinColumn: {
-            name: 'role_id',
-            referencedColumnName: 'id',
-        },
-    })
-    roles: RoleEntity[];
+  @Column(() => Operate, { prefix: false })
+  operate: Operate;
 
-    @ManyToOne(() => DepEntity, {
-        cascade: ['insert'],
-        onDelete: 'SET NULL',
-    })
-    dep: DepEntity;
+  @ManyToMany(() => RoleEntity, {
+    cascade: true
+  })
+  @JoinTable({
+    name: 'account_role',
+    joinColumn: {
+      name: 'account_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'role_id',
+      referencedColumnName: 'id',
+    },
+  })
+  roles: RoleEntity[];
+
+  @ManyToOne(() => DepEntity, {
+    cascade: ['insert'],
+    onDelete: 'SET NULL',
+  })
+  dep: DepEntity;
 }

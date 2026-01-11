@@ -21,6 +21,7 @@ import { ModelProviderService } from "./model-provider.service";
 import { ProviderManager } from "@/ai/model_runtime/services/provider-manager";
 import { ProviderService } from "@/ai/model_runtime/services/provider.service";
 import { HostConfiguration } from "@/ai/plugin/services/host-configuration";
+import { LoginRateLimiterService } from "./libs/rate-limiter/login-rate-limiter.service";
 
 @Global()
 @Module({
@@ -36,6 +37,7 @@ import { HostConfiguration } from "@/ai/plugin/services/host-configuration";
     EncryptionService,
     StorageService,
     EmailRateLimiterService,
+    LoginRateLimiterService,
     TokenManagerService,
     LocationService,
     MailService,
@@ -55,6 +57,7 @@ import { HostConfiguration } from "@/ai/plugin/services/host-configuration";
     FeatureService,
     StorageService,
     EmailRateLimiterService,
+    LoginRateLimiterService,
     TokenManagerService,
     LocationService,
     DeviceService,

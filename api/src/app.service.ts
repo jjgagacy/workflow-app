@@ -15,7 +15,7 @@ export class AppService {
     private readonly fooService: FooService,
     private readonly accountService: AccountService,
     private readonly roleService: RoleService,
-  ) {}
+  ) { }
 
   async onApplicationBootstrap() {
     // console.log('Application has started successfully [' + (process.env.NODE_ENV || 'dev') + ']');

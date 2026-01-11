@@ -11,7 +11,7 @@ export enum EmailRateLimitType {
 export interface EmailRateLimitOptions {
   type: EmailRateLimitType;
   maxAttempts: number;
-  timeWindow: number; // second
+  timeWindow: number; // seconds
 }
 
 @Injectable()

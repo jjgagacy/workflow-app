@@ -24,6 +24,7 @@ import { EmailLanguage } from './mail/mail-i18n.service';
 import { LocationService } from './service/libs/location.service';
 import { DeviceService } from './service/libs/device.service';
 import { Response } from 'express';
+import { AccountService } from './account/account.service';
 
 class OrderCreatedEvent {
   constructor(private eventObj: { orderId: number; payload: any }) { }
@@ -38,6 +39,7 @@ export class AppController {
     private readonly winstonLogger: WinstonLogger,
     private readonly i18n: I18nService,
     private readonly authAccountService: AuthAccountService,
+    private readonly accountService: AccountService,
     private readonly cacheService: EnhanceCacheService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     private readonly generalCache: GeneralCacheService,
@@ -88,8 +90,12 @@ export class AppController {
     // });
     // await this.cacheService.set('foo', 'bar', 5000);
     // await this.locationService.getLocationFromIp('113.108.81.189');
-    const deviceInfo = this.deviceService.getDeviceInfo(userAgent);
-    console.log(deviceInfo);
+    // const deviceInfo = this.deviceService.getDeviceInfo(userAgent);
+    // console.log(deviceInfo);
+    // const salt = await this.accountService.generateSaltString();
+    // const password = '123456';
+    // const encryptedPassword = await this.accountService.hashPassword(password, salt);
+    // console.log('verify password', await this.accountService.verifyPassword(password, encryptedPassword));
     console.log(await this.i18n.t('common.TIME.SECONDS', { args: { count: 1 } }));
     return await this.i18n.t("hello.HELLO");
   }

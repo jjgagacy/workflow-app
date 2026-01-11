@@ -9,7 +9,7 @@ import { SystemService } from "@/monie/system.service";
 import { TenantEntity } from "@/account/entities/tenant.entity";
 import { AccountRole } from "@/account/account.enums";
 import { AccountEntity } from "@/account/entities/account.entity";
-import { EnumUtils, getEnumKeySafe } from "@/common/utils/enums";
+import { EnumUtils } from "@/common/utils/enums";
 import { TenantAccountEntity } from "@/account/entities/tenant-account.entity";
 import { Transactional } from "@/common/decorators/transaction.decorator";
 import { FeatureService } from "./feature.service";
@@ -201,15 +201,12 @@ export class TenantService {
         role: AccountRole.OWNER,
       },
     });
-
     if (!fromMember) {
       throw new ConflictException('Only owner can transfer ownership');
     }
-
     // 更新原owner为admin
     fromMember.role = AccountRole.ADMIN;
     await workManager.save(TenantAccountEntity, fromMember);
-
     // 设置新用户为 OWNER
     await this.addAccountTenantMembership(toAccount, tenant, AccountRole.OWNER, workManager);
   }
@@ -243,7 +240,6 @@ export class TenantService {
     return !!owner;
   }
 }
-
 
 @Injectable()
 export class TenantAccountService {

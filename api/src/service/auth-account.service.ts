@@ -23,7 +23,7 @@ import { Transactional } from "@/common/decorators/transaction.decorator";
 import { TenantAccountEntity } from "@/account/entities/tenant-account.entity";
 import { EnumConverter, EnumUtils } from "@/common/utils/enums";
 import { AccountNotLinkTenantError, CanNotOperateSelfError, InvalidActionError, MemberNotInTenantError, NoPermissionError, permissionMap, RoleAlreadyAssignedError } from "@/account/errors";
-import { EmailRateLimiterService, EmailRateLimitOptions, EmailRateLimitType } from "./libs/rate-limiter/email-rate-limiter.service";
+import { EmailRateLimiterService } from "./libs/rate-limiter/email-rate-limiter.service";
 import { EmailLanguage } from "@/mail/mail-i18n.service";
 import { defaultSendResetPasswordEmailParams, SendResetPasswordEmailParams } from "./interfaces/account.interface";
 import { AccountChangeEmailRateLimitError, AccountDeletionRateLimitError, AccountResetPasswordRateLimitError, EmailCodeLoginRateLimitError } from "./exceptions/rate-limiter.error";
@@ -37,6 +37,7 @@ import { FeatureService } from "./feature.service";
 import authConfig from "@/config/auth.config";
 import { TimeConverter } from "./libs/time-converter.service";
 import { RoleEntity } from "@/account/entities/role.entity";
+import { EMAIL_RATE_LIMITER_CONFIGS } from "./configs/rate-limiter.config";
 
 @Injectable()
 export class AuthAccountService {
@@ -398,17 +399,14 @@ export class AuthAccountService {
     if (!targetMemberJoin) {
       throw new MemberNotInTenantError(user.email, tenant.name);
     }
-
     // Check if role is already assigned
     if (targetMemberJoin.role == newRole) {
       throw new RoleAlreadyAssignedError(user.realName, newRole);
     }
-
     // Handle owern role transfer
     if (newRole == AccountRole.OWNER) {
       await this.tenantService.addAccountTenantMembership(user, tenant, newRole, entityManager);
     }
-
     // Update the role
     targetMemberJoin.role = newRole;
     return await workManager.save(TenantAccountEntity, targetMemberJoin);
@@ -616,27 +614,4 @@ export class AuthAccountService {
   }
 }
 
-export type EMAIL_RATE_CONFIG_KEYS = 'reset_password' | 'change_email' | 'email_code_login' | 'email_code_account_deletion';
 
-export const EMAIL_RATE_LIMITER_CONFIGS: Record<EMAIL_RATE_CONFIG_KEYS, EmailRateLimitOptions> = {
-  'reset_password': {
-    type: EmailRateLimitType.RESET_PASSWORD,
-    maxAttempts: 1,
-    timeWindow: 60, // seconds
-  },
-  'change_email': {
-    type: EmailRateLimitType.CHANGE_EMAIL,
-    maxAttempts: 1,
-    timeWindow: 60,
-  },
-  'email_code_login': {
-    type: EmailRateLimitType.EMAIL_CODE_LOGIN,
-    maxAttempts: 1,
-    timeWindow: 60,
-  },
-  'email_code_account_deletion': {
-    type: EmailRateLimitType.EMAIL_CODE_ACCOUNT_DELETION,
-    maxAttempts: 1,
-    timeWindow: 60,
-  },
-}

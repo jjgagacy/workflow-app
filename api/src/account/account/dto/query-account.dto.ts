@@ -11,6 +11,7 @@ export class QueryAccountDto extends QueryDto {
   roleId?: number;
   relations?: { roles: boolean }
   order?: { [P in 'id' | 'status']?: 'ASC' | 'DESC' };
+  tenantId: string;
 
   setQueryArgs(args?: GetAccountListArgs) {
     if (!args) return;

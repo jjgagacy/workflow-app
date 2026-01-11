@@ -7,4 +7,5 @@ type GetAccountListArgs = Pagination & {
   status: number;
   roleId: number;
   relations: { roles: boolean; }
+  tenantId: string;
 };
