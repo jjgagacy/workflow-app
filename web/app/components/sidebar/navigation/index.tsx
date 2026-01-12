@@ -1,4 +1,5 @@
 'use client';
+
 import { MenuItem } from '@/types/menu';
 
 import { IconChevronDown, IconChevronRight, IconEyeCog } from '@tabler/icons-react';
@@ -7,6 +8,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { HoverSubmenu } from './hover-submenu';
+import { useTranslation } from 'react-i18next';
 
 interface NavigationProps {
   collapsed: boolean;
@@ -18,6 +20,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
   const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({});
   const [hoveredItem, setHoveredItem] = useState('');
   const [menuPosition, setMenuPosition] = useState(0);
+  const { t } = useTranslation();
 
   const pathname = usePathname();
   const subMenuRef = useRef<HTMLDivElement>(null);
@@ -27,21 +30,21 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
   const defaultMenus: MenuItem[] = [
     {
       key: 'dashboard',
-      title: "仪表盘",
+      title: t('system.dashboard'),
       icon: <Home className="w-5 h-5" />,
       path: "/admin/dashboard"
     },
     {
       key: 'system',
-      title: "系统设置",
+      title: t('system.system_settings'),
       icon: <Sliders className="w-5 h-5" />,
       path: '/admin/system',
       children: [
-        { key: 'account', title: "账户", icon: <UserCog className="w-4 h-4" />, path: "/admin/system/account" },
-        { key: 'dep', title: "部门", icon: <Briefcase className="w-4 h-4" />, path: "/admin/system/dep" },
-        { key: 'role', title: "角色", icon: <Crown className="w-4 h-4" />, path: "/admin/system/role" },
-        { key: 'module', title: "权限模块", icon: <Fingerprint className="w-4 h-4" />, path: "/admin/system/module" },
-        { key: 'menu', title: "菜单", icon: <List className="w-4 h-4" />, path: "/admin/system/menu" },
+        { key: 'account', title: t('system.account'), icon: <UserCog className="w-4 h-4" />, path: "/admin/system/account" },
+        { key: 'dep', title: t('system.department'), icon: <Briefcase className="w-4 h-4" />, path: "/admin/system/dep" },
+        { key: 'role', title: t('system.role'), icon: <Crown className="w-4 h-4" />, path: "/admin/system/role" },
+        { key: 'module', title: t('system.permission_module'), icon: <Fingerprint className="w-4 h-4" />, path: "/admin/system/module" },
+        { key: 'menu', title: t('system.menu'), icon: <List className="w-4 h-4" />, path: "/admin/system/menu" },
       ]
     },
     {
@@ -162,13 +165,13 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
   };
 
   return (
-    <div className="bg-white dark:bg-gradient-to-br dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 navigation-menu__root space-y-1 relative z-10">
+    <div className="bg-white py-2 px-2 dark:bg-gradient-to-br dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 navigation-menu__root space-y-1 relative z-10">
       {menuItems.map((item) => (
         <div key={item.key}>
           {item.children && collapsed ? (
             <ul>
               <li
-                className="relative"
+                className="relative px-2"
                 onMouseEnter={(e) => handleMouseEnter(e, item.key)}
                 onMouseLeave={handleMouseLeave}
               >
@@ -182,19 +185,21 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
               </li>
             </ul>
           ) : !item.children ? (
-            <div>
-              <Link
-                href={item.path || '#'}
-                onClick={() => toggleMobileSidebar?.()}
-                className={`flex items-center px-2 py-1 rounded-lg hover:bg-selection-hover ${collapsed ? "justify-center" : ""
-                  } ${isActive(item.path) ? "bg-selection-active" : ""}`}
-                title={item.title}
-              >
-                <span>{item.icon}</span>
-                {!collapsed && (
-                  <span className="ml-3">{item.title}</span>
-                )}
-              </Link>
+            <div className='relative'>
+              <div className={`flex items-center px-2 py-1 rounded-lg hover:bg-selection-hover cursor-pointer ${collapsed ? "justify-center" : "justify-between"}`}>
+                <Link
+                  href={item.path || '#'}
+                  onClick={() => toggleMobileSidebar?.()}
+                  className={`flex items-center`}
+                  title={item.title}
+                >
+                  <div className="flex items-center">
+                    <span>{item.icon}</span>
+                    {!collapsed && (<span className="ml-3">{item.title}</span>)}
+                  </div>
+                  {!collapsed && (<span>&nbsp;</span>)}
+                </Link>
+              </div>
             </div>
           ) : (
             <div>
@@ -224,7 +229,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                       key={child.key}
                       onClick={() => toggleMobileSidebar?.()}
                       href={child.path || '#'}
-                      className={`flex items-center px-2 py-1 rounded-lg hover:bg-selection-hover ${collapsed ? "justify-center" : ""
+                      className={`flex items-center px-2 py-1 mb-1 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-700 ${collapsed ? "justify-center" : ""
                         } ${isActive(child.path) ? "bg-selection-active" : ""}`}
                     >
                       <span>{child.icon}</span>

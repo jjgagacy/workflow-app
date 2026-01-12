@@ -38,7 +38,7 @@ export function Sidebar({ collapsed, onToggleCollapse, children }: SidebarProps)
           </div>
 
           {/* Navigation content area */}
-          <div className="flex-1 h-[calc(100vh-3rem)] relative py-2 overflow-y-auto no-scrollbar">
+          <div className="flex-1 h-[calc(100vh-3rem)] relative overflow-y-auto no-scrollbar">
             {children}
           </div>
         </div>

@@ -14,6 +14,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { ViewProvider } from "../hooks/use-view";
 import { useTagsViewStore } from "@/hooks/use-tagview-store";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useTranslation } from "react-i18next";
+import { Briefcase, Crown, Fingerprint, Home, List, Sliders, UserCog } from "lucide-react";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -27,6 +29,7 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
   const router = useRouter();
   const pathname = usePathname();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
   const toggleMobileSidebar = () => {
     setMobileSidebarOpen(!mobileSidebarOpen);
@@ -35,27 +38,27 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
   const menuItems: MenuItem[] = [
     {
       key: 'admin',
-      title: "首页",
+      title: t('system.home'),
       icon: <IconAbc className="w-5 h-5" />,
       path: "/admin"
     },
     {
       key: 'dashboard',
-      title: "仪表盘",
-      icon: <IconAbc className="w-5 h-5" />,
+      title: t('system.dashboard'),
+      icon: <Home className="w-5 h-5" />,
       path: "/admin/dashboard"
     },
     {
       key: 'system',
-      title: "系统设置",
-      icon: <Icon12Hours className="w-5 h-5" />,
+      title: t('system.system_settings'),
+      icon: <Sliders className="w-5 h-5" />,
       path: '/admin/system',
       children: [
-        { key: 'account', title: "账户", icon: <IconAbc className="w-4 h-4" />, path: "/admin/system/account" },
-        { key: 'dep', title: "部门", icon: <IconAbc className="w-4 h-4" />, path: "/admin/system/dep" },
-        { key: 'role', title: "角色", icon: <IconAbc className="w-4 h-4" />, path: "/admin/system/role" },
-        { key: 'module', title: "权限模块", icon: <IconAbc className="w-4 h-4" />, path: "/admin/system/module" },
-        { key: 'menu', title: "菜单", icon: <IconAbc className="w-4 h-4" />, path: "/admin/system/menu" },
+        { key: 'account', title: t('system.account'), icon: <UserCog className="w-4 h-4" />, path: "/admin/system/account" },
+        { key: 'dep', title: t('system.department'), icon: <Briefcase className="w-4 h-4" />, path: "/admin/system/dep" },
+        { key: 'role', title: t('system.role'), icon: <Crown className="w-4 h-4" />, path: "/admin/system/role" },
+        { key: 'module', title: t('system.permission_module'), icon: <Fingerprint className="w-4 h-4" />, path: "/admin/system/module" },
+        { key: 'menu', title: t('system.menu'), icon: <List className="w-4 h-4" />, path: "/admin/system/menu" },
       ]
     },
     // ... other menu items
@@ -143,7 +146,7 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
           onMenuClick={isMobile ? toggleMobileSidebar : undefined}
         />
         {/* <TagView routes={mergeRoutes} /> */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto px-4 py-6 bg-gray-50 dark:bg-gray-800">
           <Keepalive
             active={matchRoute === null ? null : matchRoute.key}
             include={include}

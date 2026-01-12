@@ -6,55 +6,55 @@ import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 
 type BreadcrumbItem = {
-    title: string;
-    link: string;
+  title: string;
+  link: string;
 }
 
 // This allows to add custom title as well
 const routeMapping: Record<string, BreadcrumbItem[]> = {
-    '/dashboard': [{ title: 'Dashboard', link: '/dashboard' }],
-    // add more custom mapping as needed
+  '/dashboard': [{ title: 'Dashboard', link: '/dashboard' }],
+  // add more custom mapping as needed
 };
 
 function findRouteTitle(routes: Route[], path: string): string {
-    for (const route of routes) {
-        // console.log('match', route.path, path);
-        if (isMatchingPath(route.path, path)) {
-            return route.meta.title || route.title || "Untitled";
-        }
-        if (route.children) {
-            const childTitle = findRouteTitle(route.children, path);
-            if (childTitle) {
-                return childTitle;
-            }
-        }
+  for (const route of routes) {
+    // console.log('match', route.path, path);
+    if (isMatchingPath(route.path, path)) {
+      return route.meta.title || route.title || "Untitled";
     }
-    return 'Untitled';
+    if (route.children) {
+      const childTitle = findRouteTitle(route.children, path);
+      if (childTitle) {
+        return childTitle;
+      }
+    }
+  }
+  return 'Untitled';
 }
 
 export function useBreadcrumbs(routes: Route[]): BreadcrumbItem[] {
-    const pathname = usePathname();
+  const pathname = usePathname();
 
-    const breadcrumbs = useMemo(() => {
-        // Check if we have a custom mapping for this exact path
-        if (routeMapping[pathname]) {
-            return routeMapping[pathname];
-        }
+  const breadcrumbs = useMemo(() => {
+    // Check if we have a custom mapping for this exact path
+    if (routeMapping[pathname]) {
+      return routeMapping[pathname];
+    }
 
-        // If no exact match, fall back to generating breadcrumbs from the path
-        const segments = pathname.split('/').filter(Boolean);
-        return segments.map((segment, index) => {
-            const path = `/${segments.slice(0, index + 1).join('/')}`;
-            return {
-                link: path,
-                title: findRouteTitle(routes, path)
-            } as BreadcrumbItem
-        })
-            .filter(item => {
-                // 过滤掉标题为空、undefined 或 "Untitled" 的项
-                return item.title && item.title.trim() !== '' && item.title !== 'Untitled';
-            });
-    }, [pathname, routes]);
+    // If no exact match, fall back to generating breadcrumbs from the path
+    const segments = pathname.split('/').filter(Boolean);
+    return segments.map((segment, index) => {
+      const path = `/${segments.slice(0, index + 1).join('/')}`;
+      return {
+        link: path,
+        title: findRouteTitle(routes, path)
+      } as BreadcrumbItem
+    })
+      .filter(item => {
+        // 过滤掉标题为空、undefined 或 "Untitled" 的项
+        return item.title && item.title.trim() !== '' && item.title !== 'Untitled';
+      });
+  }, [pathname, routes]);
 
-    return breadcrumbs;
+  return breadcrumbs;
 }

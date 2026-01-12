@@ -8,36 +8,36 @@ import { IconPlus } from "@tabler/icons-react";
 import ModuleListPage from "./module-list";
 
 export function ModuleLayout() {
-    return (
-        <ModalProvider>
-            <ModulePage />
-        </ModalProvider>
-    );
+  return (
+    <ModalProvider>
+      <ModulePage />
+    </ModalProvider>
+  );
 }
 
 export function ModulePage() {
-    const { openModal, resetModalData } = useModalContext();
+  const { openModal, resetModalData } = useModalContext();
 
-    const handleAddModule = () => {
-        resetModalData();
-        openModal('module');
-    }
+  const handleAddModule = () => {
+    resetModalData();
+    openModal('module');
+  }
 
-    return (
-        <div className="flex flex-1 flex-col space-y-4">
-            <div className="flex items-start justify-between">
-                <Heading
-                    title="权限组管理"
-                    description="编辑操作权限信息" />
-                <Button
-                    variant={'primary'}
-                    onClick={handleAddModule}
-                >
-                    <IconPlus className="mr-2 h-4 w-4" /> 添加权限组
-                </Button>
-            </div>
-            <Separator />
-            <ModuleListPage />
-        </div>
-    );
+  return (
+    <div className="flex flex-1 flex-col space-y-4">
+      <div className="flex items-start justify-between">
+        <Heading
+          title="权限组管理"
+          description="编辑操作权限信息" />
+        <Button
+          variant={'primary'}
+          onClick={handleAddModule}
+        >
+          <IconPlus className="mr-2 h-4 w-4" /> 添加权限组
+        </Button>
+      </div>
+      <Separator />
+      <ModuleListPage />
+    </div>
+  );
 }

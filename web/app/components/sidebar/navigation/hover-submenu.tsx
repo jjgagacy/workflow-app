@@ -55,7 +55,7 @@ export const HoverSubmenu = ({
               setHoveredItem('');
             }}
             href={child.path || '#'}
-            className={`flex items-center px-4 py-3 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700 transition-colors ${isActive(child.path) ? "bg-gray-100 dark:bg-neutral-700 font-medium" : ""}`}
+            className={`flex mb-1 mx-2 items-center px-2 py-1 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700 transition-colors ${isActive(child.path) ? "bg-gray-100 dark:bg-neutral-700 font-medium" : ""}`}
           >
             <span className="mr-3">{child.icon}</span>
             <span>{child.title}</span>

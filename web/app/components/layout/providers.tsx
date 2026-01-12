@@ -6,16 +6,16 @@ import { Toasters } from './toasters';
 import { DialogProvider } from '../hooks/use-dialog';
 
 export default function Providers({
-    children, activeThemeValue
-}: { children: ReactNode, activeThemeValue: string}) {
-    return (
-        <>
-            <ActiveThemeProvider initialTheme={activeThemeValue}>
-                <DialogProvider>
-                    <Toasters />
-                    {children}
-                </DialogProvider>
-            </ActiveThemeProvider>
-        </>
-    );
+  children, activeThemeValue
+}: { children: ReactNode, activeThemeValue: string }) {
+  return (
+    <>
+      <ActiveThemeProvider initialTheme={activeThemeValue}>
+        <DialogProvider>
+          <Toasters />
+          {children}
+        </DialogProvider>
+      </ActiveThemeProvider>
+    </>
+  );
 }

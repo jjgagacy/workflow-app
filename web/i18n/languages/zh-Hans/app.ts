@@ -13,7 +13,6 @@ const translation = {
     switch_to_light: '切换浅色模式',
     nav_title: '菜单',
   },
-
   actions: {
     confirm: '确定',
     cancel: '取消',
@@ -34,13 +33,11 @@ const translation = {
       dark: '护眼的界面'
     }
   },
-
   colorTheme: {
     blue: '蓝色主题',
     green: '绿色主题',
     amber: '琥珀主题',
   },
-
   icons: {
     monitor: '系统图标',
     sun: '太阳图标',

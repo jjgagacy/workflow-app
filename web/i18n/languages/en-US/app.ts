@@ -26,7 +26,6 @@ const translation = {
     dark: 'Dark Mode',
     select_theme: 'Select Theme',
     current_theme: 'Current: {{theme}}',
-
     // Dropdown descriptions
     descriptions: {
       system: 'Automatically switch based on system settings',
@@ -34,13 +33,11 @@ const translation = {
       dark: 'Eye-friendly interface'
     }
   },
-
   colorTheme: {
     blue: 'Blue',
     green: 'Green',
     amber: 'Amber',
   },
-
   // Icon labels (for accessibility)
   icons: {
     monitor: 'System icon',

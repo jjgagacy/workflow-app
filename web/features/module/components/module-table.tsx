@@ -17,153 +17,153 @@ import { ModuleForm } from "../module-form";
 import { ModulePermPage } from "../module-perm";
 
 interface ModuleTableParams<TData, TValue> {
-    data: TData[];
-    totalItems: number;
-    columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  totalItems: number;
+  columns: ColumnDef<TData, TValue>[];
 }
 
 export function ModuleTable<TData, TValue>({
-    columns
+  columns
 }: ModuleTableParams<TData, TValue>) {
-    const [queryStates, setQueryStates] = useQueryStates({
-        page: parseAsInteger.withDefault(1),
-        search: parseAsString.withDefault(''),
-        pageSize: parseAsInteger.withDefault(PER_PAGE)
-    });
-    const { search, page, pageSize } = queryStates;
-    const [debouncedSearch, setDebouncedSearch] = useState(search);
-    const deleteModuleMutation = api.module.useDeleteModule();
-    const { openModal, closeModal, isModalOpen } = useModalContext();
-    const [currentModule, setCurrentModule] = useState<Module | undefined>(undefined);
+  const [queryStates, setQueryStates] = useQueryStates({
+    page: parseAsInteger.withDefault(1),
+    search: parseAsString.withDefault(''),
+    pageSize: parseAsInteger.withDefault(PER_PAGE)
+  });
+  const { search, page, pageSize } = queryStates;
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+  const deleteModuleMutation = api.module.useDeleteModule();
+  const { openModal, closeModal, isModalOpen } = useModalContext();
+  const [currentModule, setCurrentModule] = useState<Module | undefined>(undefined);
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setDebouncedSearch(search);
-        }, DEBOUNCE_MS);
-        return () => clearTimeout(timer);
-    }, [search]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [search]);
 
-    const { modules, mutate } = api.module.useGetModules({ name: debouncedSearch, page, limit: pageSize });
-    const [data, setData] = useState<Module[]>([]);
+  const { modules, mutate } = api.module.useGetModules({ name: debouncedSearch, page, limit: pageSize });
+  const [data, setData] = useState<Module[]>([]);
 
-    useEffect(() => {
-        if (modules?.data) {
-            setData(modules.data);
-        }
-    }, [modules?.data]);
-
-    const total = modules?.pageInfo?.total || 0;
-    const pageCount = Math.ceil(total / pageSize);
-
-    const onDelete = async (module: Module) => {
-        if (confirm('确认删除吗？')) {
-            await deleteModuleMutation(module.id);
-            setData(prev =>
-                prev.filter(item => item.id !== module.id)
-            );
-        }
+  useEffect(() => {
+    if (modules?.data) {
+      setData(modules.data);
     }
+  }, [modules?.data]);
 
-    const openEditModal = (module: Module) => {
-        setCurrentModule(module);
-        openModal('module', module);
+  const total = modules?.pageInfo?.total || 0;
+  const pageCount = Math.ceil(total / pageSize);
+
+  const onDelete = async (module: Module) => {
+    if (confirm('确认删除吗？')) {
+      await deleteModuleMutation(module.id);
+      setData(prev =>
+        prev.filter(item => item.id !== module.id)
+      );
     }
+  }
 
-    const openPermModal = (module: Module) => {
-        setCurrentModule(module);
-        openModal('perm', module);
-    }
+  const openEditModal = (module: Module) => {
+    setCurrentModule(module);
+    openModal('module', module);
+  }
 
-    const handleModuleForm = async () => {
-        await mutate();
-    }
+  const openPermModal = (module: Module) => {
+    setCurrentModule(module);
+    openModal('perm', module);
+  }
 
-    const operatorColumn: ColumnDef<Module, any>[] = [
-        columnHelper.display({
-            id: "actions",
-            header: "操作",
-            cell: ({ row }) => {
-                const module = row.original;
+  const handleModuleForm = async () => {
+    await mutate();
+  }
 
-                return (
-                    <div className="space-x-2">
-                        <Button
-                            onClick={() => openEditModal(module)}
-                            variant={'primary'}
-                            size={'small'}
-                        >
-                            编辑
-                        </Button>
-                        <Button
-                            onClick={() => onDelete(module)}
-                            variant={'alert'}
-                            size={'small'}
-                        >
-                            删除
-                        </Button>
-                        <Button
-                            onClick={() => openPermModal(module)}
-                            variant={'secondary'}
-                            size={'small'}
-                        >
-                            权限列表
-                        </Button>
-                    </div>
-                );
-            },
-        }),
-    ];
+  const operatorColumn: ColumnDef<Module, any>[] = [
+    columnHelper.display({
+      id: "actions",
+      header: "操作",
+      cell: ({ row }) => {
+        const module = row.original;
 
-    const { table } = useDataTable({
-        data,
-        columns: [...columns, ...operatorColumn] as ColumnDef<Module, any>[],
-        pageCount,
-        shallow: false,
-        debounceMs: DEBOUNCE_MS,
-    });
+        return (
+          <div className="space-x-2">
+            <Button
+              onClick={() => openEditModal(module)}
+              variant={'primary'}
+              size={'small'}
+            >
+              编辑
+            </Button>
+            <Button
+              onClick={() => onDelete(module)}
+              variant={'alert'}
+              size={'small'}
+            >
+              删除
+            </Button>
+            <Button
+              onClick={() => openPermModal(module)}
+              variant={'secondary'}
+              size={'small'}
+            >
+              权限列表
+            </Button>
+          </div>
+        );
+      },
+    }),
+  ];
 
-    const onReset = useCallback(async () => {
-        setQueryStates({ page: null, search: null });
-        setDebouncedSearch('');
-        table.resetColumnFilters();
-    }, [table]);
+  const { table } = useDataTable({
+    data,
+    columns: [...columns, ...operatorColumn] as ColumnDef<Module, any>[],
+    pageCount,
+    shallow: false,
+    debounceMs: DEBOUNCE_MS,
+  });
 
-    return (
-        <>
-            <DataTable table={table}>
-                <DataTableToolbar table={table}>
-                    <Input
-                        id='search'
-                        type='text'
-                        value={search}
-                        className="w-56"
-                        onChange={(e) => {
-                            setQueryStates({ search: e.target.value, page: 1 })
-                        }}
-                        placeholder="按关键词搜索..."
-                    />
-                    <Button
-                        variant={'ghost'}
-                        size={'large'}
-                        onClick={() => onReset()}
-                    >Reset</Button>
-                </DataTableToolbar>
-            </DataTable>
+  const onReset = useCallback(async () => {
+    setQueryStates({ page: null, search: null });
+    setDebouncedSearch('');
+    table.resetColumnFilters();
+  }, [table]);
 
-            <ModuleForm
-                isOpen={isModalOpen('module')}
-                onOpenChange={() => closeModal()}
-                module={currentModule}
-                onSubmitSuccess={handleModuleForm}
-            />
+  return (
+    <>
+      <DataTable table={table}>
+        <DataTableToolbar table={table}>
+          <Input
+            id='search'
+            type='text'
+            value={search}
+            className="w-56"
+            onChange={(e) => {
+              setQueryStates({ search: e.target.value, page: 1 })
+            }}
+            placeholder="按关键词搜索..."
+          />
+          <Button
+            variant={'ghost'}
+            size={'large'}
+            onClick={() => onReset()}
+          >Reset</Button>
+        </DataTableToolbar>
+      </DataTable>
 
-            <ModulePermPage
-                isOpen={isModalOpen('perm')}
-                onOpenChange={() => closeModal()}
-                module={currentModule!}
-                onSubmitSuccess={handleModuleForm}
-            />
-        </>
+      <ModuleForm
+        isOpen={isModalOpen('module')}
+        onOpenChange={() => closeModal()}
+        module={currentModule}
+        onSubmitSuccess={handleModuleForm}
+      />
 
-    );
+      <ModulePermPage
+        isOpen={isModalOpen('perm')}
+        onOpenChange={() => closeModal()}
+        module={currentModule!}
+        onSubmitSuccess={handleModuleForm}
+      />
+    </>
+
+  );
 }

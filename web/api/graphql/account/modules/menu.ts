@@ -94,11 +94,11 @@ export const useUpdateMenu = () => {
   const mutation = useGraphQLMutation<{ updateMenu: any }, {
     input: {
       key: string;
-      parent?: string;
+      parent: string | undefined;
       name: string;
-      status?: number;
-      sort?: number;
-      moduleId?: string;
+      status: number | undefined;
+      sort: number | undefined;
+      moduleId: string | undefined;
     }
   }>(UPDATE_MENU);
 

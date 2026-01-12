@@ -3,10 +3,12 @@ import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/r
 import { IconBell, IconChevronDown, IconLogout, IconPercentage50, IconUser, IconUserCog } from "@tabler/icons-react";
 import { useRouter } from 'next/navigation';
 import { Fragment, useState } from "react";
+import { useTranslation } from 'react-i18next';
 
 export function UserSelector() {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation();
 
   const handleLogout = () => {
     logout();
@@ -20,7 +22,7 @@ export function UserSelector() {
           {user?.avatar ? (
             <img
               src={user.avatar}
-              alt="用户头像"
+              alt={t('system.user_avatar')}
               className="h-8 w-8 rounded-full"
             />
           ) : (
@@ -29,7 +31,7 @@ export function UserSelector() {
             </div>
           )}
           <span className="text-sm font-medium text-gray-700 dark:text-white">
-            {user?.name || "未登录"}
+            {user?.name || t('system.not_logged_in')}
           </span>
           <IconChevronDown
             className="h-4 w-4 text-gray-500"
@@ -54,7 +56,7 @@ export function UserSelector() {
                   className={`flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white`}
                 >
                   <IconUser className="mr-2 h-4 w-4" />
-                  个人中心
+                  {t('system.personal_center')}
                 </button>
               )}
             </MenuItem>
@@ -65,7 +67,7 @@ export function UserSelector() {
                   className={`flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white`}
                 >
                   <IconUserCog className="mr-2 h-4 w-4" />
-                  系统设置
+                  {t('system.system_settings')}
                 </button>
               )}
             </MenuItem>
@@ -76,7 +78,7 @@ export function UserSelector() {
                   className={`flex items-center px-4 py-2 text-sm text-red-600 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white`}
                 >
                   <IconLogout className="mr-2 h-4 w-4" />
-                  退出登录
+                  {t('system.logout')}
                 </button>
               )}
             </MenuItem>

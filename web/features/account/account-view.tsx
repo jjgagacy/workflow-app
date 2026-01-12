@@ -1,12 +1,12 @@
 import AccountForm from "./account-form";
 
 type AccountViewPageProps = {
-    accountId: string;
+  accountId: string;
 }
 export default async function AccountViewPage({
-    accountId
+  accountId
 }: AccountViewPageProps) {
-    const pageTitle = accountId !== 'new' ? '编辑账户' : '添加账户';
+  const pageTitle = accountId !== 'new' ? '编辑账户' : '添加账户';
 
-    return <AccountForm accountId={accountId} pageTitle={pageTitle} />;
+  return <AccountForm accountId={accountId} pageTitle={pageTitle} />;
 }
