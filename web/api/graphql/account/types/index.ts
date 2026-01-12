@@ -30,3 +30,9 @@ export interface ForgotPasswordResetInput {
   confirmPassword: string;
   token: string;
 }
+
+export interface PasswordLoginInput {
+  email: string;
+  password: string;
+  token?: string;
+}

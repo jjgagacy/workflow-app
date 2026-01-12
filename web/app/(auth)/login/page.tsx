@@ -243,7 +243,6 @@ export default function Login() {
                   </span>
                 </button>
 
-
                 <div className="mt-8 text-center">
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     {t('account.agreement_prefix')}
@@ -258,7 +257,6 @@ export default function Login() {
                 </div>
               </div>
             )}
-
           </div>
 
         </div>

@@ -29,6 +29,7 @@ export type I18nTranslations = {
         "EMAIL_CHANGE_RATE_LIMIT_EXCEEDED": string;
         "INVALID_TOKEN": string;
         "INVALID_EMAIL": string;
+        "INVALID_ACCOUNT": string;
         "VERIFY_CODE_ERROR": string;
         "EMAIL_CHANGE_ERROR_RATE_LIMIT": string;
         "LOGIN_ERROR_RATE_LIMIT": string;

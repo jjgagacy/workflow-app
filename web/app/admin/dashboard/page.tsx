@@ -19,183 +19,183 @@ import { arrayToTree, treeToFlatten } from "@/utils/trees";
 import { useState } from "react";
 
 export default function Page() {
-    const [openDialog, setOpenDialog] = useState(false);
-    const { showDialog, showAlert, showConfirm } = useDialog();
+  const [openDialog, setOpenDialog] = useState(false);
+  const { showDialog, showAlert, showConfirm } = useDialog();
 
-    const handleDelete = async () => {
-        // use dialog
-        const confirmed = await showDialog({
-            title: "确认删除",
-            description: "您确定要删除此项吗？此操作不可撤销。",
-            confirmText: "删除",
-            cancelText: "取消",
-            destructive: true,
-            onConfirm: async () => {
-            }
-        });
+  const handleDelete = async () => {
+    // use dialog
+    const confirmed = await showDialog({
+      title: "确认删除",
+      description: "您确定要删除此项吗？此操作不可撤销。",
+      confirmText: "删除",
+      cancelText: "取消",
+      destructive: true,
+      onConfirm: async () => {
+      }
+    });
 
-        if (confirmed) {
-            console.log('Item deleted');
-        }
-    };
-
-    const handleAlert = async () => {
-        await showAlert('确定操作吗');
+    if (confirmed) {
+      console.log('Item deleted');
     }
+  };
 
-    const handleConfirm = async () => {
-        const confirmed = await showConfirm('确定吗？？？', '修改修改修改');
-        if (confirmed) {
-            console.log('confirmed');
-        }
+  const handleAlert = async () => {
+    await showAlert('确定操作吗');
+  }
+
+  const handleConfirm = async () => {
+    const confirmed = await showConfirm('确定吗？？？', '修改修改修改');
+    if (confirmed) {
+      console.log('confirmed');
     }
+  }
 
-    const selectItems = [
-        { value: 1, name: '选项一' },
-        { value: 2, name: '选项二' },
-        { value: 3, name: '选项三' },
-        { value: 4, name: '选项四' },
-        { value: 5, name: '选项五' }
-    ];
+  const selectItems = [
+    { value: 1, name: '选项一' },
+    { value: 2, name: '选项二' },
+    { value: 3, name: '选项三' },
+    { value: 4, name: '选项四' },
+    { value: 5, name: '选项五' }
+  ];
 
 
-    const treeData: TreeNode[] = [
+  const treeData: TreeNode[] = [
+    {
+      id: 1,
+      name: 'Node 1',
+      children: [
         {
-            id: 1,
-            name: 'Node 1',
-            children: [
-                {
-                    id: 2,
-                    name: 'Node 1.1',
-                    children: [
-                        { id: 3, name: 'Node 1.1.1' }
-                    ]
-                },
-                { id: 4, name: 'Node 1.2' }
-            ]
+          id: 2,
+          name: 'Node 1.1',
+          children: [
+            { id: 3, name: 'Node 1.1.1' }
+          ]
         },
-        {
-            id: 5,
-            name: 'Node 2'
-        }
-    ];
+        { id: 4, name: 'Node 1.2' }
+      ]
+    },
+    {
+      id: 5,
+      name: 'Node 2'
+    }
+  ];
 
-    const faqItems = [
-        {
-            title: "What is your refund policy?",
-            description: "If you're unhappy with your purchase, we'll refund you in full.",
-            defaultOpen: true
-        },
-        {
-            title: "Do you offer technical support?",
-            description: "No, we don't offer technical support for free products."
-        },
-        {
-            title: "How long does delivery take?",
-            description: "Delivery usually takes 3-5 business days depending on your location."
-        }
-    ]
+  const faqItems = [
+    {
+      title: "What is your refund policy?",
+      description: "If you're unhappy with your purchase, we'll refund you in full.",
+      defaultOpen: true
+    },
+    {
+      title: "Do you offer technical support?",
+      description: "No, we don't offer technical support for free products."
+    },
+    {
+      title: "How long does delivery take?",
+      description: "Delivery usually takes 3-5 business days depending on your location."
+    }
+  ]
 
-    return (
-        <div>
-            <h1 className="mt-4">Dashboard</h1>
-            <div className="flex gap-2">
-                <Button variant={'primary'}>primary</Button>
-                <Button variant={'secondary'}>secondary</Button>
-                <Button variant={'warning'}>warning</Button>
-                <Button variant={'tertiary'}>tertiary</Button>
-                <Button variant={'ghost'}>ghost</Button>
-            </div>
+  return (
+    <div>
+      <h1 className="mt-4">Dashboard</h1>
+      <div className="flex gap-2">
+        <Button variant={'primary'}>primary</Button>
+        <Button variant={'secondary'}>secondary</Button>
+        <Button variant={'warning'}>warning</Button>
+        <Button variant={'tertiary'}>tertiary</Button>
+        <Button variant={'ghost'}>ghost</Button>
+      </div>
 
-            <h1 className="mt-4">badge</h1>
-            <div className="flex gap-2">
-                <Badge>badge</Badge>
-                <Badge variant={'default'}>default</Badge>
-                <Badge variant={'primary'}>primary</Badge>
-                <Badge variant={'indigo'} bordered={true}>indigo bordered</Badge>
-                <Badge variant={'pink'} size={'xs'}>pink xs</Badge>
-                <Badge variant={'purple'} size={'sm'}>purple sm</Badge>
-                <Badge variant={'success'} size={'lg'}>success lg</Badge>
-                <Badge variant={'warning'} dot={true}>warning dot</Badge>
-            </div>
+      <h1 className="mt-4">badge</h1>
+      <div className="flex gap-2">
+        <Badge>badge</Badge>
+        <Badge variant={'default'}>default</Badge>
+        <Badge variant={'primary'}>primary</Badge>
+        <Badge variant={'indigo'} bordered={true}>indigo bordered</Badge>
+        <Badge variant={'pink'} size={'xs'}>pink xs</Badge>
+        <Badge variant={'purple'} size={'sm'}>purple sm</Badge>
+        <Badge variant={'success'} size={'lg'}>success lg</Badge>
+        <Badge variant={'warning'} dot={true}>warning dot</Badge>
+      </div>
 
-            <h1 className="mt-4">toasters</h1>
-            <div className="flex gap-2">
-                <Button variant={'secondary'} onClick={() => toast.message('this is a message')}>message</Button>
-                <Button variant={'secondary'} onClick={() => toast.info('this is a info message')}>info</Button>
-                <Button variant={'secondary'} onClick={() => toast.success('this is a success message')}>success</Button>
-                <Button variant={'secondary'} onClick={() => toast.warning('this is a warning message')}>warning</Button>
-                <Button variant={'secondary'} onClick={() => toast.error('this is an error message')}>error</Button>
-                <Button variant={'secondary'} onClick={() => { toast.loading(); setTimeout(() => toast.dismiss(), 3000); }}>loading</Button>
-            </div>
+      <h1 className="mt-4">toasters</h1>
+      <div className="flex gap-2">
+        <Button variant={'secondary'} onClick={() => toast.message('this is a message')}>message</Button>
+        <Button variant={'secondary'} onClick={() => toast.info('this is a info message')}>info</Button>
+        <Button variant={'secondary'} onClick={() => toast.success('this is a success message')}>success</Button>
+        <Button variant={'secondary'} onClick={() => toast.warning('this is a warning message')}>warning</Button>
+        <Button variant={'secondary'} onClick={() => toast.error('this is an error message')}>error</Button>
+        <Button variant={'secondary'} onClick={() => { toast.loading(); setTimeout(() => toast.dismiss(), 3000); }}>loading</Button>
+      </div>
 
-            <h1 className="mt-4">dialog</h1>
-            <div className="flex gap-2">
-                <Button variant={'secondary'} onClick={() => setOpenDialog(true)}>show dialog</Button>
-                <Button variant={'secondary'} onClick={() => handleDelete()}>show delete dialog</Button>
-                <Button variant={'secondary'} onClick={() => handleAlert()}>show alert</Button>
-                <Button variant={'secondary'} onClick={() => handleConfirm()}>show confirm</Button>
-            </div>
+      <h1 className="mt-4">dialog</h1>
+      <div className="flex gap-2">
+        <Button variant={'secondary'} onClick={() => setOpenDialog(true)}>show dialog</Button>
+        <Button variant={'secondary'} onClick={() => handleDelete()}>show delete dialog</Button>
+        <Button variant={'secondary'} onClick={() => handleAlert()}>show alert</Button>
+        <Button variant={'secondary'} onClick={() => handleConfirm()}>show confirm</Button>
+      </div>
 
-            <h1 className="mt-4">forms</h1>
-            <div className="flex flex-col gap-2">
-                <Input type="text" placeholder="please input..." />
-                <Textarea placeholder="a simple description" />
-                <Select onChange={(arg) => console.log(arg.target.value)}>
-                    <option>Canada</option>
-                    <option>Mexico</option>
-                    <option>United States</option>
-                </Select>
-                <SimpleSelect items={selectItems} allowSearch={false}></SimpleSelect>
-                <TreeSelect options={treeData} idKey="id" labelKey="name" multiple={true} onChange={(e) => console.log(e)}></TreeSelect>
-                <label className="flex items-center gap-1"><Checkbox />复选框</label>
-                <label className="flex items-center gap-1"><Radio />单选框</label>
-                <Switch checked={true} onChange={(arg) => console.log(arg)} />
-                <RadioGroup name='status' defaultValue={1} onValueChange={(e) => console.log(e)}>
-                    <RadioGroupItem value={1}>启用</RadioGroupItem>
-                    <RadioGroupItem value={0}>禁用</RadioGroupItem>
-                </RadioGroup>
-                <RadioGroup name='userName' defaultValue={'alex'} onValueChange={(e) => console.log(e)} orientation="horizontal">
-                    <RadioGroupItem value={'alex'}>Alex</RadioGroupItem>
-                    <RadioGroupItem value={'joe'}>Joe</RadioGroupItem>
-                </RadioGroup>
-            </div>
+      <h1 className="mt-4">forms</h1>
+      <div className="flex flex-col gap-2">
+        <Input type="text" placeholder="please input..." />
+        <Textarea placeholder="a simple description" />
+        <Select onChange={(arg) => console.log(arg.target.value)}>
+          <option>Canada</option>
+          <option>Mexico</option>
+          <option>United States</option>
+        </Select>
+        <SimpleSelect items={selectItems} allowSearch={false}></SimpleSelect>
+        <TreeSelect options={treeData} idKey="id" labelKey="name" multiple={true} onChange={(e) => console.log(e)}></TreeSelect>
+        <label className="flex items-center gap-1"><Checkbox />复选框</label>
+        <label className="flex items-center gap-1"><Radio />单选框</label>
+        <Switch checked={true} onChange={(arg) => console.log(arg)} />
+        <RadioGroup name='status' defaultValue={1} onValueChange={(e) => console.log(e)}>
+          <RadioGroupItem value={1}>启用</RadioGroupItem>
+          <RadioGroupItem value={0}>禁用</RadioGroupItem>
+        </RadioGroup>
+        <RadioGroup name='userName' defaultValue={'alex'} onValueChange={(e) => console.log(e)} orientation="horizontal">
+          <RadioGroupItem value={'alex'}>Alex</RadioGroupItem>
+          <RadioGroupItem value={'joe'}>Joe</RadioGroupItem>
+        </RadioGroup>
+      </div>
 
-            <h1 className="mt-4">accordion</h1>
-            <div className="flex flex-col gap-2">
-                <Accordion items={faqItems} />
-            </div>
+      <h1 className="mt-4">accordion</h1>
+      <div className="flex flex-col gap-2">
+        <Accordion items={faqItems} />
+      </div>
 
-            <h1 className="mt-4">card</h1>
-            <div className="flex flex-col gap-2">
-                <Card className="mx-auto w-full">
-                    <CardHeader>
-                        <CardTitle className="text-left text-2xl font-bold">This is a foo</CardTitle>
-                        <CardAction className="">
-                            <Button className="mr-1">编辑</Button>
-                            <Button variant={'alert'}>删除</Button>
-                        </CardAction>
-                    </CardHeader>
-                    <CardContent>
-                        <CardDescription>This is description</CardDescription>
-                        This is card content
-                    </CardContent>
-                </Card>
-            </div>
+      <h1 className="mt-4">card</h1>
+      <div className="flex flex-col gap-2">
+        <Card className="mx-auto w-full">
+          <CardHeader>
+            <CardTitle className="text-left text-2xl font-bold">This is a foo</CardTitle>
+            <CardAction className="">
+              <Button className="mr-1">编辑</Button>
+              <Button variant={'alert'}>删除</Button>
+            </CardAction>
+          </CardHeader>
+          <CardContent>
+            <CardDescription>This is description</CardDescription>
+            This is card content
+          </CardContent>
+        </Card>
+      </div>
 
 
-            <Dialog
-                isOpen={openDialog}
-                isLoading={true}
-                title={'this is title data'}
-                description=""
-                confirmText="确定"
-                cancelText="取消"
-                onConfirm={() => 1}
-                onCancel={() => setOpenDialog(false)}
-            >
-                this is content dialog
-            </Dialog>
-        </div>
-    );
+      <Dialog
+        isOpen={openDialog}
+        isLoading={true}
+        title={'this is title data'}
+        description=""
+        confirmText="确定"
+        cancelText="取消"
+        onConfirm={() => 1}
+        onCancel={() => setOpenDialog(false)}
+      >
+        this is content dialog
+      </Dialog>
+    </div>
+  );
 }

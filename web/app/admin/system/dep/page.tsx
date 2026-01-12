@@ -10,30 +10,30 @@ import Loading from "../../loading";
 import DepartmentListPage from "@/features/dep/dep-list";
 
 export const metadata = {
-    title: 'Dashboard: 部门列表'
+  title: 'Dashboard: 部门列表'
 };
 
 export default function Page() {
-    return (
-        <PageContainer>
-            <div className="flex flex-1 flex-col space-y-4">
-                <div className="flex items-start justify-between">
-                    <Heading
-                        title="部门管理"
-                        description="管理您公司内的部门" />
-                    <Link
-                        href="/admin/system/dep/new"
-                        className={cn(buttonVariants(), 'text-xs md:text-sm')}
-                    >
-                        <IconPlus className="mr-2 h-4 w-4" /> 添加部门
-                    </Link>
-                </div>
-                <Separator />
-                <Suspense
-                    fallback={<Loading />}>
-                    <DepartmentListPage />
-                </Suspense>
-            </div>
-        </PageContainer>
-    );
+  return (
+    <PageContainer>
+      <div className="flex flex-1 flex-col space-y-4">
+        <div className="flex items-start justify-between">
+          <Heading
+            title="部门管理"
+            description="管理您公司内的部门" />
+          <Link
+            href="/admin/system/dep/new"
+            className={cn(buttonVariants(), 'text-xs md:text-sm')}
+          >
+            <IconPlus className="mr-2 h-4 w-4" /> 添加部门
+          </Link>
+        </div>
+        <Separator />
+        <Suspense
+          fallback={<Loading />}>
+          <DepartmentListPage />
+        </Suspense>
+      </div>
+    </PageContainer>
+  );
 }

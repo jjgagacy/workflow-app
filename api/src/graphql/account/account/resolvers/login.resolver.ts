@@ -1,7 +1,7 @@
 import { Args, Mutation, Resolver, Query } from "@nestjs/graphql";
 import { AccountService } from "@/account/account.service";
 import { LoginResponse, UserInfoResponse } from "../types/login-response.type";
-import { EmailCodeLoginInput, EmailCodeLoginSendEmail, LoginInput, ResetPasswordSendEmailInput } from "../types/login-input.type";
+import { EmailCodeLoginInput, EmailCodeLoginSendEmail, LoginInput, PasswordLoginInput, ResetPasswordSendEmailInput } from "../types/login-input.type";
 import { AuthService } from "@/auth/auth.service";
 import { CurrentUser } from "@/common/decorators/current-user";
 import { BadRequestException, NotFoundException, Req, UseGuards } from "@nestjs/common";
@@ -9,7 +9,7 @@ import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { AuthAccountService } from "@/service/auth-account.service";
 import { DeviceService } from "@/service/libs/device.service";
 import { EnableEmailPasswordLoginGuard } from "@/common/guards/auth/enable-email-password-login.guard";
-import { EmailInFreezeError } from "@/service/exceptions/account.error";
+import { AccountNotFoundError, EmailInFreezeError } from "@/service/exceptions/account.error";
 import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { FeatureService } from "@/service/feature.service";
@@ -62,8 +62,23 @@ export class LoginResolver {
   }
 
   @Mutation(() => LoginResponse)
-  async passwordLogin(): Promise<LoginResponse> {
-    throw new Error('Not impl');
+  async emailPasswordLogin(@Args('input') input: PasswordLoginInput, @GqlRequest() req: Request): Promise<LoginResponse> {
+    const language = this.deviceService.getLanguageFromHeader(req.headers['accept-language']);
+    const translatedLanguage = convertLanguageCode(getMappedLang(language));
+
+    const account = await this.accountService.getByEmail(input.email);
+    if (!account) {
+      throw AccountNotFoundError.create(this.i18n);
+    }
+
+    return this.authAccountService
+      .validatePasswordLogin(input.email, input.password, translatedLanguage)
+      .then(async (user) => {
+        if (await this.authAccountService.isAccountFreezed(input.email)) {
+          throw EmailInFreezeError.create(this.i18n);
+        }
+        return this.authService.login(user)
+      });
   }
 
   @Mutation(() => String)

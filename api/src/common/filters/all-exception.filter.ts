@@ -20,10 +20,10 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
 
   async catch(exception: any, host: ArgumentsHost) {
     if (exception instanceof Error) {
-      this.logger.error('GlobalExceptionFilter:', getErrorDetails(exception));
+      this.logger.error('AllExceptionFilter:', getErrorDetails(exception));
     } else {
       // todo 其他类型的错误
-      this.logger.log("GlobalExceptionFilter:", exception);
+      this.logger.log("AllExceptionFilter:", exception);
     }
     const contextType = host.getType<GqlContextType>();
 

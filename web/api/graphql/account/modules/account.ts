@@ -1,7 +1,7 @@
 import { createMutationHook, useGraphQLMutation, useGraphQLQuery } from "@/hooks/use-graphql";
 import { GET_ACCOUNTS } from "../../queries";
-import { CREATE_ACCOUNT, DELETE_ACCOUNT, EMAIL_CODE_LOGIN, EMAIL_CODE_LOGIN_SEND, EMAIL_CODE_RESET_PASSWORD_SEND, EMAIL_CODE_SIGNUP, EMAIL_CODE_SIGNUP_SEND, FORGOT_PASSWORD_CHECK, FORGOT_PASSWORD_RESET, TOGGLE_ACCOUNT_STATUS, UPDATE_ACCOUNT, VALIDATE_EMAIL, VALIDATE_USERNAME } from '../mutations/account-mutations';
-import { EmailCodeLoginInput, EmailCodeSendInput, EmailCodeSignUpInput, ForgotPasswordCheckInput, ForgotPasswordCheckOutput, ForgotPasswordResetInput } from "../types";
+import { CREATE_ACCOUNT, DELETE_ACCOUNT, EMAIL_CODE_LOGIN, EMAIL_CODE_LOGIN_SEND, EMAIL_CODE_RESET_PASSWORD_SEND, EMAIL_CODE_SIGNUP, EMAIL_CODE_SIGNUP_SEND, EMAIL_PASSWORD_LOIGN, FORGOT_PASSWORD_CHECK, FORGOT_PASSWORD_RESET, TOGGLE_ACCOUNT_STATUS, UPDATE_ACCOUNT, VALIDATE_EMAIL, VALIDATE_USERNAME } from '../mutations/account-mutations';
+import { EmailCodeLoginInput, EmailCodeSendInput, EmailCodeSignUpInput, ForgotPasswordCheckInput, ForgotPasswordCheckOutput, ForgotPasswordResetInput, PasswordLoginInput } from "../types";
 
 // 获取账户列表
 export const useGetAccounts = (params: {
@@ -137,6 +137,17 @@ export const useEmailCodeLogin = createMutationHook<
   EMAIL_CODE_LOGIN,
   {
     transform: (data) => data.emailCodeLogin
+  }
+);
+
+export const useEmailPasswordLogin = createMutationHook<
+  { emailPasswordLogin: any },
+  { input: PasswordLoginInput },
+  any
+>(
+  EMAIL_PASSWORD_LOIGN,
+  {
+    transform: (data) => data.emailPasswordLogin
   }
 );
 

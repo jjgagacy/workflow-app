@@ -54,6 +54,7 @@ const translation = {
   username_min_length: '用户名至少需要2个字符',
   username_max_length: '用户名不能超过20个字符',
   registration_failed: '注册失败，请稍后重试',
+  login_failed: '登录失败，请稍后重试',
   // Alternative options
   or_choose_other_way: '或选择其他方式',
   // Account status

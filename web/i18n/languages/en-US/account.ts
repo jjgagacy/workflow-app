@@ -53,6 +53,7 @@ const translation = {
   username_min_length: 'Username must be at least 2 characters',
   username_max_length: 'Username cannot exceed 20 characters',
   registration_failed: 'Registration failed, please try again later',
+  login_failed: 'Login failed, please try again later',
   enter_email_first: 'Please enter email first',
   send_code_failed: 'Failed to send verification code',
   // Alternative options

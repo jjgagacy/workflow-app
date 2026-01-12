@@ -1,7 +1,7 @@
 import { AccountService } from "@/account/account.service";
 import { AccountEntity } from "@/account/entities/account.entity";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Cache } from "cache-manager";
 import { DataSource, EntityManager, QueryRunner, Repository } from "typeorm";
@@ -26,7 +26,7 @@ import { AccountNotLinkTenantError, CanNotOperateSelfError, InvalidActionError, 
 import { EmailRateLimiterService } from "./libs/rate-limiter/email-rate-limiter.service";
 import { EmailLanguage } from "@/mail/mail-i18n.service";
 import { defaultSendResetPasswordEmailParams, SendResetPasswordEmailParams } from "./interfaces/account.interface";
-import { AccountChangeEmailRateLimitError, AccountDeletionRateLimitError, AccountResetPasswordRateLimitError, EmailCodeLoginRateLimitError } from "./exceptions/rate-limiter.error";
+import { AccountChangeEmailRateLimitError, AccountDeletionRateLimitError, AccountResetPasswordRateLimitError, EmailCodeLoginRateLimitError, EmailPasswordLoginInvalidCredentialError, EmailPasswordLoginRateLimitError } from "./exceptions/rate-limiter.error";
 import { TOKEN_TYPES, TokenManagerService } from "./libs/token-manager.service";
 import { MailService } from "@/mail/mail.service";
 import { MonieConfig } from "@/monie/monie.config";
@@ -37,13 +37,12 @@ import { FeatureService } from "./feature.service";
 import authConfig from "@/config/auth.config";
 import { TimeConverter } from "./libs/time-converter.service";
 import { RoleEntity } from "@/account/entities/role.entity";
-import { EMAIL_RATE_LIMITER_CONFIGS } from "./configs/rate-limiter.config";
+import { EMAIL_RATE_LIMITER_CONFIGS, LOGIN_RATE_LIMITER_CONFIGS } from "./configs/rate-limiter.config";
+import { LoginRateLimiterService } from "./libs/rate-limiter/login-rate-limiter.service";
 
 @Injectable()
 export class AuthAccountService {
   constructor(
-    @InjectRepository(AccountEntity)
-    private readonly accountRepository: Repository<AccountEntity>,
     private readonly accountService: AccountService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     private readonly cacheService: EnhanceCacheService,
@@ -53,6 +52,7 @@ export class AuthAccountService {
     private readonly i18n: I18nService<I18nTranslations>,
     private readonly tenantService: TenantService,
     private readonly emailRateLimiter: EmailRateLimiterService,
+    private readonly loginRateLimiter: LoginRateLimiterService,
     private readonly tokenManagerService: TokenManagerService,
     private readonly mailService: MailService,
     private readonly monieConfig: MonieConfig,
@@ -201,12 +201,43 @@ export class AuthAccountService {
       if (await this.isAccountFreezed(email)) {
         throw EmailInFreezeError.create(this.i18n);
       }
+      await this.validateAccountStatus(account);
       const workEntity = entityManager || this.dataSource.manager;
       const tenant = await this.getCurrentTenant(account.id, workEntity);
       if (!tenant?.tenant) {
         await this.createTenantForNewAccount(account);
       }
       return account;
+    }
+  }
+
+  async validatePasswordLogin(email: string, password: string, language: string): Promise<AccountEntity> {
+    const isRateLimited = await this.loginRateLimiter.isRateLimited(email, LOGIN_RATE_LIMITER_CONFIGS['password_login']);
+    if (isRateLimited) {
+      throw EmailPasswordLoginRateLimitError.create(this.i18n);
+    }
+
+    const account = await this.accountService.getByEmail(email, true);
+    if (!account) throw new NotFoundException();
+
+    const isPasswordValid = await this.accountService.verifyPassword(
+      password,
+      account.password
+    );
+
+    if (!isPasswordValid) {
+      await this.loginRateLimiter.recordAttempt(email, LOGIN_RATE_LIMITER_CONFIGS['password_login']);
+
+      throw EmailPasswordLoginInvalidCredentialError.create(this.i18n);
+    }
+
+    await this.loginRateLimiter.resetAttempts(email, LOGIN_RATE_LIMITER_CONFIGS['password_login'].type);
+    return account;
+  }
+
+  private async validateAccountStatus(account: AccountEntity) {
+    if (account.status !== 0) {
+      throw new UnauthorizedException(this.i18n.t('auth.INVALID_ACCOUNT'));
     }
   }
 

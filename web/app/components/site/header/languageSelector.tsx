@@ -2,6 +2,7 @@
 
 import { setClientLocale } from "@/i18n";
 import { getLanguageNameByValue } from "@/i18n/config";
+import { getLanguageByValue, LanguageEmojiDefault, languages } from "@/types/language";
 import { Globe } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -36,22 +37,17 @@ export function LanguageSelector() {
           {/* 下拉菜单 */}
           <div className="absolute top-6 right-0 mt-2 w-32 bg-white rounded-lg shadow-lg z-20 border border-gray-200">
             <ul className="py-1">
-              <li>
-                <button
-                  onClick={() => toggleLanguage('en-US')}
-                  className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
-                >
-                  <span>English</span>
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => toggleLanguage('zh-Hans')}
-                  className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
-                >
-                  <span>中文</span>
-                </button>
-              </li>
+              {languages.map(lang => (
+                <li key={lang.name} className="flex items-center">
+                  <button
+                    onClick={() => toggleLanguage(lang.value)}
+                    className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                  >
+                    <span className="text-lg">{lang.emoji || LanguageEmojiDefault}</span>
+                    <span>{lang.name}</span>
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
         </>

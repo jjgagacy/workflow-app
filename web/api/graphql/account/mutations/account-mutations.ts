@@ -1,4 +1,5 @@
 import { gql } from "graphql-request";
+import { LOGIN_RESPONSE_FIELDS } from "../types/fields";
 
 export const LOGIN_MUTATION = gql`
   mutation LoginMutation($input: LoginInput!) {
@@ -78,25 +79,31 @@ export const EMAIL_CODE_RESET_PASSWORD_SEND = gql`
 export const EMAIL_CODE_LOGIN = gql`
   mutation EmailCodeLogin($input: EmailCodeLoginInput!) {
     emailCodeLogin(input: $input) {
-      access_token,
-      name,
-      roles,
-      isSuper,
-      expiresIn
+      ...LoginResponseParts
     }
   }
+
+  ${LOGIN_RESPONSE_FIELDS}
+`
+
+export const EMAIL_PASSWORD_LOIGN = gql`
+  mutation EmailPasswordLogin($input: PasswordLoginInput!) {
+    emailPasswordLogin(input: $input) {
+      ...LoginResponseParts
+    }
+  }
+  
+  ${LOGIN_RESPONSE_FIELDS}
 `
 
 export const EMAIL_CODE_SIGNUP = gql`
   mutation EmailCodeSignUp($input: EmailCodeSignUpInput!) {
     emailCodeSignUp(input: $input) {
-      access_token,
-      name,
-      roles,
-      isSuper,
-      expiresIn
+      ...LoginResponseParts
     }
   }
+
+  ${LOGIN_RESPONSE_FIELDS}
 `
 
 export const FORGOT_PASSWORD_CHECK = gql`

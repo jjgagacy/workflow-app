@@ -183,11 +183,11 @@ type Mutation {
   emailCodeLoginSendEmail(input: EmailCodeLoginSendEmail!): String!
   emailCodeSignUp(input: EmailCodeSignUpInput!): LoginResponse!
   emailCodeSignupSendEmail(input: EmailCodeLoginSendEmail!): String!
+  emailPasswordLogin(input: PasswordLoginInput!): LoginResponse!
   forgetPasswordReset(input: ForgetPasswordResetInput!): Boolean!
   forgetPasswordSendEmail(input: ForgetPasswordInput!): String!
   forgetPasswordTokenCheck(input: ForgetPasswordInput!): ForgetPasswordCheckResponse!
   login(input: LoginInput!): LoginResponse!
-  passwordLogin: LoginResponse!
   resetPasswordSendEmail(input: ResetPasswordSendEmailInput!): String!
   setRolePerms(input: RoleSetPermInput!): Boolean!
   switchWorkspace(tenant_id: String!): Boolean!
@@ -209,6 +209,12 @@ type PageInfo {
   page: Int!
   pageSize: Int!
   total: Int!
+}
+
+input PasswordLoginInput {
+  email: String!
+  password: String!
+  token: String
 }
 
 type Perm {

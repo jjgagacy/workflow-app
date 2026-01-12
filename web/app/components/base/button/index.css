@@ -2,64 +2,64 @@
 @import "tailwindcss/utilities";
 
 @layer utilities {
-    .btn {
-        /* 基础 */
-        @apply inline-flex justify-center items-center cursor-pointer;
-        @apply whitespace-nowrap font-medium select-none;
+  .btn {
+    /* 基础 */
+    @apply inline-flex justify-center items-center cursor-pointer;
+    @apply whitespace-nowrap font-medium select-none;
 
-        /* 形状 */
-        @apply rounded-md border border-transparent;
+    /* 形状 */
+    @apply rounded-md border border-transparent;
 
-        /* 过渡 */
-        @apply transition-all duration-200 ease-in-out;
+    /* 过渡 */
+    @apply transition-all duration-200 ease-in-out;
 
-        /* 交互 */
-        @apply hover:brightness-95 active:scale-[0.98];
-        @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
-        @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    /* 交互 */
+    @apply hover:brightness-98 active:scale-[0.98];
+    @apply focus:outline-none focus:shadow-[0_0_0_2px_currentColor];
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
 
-        /* 尺寸 */
-        /* @apply px-4 py-2 text-sm; */
-        /* @apply md:px-5 md:py-2.5 md:text-base; */
-    }
+    /* 尺寸 */
+    /* @apply px-4 py-2 text-sm; */
+    /* @apply md:px-5 md:py-2.5 md:text-base; */
+  }
 
-    .btn-small {
-        @apply px-2 h-6 rounded-md text-xs font-medium;
-    }
+  .btn-small {
+    @apply px-2 h-6 rounded-md text-xs font-medium;
+  }
 
-    .btn-medium {
-        @apply px-3.5 h-8 rounded-lg text-[13px] leading-4 font-medium;
-    }
+  .btn-medium {
+    @apply px-3.5 h-8 rounded-lg text-[13px] leading-4 font-medium;
+  }
 
-    .btn-large {
-        @apply px-4 h-9 rounded-[10px] text-sm font-semibold;
-    }
+  .btn-large {
+    @apply px-4 h-9 rounded-[10px] text-sm font-semibold;
+  }
 
-    .btn-disabled {
-        @apply cursor-not-allowed;
-    }
+  .btn-disabled {
+    @apply cursor-not-allowed;
+  }
 
-    .btn-primary {
-        @apply shadow bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-blue-500
-    }
+  .btn-primary {
+    @apply shadow bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-blue-500
+  }
 
-    .btn-secondary {
-        @apply shadow bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:ring-gray-500
-    }
+  .btn-secondary {
+    @apply shadow bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:ring-gray-500
+  }
 
-    .btn-warning {
-        @apply shadow bg-warning text-warning-foreground hover:bg-warning/90 focus:ring-yellow-500
-    }
+  .btn-warning {
+    @apply shadow bg-warning text-warning-foreground hover:bg-warning/90 focus:ring-yellow-500
+  }
 
-    .btn-tertiary {
-        @apply shadow bg-muted text-muted-foreground hover:bg-muted/90 focus:ring-gray-500
-    }
+  .btn-tertiary {
+    @apply shadow bg-muted text-muted-foreground hover:bg-muted/90 focus:ring-gray-500
+  }
 
-    .btn-ghost {
-        @apply border-[var(--border)] text-gray-600 rounded-md hover:bg-muted/90 dark:text-gray-300 focus:outline-none focus:ring-gray-100
-    }
+  .btn-ghost {
+    @apply border-[var(--border)] text-gray-600 rounded-md hover:bg-muted/90 dark:text-gray-300 focus:outline-none focus:ring-gray-100
+  }
 
-    .btn-alert {
-        @apply shadow bg-destructive text-destructive-foreground hover:bg-destructive/90 focus:ring-red-500
-    }
+  .btn-alert {
+    @apply shadow bg-destructive text-destructive-foreground hover:bg-destructive/90 focus:ring-red-500
+  }
 }

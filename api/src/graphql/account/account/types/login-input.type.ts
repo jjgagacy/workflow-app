@@ -58,10 +58,7 @@ export class EmailCodeSignUpInput {
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  @Matches(
-    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-    { message: 'auth.INVALID_EMAIL' }
-  )
+  @Matches(EMAIL_REGEX, { message: 'auth.INVALID_EMAIL' })
   email: string;
 
   @Field()
@@ -71,4 +68,19 @@ export class EmailCodeSignUpInput {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   token: string;
+}
+
+@InputType('PasswordLoginInput')
+export class PasswordLoginInput {
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  @Matches(EMAIL_REGEX, { message: 'auth.INVALID_EMAIL' })
+  email: string;
+
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  password: string;
+
+  @Field({ nullable: true })
+  token?: string; // TODO: 可选的安全令牌，如验证码
 }

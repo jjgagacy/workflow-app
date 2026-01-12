@@ -33,24 +33,23 @@ export function useLoginForm() {
 
   const emailCodeLoginMutaiton = api.account.useEmailCodeLogin();
   const validateEmailMutation = api.account.useValidateEmail();
+  const emailPasswordLoginMutation = api.account.useEmailPasswordLogin();
 
   const validateForm = useCallback(() => {
     const newErrors: Record<string, string> = {};
 
-    if (!showVerification) {
+    if (usePassword) {
+      const passwordError = validateField('password');
+      if (passwordError) newErrors.password = passwordError;
+    } else if (!showVerification) {
       const emailError = validateField('email');
       if (emailError) newErrors.email = emailError;
     } else {
-      if (usePassword) {
-        const passwordError = validateField('password');
-        if (passwordError) newErrors.password = passwordError;
-      } else {
-        const tokenError = validateField('token');
-        const codeError = validateField('verificationCode');
+      const tokenError = validateField('token');
+      const codeError = validateField('verificationCode');
 
-        if (tokenError) newErrors.submit = tokenError;
-        if (codeError) newErrors.verificationCode = codeError;
-      }
+      if (tokenError) newErrors.submit = tokenError;
+      if (codeError) newErrors.verificationCode = codeError;
     }
     return newErrors;
   }, [showVerification, formData, validateField]);
@@ -72,12 +71,26 @@ export function useLoginForm() {
       }
     });
     if (!result) {
-      throw new Error(t('account.registration_failed'));
+      throw new Error(t('account.login_failed'));
     }
 
     login(result.access_token, result.name, result.roles, result.isSuper, '');
     router.push('/admin');
   }, [emailCodeLoginMutaiton, formData]);
+
+  const handleEmailPasswordLogin = useCallback(async () => {
+    const result = await emailPasswordLoginMutation({
+      input: {
+        email: formData.email,
+        password: formData.password,
+      }
+    });
+    if (!result) {
+      throw new Error(t('account.login_failed'));
+    }
+    login(result.access_token, result.name, result.roles, result.isSuper, '');
+    router.push('/admin');
+  }, [emailPasswordLoginMutation, formData.email, formData.password]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,7 +104,9 @@ export function useLoginForm() {
     setErrors({});
     setIsLoading(true);
     try {
-      if (!showVerification) {
+      if (usePassword) {
+        await handleEmailPasswordLogin();
+      } else if (!showVerification) {
         await handleEmailValidation();
         await handleSendVerificationCode();
       } else {
