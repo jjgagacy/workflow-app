@@ -17,33 +17,15 @@ import { RadioGroup, RadioGroupItem } from "@/app/ui/radio-group";
 import { Module } from "../module/components/data";
 import Button from "@/app/components/base/button";
 import { Input } from "@/app/ui/input";
-
-const formSchema = z.object({
-  key: z.string().min(2, {
-    error: 'key至少需要2个字符',
-  }),
-  name: z.string().min(2, {
-    error: '部门名称至少需要2个字符'
-  }),
-  parent: z.union([
-    z.string(),
-    z.undefined()
-  ]),
-  sort: z.number(),
-  status: z.number(),
-  module: z.union([
-    z.string(),
-    z.undefined()
-  ]),
-});
+import { useTranslation } from "react-i18next";
 
 export default function MenuForm({
   menuId,
-  pageTitle
 }: {
   menuId: number;
-  pageTitle: string;
 }) {
+  const { t } = useTranslation();
+  const pageTitle = menuId > 0 ? t('system.edit_menu') : t('system.add_menu');
   usePageTitle(pageTitle);
   const [isLoading, setIsLoading] = useState(false);
   const [updateMenuId] = useState<number>(menuId);
@@ -74,6 +56,25 @@ export default function MenuForm({
     setModules(moduleResult?.data);
   }, [moduleResult?.data]);
 
+  const formSchema = z.object({
+    key: z.string().min(2, {
+      error: t('system.menu_key_min_length'),
+    }),
+    name: z.string().min(2, {
+      error: t('system.menu_name_min_length'),
+    }),
+    parent: z.union([
+      z.string(),
+      z.undefined()
+    ]),
+    sort: z.number(),
+    status: z.number(),
+    module: z.union([
+      z.string(),
+      z.undefined()
+    ]),
+  });
+
   const defaultValues: z.infer<typeof formSchema> = {
     key: currentMenu?.key || '',
     name: currentMenu?.name || '',
@@ -88,15 +89,15 @@ export default function MenuForm({
       setIsLoading(true);
       if (updateMenuId) {
         await updateMenu({ ...values });
-        toast.success('编辑成功');
+        toast.success(t('system.edit_success'));
       } else {
         await createMenu({ ...values });
-        toast.success('添加成功');
+        toast.success(t('system.add_success'));
       }
       router.push('/admin/system/menu');
     } catch (error) {
       console.error(error);
-      toast.error('操作失败');
+      toast.error(t('system.operation_failed'));
     } finally {
       setIsLoading(false);
     }
@@ -125,7 +126,7 @@ export default function MenuForm({
                   name='parent'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>上级菜单</FormLabel>
+                      <FormLabel>{t('system.parent_menu')}</FormLabel>
                       <FormControl>
                         <TreeSelect
                           options={parentMenus}
@@ -147,7 +148,7 @@ export default function MenuForm({
                   name='key'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>菜单Key</FormLabel>
+                      <FormLabel>{t('system.menu_key')}</FormLabel>
                       <FormControl>
                         <Input
                           disabled={!!updateMenuId}
@@ -164,7 +165,7 @@ export default function MenuForm({
                   name='name'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>菜单名称</FormLabel>
+                      <FormLabel>{t('system.menu_name')}</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -180,7 +181,7 @@ export default function MenuForm({
                   name='sort'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>排序值</FormLabel>
+                      <FormLabel>{t('system.sort_order')}</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -198,7 +199,7 @@ export default function MenuForm({
                   name="status"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>状态</FormLabel>
+                      <FormLabel>{t('system.status')}</FormLabel>
                       <RadioGroup
                         name='status'
                         defaultValue={field.value}
@@ -206,8 +207,8 @@ export default function MenuForm({
                         onValueChange={(e) => field.onChange(e)}
                         orientation='horizontal'
                       >
-                        <RadioGroupItem value={1}>启用</RadioGroupItem>
-                        <RadioGroupItem value={0}>禁用</RadioGroupItem>
+                        <RadioGroupItem value={1}>{t('system.enable')}</RadioGroupItem>
+                        <RadioGroupItem value={0}>{t('system.disable')}</RadioGroupItem>
                       </RadioGroup>
                       <FormMessage />
                     </FormItem>
@@ -219,7 +220,7 @@ export default function MenuForm({
                   name='module'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>选择权限组</FormLabel>
+                      <FormLabel>{t('system.select_permission_group')}</FormLabel>
                       <FormControl>
                         <TreeSelect
                           options={modules}
@@ -239,7 +240,7 @@ export default function MenuForm({
               </div>
             </div>
 
-            <Button className="ml-4" type="submit" disabled={isLoading} loading={isLoading}>{updateMenuId ? '编辑菜单' : '添加菜单'}</Button>
+            <Button className="ml-4" type="submit" disabled={isLoading} loading={isLoading}>{updateMenuId ? t('system.edit_menu') : t('system.add_menu')}</Button>
           </form>
         </Form>
       </CardContent>

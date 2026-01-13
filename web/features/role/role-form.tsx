@@ -12,6 +12,7 @@ import { arrayToTree, filterCurrentAndChildren } from "@/utils/trees";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import z from "zod";
 
 interface RoleFormProps {
@@ -21,21 +22,14 @@ interface RoleFormProps {
   onSubmitSuccess: () => void;
 }
 
-const formSchema = z.object({
-  key: z.string().min(2, {
-    error: 'key至少需要2个字符',
-  }),
-  name: z.string().min(2, {
-    error: '角色名称至少需要2个字符'
-  }),
-  parent: z.string()
-});
+
 
 export default function RoleForm({
   isOpen,
   onOpenChange,
   onSubmitSuccess
 }: RoleFormProps) {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [parentRoles, setParentRoles] = useState<Role[]>([]);
   const { modalData: role } = useModalContext();
@@ -54,6 +48,16 @@ export default function RoleForm({
     }
   }, [roles, currentRole]);
 
+  const formSchema = z.object({
+    key: z.string().min(2, {
+      error: t('system.role_key_min_length'),
+    }),
+    name: z.string().min(2, {
+      error: t('system.role_name_min_length'),
+    }),
+    parent: z.string()
+  });
+
   const defaultValues: z.infer<typeof formSchema> = {
     key: currentRole?.key || '',
     name: currentRole?.name || '',
@@ -70,10 +74,10 @@ export default function RoleForm({
       setIsLoading(true);
       if (currentRole) {
         await updateRole({ ...values, id: currentRole.id });
-        toast.success('编辑成功');
+        toast.success(t('system.edit_success'));
       } else {
         await createRole({ ...values });
-        toast.success('添加成功');
+        toast.success(t('system.add_success'));
       }
       // 关闭模态框并通知父组件刷新
       currentRole = null;
@@ -82,7 +86,7 @@ export default function RoleForm({
       onSubmitSuccess();
     } catch (error) {
       console.error(error);
-      toast.error('操作失败');
+      toast.error(t('system.operation_failed'));
     } finally {
       setIsLoading(false);
     }
@@ -92,25 +96,26 @@ export default function RoleForm({
     <Dialog
       isOpen={isOpen}
       isLoading={isLoading}
-      title={'角色'}
+      title={t('system.role')}
       description=""
-      confirmText="确定"
-      cancelText="取消"
+      confirmText={t('system.confirm')}
+      cancelText={t('system.cancel')}
       onConfirm={form.handleSubmit(onSubmit)}
       onCancel={() => {
         onOpenChange(false)
       }}
+      className="max-w-sm"
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="grid grid-cols-12 gap-4 mb-4">
-            <div className="col-span-6 p-4 space-y-4 rounded">
+            <div className="col-span-full p-4 space-y-4 rounded">
               <FormField
                 control={form.control}
                 name='key'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>角色Key</FormLabel>
+                    <FormLabel>{t('system.role_key')}</FormLabel>
                     <FormControl>
                       <Input
                         disabled={!!currentRole}
@@ -127,7 +132,7 @@ export default function RoleForm({
                 name='name'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>角色名称</FormLabel>
+                    <FormLabel>{t('system.role_name')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -143,7 +148,7 @@ export default function RoleForm({
                 name='parent'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>上级角色</FormLabel>
+                    <FormLabel>{t('system.parent_role')}</FormLabel>
                     <FormControl>
                       <TreeSelect
                         options={parentRoles}

@@ -1,38 +1,38 @@
-'use client';
-
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { Account } from "./data";
 import { Badge } from "@/app/components/base/badge";
 
 export const columnHelper = createColumnHelper<Account>();
-export const columns: ColumnDef<Account, any>[] = [
-  columnHelper.accessor("username", {
-    header: "账户名",
-    cell: info => info.getValue(),
-    meta: { label: '账户名', variant: 'text' }
-  }),
-  columnHelper.accessor("realName", {
-    header: "姓名",
-    cell: info => info.getValue(),
-    meta: { label: '姓名' }
-  }),
-  columnHelper.accessor("mobile", {
-    header: "手机",
-    cell: info => info.getValue(),
-    meta: { label: '手机' }
-  }),
-  columnHelper.accessor("email", {
-    header: "邮箱",
-    cell: info => info.getValue(),
-    meta: { label: '邮箱' }
-  }),
-  columnHelper.accessor("status", {
-    header: "状态",
-    cell: info => (
-      <Badge variant={info.getValue() === 1 ? 'success' : 'danger'}>
-        {info.getValue() === 1 ? "启用" : "禁用"}
-      </Badge>
-    ),
-    meta: { label: '状态' }
-  }),
-];
+export function createColumns(t: (key: string, options?: any) => string): ColumnDef<Account, any>[] {
+  return [
+    columnHelper.accessor("username", {
+      header: t('system.account_name'),
+      cell: info => info.getValue(),
+      meta: { label: t('system.account_name'), variant: 'text' }
+    }),
+    columnHelper.accessor("realName", {
+      header: t('system.full_name'),
+      cell: info => info.getValue(),
+      meta: { label: t('system.full_name') }
+    }),
+    columnHelper.accessor("mobile", {
+      header: t('system.phone'),
+      cell: info => info.getValue(),
+      meta: { label: t('system.phone') }
+    }),
+    columnHelper.accessor("email", {
+      header: t('system.email'),
+      cell: info => info.getValue(),
+      meta: { label: t('system.email') }
+    }),
+    columnHelper.accessor("status", {
+      header: t('system.status'),
+      cell: info => (
+        <Badge variant={info.getValue() === 1 ? 'success' : 'danger'}>
+          {info.getValue() === 1 ? t('system.enable') : t('system.disable')}
+        </Badge>
+      ),
+      meta: { label: t('system.status') }
+    }),
+  ]
+}

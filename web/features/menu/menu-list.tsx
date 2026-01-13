@@ -1,4 +1,3 @@
-import { columns } from "./components/columns";
 import { Menu } from "./components/data";
 import { MenuTable } from "./components/menu-table";
 
@@ -10,7 +9,6 @@ export default async function MenuListPage() {
     <MenuTable
       data={menus}
       totalItems={totalMenus}
-      columns={columns}
     />
   )
 }

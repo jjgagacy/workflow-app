@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import MobileMenu from "./mobileMenu";
 import { useEffect, useState } from "react";
 import { useMobileMenu } from "@/context/mobileMenuContext";
-import { Bot, Server, MessageSquare, Palette, BarChart, Workflow, Zap, Layers, Cpu, Sparkles, Brain, Code, Cloud, Package, BookOpen, Users, Lock } from "lucide-react";
 import { createMobileMenuData } from "../navItems";
 
 export default function MobileMenuWrap() {

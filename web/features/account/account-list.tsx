@@ -1,7 +1,6 @@
 import { searchParams } from "@/utils/search-params";
 import { AccountTable } from "./components/account-table";
 import { Account } from "./components/data";
-import { columns } from "./components/columns";
 
 export default async function AccountListPage() {
   // server request
@@ -23,7 +22,6 @@ export default async function AccountListPage() {
     <AccountTable
       data={accounts}
       totalItems={totalAccounts}
-      columns={columns}
     />
   );
 }

@@ -1,3 +1,5 @@
+'use client';
+
 import { ArrowRight, Bot, Brain, CheckCircle, Lock, MessageSquare, Palette, Sparkles, Users, Workflow, Zap } from "lucide-react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";

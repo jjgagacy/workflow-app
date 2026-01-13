@@ -1,6 +1,3 @@
-'use client';
-
-import { Brain } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 

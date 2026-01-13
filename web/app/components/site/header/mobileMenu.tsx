@@ -19,6 +19,18 @@ export default function MobileMenu({
 }) {
   if (!isOpen) return null;
 
+  const menus = [
+    ...menuItems,
+    {
+      href: '/login',
+      label: t('home.auth.login'),
+    },
+    {
+      href: '/signup',
+      label: t('home.auth.register'),
+    }
+  ];
+
   return (
     <>
       {/* 遮罩层 */}
@@ -54,7 +66,7 @@ export default function MobileMenu({
         <div className="p-4">
           {/* 一级菜单项 */}
           <div className="space-y-1">
-            {menuItems.map((item) => (
+            {menus.map((item) => (
               <div key={item.label} className="mb-1">
                 {/* 没有下拉菜单的项 */}
                 {!item.dropdown ? (

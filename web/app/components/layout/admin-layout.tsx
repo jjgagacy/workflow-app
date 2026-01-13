@@ -1,13 +1,13 @@
 'use client';
 
 import { Route } from "@/types/route";
-import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { Sidebar } from "../sidebar";
 import { Navigation } from "../sidebar/navigation";
 import { Navbar } from "../header/navbar";
 import { usePersistentState } from "@/hooks/use-persistent-state";
 import { MenuItem } from "@/types/menu";
-import { Icon12Hours, Icon3dCubeSphereOff, IconAbc, IconAdjustmentsPin, IconAlertHexagonFilled, IconAlertSquare, IconEyeCog, IconLocationCode } from "@tabler/icons-react";
+import { IconAbc, IconAlertSquare } from "@tabler/icons-react";
 import { convertMenuToRoutes, findMatchingRoute } from "@/utils/menu";
 import Keepalive from "../header/keepalive";
 import { usePathname, useRouter } from "next/navigation";

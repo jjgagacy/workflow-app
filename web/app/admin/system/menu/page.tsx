@@ -8,25 +8,34 @@ import Link from "next/link";
 import { Suspense } from "react";
 import Loading from "../../loading";
 import MenuListPage from "@/features/menu/menu-list";
+import { Metadata } from "next";
+import { getServerLocale, useTranslation } from "@/i18n/server";
 
-export const metadata = {
-  title: 'Dashboard: 菜单列表'
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocale();
+  const { t } = await useTranslation(locale, 'system');
+  return {
+    title: t('menu_management'),
+  };
+}
 
-export default function Page() {
+export default async function Page() {
+  const locale = await getServerLocale();
+  const { t } = await useTranslation(locale, 'system');
+
   return (
     <PageContainer>
       <div className="flex flex-1 flex-col space-y-4">
         <div className="flex items-start justify-between">
           <Heading
-            title="菜单列表"
-            description="管理您后台的菜单信息"
+            title={t('menu_management')}
+            description={t('manage_backend_menu_info')}
           />
           <Link
             href='/admin/system/menu/new'
             className={cn(buttonVariants(), 'text-xs md:text-sm')}
           >
-            <IconPlus className="mr-2 h-4 w-4" /> 添加菜单
+            <IconPlus className="mr-2 h-4 w-4" /> {t('add_menu')}
           </Link>
         </div>
         <Separator />

@@ -7,29 +7,28 @@ import { parseAsString, useQueryStates } from "nuqs";
 import { useCallback, useEffect, useState } from "react";
 import { Department } from "./data";
 import { arrayToTree } from "@/utils/trees";
-import { columnHelper } from "./columns";
+import { columnHelper, createColumns } from "./columns";
 import Button, { buttonVariants } from "@/app/components/base/button";
 import Link from "next/link";
 import { DataTable } from "@/app/ui/table/data-table";
 import { DataTableToolbar } from "@/app/ui/table/data-table-toolbar";
 import { Input } from "@/app/ui/input";
 import { cn } from "@/utils/classnames";
+import { useTranslation } from "react-i18next";
 
 interface DepartmentTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
-  columns: ColumnDef<TData, TValue>[];
 }
 
-export function DepartmentTable<TData, TValue>({
-  columns
-}: DepartmentTableParams<TData, TValue>) {
+export function DepartmentTable<TData, TValue>({ }: DepartmentTableParams<TData, TValue>) {
   const [queryStates, setQueryStates] = useQueryStates({
     search: parseAsString.withDefault(''),
   });
   const { search } = queryStates;
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   const deleteDepartment = api.dep.useDeleteDep();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -97,10 +96,12 @@ export function DepartmentTable<TData, TValue>({
     }
   }
 
+  const columns = createColumns(t);
+
   const operatorColumn: ColumnDef<Department, any>[] = [
     columnHelper.display({
       id: "actions",
-      header: "操作",
+      header: t('system.operation'),
       cell: ({ row }) => {
         const dep = row.original;
         return (
@@ -109,7 +110,7 @@ export function DepartmentTable<TData, TValue>({
               href={`/admin/system/dep/${dep.key}`}
               className={cn(buttonVariants({ size: 'small' }))}
             >
-              编辑
+              {t('system.edit')}
             </Link>
             <Button
               onClick={() => onDelete(dep)}
@@ -117,7 +118,7 @@ export function DepartmentTable<TData, TValue>({
               className=""
               size={'small'}
             >
-              删除
+              {t('system.delete')}
             </Button>
           </div>
         );
@@ -152,14 +153,14 @@ export function DepartmentTable<TData, TValue>({
           onChange={e => {
             setQueryStates({ search: e.target.value })
           }}
-          placeholder="按关键词搜索..."
+          placeholder={t('system.search_by_keyword')}
         />
         <Button
           variant={'ghost'}
           size={'large'}
           onClick={() => onReset()}
         >
-          Reset
+          {t('system.reset')}
         </Button>
       </DataTableToolbar>
     </DataTable>

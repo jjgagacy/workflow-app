@@ -6,27 +6,21 @@ import { Input } from "@/app/ui/input";
 import { DataTable } from "@/app/ui/table/data-table";
 import { DataTableToolbar } from "@/app/ui/table/data-table-toolbar";
 import { DEBOUNCE_MS, useDataTable } from "@/hooks/use-data-table";
-import { useDebounceCallback } from "@/hooks/use-debounce-callback";
 import { PER_PAGE } from "@/utils/search-params";
 import { ColumnDef } from "@tanstack/react-table";
-import request from "graphql-request";
-import { parseAsInteger, parseAsString, useQueryState, useQueryStates } from "nuqs";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import useSWR from "swr";
-import { columnHelper } from "./columns";
+import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
+import { useCallback, useEffect, useState } from "react";
+import { columnHelper, createColumns } from "./columns";
 import { Account } from "./data";
 import Link from "next/link";
-import { useUpdate } from "@/hooks/use-update";
+import { useTranslation } from "react-i18next";
 
 interface AccountTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
-  columns: ColumnDef<TData, TValue>[];
 }
 
-export function AccountTable<TData, TValue>({
-  columns
-}: AccountTableParams<TData, TValue>) {
+export function AccountTable<TData, TValue>({ }: AccountTableParams<TData, TValue>) {
   // const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(PER_PAGE));
   const [queryStates, setQueryStates] = useQueryStates({
     page: parseAsInteger.withDefault(1),
@@ -37,6 +31,7 @@ export function AccountTable<TData, TValue>({
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   const toggleStatusMutation = api.account.useToggleAccountStatus();
   const deleteAccount = api.account.useDeleteAccount();
+  const { t } = useTranslation();
 
   useEffect(() => {
     //if (search === '') return;
@@ -59,7 +54,7 @@ export function AccountTable<TData, TValue>({
   const pageCount = Math.ceil(total / pageSize);
 
   const onDelete = async (account: Account) => {
-    if (confirm('确认删除吗？')) {
+    if (confirm(t('system.confirm_delete'))) {
       await deleteAccount(account.id);
       setData(prev =>
         prev.filter((item) => item.id !== account.id)
@@ -75,11 +70,13 @@ export function AccountTable<TData, TValue>({
     );
   }
 
+  const columns = createColumns(t);
+
   const operatorColumn: ColumnDef<Account, any>[] = [
     columnHelper.display({
       id: "actions",
-      header: "操作",
-      meta: { label: '操作' },
+      header: t('system.operation'),
+      meta: { label: t('system.operation') },
       cell: ({ row }) => {
         const account = row.original;
 
@@ -95,7 +92,7 @@ export function AccountTable<TData, TValue>({
               size={'small'}
             >
               <Link href={`/admin/system/account/${account.id}`}>
-                编辑
+                {t('system.edit')}
               </Link>
             </Button>
             <Button
@@ -104,7 +101,7 @@ export function AccountTable<TData, TValue>({
               className=""
               size={'small'}
             >
-              删除
+              {t('system.delete')}
             </Button>
             <Button
               onClick={() => onToggleStatus(account)}
@@ -112,7 +109,7 @@ export function AccountTable<TData, TValue>({
               className=""
               size={'small'}
             >
-              {account.status === 1 ? "禁用" : "启用"}
+              {account.status === 1 ? t('system.disable') : t('system.enable')}
             </Button>
           </div>
         );
@@ -145,13 +142,13 @@ export function AccountTable<TData, TValue>({
           onChange={(e) => {
             setQueryStates({ search: e.target.value, page: 1 });
           }}
-          placeholder="按关键词搜索..."
+          placeholder={t('system.search_by_keyword')}
         />
         <Button
           variant={'ghost'}
           size={'large'}
           onClick={() => onReset()}
-        >Reset</Button>
+        >{t('system.reset')}</Button>
       </DataTableToolbar>
     </DataTable>
   );

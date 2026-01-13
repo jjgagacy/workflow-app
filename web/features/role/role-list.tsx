@@ -1,7 +1,6 @@
 'use client';
 
 import { Role } from "@/types/role";
-import { columns } from "./components/columns";
 import { RoleTable } from "./components/role-table";
 
 export default function RoleListPage() {
@@ -12,7 +11,6 @@ export default function RoleListPage() {
     <RoleTable
       data={roles}
       totalItems={totalRoles}
-      columns={columns}
     />
   );
 }

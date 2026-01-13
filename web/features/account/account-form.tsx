@@ -14,31 +14,9 @@ import { Role } from "@/types/role";
 import { arrayToTree, treeToFlatten } from "@/utils/trees";
 import { TreeSelect } from "@/app/ui/tree-select";
 import { RadioGroup, RadioGroupItem } from "@/app/ui/radio-group";
-import Spinner from "@/app/components/base/spinner";
 import { toast } from "@/app/ui/toast";
 import { useRouter } from "next/navigation";
-
-const formSchema = z.object({
-  username: z.string().min(2, {
-    error: '账户名至少需要2个字符'
-  }),
-  password: z.union([
-    z.string().min(4, {
-      error: '密码至少需要4个字符',
-    }),
-    z.string().min(0)
-  ]),
-  realName: z.string(),
-  mobile: z.string(),
-  email: z.union([
-    z.email({ error: '邮箱格式错误' }).nullable().optional(),
-    z.string().min(0)
-  ]),
-  roles: z.array(z.string()).min(1, {
-    error: '至少选择一个角色',
-  }),
-  status: z.int(),
-});
+import { useTranslation } from "react-i18next";
 
 export default function AccountForm({
   accountId,
@@ -54,7 +32,31 @@ export default function AccountForm({
   const updateAccount = api.account.useUpdateAccount();
   const createAccount = api.account.useCreateAccount();
   const router = useRouter();
+  const { t } = useTranslation();
   // get account info if accountId is not empty, and set default values
+
+  const formSchema = z.object({
+    username: z.string().min(2, {
+      error: t('system.account_name_min_length'),
+    }),
+    password: z.union([
+      z.string().min(4, {
+        error: t('system.password_min_length'),
+      }),
+      z.string().min(0)
+    ]),
+    realName: z.string(),
+    mobile: z.string(),
+    email: z.union([
+      z.email({ error: t('system.email_format_error') }).nullable().optional(),
+      z.string().min(0)
+    ]),
+    roles: z.array(z.string()).min(1, {
+      error: t('system.select_at_least_one_role'),
+    }),
+    status: z.int(),
+  });
+
   let account: any = {};
   if (updateAccountId) {
     const { accounts } = api.account.useGetAccounts({ id: updateAccountId });
@@ -89,12 +91,12 @@ export default function AccountForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { username, password, roles: roleKeys, ...rest } = values;
     if (!username) {
-      form.setError('username', { message: '账户名不能为空' });
+      form.setError('username', { message: t('system.account_name_required') });
       return;
     }
 
     if (!accountId && !password) {
-      form.setError('password', { message: '密码不能为空' });
+      form.setError('password', { message: t('system.password_required') });
       return;
     }
 
@@ -115,7 +117,7 @@ export default function AccountForm({
           roles: roleIds,
           id: updateAccountId,
         });
-        toast.success('编辑成功');
+        toast.success(t('system.edit_success'));
       } else {
         // Ensure email is string or undefined, not null
         const safeRest = {
@@ -128,12 +130,12 @@ export default function AccountForm({
           password,
           roles: roleIds,
         });
-        toast.success('添加成功');
+        toast.success(t('system.add_success'));
       }
       router.push('/admin/system/account');
     } catch (error) {
       console.error(error);
-      toast.error('操作失败');
+      toast.error(t('system.operation_failed'));
     } finally {
       setIsLoading(false);
     }
@@ -157,7 +159,8 @@ export default function AccountForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 
-            <div className="grid grid-cols-12 gap-4 mb-8">
+            <div className="grid grid-
+            s-12 gap-4 mb-8">
               <div className="col-span-6 p-4 space-y-4 rounded">
 
                 <FormField
@@ -165,7 +168,7 @@ export default function AccountForm({
                   name="username"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>账户名</FormLabel>
+                      <FormLabel>{t('system.account_name')}</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -181,7 +184,7 @@ export default function AccountForm({
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>密码</FormLabel>
+                      <FormLabel>{t('system.password')}</FormLabel>
                       <FormControl>
                         <Input
                           type="password"
@@ -198,7 +201,7 @@ export default function AccountForm({
                   name="realName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>姓名</FormLabel>
+                      <FormLabel>{t('system.full_name')}</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -214,7 +217,7 @@ export default function AccountForm({
                   name="mobile"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>手机号</FormLabel>
+                      <FormLabel>{t('system.phone')}</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -230,7 +233,7 @@ export default function AccountForm({
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>邮箱</FormLabel>
+                      <FormLabel>{t('system.email')}</FormLabel>
                       <FormControl>
                         <Input
                           type="email"
@@ -250,7 +253,7 @@ export default function AccountForm({
                   name="roles"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>角色</FormLabel>
+                      <FormLabel>{t('system.role')}</FormLabel>
                       <FormControl>
                         <TreeSelect
                           options={roleSelectList}
@@ -272,7 +275,7 @@ export default function AccountForm({
                   name="status"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>状态</FormLabel>
+                      <FormLabel>{t('system.status')}</FormLabel>
                       <RadioGroup
                         name='status'
                         defaultValue={field.value}
@@ -280,8 +283,8 @@ export default function AccountForm({
                         onValueChange={(e) => field.onChange(e)}
                         orientation='horizontal'
                       >
-                        <RadioGroupItem value={1}>启用</RadioGroupItem>
-                        <RadioGroupItem value={0}>禁用</RadioGroupItem>
+                        <RadioGroupItem value={1}>{t('system.enable')}</RadioGroupItem>
+                        <RadioGroupItem value={0}>{t('system.disable')}</RadioGroupItem>
                       </RadioGroup>
                       <FormMessage />
                     </FormItem>
@@ -290,7 +293,7 @@ export default function AccountForm({
               </div>
             </div>
 
-            <Button className="ml-4" type="submit" disabled={isLoading} loading={isLoading}>{updateAccountId ? '编辑账户' : '添加账户'}</Button>
+            <Button className="ml-4" type="submit" disabled={isLoading} loading={isLoading}>{updateAccountId ? t('system.edit_account') : t('system.add_account')}</Button>
           </form>
         </Form>
       </CardContent>

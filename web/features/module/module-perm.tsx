@@ -8,6 +8,7 @@ import { Dialog } from "@/app/ui/dialog";
 import Button from "@/app/components/base/button";
 import { Input } from "@/app/ui/input";
 import { useModalContext } from "@/hooks/use-model";
+import { useTranslation } from "react-i18next";
 
 interface ModulePermProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ interface ModulePermProps {
 }
 
 export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: ModulePermProps) {
+  const { t } = useTranslation();
   const { modalData: module } = useModalContext();
   const [modulePerms, setModulePerms] = useState<ModulePerm[]>(module?.perms || []);
   const [form, setForm] = useState<Partial<ModulePerm>>({});
@@ -52,7 +54,7 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
     const { key, name, restrictLevel } = form;
 
     if (!key || !name || !restrictLevel) {
-      toast.error('请填写完整信息');
+      toast.error(t('system.please_complete_info'));
       return;
     }
 
@@ -69,7 +71,7 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
           key, name, restrictLevel
         };
         setModulePerms(prev => [...prev, newModulePerm]);
-        toast.success('添加成功');
+        toast.success(t('system.add_success'));
         setIsAdding(false);
       } else if (editingId) {
         await updateModulePerm({
@@ -85,12 +87,12 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
               : m
           )
         );
-        toast.success('编辑成功');
+        toast.success(t('system.edit_success'));
         setEditingId(null);
       }
     } catch (error) {
       console.error(error);
-      toast.error('操作失败');
+      toast.error(t('system.operation_failed'));
     } finally {
       setIsLoading(false);
     }
@@ -98,14 +100,14 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
 
   // 删除模块
   const handleDelete = async (key: string) => {
-    if (confirm('确定要删除此模块吗？')) {
+    if (confirm(t('system.confirm_delete_module'))) {
       try {
         deleteMOdulePerm({ module: module.key, key });
         setModulePerms(prev => prev.filter(m => m.key != key));
-        toast.success('删除成功');
+        toast.success(t('system.delete_success'));
       } catch (error) {
         console.error(error);
-        toast.error('操作失败');
+        toast.error(t('system.operation_failed'));
       }
     }
   }
@@ -127,10 +129,10 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
     <Dialog
       isOpen={isOpen}
       isLoading={isLoading}
-      title={'权限组'}
+      title={t('system.permission_group')}
       description=""
-      confirmText="确定"
-      cancelText="取消"
+      confirmText={t('system.confirm')}
+      cancelText={t('system.cancel')}
       onConfirm={() => {
         onOpenChange(false);
         onSubmitSuccess();
@@ -149,7 +151,7 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
           size={'medium'}
           className="mb-2"
         >
-          添加权限
+          {t('system.add_permission')}
         </Button>
 
         {/* 表格 */}
@@ -172,7 +174,7 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
                       type="text"
                       value={form.key || ""}
                       onChange={(e) => handleInputChange("key", e.target.value)}
-                      placeholder="输入key"
+                      placeholder=""
                     />
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -181,7 +183,7 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
                       value={form.name || ""}
                       onChange={(e) => handleInputChange("name", e.target.value)}
                       className="border rounded px-2 py-1 w-full"
-                      placeholder="输入名称"
+                      placeholder=""
                     />
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -190,7 +192,7 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
                       value={form.restrictLevel || ''}
                       onChange={(e) => handleInputChange("restrictLevel", parseInt(e.target.value) || 1)}
                       className="border rounded px-2 py-1 w-full"
-                      placeholder="输入数字"
+                      placeholder=""
                     />
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap flex gap-2">
@@ -199,14 +201,14 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
                       variant={'warning'}
                       size={'large'}
                     >
-                      保存
+                      {t('system.save')}
                     </Button>
                     <Button
                       onClick={cancelEdit}
                       variant={'secondary'}
                       size={'large'}
                     >
-                      取消
+                      {t('system.cancel')}
                     </Button>
                   </td>
                 </tr>
@@ -259,14 +261,14 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
                           variant={'primary'}
                           size={'medium'}
                         >
-                          保存
+                          {t('system.save')}
                         </Button>
                         <Button
                           onClick={cancelEdit}
                           variant={'secondary'}
                           size={'medium'}
                         >
-                          取消
+                          {t('system.cancel')}
                         </Button>
                       </>
                     ) : (
@@ -276,14 +278,14 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
                           variant={'primary'}
                           size={'medium'}
                         >
-                          编辑
+                          {t('system.edit')}
                         </Button>
                         <Button
                           onClick={() => handleDelete(module.key)}
                           variant={'alert'}
                           size={'medium'}
                         >
-                          删除
+                          {t('system.delete')}
                         </Button>
                       </>
                     )}
@@ -294,7 +296,6 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
           </table>
         </div>
       </div>
-
     </Dialog>
   );
 }

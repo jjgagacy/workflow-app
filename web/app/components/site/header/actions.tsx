@@ -1,6 +1,5 @@
-import { changeLanguage, getLanguageNameByValue } from "@/i18n/config";
 import { useTranslation } from "react-i18next";
-import { Globe, X, Menu, Moon, Sun } from "lucide-react";
+import { X, Menu } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import Button from "@/app/components/base/button";
@@ -25,7 +24,7 @@ export default function Actions() {
       <LanguageSelector />
 
       {/* 桌面端登录/注册按钮 */}
-      <div className=" md:flex items-center space-x-3">
+      <div className="hidden sm:flex items-center space-x-3">
         <Button variant={'secondary'}>
           <Link
             href="/login"

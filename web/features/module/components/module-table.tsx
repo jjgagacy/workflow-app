@@ -10,21 +10,21 @@ import { ColumnDef } from "@tanstack/react-table";
 import { parseAsInteger, parseAsString, useQueryState, useQueryStates } from "nuqs";
 import { useCallback, useEffect, useState } from "react";
 import { Module } from "./data";
-import { columnHelper } from "./columns";
+import { columnHelper, createColumns } from "./columns";
 import Button from "@/app/components/base/button";
 import { useModalContext } from "@/hooks/use-model";
 import { ModuleForm } from "../module-form";
 import { ModulePermPage } from "../module-perm";
+import { useTranslation } from "react-i18next";
 
 interface ModuleTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
-  columns: ColumnDef<TData, TValue>[];
 }
 
 export function ModuleTable<TData, TValue>({
-  columns
 }: ModuleTableParams<TData, TValue>) {
+  const { t } = useTranslation();
   const [queryStates, setQueryStates] = useQueryStates({
     page: parseAsInteger.withDefault(1),
     search: parseAsString.withDefault(''),
@@ -56,7 +56,7 @@ export function ModuleTable<TData, TValue>({
   const pageCount = Math.ceil(total / pageSize);
 
   const onDelete = async (module: Module) => {
-    if (confirm('确认删除吗？')) {
+    if (confirm(t('system.confirm_delete'))) {
       await deleteModuleMutation(module.id);
       setData(prev =>
         prev.filter(item => item.id !== module.id)
@@ -78,10 +78,12 @@ export function ModuleTable<TData, TValue>({
     await mutate();
   }
 
+  const columns = createColumns(t);
+
   const operatorColumn: ColumnDef<Module, any>[] = [
     columnHelper.display({
       id: "actions",
-      header: "操作",
+      header: t('system.operation'),
       cell: ({ row }) => {
         const module = row.original;
 
@@ -92,21 +94,21 @@ export function ModuleTable<TData, TValue>({
               variant={'primary'}
               size={'small'}
             >
-              编辑
+              {t('system.edit')}
             </Button>
             <Button
               onClick={() => onDelete(module)}
               variant={'alert'}
               size={'small'}
             >
-              删除
+              {t('system.delete')}
             </Button>
             <Button
               onClick={() => openPermModal(module)}
               variant={'secondary'}
               size={'small'}
             >
-              权限列表
+              {t('system.permission_list')}
             </Button>
           </div>
         );
@@ -140,13 +142,15 @@ export function ModuleTable<TData, TValue>({
             onChange={(e) => {
               setQueryStates({ search: e.target.value, page: 1 })
             }}
-            placeholder="按关键词搜索..."
+            placeholder={t('system.search_by_keyword')}
           />
           <Button
             variant={'ghost'}
             size={'large'}
             onClick={() => onReset()}
-          >Reset</Button>
+          >
+            {t('system.reset')}
+          </Button>
         </DataTableToolbar>
       </DataTable>
 
@@ -164,6 +168,5 @@ export function ModuleTable<TData, TValue>({
         onSubmitSuccess={handleModuleForm}
       />
     </>
-
   );
 }

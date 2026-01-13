@@ -9,6 +9,17 @@ const translation = {
   permission_module: '权限模块',
   menu: '菜单',
 
+  manage_account_info: '管理您的账户信息',
+  account_management: '账户管理',
+  department_management: '部门管理',
+  manage_company_departments: '管理您公司内的部门',
+  role_management: '角色管理',
+  edit_operation_role_info: '编辑操作角色信息',
+  permission_group_management: '权限组管理',
+  edit_operation_permission_info: '编辑操作权限信息',
+  menu_management: '菜单管理',
+  manage_backend_menu_info: '管理您后台的菜单信息',
+
   // 用户相关
   user_avatar: '用户头像',
   not_logged_in: '未登录',
@@ -37,6 +48,7 @@ const translation = {
   status: '状态',
   create_time: '创建时间',
   update_time: '更新时间',
+  password: '密码',
 
   // 表单验证
   account_name_min_length: '账户名至少需要2个字符',
@@ -74,32 +86,42 @@ const translation = {
   department_name_min_length: '部门名称至少需要2个字符',
   edit_department: '编辑部门',
   add_department: '添加部门',
-  department_management: '部门管理',
 
   // 菜单管理
   menu_name: '菜单名称',
   menu_icon: '菜单图标',
   menu_url: '菜单链接',
+  menu_key: '菜单Key',
   sort_order: '排序',
   parent_menu: '上级菜单',
   menu_status: '菜单状态',
+  add_menu: '添加菜单',
+  edit_menu: '编辑菜单',
+  menu_key_min_length: '菜单Key至少需要2个字符',
+  menu_name_min_length: '菜单名称至少需要2个字符',
 
   // 权限组管理
   permission_group: '权限组',
   permission_group_name: '权限组名称',
+  permission_group_key: '权限组Key',
   permission_list: '权限列表',
   permission_management: '权限管理',
   edit_permission_group: '编辑权限组',
   add_permission_group: '添加权限组',
   confirm_delete_module: '确定要删除此模块吗？',
+  permission_group_key_min_length: '权限组Key至少需要2个字符',
+  permission_group_name_min_length: '权限组名称至少需要2个字符',
+  add_permission: '添加权限',
 
   // 角色管理
   role_name: '角色名称',
   role_key: '角色Key',
-  role_management: '角色管理',
   edit_role: '编辑角色',
   add_role: '添加角色',
   permission_assignment: '权限分配',
+  role_key_min_length: '角色Key至少需要2个字符',
+  role_name_min_length: '角色名称至少需要2个字符',
+  parent_role: '上级角色',
 
   // 表单占位符
   enter_name: '输入名称',

@@ -9,6 +9,17 @@ const translation = {
   permission_module: 'Permission Module',
   menu: 'Menu',
 
+  manage_account_info: 'Manage Your Account Information',
+  account_management: 'Account Management',
+  department_management: 'Department Management',
+  manage_company_departments: 'Manage Departments in Your Company',
+  role_management: 'Role Management',
+  edit_operation_role_info: 'Edit Operation Role Information',
+  permission_group_management: 'Permission Group Management',
+  edit_operation_permission_info: 'Edit Operation Permission Information',
+  menu_management: 'Menu Management',
+  manage_backend_menu_info: 'Manage Your Backend Menu Information',
+
   // 用户相关
   user_avatar: 'User Avatar',
   not_logged_in: 'Not Logged In',
@@ -32,6 +43,7 @@ const translation = {
   // 账户相关字段
   account_name: 'Account Name',
   full_name: 'Full Name',
+  password: 'Password',
   phone: 'Phone',
   email: 'Email',
   status: 'Status',
@@ -74,32 +86,42 @@ const translation = {
   department_name_min_length: 'Department name requires at least 2 characters',
   edit_department: 'Edit Department',
   add_department: 'Add Department',
-  department_management: 'Department Management',
 
   // 菜单管理
   menu_name: 'Menu Name',
   menu_icon: 'Menu Icon',
   menu_url: 'Menu URL',
+  menu_key: "Menu Key",
   sort_order: 'Sort Order',
   parent_menu: 'Parent Menu',
   menu_status: 'Menu Status',
+  add_menu: 'Add Menu',
+  edit_menu: 'Edit Menu',
+  menu_key_min_length: 'Menu key requires at least 2 characters',
+  menu_name_min_length: 'Menu name requires at least 2 characters',
 
   // 权限组管理
   permission_group: 'Permission Group',
   permission_group_name: 'Permission Group Name',
+  permission_group_key: 'Permission Group Key',
   permission_list: 'Permission List',
   permission_management: 'Permission Management',
   edit_permission_group: 'Edit Permission Group',
   add_permission_group: 'Add Permission Group',
   confirm_delete_module: 'Are you sure to delete this module?',
+  permission_group_key_min_length: 'Permission Group key requires at least 2 characters',
+  permission_group_name_min_length: 'Permission Group name requires at least 2 characters',
+  add_permission: 'Add Permission',
 
   // 角色管理
   role_name: 'Role Name',
   role_key: 'Role Key',
-  role_management: 'Role Management',
   edit_role: 'Edit Role',
   add_role: 'Add Role',
   permission_assignment: 'Permission Assignment',
+  role_key_min_length: 'Role key requires at least 2 characters',
+  role_name_min_length: 'Role name requires at least 2 characters',
+  parent_role: 'Parent Role',
 
   // 表单占位符
   enter_name: 'Enter name',

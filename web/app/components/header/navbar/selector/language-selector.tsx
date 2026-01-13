@@ -12,6 +12,7 @@ export function LanguageSelector() {
   const toggleLanguage = async (lng: string) => {
     if (i18n.language === lng) return;
     await setClientLocale(lng, false);
+    location.reload();
   };
 
   return (

@@ -16,25 +16,15 @@ import { Textarea } from "@/app/ui/textarea";
 import Button from "@/app/components/base/button";
 import { TreeSelect } from "@/app/ui/tree-select";
 import { toast } from "@/app/ui/toast";
-
-const formSchama = z.object({
-  key: z.string().min(2, {
-    error: 'key至少需要2个字符',
-  }),
-  name: z.string().min(2, {
-    error: '部门名称至少需要2个字符'
-  }),
-  parent: z.string(),
-  remarks: z.string(),
-});
+import { useTranslation } from "react-i18next";
 
 export default function DepartmentForm({
   depKey,
-  pageTitle
 }: {
   depKey: string;
-  pageTitle: string;
 }) {
+  const { t } = useTranslation();
+  const pageTitle = depKey !== 'new' ? t('system.edit_department') : t('system.add_department');
   usePageTitle(pageTitle);
   const [isLoading, setIsLoading] = useState(false);
   const [parentDeps, setParentDeps] = useState<Department[]>([]);
@@ -42,19 +32,31 @@ export default function DepartmentForm({
   const updateDepartment = api.dep.useUpdateDep();
   const createDepartment = api.dep.useCreateDep();
   const router = useRouter();
+  const { deps } = api.dep.useGetDeps();
+
   let department: Department | null = null;
   if (updateDepKey) {
     const { dep } = api.dep.useGetDepInfo({ key: updateDepKey });
     department = dep;
   }
 
-  const { deps } = api.dep.useGetDeps();
   useEffect(() => {
     if (!deps) return;
     const treeDeps = arrayToTree(deps, { idKey: 'key', parentKey: 'parent' }) as Department[];
     const filteredParentDeps = filterCurrentAndChildren(treeDeps, updateDepKey, 'key')
     setParentDeps(filteredParentDeps);
   }, [deps]);
+
+  const formSchama = z.object({
+    key: z.string().min(2, {
+      error: t('system.department_key_min_length'),
+    }),
+    name: z.string().min(2, {
+      error: t('system.department_name_min_length'),
+    }),
+    parent: z.string(),
+    remarks: z.string(),
+  });
 
   const defaultValues: z.infer<typeof formSchama> = {
     key: department?.key || '',
@@ -72,15 +74,15 @@ export default function DepartmentForm({
       setIsLoading(true);
       if (updateDepKey) {
         await updateDepartment({ ...values });
-        toast.success('编辑成功');
+        toast.success(t('system.edit_success'));
       } else {
         await createDepartment({ ...values });
-        toast.success('添加成功');
+        toast.success(t('system.add_success'));
       }
       router.push('/admin/system/dep');
     } catch (error) {
       console.error(error);
-      toast.error('操作失败');
+      toast.error(t('system.operation_failed'));
     } finally {
       setIsLoading(false);
     }
@@ -104,7 +106,7 @@ export default function DepartmentForm({
                   name='parent'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>上级部门</FormLabel>
+                      <FormLabel>{t('system.parent_department')}</FormLabel>
                       <FormControl>
                         <TreeSelect
                           options={parentDeps}
@@ -126,7 +128,7 @@ export default function DepartmentForm({
                   name='key'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>部门Key</FormLabel>
+                      <FormLabel>{t('system.department_key')}</FormLabel>
                       <FormControl>
                         <Input
                           disabled={!!updateDepKey}
@@ -143,7 +145,7 @@ export default function DepartmentForm({
                   name='name'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>部门名称</FormLabel>
+                      <FormLabel>{t('system.department_name')}</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -159,7 +161,7 @@ export default function DepartmentForm({
                   name='remarks'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>备注</FormLabel>
+                      <FormLabel>{t('system.remarks')}</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
@@ -173,7 +175,7 @@ export default function DepartmentForm({
               </div>
             </div>
 
-            <Button className="ml-4" type="submit" disabled={isLoading} loading={isLoading}>{updateDepKey ? '编辑部门' : '添加部门'}</Button>
+            <Button className="ml-4" type="submit" disabled={isLoading} loading={isLoading}>{updateDepKey ? t('system.edit_department') : t('system.add_department')}</Button>
           </form>
         </Form>
       </CardContent>

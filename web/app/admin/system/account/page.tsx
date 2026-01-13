@@ -8,32 +8,41 @@ import Link from "next/link";
 import { Suspense } from "react";
 import Loading from "../../loading";
 import AccountListPage from "@/features/account/account-list";
+import { getServerLocale, useTranslation } from "@/i18n/server";
+import { Metadata } from "next";
 
-export const metadata = {
-    title: 'Dashboard: 账户列表'
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocale();
+  const { t } = await useTranslation(locale, 'system');
+  return {
+    title: t('account_list'),
+  };
+}
 
-export default function Page() {
-    return (
-        <PageContainer>
-            <div className='flex flex-1 flex-col space-y-4'>
-                <div className='flex items-start justify-between'>
-                    <Heading
-                        title="账户管理"
-                        description="管理您的账户信息" />
-                    <Link
-                        href='/admin/system/account/new'
-                        className={cn(buttonVariants(), 'text-xs md:text-sm')}
-                    >
-                        <IconPlus className='mr-2 h-4 w-4' /> 添加账户
-                    </Link>
-                </div>
-                <Separator />
-                <Suspense
-                    fallback={<Loading />}>
-                    <AccountListPage />
-                </Suspense>
-            </div>
-        </PageContainer>
-    );
+export default async function Page() {
+  const locale = await getServerLocale();
+  const { t } = await useTranslation(locale, 'system');
+
+  return (
+    <PageContainer>
+      <div className='flex flex-1 flex-col space-y-4'>
+        <div className='flex items-start justify-between'>
+          <Heading
+            title={t('account_management')}
+            description={t('manage_account_info')} />
+          <Link
+            href='/admin/system/account/new'
+            className={cn(buttonVariants(), 'text-xs md:text-sm')}
+          >
+            <IconPlus className='mr-2 h-4 w-4' /> {t('add_account')}
+          </Link>
+        </div>
+        <Separator />
+        <Suspense
+          fallback={<Loading />}>
+          <AccountListPage />
+        </Suspense>
+      </div>
+    </PageContainer>
+  );
 }

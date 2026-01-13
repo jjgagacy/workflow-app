@@ -7,23 +7,23 @@ import { ColumnDef, getExpandedRowModel } from "@tanstack/react-table";
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 import { useCallback, useEffect, useState } from "react";
 import { Menu } from "./data";
-import { columnHelper } from "./columns";
+import { columnHelper, createColumns } from "./columns";
 import Button from "@/app/components/base/button";
 import Link from "next/link";
 import { DataTable } from "@/app/ui/table/data-table";
 import { DataTableToolbar } from "@/app/ui/table/data-table-toolbar";
 import { Input } from "@/app/ui/input";
 import { arrayToTree } from "@/utils/trees";
+import { useTranslation } from "react-i18next";
 
 interface MenuTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
-  columns: ColumnDef<TData, TValue>[];
 }
 
 export function MenuTable<TData, TValue>({
-  columns
 }: MenuTableParams<TData, TValue>) {
+  const { t } = useTranslation();
   const [queryStates, setQueryStates] = useQueryStates({
     search: parseAsString.withDefault(''),
     page: parseAsInteger.withDefault(1),
@@ -93,7 +93,7 @@ export function MenuTable<TData, TValue>({
   }
 
   const onDelete = async (menu: Menu) => {
-    if (confirm('确认删除吗？')) {
+    if (confirm(t('system.confirm_delete'))) {
       await deleteMenu(menu.id);
       setData(prev => removeMenuFromTree(prev, menu.id));
     }
@@ -107,10 +107,12 @@ export function MenuTable<TData, TValue>({
     );
   }
 
+  const columns = createColumns(t);
+
   const operatorColumn: ColumnDef<Menu, any>[] = [
     columnHelper.display({
       id: "actions",
-      header: "操作",
+      header: t('system.operation'),
       cell: ({ row }) => {
         const menu = row.original;
         return (
@@ -121,7 +123,7 @@ export function MenuTable<TData, TValue>({
               size={'small'}
             >
               <Link href={`/admin/system/menu/${menu.id}`}>
-                编辑
+                {t('system.edit')}
               </Link>
             </Button>
             <Button
@@ -130,7 +132,7 @@ export function MenuTable<TData, TValue>({
               className=""
               size={'small'}
             >
-              删除
+              {t('system.delete')}
             </Button>
             <Button
               onClick={() => onToggleStatus(menu)}
@@ -138,7 +140,7 @@ export function MenuTable<TData, TValue>({
               className=""
               size={'small'}
             >
-              {menu.status === 1 ? "禁用" : "启用"}
+              {menu.status === 1 ? t('system.disable') : t('system.enable')}
             </Button>
           </div>
         );
@@ -173,13 +175,15 @@ export function MenuTable<TData, TValue>({
           onChange={(e) => {
             setQueryStates({ search: e.target.value })
           }}
-          placeholder="按关键词搜索..."
+          placeholder={t('system.search_by_keyword')}
         />
         <Button
           variant={'ghost'}
           size={'large'}
           onClick={() => onReset()}
-        >Reset</Button>
+        >
+          {t('system.reset')}
+        </Button>
       </DataTableToolbar>
     </DataTable>
   );

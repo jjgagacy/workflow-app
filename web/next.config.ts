@@ -17,15 +17,24 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    domains: ['images.unsplash.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**', // 或者指定具体的域名
+      },
+    ],
   },
 
-  webpack(config) {
-    config.module.rules.push({
-      test: /\.svg$/,
-      use: ['@svgr/webpack'],
-    })
-    return config
+  // webpack(config) {
+  //   config.module.rules.push({
+  //     test: /\.svg$/,
+  //     use: ['@svgr/webpack'],
+  //   })
+  //   return config
+  // },
+
+  turbopack: {
+
   },
 
   async redirects() {

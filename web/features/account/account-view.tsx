@@ -1,3 +1,4 @@
+import { getServerLocale, useTranslation } from "@/i18n/server";
 import AccountForm from "./account-form";
 
 type AccountViewPageProps = {
@@ -6,7 +7,9 @@ type AccountViewPageProps = {
 export default async function AccountViewPage({
   accountId
 }: AccountViewPageProps) {
-  const pageTitle = accountId !== 'new' ? '编辑账户' : '添加账户';
+  const locale = await getServerLocale();
+  const { t } = await useTranslation(locale, 'system');
 
+  const pageTitle = accountId !== 'new' ? t('edit_account') : t('add_account');
   return <AccountForm accountId={accountId} pageTitle={pageTitle} />;
 }

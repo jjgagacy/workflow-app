@@ -7,23 +7,23 @@ import { arrayToTree } from "@/utils/trees";
 import { ColumnDef, getExpandedRowModel } from "@tanstack/react-table";
 import { parseAsString, useQueryStates } from "nuqs";
 import { useCallback, useEffect, useState } from "react";
-import { columnHelper } from "./columns";
+import { columnHelper, createColumns } from "./columns";
 import { useModalContext } from "@/hooks/use-model";
 import Button from "@/app/components/base/button";
 import { DataTable } from "@/app/ui/table/data-table";
 import { DataTableToolbar } from "@/app/ui/table/data-table-toolbar";
 import { Input } from "@/app/ui/input";
 import RoleForm from "../role-form";
+import { useTranslation } from "react-i18next";
 
 interface RoleTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
-  columns: ColumnDef<Role, any>[];
 }
 
 export function RoleTable<TData, TValue>({
-  columns
 }: RoleTableParams<TData, TValue>) {
+  const { t } = useTranslation();
   const [queryStates, setQueryStates] = useQueryStates({
     search: parseAsString.withDefault(''),
   });
@@ -44,6 +44,8 @@ export function RoleTable<TData, TValue>({
   const [allRoles, setAllRoles] = useState<Role[]>([]);
   const [currentRole, setCurrentRole] = useState<Role | undefined>(undefined);
   const { openModal, closeModal, isModalOpen, modalData } = useModalContext();
+
+  const columns = createColumns(t);
 
   const filterRolesBySearch = (roles: Role[], searchItem: string): Role[] => {
     if (!searchItem.trim()) {
@@ -93,7 +95,7 @@ export function RoleTable<TData, TValue>({
   }
 
   const onDelete = async (role: Role) => {
-    if (confirm('确认删除吗？')) {
+    if (confirm(t('system.confirm_delete'))) {
       await deleteRole(role.id);
       setData(prev => removeRoleFromTree(prev, role.id));
     }
@@ -111,7 +113,7 @@ export function RoleTable<TData, TValue>({
   const operatorColumn: ColumnDef<Role, any>[] = [
     columnHelper.display({
       id: "actions",
-      header: "操作",
+      header: t('system.operation'),
       cell: ({ row }) => {
         const role = row.original;
         return (
@@ -121,14 +123,14 @@ export function RoleTable<TData, TValue>({
               variant={'primary'}
               size={'small'}
             >
-              编辑
+              {t('system.edit')}
             </Button>
             <Button
               onClick={() => onDelete(role)}
               variant={'alert'}
               size={'small'}
             >
-              删除
+              {t('system.delete')}
             </Button>
           </div>
         )
@@ -163,14 +165,14 @@ export function RoleTable<TData, TValue>({
             onChange={e => {
               setQueryStates({ search: e.target.value });
             }}
-            placeholder="按关键词搜索..."
+            placeholder={t('system.search_by_keyword')}
           />
           <Button
             variant={'ghost'}
             size={'large'}
             onClick={() => onReset()}
           >
-            Reset
+            {t('system.reset')}
           </Button>
         </DataTableToolbar>
       </DataTable>

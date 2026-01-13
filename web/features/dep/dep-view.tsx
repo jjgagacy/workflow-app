@@ -7,6 +7,5 @@ type DepartmentViewProps = {
 export default async function DepartmentViewPage({
   depKey
 }: DepartmentViewProps) {
-  const pageTitle = depKey !== 'new' ? '编辑部门' : '添加部门';
-  return <DepartmentForm depKey={depKey} pageTitle={pageTitle} />;
+  return <DepartmentForm depKey={depKey} />;
 }

@@ -1,11 +1,7 @@
-// constants/navigation.ts
 import {
   Bot, MessageSquare, Palette, BarChart, Workflow, Zap,
   Layers, Cpu, Sparkles, Brain, Lock, Server, Code,
-  Cloud, Package, BookOpen, Users,
-  Home,
-  LogIn,
-  UserPlus
+  Cloud, Package, BookOpen, Users
 } from 'lucide-react';
 
 // 定义类型

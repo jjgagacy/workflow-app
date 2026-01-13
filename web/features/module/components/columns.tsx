@@ -4,9 +4,12 @@ import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { Module } from "./data";
 
 export const columnHelper = createColumnHelper<Module>();
-export const columns: ColumnDef<Module, any>[] = [
-  columnHelper.accessor("name", {
-    header: "权限组名称",
-    cell: info => info.getValue(),
-  }),
-];
+
+export function createColumns(t: (key: string, options?: any) => string): ColumnDef<Module, any>[] {
+  return [
+    columnHelper.accessor("name", {
+      header: t('system.permission_group_name'),
+      cell: info => info.getValue(),
+    }),
+  ];
+}

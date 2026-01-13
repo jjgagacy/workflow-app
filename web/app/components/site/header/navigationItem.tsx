@@ -1,6 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
-import { JSX, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavItem } from "../navItems";
 
 interface NavigationitemProps {

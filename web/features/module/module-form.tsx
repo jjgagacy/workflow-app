@@ -1,6 +1,6 @@
 'use client';
 
-import z, { iso } from "zod";
+import z from "zod";
 import { Module } from "./components/data";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,9 +9,9 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "@/app/ui/toast";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/ui/form";
 import { Input } from "@/app/ui/input";
-import Button from "@/app/components/base/button";
 import { Dialog } from "@/app/ui/dialog";
 import { useModalContext } from "@/hooks/use-model";
+import { useTranslation } from "react-i18next";
 
 interface ModuleFormProps {
   isOpen: boolean;
@@ -20,26 +20,27 @@ interface ModuleFormProps {
   onSubmitSuccess: () => void;
 }
 
-const formSchema = z.object({
-  key: z.string().min(2, {
-    error: 'key至少需要2个字符',
-  }),
-  name: z.string().min(2, {
-    error: '部门名称至少需要2个字符'
-  }),
-});
-
 export function ModuleForm({
   isOpen,
   onOpenChange,
   module,
   onSubmitSuccess
 }: ModuleFormProps) {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const { modalData } = useModalContext();
   let currentModule = useMemo(() => modalData, [modalData]);
   const updateModule = api.module.useUpdateModule();
   const createModule = api.module.useCreateModule();
+
+  const formSchema = z.object({
+    key: z.string().min(2, {
+      error: t('system.permission_group_key_min_length'),
+    }),
+    name: z.string().min(2, {
+      error: t('system.permission_group_name_min_length'),
+    }),
+  });
 
   const defaultValues: z.infer<typeof formSchema> = {
     key: currentModule?.key || '',
@@ -64,17 +65,17 @@ export function ModuleForm({
       setIsLoading(true);
       if (currentModule) {
         await updateModule({ ...values, id: currentModule.id });
-        toast.success('编辑成功');
+        toast.success(t('system.edit_success'));
       } else {
         await createModule({ ...values });
-        toast.success('添加成功');
+        toast.success(t('system.add_success'));
       }
       // 关闭模态框并通知父组件刷新
       onOpenChange(false);
       onSubmitSuccess();
     } catch (error) {
       console.error(error);
-      toast.error('操作失败');
+      toast.error(t('system.operation_failed'));
     } finally {
       setIsLoading(false);
     }
@@ -84,25 +85,26 @@ export function ModuleForm({
     <Dialog
       isOpen={isOpen}
       isLoading={isLoading}
-      title={'权限组'}
+      title={t('system.permission_group')}
       description=""
-      confirmText="确定"
-      cancelText="取消"
+      confirmText={t('system.confirm')}
+      cancelText={t('system.cancel')}
       onConfirm={form.handleSubmit(onSubmit)}
       onCancel={() => {
         onOpenChange(false)
       }}
+      className="max-w-sm"
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="grid grid-cols-12 gap-4 mb-4">
-            <div className="col-span-6 p-4 space-y-4 rounded">
+            <div className="col-span-full p-4 space-y-4 rounded">
               <FormField
                 control={form.control}
                 name='key'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>权限组Key</FormLabel>
+                    <FormLabel>{t('system.permission_group_key')}</FormLabel>
                     <FormControl>
                       <Input
                         disabled={!!module}
@@ -119,7 +121,7 @@ export function ModuleForm({
                 name='name'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>权限组名称</FormLabel>
+                    <FormLabel>{t('system.permission_group_name')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
