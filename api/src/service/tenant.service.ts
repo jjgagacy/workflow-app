@@ -139,7 +139,7 @@ export class TenantService {
         role: In(roles),
       }
     });
-    return joinRecord != null;
+    return joinRecord !== null;
   }
 
   async getTenant(tenantId: string): Promise<TenantEntity | null> {

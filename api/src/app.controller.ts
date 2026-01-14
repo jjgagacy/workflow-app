@@ -25,6 +25,8 @@ import { LocationService } from './service/libs/location.service';
 import { DeviceService } from './service/libs/device.service';
 import { Response } from 'express';
 import { AccountService } from './account/account.service';
+import { TenantService } from './service/tenant.service';
+import { AccountRole } from './account/account.enums';
 
 class OrderCreatedEvent {
   constructor(private eventObj: { orderId: number; payload: any }) { }
@@ -49,6 +51,7 @@ export class AppController {
     private readonly mailService: MailService,
     private readonly locationService: LocationService,
     private readonly deviceService: DeviceService,
+    private readonly tenantService: TenantService,
   ) { }
 
   @Get()
@@ -96,6 +99,14 @@ export class AppController {
     // const password = '123456';
     // const encryptedPassword = await this.accountService.hashPassword(password, salt);
     // console.log('verify password', await this.accountService.verifyPassword(password, encryptedPassword));
+    // const tenant = await this.tenantService.getTenant('');
+    // const account = await this.accountService.getById(204);
+    // if (tenant && account) {
+    //   await this.tenantService.addAccountTenantMembership(account, tenant, AccountRole.ADMIN);
+    // } else {
+    //   console.log('invalid tenant or account', tenant, account);
+    // }
+    console.log(await this.authAccountService.getCurrentTenant(204));
     console.log(await this.i18n.t('common.TIME.SECONDS', { args: { count: 1 } }));
     return await this.i18n.t("hello.HELLO");
   }

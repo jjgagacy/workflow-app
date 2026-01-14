@@ -190,6 +190,7 @@ type Mutation {
   login(input: LoginInput!): LoginResponse!
   resetPasswordSendEmail(input: ResetPasswordSendEmailInput!): String!
   setRolePerms(input: RoleSetPermInput!): Boolean!
+  switchTenant(tenant_id: String!): TenantResponse!
   switchWorkspace(tenant_id: String!): Boolean!
   toggleAccountStatus(id: Int!): Boolean!
   updateAccount(input: AccountInput!): AccountResponse!
@@ -233,6 +234,7 @@ input PermInput {
 type Query {
   accountInfo: Account!
   accounts(email: String, id: Int, limit: Int, mobile: String, page: Int, realName: String, roleId: Int, username: String): AccountList!
+  currentTenant: TenantResponse!
   currentUser: UserInfoResponse!
   depInfo(key: String!): Dep!
   deps: [Dep!]!
@@ -310,6 +312,12 @@ type Route {
 type Scope {
   key: String!
   name: String!
+}
+
+type TenantResponse {
+  name: String!
+  plan: String!
+  tenant_id: String!
 }
 
 input UpdateAccountAvatarInput {

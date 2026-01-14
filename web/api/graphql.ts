@@ -6,15 +6,12 @@ import { GraphQLClient } from "graphql-request";
 const client = new GraphQLClient(process.env.NEXT_PUBLIC_PUBLIC_API_PREFIX as string);
 
 // 带认证的客户端
-export const getAuthenticatedClient = (token?: string, locale?: string) => {
+export const getAuthenticatedClient = (token?: string, locale?: string, tenantId?: string) => {
   const headers: Record<string, string> = {};
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-  if (locale) {
-    headers['Accept-Language'] = formatAcceptLanguage(locale);
-  }
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  if (locale) headers['Accept-Language'] = formatAcceptLanguage(locale);
+  if (tenantId) headers['x-tenant-id'] = tenantId;
 
   return new GraphQLClient(process.env.NEXT_PUBLIC_PUBLIC_API_PREFIX as string, {
     headers
@@ -23,9 +20,10 @@ export const getAuthenticatedClient = (token?: string, locale?: string) => {
 
 // 获取当前用户客户端（在组件内使用）
 export const useGraphQLClient = () => {
-  const { accessToken } = useAuth();
+  const { accessToken, getTenantId } = useAuth();
   const locale = getClientLocale();
-  return getAuthenticatedClient(accessToken, locale);
+  const tenantId = getTenantId();
+  return getAuthenticatedClient(accessToken, locale, tenantId);
 }
 
 const formatAcceptLanguage = (locale: string): string => {

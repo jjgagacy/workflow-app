@@ -14,6 +14,7 @@ import { columnHelper, createColumns } from "./columns";
 import { Account } from "./data";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import { toast } from "@/app/ui/toast";
 
 interface AccountTableParams<TData, TValue> {
   data: TData[];
@@ -39,16 +40,22 @@ export function AccountTable<TData, TValue>({ }: AccountTableParams<TData, TValu
       setDebouncedSearch(search);
     }, DEBOUNCE_MS);
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [search, setDebouncedSearch]);
 
-  const { accounts, mutate } = api.account.useGetAccounts({ username: debouncedSearch, page, limit: pageSize });
+  let accounts: { data: Account[]; pageInfo: { total: number; } } | null = null;
+  try {
+    const { accounts: response, error } = api.account.useGetAccounts({ username: debouncedSearch, page, limit: pageSize });
+    accounts = response;
+  } catch (err: any) {
+    toast.error(err.message);
+  }
   const [data, setData] = useState<Account[]>([]);
 
   useEffect(() => {
     if (accounts?.data) {
       setData(accounts?.data);
     }
-  }, [accounts?.data]);
+  }, [accounts?.data, setData]);
 
   const total = accounts?.pageInfo?.total || 0;
   const pageCount = Math.ceil(total / pageSize);

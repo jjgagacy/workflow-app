@@ -97,6 +97,7 @@ import { SignUpResolver } from './graphql/account/account/resolvers/signup.resol
 import { GraphQLExceptionFilter } from './common/filters/graphql-exception.filter';
 import { AllExceptionsFilter } from './common/filters/all-exception.filter';
 import { ForgetPasswordResolver } from './graphql/account/account/resolvers/forget-password.resolver';
+import { TenantMiddleware } from './common/middleware/tenant.middleware';
 
 @Module({
   imports: [
@@ -169,8 +170,8 @@ import { ForgetPasswordResolver } from './graphql/account/account/resolvers/forg
         },
         retryAttempts: configService.get<number>('POSTGRES_RETRY_ATTEMPTS', 10),        // 重试次数
         retryDelay: configService.get<number>('POSTGRES_RETRY_DELAY', 3000),        // 重试延迟(毫秒)
-        // logging: process.env.NODE_ENV !== 'production',
-        // logger: 'advanced-console',
+        logging: process.env.NODE_ENV !== 'production',
+        logger: 'advanced-console',
       }),
       inject: [ConfigService],
     }),
@@ -336,6 +337,9 @@ export class AppModule implements NestModule {
     // consumer
     //   .apply(AuthMiddleware)
     //   .forRoutes('graphql');
+    consumer
+      .apply(TenantMiddleware)
+      .forRoutes('graphql');
 
     consumer
       .apply(TenantContextMiddleware)

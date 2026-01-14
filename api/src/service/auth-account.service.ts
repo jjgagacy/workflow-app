@@ -311,8 +311,6 @@ export class AuthAccountService {
 
     let tenant: TenantEntity | undefined = undefined;
 
-
-
     if (this.systemService.allowCreateWorkspace
       && dto.createWorkspaceRequired
       && (await this.featureService.getFeatures()).license.workspaces.isAvailable()
@@ -515,8 +513,9 @@ export class AuthAccountService {
     return membership ? { tenant: membership.tenant, membership } : null;
   }
 
-  async findAndValidateMembership(accountId: number, tenantId: string, manager: EntityManager): Promise<TenantAccountEntity> {
-    const tenantAccount = await manager
+  async findAndValidateMembership(accountId: number, tenantId: string, entityManager?: EntityManager): Promise<TenantAccountEntity> {
+    const workManager = entityManager || this.dataSource.manager;
+    const tenantAccount = await workManager
       .createQueryBuilder(TenantAccountEntity, 'taj')
       .innerJoinAndSelect('taj.tenant', 'tenant')
       .where('taj.account_id = :accountId', { accountId })
@@ -524,7 +523,7 @@ export class AuthAccountService {
       .andWhere('tenant.status = :status', { status: TenantStatus.ACTIVE })
       .getOne();
     if (!tenantAccount) {
-      throw new AccountNotLinkTenantError(tenantId, await this.getAccountEmail(accountId, manager));
+      throw new AccountNotLinkTenantError(tenantId, await this.getAccountEmail(accountId, workManager));
     }
 
     return tenantAccount;

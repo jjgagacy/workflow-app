@@ -28,7 +28,7 @@ export function useLoginForm() {
     setErrors,
     setIsLoading,
     setShowVerification,
-    handleSendVerificationCode
+    handleSendVerificationCode,
   } = base;
 
   const emailCodeLoginMutaiton = api.account.useEmailCodeLogin();

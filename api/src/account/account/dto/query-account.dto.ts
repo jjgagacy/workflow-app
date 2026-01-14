@@ -26,11 +26,13 @@ export class QueryAccountDto extends QueryDto {
       roleId,
       page,
       limit,
-      relations
+      relations,
+      tenantId,
     } = args;
 
     // 使用对象解构和简写赋值
     Object.assign(this, {
+      ...{ tenantId },
       ...(validId(id) && { id }),
       ...(notEmpty(username) && { username }),
       ...(notEmpty(email) && { email }),

@@ -4,7 +4,7 @@ import { LoginResponse, UserInfoResponse } from "../types/login-response.type";
 import { EmailCodeLoginInput, EmailCodeLoginSendEmail, LoginInput, PasswordLoginInput, ResetPasswordSendEmailInput } from "../types/login-input.type";
 import { AuthService } from "@/auth/auth.service";
 import { CurrentUser } from "@/common/decorators/current-user";
-import { BadRequestException, NotFoundException, Req, UseGuards } from "@nestjs/common";
+import { BadRequestException, NotFoundException, UseGuards } from "@nestjs/common";
 import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { AuthAccountService } from "@/service/auth-account.service";
 import { DeviceService } from "@/service/libs/device.service";
@@ -13,7 +13,7 @@ import { AccountNotFoundError, EmailInFreezeError } from "@/service/exceptions/a
 import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { FeatureService } from "@/service/feature.service";
-import { convertLanguageCode, EmailLanguage } from "@/mail/mail-i18n.service";
+import { convertLanguageCode } from "@/mail/mail-i18n.service";
 import { getMappedLang } from "@/i18n-global/langmap";
 import { GqlRequest } from "@/common/decorators/gql-request";
 import { EmailValidationPipe } from "@/common/pipes/email-validation.pipe";

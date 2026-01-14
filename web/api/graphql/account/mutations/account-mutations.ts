@@ -120,3 +120,13 @@ export const FORGOT_PASSWORD_RESET = gql`
     forgetPasswordReset(input: $input)
   }
 `
+
+export const SWITCH_TENANT = gql`
+  mutation SwitchTenantMutation($tenant_id: String!) {
+    switchTenant {
+      tenant_id,
+      name,
+      plan
+    }
+  }
+`

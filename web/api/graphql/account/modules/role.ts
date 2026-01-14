@@ -1,7 +1,7 @@
 // services/roleService.ts
 import { useGraphQLQuery, useGraphQLMutation } from "@/hooks/use-graphql";
 import { CREATE_ROLE, UPDATE_ROLE, DELETE_ROLE, SET_ROLE_PERMS } from "../mutations/role-mutations";
-import { GET_ROLES } from "../../queries";
+import { GET_ROLES } from "../queries";
 
 // 获取角色列表
 export const useGetRoles = (params: {

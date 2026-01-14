@@ -1,7 +1,7 @@
 // services/departmentService.ts
 import { useGraphQLQuery, useGraphQLMutation } from "@/hooks/use-graphql";
 import { CREATE_DEP, UPDATE_DEP, DELETE_DEP } from '../mutations/dep-mutations';
-import { GET_DEPS, GET_DEP } from "../../queries";
+import { GET_DEPS, GET_DEP } from "../queries";
 
 // 获取部门列表
 export const useGetDeps = (params: { key?: string; name?: string; parent?: string } = {}) => {

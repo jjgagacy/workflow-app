@@ -16,6 +16,8 @@ import { useTagsViewStore } from "@/hooks/use-tagview-store";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslation } from "react-i18next";
 import { Briefcase, Crown, Fingerprint, Home, List, Sliders, UserCog } from "lucide-react";
+import api from "@/api";
+import { useAuth } from "@/hooks/use-auth";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -30,6 +32,9 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
   const pathname = usePathname();
   const isMobile = useIsMobile();
   const { t } = useTranslation();
+  const useCurrentTenant = api.user.useCurrentTenant();
+  const { data: tenantInfo } = useCurrentTenant();
+  const { setCurrentTenant } = useAuth();
 
   const toggleMobileSidebar = () => {
     setMobileSidebarOpen(!mobileSidebarOpen);
@@ -116,6 +121,12 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
     }
     return isCollapsed ? 'ml-32' : 'ml-64';
   }, [isCollapsed, isMobile]);
+
+  useEffect(() => {
+    if (tenantInfo) {
+      setCurrentTenant(tenantInfo.tenant_id, tenantInfo.name, tenantInfo.plan);
+    }
+  }, [tenantInfo, setCurrentTenant]);
 
   // theme-xx replace xx to your theme
   return (

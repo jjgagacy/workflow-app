@@ -1,7 +1,7 @@
 // services/menuService.ts
 import { useGraphQLQuery, useGraphQLMutation } from "@/hooks/use-graphql";
 import { Menu } from "@/features/menu/components/data";
-import { GET_MENUS, GET_MENUS2 } from "../../queries";
+import { GET_MENUS, GET_MENUS2 } from "../queries";
 import { CREATE_MENU, UPDATE_MENU, DELETE_MENU } from "../mutations/role-mutations";
 
 // 获取菜单列表 (GET_MENUS)

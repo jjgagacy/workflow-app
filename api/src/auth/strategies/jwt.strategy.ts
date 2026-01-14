@@ -6,32 +6,32 @@ import { JWT_CONSTANTS } from "@/config/constants";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-    constructor() {
-        super({
-            jwtFromRequest: ExtractJwt.fromExtractors([
-                JwtStrategy.extractJWT,
-                ExtractJwt.fromAuthHeaderAsBearerToken(),
-            ]),
-            ignoreExpiration: false,
-            secretOrKey: JWT_CONSTANTS.secret
-        })
-    }
+  constructor() {
+    super({
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        JwtStrategy.extractJWT,
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
+      ignoreExpiration: false,
+      secretOrKey: JWT_CONSTANTS.secret
+    })
+  }
 
-    // return value of validate will be attached to the Request object
-    async validate(payload: any) {
-        return { id: payload.sub, name: payload.name };
-    }
+  // return value of validate will be attached to the Request object
+  async validate(payload: any) {
+    return { id: payload.sub, name: payload.name };
+  }
 
-    private static extractJWT(req: RequestType): string | null {
-        if (req.cookies && 'token' in req.cookies && req.cookies.token.length > 0) {
-            return req.cookies.token;
-        }
-        const auth = req.get('Authorization');
-        if (auth !== undefined && auth.length > 0) {
-            return auth.split(' ')[1] || null;
-        }
-        return null;
+  private static extractJWT(req: RequestType): string | null {
+    if (req.cookies && 'token' in req.cookies && req.cookies.token.length > 0) {
+      return req.cookies.token;
     }
+    const auth = req.get('Authorization');
+    if (auth !== undefined && auth.length > 0) {
+      return auth.split(' ')[1] || null;
+    }
+    return null;
+  }
 }
 
 

@@ -32,14 +32,14 @@ export class AuthService {
   async login(user: any): Promise<LoginResponse> {
     const userId = user?.id ?? 0;
     if (!userId) {
-      throw new BadRequestException(this.i18n.t('account.ACCOUNT_ID_NOT_EXISTS', { args: { name } }));
+      throw new BadRequestException(this.i18n.t('account.ACCOUNT_ID_NOT_EXISTS', { args: { name: user?.id ?? 0 } }));
     }
     const payload = { name: user.username, sub: userId };
     const access_token = this.jwtService.sign(payload, {
       secret: JWT_CONSTANTS.secret,
       expiresIn: JWT_CONSTANTS.expiresIn,
     });
-    const roleKeys = user.roles?.map((role) => role.key) || [];
+    const roleKeys = user.roles?.map((role: any) => role.key) || [];
     return {
       access_token,
       name: user.realName ? user.realName : user.username,

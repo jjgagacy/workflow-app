@@ -8,24 +8,24 @@ export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 
 @Injectable()
 export class GqlAuthGuard extends AuthGuard('jwt') {
-    constructor(private readonly reflector: Reflector) {
-        super();
-    }
+  constructor(private readonly reflector: Reflector) {
+    super();
+  }
 
-    getRequest(context: ExecutionContext) {
-        const ctx = GqlExecutionContext.create(context);
-        return ctx.getContext().req;
-    }
+  getRequest(context: ExecutionContext) {
+    const ctx = GqlExecutionContext.create(context);
+    return ctx.getContext().req;
+  }
 
-    canActivate(context: ExecutionContext) {
-        const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-            context.getHandler(),
-            context.getClass()
-        ]);
+  canActivate(context: ExecutionContext) {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass()
+    ]);
 
-        if (isPublic) {
-            return true;
-        }
-        return super.canActivate(context);
+    if (isPublic) {
+      return true;
     }
+    return super.canActivate(context);
+  }
 }

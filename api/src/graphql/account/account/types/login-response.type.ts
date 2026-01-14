@@ -25,3 +25,14 @@ export class UserInfoResponse {
   @Field({ nullable: true })
   name?: string;
 }
+
+@ObjectType('TenantResponse')
+export class TenantResponse {
+  @Field()
+  tenant_id: string;
+  @Field()
+  name: string;
+
+  @Field()
+  plan: string;
+}

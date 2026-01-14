@@ -205,7 +205,7 @@ export class AccountService {
 
     // 构建查询条件
     const where: FindOptionsWhere<AccountEntity> = {
-      ...{ tenant: { id: dto.tenantId } },
+      ...{ tenants: { tenant: { id: dto.tenantId } } },
       ...(dto.id !== undefined && { id: dto.id }),
       ...(dto.username !== undefined && { username: Like(`%${dto.username}%`) }),
       ...(dto.realName !== undefined && { realName: Like(`%${dto.realName}%`) }),

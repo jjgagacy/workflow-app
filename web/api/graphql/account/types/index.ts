@@ -36,3 +36,9 @@ export interface PasswordLoginInput {
   password: string;
   token?: string;
 }
+
+export interface TenantResponseOutput {
+  tenant_id: string;
+  name: string;
+  plan: string;
+}

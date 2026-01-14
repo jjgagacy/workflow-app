@@ -1,7 +1,9 @@
 import { DepEntity } from "@/account/entities/dep.entity";
 import { RoleEntity } from "@/account/entities/role.entity";
 import { Operate } from "@/common/database/entities/fields/operate";
-import { BaseEntity, Column, Entity, Index, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, Index, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { TenantEntity } from "./tenant.entity";
+import { TenantAccountEntity } from "./tenant-account.entity";
 
 @Entity({ name: 'account' })
 export class AccountEntity extends BaseEntity {
@@ -108,4 +110,7 @@ export class AccountEntity extends BaseEntity {
     onDelete: 'SET NULL',
   })
   dep: DepEntity;
+
+  @OneToMany(() => TenantAccountEntity, tenantAccount => tenantAccount.account)
+  tenants: TenantAccountEntity[];
 }

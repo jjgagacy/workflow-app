@@ -2,17 +2,19 @@
 
 import { useGraphQLClient } from '@/api/graphql'
 import { DocumentNode } from 'graphql'
+import { useMemo } from 'react';
 import useSWR from 'swr';
 
-export const useGraphQLQuery = <TData, TVariables extends object = object>(
+export const useGraphQLQuery = <
+  TData,
+  TVariables extends object = object
+>(
   query: DocumentNode | string,
   variables?: TVariables,
   options?: any
 ) => {
   const client = useGraphQLClient();
-
   const fetcher = () => client.request<TData>(query, variables);
-
   return useSWR<TData>(
     [query, variables],
     fetcher,
@@ -21,6 +23,75 @@ export const useGraphQLQuery = <TData, TVariables extends object = object>(
       ...options
     }
   );
+}
+
+export function createQueryHook<
+  TData,
+  TVariables extends object = object,
+  TTransformed = TData
+>(
+  queries: DocumentNode | string,
+  config?: {
+    transform?: (data: TData) => TTransformed,
+    defaultVariables?: Partial<TVariables>,
+    hookOptions?: {
+      onSuccess?: (data: TTransformed) => void;
+      onError?: (error: any) => void;
+    },
+    queryOptions?: {
+      shouldRetryOnError?: boolean;
+      revalidateOnReconnect?: boolean;
+      staleTime?: number;
+      cacheTime?: number;
+      refetchOnWindowFocus?: boolean;
+    }
+  }
+) {
+  const {
+    transform,
+    defaultVariables = {},
+    hookOptions = {},
+    queryOptions = {},
+  } = config || {};
+  return () => {
+    const enhancedQuery = (
+      variables?: TVariables,
+      options?: any,
+    ): { data: TTransformed, mutate: any, isLoading: boolean, error: any } => {
+      const mergedVariables = useMemo(() => {
+        return { ...defaultVariables, ...variables } as TVariables;
+      }, [defaultVariables, variables]);
+
+      const mergedQueryOptions = useMemo(() => {
+        return { ...queryOptions, ...options };
+      }, [queryOptions, options]);
+
+      try {
+        const { data, error, isLoading, mutate } = useGraphQLQuery<TData, TVariables>(
+          queries,
+          mergedVariables,
+          mergedQueryOptions,
+        );
+        if (error) {
+          throw error;
+        }
+        const transformedData = transform ? transform(data!) : (data as unknown as TTransformed);
+        hookOptions?.onSuccess?.(transformedData);
+        options?.onSuccess?.(transformedData);
+        return {
+          data: transformedData,
+          mutate,
+          isLoading,
+          error
+        };
+      } catch (error) {
+        options?.onError?.(error);
+        config?.hookOptions?.onError?.(error);
+        throw error;
+      }
+    }
+    return enhancedQuery;
+  };
 }
 
 export const useGraphQLMutation = <

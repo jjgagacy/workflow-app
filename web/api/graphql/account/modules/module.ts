@@ -1,6 +1,6 @@
 // services/moduleService.ts
 import { useGraphQLQuery, useGraphQLMutation } from "@/hooks/use-graphql";
-import { GET_MODULES } from "../../queries";
+import { GET_MODULES } from "../queries";
 import { CREATE_MODULE, UPDATE_MODULE, DELETE_MODULE, CREATE_MODULE_PERM, UPDATE_MODULE_PERM, DELETE_MODULE_PERM } from "../mutations/module-mutations";
 
 // 获取模块列表

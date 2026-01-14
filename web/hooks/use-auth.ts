@@ -1,111 +1,130 @@
 import { useState, useEffect, useCallback } from 'react';
 
 export function useAuth() {
-    // 从 localStorage 安全读取并解析数据
-    const getSessionData = useCallback((key: string, defaultValue: any) => {
-        if (typeof window === 'undefined') return defaultValue;
+  // 从 localStorage 安全读取并解析数据
+  const getSessionData = useCallback((key: string, defaultValue: any) => {
+    if (typeof window === 'undefined') return defaultValue;
 
-        try {
-            const data = localStorage.getItem(key);
-            return data ? JSON.parse(data) : defaultValue;
-        } catch (error) {
-            console.error(`Error parsing session data for key ${key}:`, error);
-            return defaultValue;
-        }
-    }, []);
+    try {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : defaultValue;
+    } catch (error) {
+      console.error(`Error parsing session data for key ${key}:`, error);
+      return defaultValue;
+    }
+  }, []);
 
-    // 初始化状态
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() =>
-        !!getSessionData('session:token', { access_token: '' }).access_token
-    );
-    const [accessToken, setAccessToken] = useState<string>(() =>
-        getSessionData('session:token', { access_token: '' }).access_token
-    );
-    const [routes, setRoutes] = useState<any[]>(() =>
-        getSessionData('session:routes', [])
-    );
-    const [user, setUser] = useState<{
-        name: string;
-        roles: string[];
-        is_super: boolean;
-        avatar?: string | undefined;
-    }>(() =>
-        getSessionData('session:userinfo', { name: '', roles: [], is_super: false, avatar: undefined })
-    );
+  // 初始化状态
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() =>
+    !!getSessionData('session:token', { access_token: '' }).access_token
+  );
+  const [accessToken, setAccessToken] = useState<string>(() =>
+    getSessionData('session:token', { access_token: '' }).access_token
+  );
+  const [routes, setRoutes] = useState<any[]>(() =>
+    getSessionData('session:routes', [])
+  );
+  const [user, setUser] = useState<{
+    name: string;
+    roles: string[];
+    is_super: boolean;
+    avatar?: string | undefined;
+  }>(() =>
+    getSessionData('session:userinfo', { name: '', roles: [], is_super: false, avatar: undefined })
+  );
+  const [tenant, setTenant] = useState<{
+    tenant_id: string;
+    name: string;
+    plan: string
+  }>(() => getSessionData('session:tenantInfo', { tenant_id: '', name: '', plan: '' }));
 
-    // 登录方法
-    const login = useCallback((
-        access_token: string,
-        name: string,
-        roles: string[],
-        is_super: boolean,
-        avatar?: string,
-    ) => {
-        const userInfo = { name, roles, is_super, avatar };
-        const tokenData = { access_token };
+  // 登录方法
+  const login = useCallback((
+    access_token: string,
+    name: string,
+    roles: string[],
+    is_super: boolean,
+    avatar?: string,
+  ) => {
+    const userInfo = { name, roles, is_super, avatar };
+    const tokenData = { access_token };
 
-        localStorage.setItem("session:token", JSON.stringify(tokenData));
-        localStorage.setItem("session:userinfo", JSON.stringify(userInfo));
+    localStorage.setItem("session:token", JSON.stringify(tokenData));
+    localStorage.setItem("session:userinfo", JSON.stringify(userInfo));
 
-        setIsAuthenticated(true);
-        setUser({ name, roles, is_super, avatar });
-        setAccessToken(access_token);
-    }, [setIsAuthenticated, setUser, setAccessToken]);
+    setIsAuthenticated(true);
+    setUser({ name, roles, is_super, avatar });
+    setAccessToken(access_token);
+  }, [setIsAuthenticated, setUser, setAccessToken]);
 
-    // 登出方法
-    const logout = useCallback(() => {
-        ["session:token", "session:userinfo", "session:routes"].forEach(key => {
-            localStorage.removeItem(key);
-        });
-        setIsAuthenticated(false);
-        setUser({ name: '', roles: [], is_super: false, avatar: undefined });
-        setAccessToken('');
-        setRoutes([]);
-    }, [setIsAuthenticated, setUser, setAccessToken, setRoutes]);
+  const setCurrentTenant = useCallback((tenant_id: string, name: string, plan: string) => {
+    const tenantInfo = { tenant_id, name, plan };
+    localStorage.setItem("session:tenantInfo", JSON.stringify(tenantInfo));
+    setTenant(tenantInfo);
+  }, [setTenant]);
 
-    // 同步状态与 localStorage
-    useEffect(() => {
-        const handleStorageChange = (e: StorageEvent) => {
-            if (e.key === 'session:token') {
-                const tokenData = e.newValue ? JSON.parse(e.newValue) : { access_token: '' };
-                setAccessToken(tokenData.access_token);
-                setIsAuthenticated(!!tokenData.access_token);
-            }
-            if (e.key === 'session:userinfo') {
-                const userInfo = e.newValue ? JSON.parse(e.newValue) : { name: '', roles: [], is_super: false };
-                setUser(userInfo);
-            }
-            if (e.key === 'session:routes') {
-                const routesData = e.newValue ? JSON.parse(e.newValue) : [];
-                setRoutes(routesData);
-            }
-        };
+  // 登出方法
+  const logout = useCallback(() => {
+    ["session:token", "session:userinfo", "session:routes", "session:tenantInfo"].forEach(key => {
+      localStorage.removeItem(key);
+    });
+    setIsAuthenticated(false);
+    setUser({ name: '', roles: [], is_super: false, avatar: undefined });
+    setAccessToken('');
+    setRoutes([]);
+    setTenant({ tenant_id: '', name: '', plan: '' });
+  }, [setIsAuthenticated, setUser, setAccessToken, setRoutes]);
 
-        window.addEventListener('storage', handleStorageChange);
-        return () => window.removeEventListener('storage', handleStorageChange);
-    }, []);
-
-    // 辅助方法
-    const getUserName = useCallback(() => user.name, [user]);
-    const getRoles = useCallback(() => [...user.roles], [user]); // 返回副本避免外部修改
-    const isSuper = useCallback(() => user.is_super, [user]);
-    const getUserAvatar = useCallback(() => user.avatar, [user]);
-    const removeToken = useCallback(() => {
-        setAccessToken('');
-        localStorage.removeItem('session:token');
-    }, [setAccessToken]);
-
-    return {
-        isAuthenticated,
-        login,
-        logout,
-        user,
-        getUserName,
-        getUserAvatar,
-        accessToken,
-        routes,
-        getRoles,
-        removeToken,
-        isSuper,
+  // 同步状态与 localStorage
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'session:token') {
+        const tokenData = e.newValue ? JSON.parse(e.newValue) : { access_token: '' };
+        setAccessToken(tokenData.access_token);
+        setIsAuthenticated(!!tokenData.access_token);
+      }
+      if (e.key === 'session:userinfo') {
+        const userInfo = e.newValue ? JSON.parse(e.newValue) : { name: '', roles: [], is_super: false };
+        setUser(userInfo);
+      }
+      if (e.key === 'session:routes') {
+        const routesData = e.newValue ? JSON.parse(e.newValue) : [];
+        setRoutes(routesData);
+      }
+      if (e.key == 'session:tenantInfo') {
+        const tenantInfo = e.newValue ? JSON.parse(e.newValue) : { tenant_id: '', name: '', plan: '' };
+        setTenant(tenantInfo);
+      }
     };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  // 辅助方法
+  const getUserName = useCallback(() => user.name, [user]);
+  const getRoles = useCallback(() => [...user.roles], [user]); // 返回副本避免外部修改
+  const isSuper = useCallback(() => user.is_super, [user]);
+  const getUserAvatar = useCallback(() => user.avatar, [user]);
+  const getTenantId = useCallback(() => tenant.tenant_id, [tenant]);
+  const removeToken = useCallback(() => {
+    setAccessToken('');
+    localStorage.removeItem('session:token');
+  }, [setAccessToken]);
+
+  return {
+    isAuthenticated,
+    login,
+    logout,
+    user,
+    getUserName,
+    getUserAvatar,
+    accessToken,
+    routes,
+    getRoles,
+    removeToken,
+    isSuper,
+    getTenantId,
+    setCurrentTenant
+  };
 }
