@@ -7,10 +7,12 @@ import { UseGuards } from "@nestjs/common";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
 import { CreateModuleDto } from "@/account/module/dto/create-module.dto";
+import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
-@UseGuards(GqlAuthGuard)
-@UseGuards(EditionSelfHostedGuard)
 @Resolver()
+@UseGuards(GqlAuthGuard)
+@UseGuards(TenantContextGuard)
+@UseGuards(EditionSelfHostedGuard)
 export class CreateModuleResolver {
   constructor(
     private readonly moduleService: ModuleService

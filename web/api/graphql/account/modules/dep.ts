@@ -5,9 +5,9 @@ import { GET_DEPS, GET_DEP } from "../queries";
 
 // 获取部门列表
 export const useGetDeps = (params: { key?: string; name?: string; parent?: string } = {}) => {
-  const { data, error, isLoading, mutate } = useGraphQLQuery<{ deps: any }, { input: typeof params }>(
+  const { data, error, isLoading, mutate } = useGraphQLQuery<{ deps: any }, typeof params>(
     GET_DEPS,
-    { input: params },
+    params,
     {
       shouldRetryOnError: false,
       revalidateOnReconnect: true

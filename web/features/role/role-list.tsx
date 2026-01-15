@@ -1,5 +1,3 @@
-'use client';
-
 import { Role } from "@/types/role";
 import { RoleTable } from "./components/role-table";
 

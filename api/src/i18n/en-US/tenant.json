@@ -1,5 +1,6 @@
 {
-    "WORKSPACE_CREATE_NOT_ALLOWD": "Failed to create namespace",
-    "WORKSPACE_LIMIT_EXEEEDED": "Workspace limit exceed",
-    "TENANT_NOT_FOUND": "Workspace does not found"
+  "WORKSPACE_CREATE_NOT_ALLOWD": "Failed to create namespace",
+  "WORKSPACE_LIMIT_EXEEEDED": "Workspace limit exceed",
+  "TENANT_NOT_FOUND": "Workspace does not found",
+  "TENANT_ID_NOT_EMPTY": "Workspace id does not empty"
 }

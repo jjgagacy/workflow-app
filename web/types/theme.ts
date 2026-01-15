@@ -1,4 +1,4 @@
-export type ThemeType = 'blue' | 'green' | 'amber';
+export type ThemeType = 'default' | 'blue' | 'green' | 'amber';
 
 export interface ThemeConfig {
   value: ThemeType;
@@ -11,28 +11,36 @@ export interface ThemeConfig {
 
 export const themes: ThemeConfig[] = [
   {
+    value: 'default',
+    name: 'Default',
+    bgColor: 'bg-gray-50 dark:bg-gray-900',
+    textColor: 'text-gray-700 dark:text-gray-200',
+    hoverColor: 'hover:bg-gray-100 dark:hover:bg-neutral-700',
+    activeColor: 'text-gray-600 dark:text-gray-300',
+  },
+  {
     value: 'blue',
     name: 'Blue',
-    activeColor: 'text-blue-600',
-    bgColor: 'bg-blue-50',
-    textColor: 'text-blue-700',
-    hoverColor: 'hover:bg-blue-100',
+    bgColor: 'bg-blue-50 dark:bg-blue-900',
+    textColor: 'text-blue-700 dark:text-blue-200',
+    hoverColor: 'hover:bg-blue-100 dark:hover:bg-blue-800',
+    activeColor: 'text-blue-600 dark:text-blue-300',
   },
   {
     value: 'green',
     name: 'Green',
-    activeColor: 'text-green-600',
-    bgColor: 'bg-green-50',
-    textColor: 'text-green-700',
-    hoverColor: 'hover:bg-green-100',
+    bgColor: 'bg-green-50 dark:bg-green-900',
+    textColor: 'text-green-700 dark:text-green-200',
+    hoverColor: 'hover:bg-green-100 dark:hover:bg-green-800',
+    activeColor: 'text-green-600 dark:text-green-300',
   },
   {
     value: 'amber',
     name: 'Amber',
-    activeColor: 'text-amber-600',
-    bgColor: 'bg-amber-50',
-    textColor: 'text-amber-700',
-    hoverColor: 'hover:bg-amber-100',
+    bgColor: 'bg-amber-50 dark:bg-amber-900',
+    textColor: 'text-amber-700 dark:text-amber-200',
+    hoverColor: 'hover:bg-amber-100 dark:hover:bg-amber-800',
+    activeColor: 'text-amber-600 dark:text-amber-300',
   },
 ];
 
@@ -63,4 +71,9 @@ export function getThemeTextClass(themeValue: ThemeType): string {
 // 获取主题hover色
 export function getThemeHoverClass(themeValue: ThemeType): string {
   return getThemeConfig(themeValue).hoverColor;
+}
+
+// 获取主题active色
+export function getThemeActiveClass(themeValue: ThemeType): string {
+  return getThemeConfig(themeValue).activeColor;
 }

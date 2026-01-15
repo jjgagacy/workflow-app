@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { DepEntity } from "./entities/dep.entity";
-import { EntityManager, FindManyOptions, FindOptionsWhere, In, Not, QueryRunner, Repository } from "typeorm";
+import { EntityManager, FindManyOptions, FindOptionsWhere, In, Like, Not, QueryRunner, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { plainToInstance } from "class-transformer";
 import { QueryDepDto } from "./dep/dto/query-dep.dto";
@@ -13,6 +13,7 @@ import { I18nTranslations } from "@/generated/i18n.generated";
 import { throwIfDtoValidateFail } from "@/common/utils/validation";
 import { InvalidInputGraphQLException } from "@/common/exceptions";
 import { isPaginator } from "@/common/database/utils/pagination";
+import { QueryRoleDto } from "./role/dto/query-role.dto";
 
 @Injectable()
 export class DepService {
@@ -48,6 +49,7 @@ export class DepService {
       throw new BadRequestException(this.i18n.t('system.ROLE_KEY_EXISTS', { args: { key: dto.key } }));
     }
     const newDep = this.depRepository.create({
+      tenant: { id: dto.tenantId },
       key: dto.key,
       name: dto.name,
       parent: dto.parent,
@@ -165,10 +167,10 @@ export class DepService {
     }
     // 1. 构建查询条件
     const where: FindOptionsWhere<DepEntity> = {
-      ...{ tenant: { id: dto.tenantId } },
+      ...(dto.tenantId !== undefined && { tenant: { id: dto.tenantId } }),
       ...(dto.key !== undefined && { key: dto.key }),
-      ...(dto.name !== undefined && { key: dto.name }),
-      ...(dto.parent !== undefined && { key: dto.parent }),
+      ...(dto.name !== undefined && { name: Like(`%${dto.name}%`) }),
+      ...(dto.parent !== undefined && { parent: dto.parent }),
     }
     // 2. 构建排序条件
     const order = dto.order ? { ...dto.order } : {};
@@ -188,10 +190,17 @@ export class DepService {
     }
   }
 
-  async getDeps(tenantId: string): Promise<DepInterface[]> {
+  async getDeps(queryParams: Partial<QueryDepDto> | GetDepArgs): Promise<DepInterface[]> {
     // 1. 查询所有部门
-    const dto = { tenantId } as QueryDepDto;
+    const dto = new QueryDepDto();
+    if (queryParams instanceof QueryDepDto) {
+      Object.assign(dto, queryParams);
+    } else {
+      dto.setQueryArgs(queryParams as GetDepArgs);
+    }
     const { data: deps } = await this.query(dto);
+
+    return deps;
 
     // 2. 创建部门映射表并初始化子部门数组
     const depMap = new Map<string, DepInterface>();
@@ -205,7 +214,7 @@ export class DepService {
 
     // 3. 并行获取所有部门的管理者信息
     const managerPromises = Array.from(depMap.values()).map(async depNode => {
-      const dep = await this.getByKey(depNode.key, tenantId);
+      const dep = await this.getByKey(depNode.key, dto.tenantId || '');
       if (!dep?.id) return { depKey: null };
       const manager = await this.getManager(dep.id);
       if (!manager) return { depKey: depNode.key };
@@ -230,16 +239,16 @@ export class DepService {
     });
 
     // 5. 构建部门树
-    const tree: DepInterface[] = [];
-    depMap.forEach(depNode => {
-      if (!depNode.parent) {
-        tree.push(depNode);
-      } else {
-        const parent = depMap.get(depNode.parent);
-        if (parent && parent.children) parent.children.push(depNode);
-      }
-    });
+    // const tree: DepInterface[] = [];
+    // depMap.forEach(depNode => {
+    //   if (!depNode.parent) {
+    //     tree.push(depNode);
+    //   } else {
+    //     const parent = depMap.get(depNode.parent);
+    //     if (parent && parent.children) parent.children.push(depNode);
+    //   }
+    // });
 
-    return tree;
+    // return tree;
   }
 }

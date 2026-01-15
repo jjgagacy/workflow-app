@@ -28,8 +28,8 @@ export function createColumns(t: (key: string, options?: any) => string): Column
     columnHelper.accessor("status", {
       header: t('system.status'),
       cell: info => (
-        <Badge variant={info.getValue() === 1 ? 'success' : 'danger'}>
-          {info.getValue() === 1 ? t('system.enable') : t('system.disable')}
+        <Badge variant={info.getValue() === 1 ? 'danger' : 'success'}>
+          {info.getValue() === 1 ? t('system.disable') : t('system.enable')}
         </Badge>
       ),
       meta: { label: t('system.status') }

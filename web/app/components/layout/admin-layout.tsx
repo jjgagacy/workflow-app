@@ -33,8 +33,11 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
   const isMobile = useIsMobile();
   const { t } = useTranslation();
   const useCurrentTenant = api.user.useCurrentTenant();
-  const { data: tenantInfo } = useCurrentTenant();
-  const { setCurrentTenant } = useAuth();
+  const { setCurrentTenant, getTenantId } = useAuth();
+  let tenantInfo: any;
+  if (!getTenantId()) {
+    const { data: tenantInfo } = useCurrentTenant();
+  }
 
   const toggleMobileSidebar = () => {
     setMobileSidebarOpen(!mobileSidebarOpen);

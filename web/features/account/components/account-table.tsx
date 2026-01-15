@@ -15,6 +15,7 @@ import { Account } from "./data";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { toast } from "@/app/ui/toast";
+import { useAuth } from "@/hooks/use-auth";
 
 interface AccountTableParams<TData, TValue> {
   data: TData[];
@@ -33,6 +34,7 @@ export function AccountTable<TData, TValue>({ }: AccountTableParams<TData, TValu
   const toggleStatusMutation = api.account.useToggleAccountStatus();
   const deleteAccount = api.account.useDeleteAccount();
   const { t } = useTranslation();
+  const { isSuperUser } = useAuth();
 
   useEffect(() => {
     //if (search === '') return;
@@ -87,7 +89,7 @@ export function AccountTable<TData, TValue>({ }: AccountTableParams<TData, TValu
       cell: ({ row }) => {
         const account = row.original;
 
-        if (account.username === 'admin') {
+        if (isSuperUser(account)) {
           return null;
         }
 
@@ -116,7 +118,7 @@ export function AccountTable<TData, TValue>({ }: AccountTableParams<TData, TValu
               className=""
               size={'small'}
             >
-              {account.status === 1 ? t('system.disable') : t('system.enable')}
+              {account.status === 1 ? t('system.enable') : t('system.disable')}
             </Button>
           </div>
         );
@@ -155,7 +157,9 @@ export function AccountTable<TData, TValue>({ }: AccountTableParams<TData, TValu
           variant={'ghost'}
           size={'large'}
           onClick={() => onReset()}
-        >{t('system.reset')}</Button>
+        >
+          {t('system.reset')}
+        </Button>
       </DataTableToolbar>
     </DataTable>
   );

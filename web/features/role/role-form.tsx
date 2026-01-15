@@ -22,8 +22,6 @@ interface RoleFormProps {
   onSubmitSuccess: () => void;
 }
 
-
-
 export default function RoleForm({
   isOpen,
   onOpenChange,

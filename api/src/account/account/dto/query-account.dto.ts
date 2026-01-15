@@ -11,7 +11,7 @@ export class QueryAccountDto extends QueryDto {
   roleId?: number;
   relations?: { roles: boolean }
   order?: { [P in 'id' | 'status']?: 'ASC' | 'DESC' };
-  tenantId: string;
+  tenantId?: string;
 
   setQueryArgs(args?: GetAccountListArgs) {
     if (!args) return;
@@ -32,8 +32,8 @@ export class QueryAccountDto extends QueryDto {
 
     // 使用对象解构和简写赋值
     Object.assign(this, {
-      ...{ tenantId },
       ...(validId(id) && { id }),
+      ...(notEmpty(tenantId) && { tenantId }),
       ...(notEmpty(username) && { username }),
       ...(notEmpty(email) && { email }),
       ...(notEmpty(mobile) && { mobile }),

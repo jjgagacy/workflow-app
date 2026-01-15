@@ -237,7 +237,7 @@ type Query {
   currentTenant: TenantResponse!
   currentUser: UserInfoResponse!
   depInfo(key: String!): Dep!
-  deps: [Dep!]!
+  deps(key: String, name: String, parent: String): [Dep!]!
   hello: String!
   menuInfo(id: Int!): Menu!
   menus(key: String, module: Boolean, modulePerm: Boolean, name: String, parent: String, scope: Boolean, status: Int): [Menu!]!

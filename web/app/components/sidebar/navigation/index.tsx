@@ -9,6 +9,8 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { HoverSubmenu } from './hover-submenu';
 import { useTranslation } from 'react-i18next';
+import { useActiveTheme } from '../../active-theme';
+import { getThemeActiveClass, getThemeBgClass, getThemeHoverClass, ThemeType } from '@/types/theme';
 
 interface NavigationProps {
   collapsed: boolean;
@@ -26,6 +28,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
   const subMenuRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hoverRef = useRef<{ key: string; timeout: NodeJS.Timeout | null }>({ key: '', timeout: null });
+  const { activeTheme } = useActiveTheme();
 
   const defaultMenus: MenuItem[] = [
     {
@@ -176,8 +179,8 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                 onMouseLeave={handleMouseLeave}
               >
                 <div
-                  className={`navigation-menu__trigger flex items-center px-2 py-2 w-full rounded-lg hover:bg-selection-hover ${collapsed ? "justify-center" : ""
-                    } ${isActive(item.path) ? "bg-selection-active" : ""}`}
+                  className={`navigation-menu__trigger flex items-center px-2 py-2 w-full rounded-lg ${getThemeHoverClass(activeTheme as ThemeType)}${collapsed ? "justify-center" : ""
+                    } ${isActive(item.path) ? `${getThemeActiveClass(activeTheme as ThemeType)} ${getThemeBgClass(activeTheme as ThemeType)}` : ""}`}
                   title={item.title}
                 >
                   {item.icon}
@@ -186,7 +189,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
             </ul>
           ) : !item.children ? (
             <div className='relative'>
-              <div className={`flex items-center px-2 py-1 rounded-lg hover:bg-selection-hover cursor-pointer ${collapsed ? "justify-center" : "justify-between"}`}>
+              <div className={`flex items-center px-2 py-1 rounded-lg ${getThemeHoverClass(activeTheme as ThemeType)} cursor-pointer ${collapsed ? "justify-center" : "justify-between"}`}>
                 <Link
                   href={item.path || '#'}
                   onClick={() => toggleMobileSidebar?.()}
@@ -204,8 +207,8 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
           ) : (
             <div>
               <div
-                className={`flex items-center px-2 py-1 rounded-lg hover:bg-selection-hover cursor-pointer ${collapsed ? "justify-center" : "justify-between"
-                  } ${item.children.some(c => isActive(c.path)) ? "bg-selection-active" : ""}`}
+                className={`flex items-center px-2 py-1 rounded-lg ${getThemeHoverClass(activeTheme as ThemeType)} cursor-pointer ${collapsed ? "justify-center" : "justify-between"
+                  } ${item.children.some(c => isActive(c.path)) ? `${getThemeActiveClass(activeTheme as ThemeType)} ${getThemeBgClass(activeTheme as ThemeType)}` : ""}`}
                 onClick={() => toggleSubmenu(item.title)}
               >
                 <div className="flex items-center">
@@ -229,8 +232,8 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                       key={child.key}
                       onClick={() => toggleMobileSidebar?.()}
                       href={child.path || '#'}
-                      className={`flex items-center px-2 py-1 mb-1 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-700 ${collapsed ? "justify-center" : ""
-                        } ${isActive(child.path) ? "bg-selection-active" : ""}`}
+                      className={`flex items-center px-2 py-1 mb-1 rounded-lg ${getThemeHoverClass(activeTheme as ThemeType)} ${collapsed ? "justify-center" : ""
+                        } ${isActive(child.path) ? `${getThemeActiveClass(activeTheme as ThemeType)} ${getThemeBgClass(activeTheme as ThemeType)}` : ""}`}
                     >
                       <span>{child.icon}</span>
                       <span className="ml-3">{child.title}</span>

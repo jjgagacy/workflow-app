@@ -2,6 +2,7 @@ import { AccountService } from "@/account/account.service";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
 import { CurrentUser } from "@/common/decorators/current-user";
 import { AccountNotInFreezeGuard } from "@/common/guards/auth/account-not-infreeze.guard";
+import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 import { I18nTranslations } from "@/generated/i18n.generated";
@@ -16,6 +17,8 @@ import { I18nService } from "nestjs-i18n";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
+@UseGuards(TenantContextGuard)
+@UseGuards(EditionSelfHostedGuard)
 export class WorkspaceResolver {
   constructor(
     private readonly authAccountService: AuthAccountService,
@@ -81,4 +84,3 @@ export class WorkspaceResolver {
     return true;
   }
 }
-

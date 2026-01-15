@@ -5,7 +5,6 @@ import { Account } from "../types/account.type";
 import { formatDate } from "@/common/utils/time";
 import { AccountEntity } from "@/account/entities/account.entity";
 import { validNumber } from "@/common/utils/strings";
-import { AuthService } from "@/auth/auth.service";
 import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { BadRequestException, UseGuards } from "@nestjs/common";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
@@ -15,13 +14,14 @@ import { CurrentUser } from "@/common/decorators/current-user";
 import { TenantResponse } from "../types/login-response.type";
 import { TenantService } from "@/service/tenant.service";
 import { AuthAccountService } from "@/service/auth-account.service";
-import { AccountNotInitializedError } from "@/service/exceptions/account.error";
 import { TenantNotFoundError } from "@/service/exceptions/tenant.error";
 import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
+import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
 @UseGuards(GqlAuthGuard)
 @Resolver()
+@UseGuards(TenantContextGuard)
 export class AccountResolver {
   constructor(private readonly accountService: AccountService,
     private readonly authAccountService: AuthAccountService,

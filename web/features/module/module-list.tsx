@@ -1,5 +1,3 @@
-'use client';
-
 import { Module } from "./components/data";
 import { ModuleTable } from "./components/module-table";
 

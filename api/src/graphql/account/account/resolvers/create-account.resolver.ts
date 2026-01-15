@@ -6,9 +6,11 @@ import { UseGuards } from "@nestjs/common";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 import { AccountResponse } from "../types/account-response.type";
 import { AccountInput } from "../types/account-input.type";
+import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
-@UseGuards(GqlAuthGuard)
 @Resolver()
+@UseGuards(GqlAuthGuard)
+@UseGuards(TenantContextGuard)
 export class CreateAccountResolver {
   constructor(private readonly accountService: AccountService) { }
 

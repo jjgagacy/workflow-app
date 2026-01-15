@@ -8,9 +8,11 @@ import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { UseGuards } from "@nestjs/common";
 import { GetModuleArgs } from "../types/get-module.args";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
+import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
+@UseGuards(TenantContextGuard)
 export class ModuleResolver {
   constructor(
     private readonly moduleService: ModuleService

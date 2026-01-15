@@ -9,7 +9,7 @@ export class QueryRoleDto extends QueryDto {
   parent?: string;
   order?: { [P in 'name' | 'status' | 'id']?: 'ASC' | 'DESC' };
   relations?: { menus: boolean; };
-  tenantId: string;
+  tenantId?: string;
 
   setQueryArgs(args?: GetRoleListArgs) {
     if (!args) return;
@@ -22,7 +22,8 @@ export class QueryRoleDto extends QueryDto {
       ...(notEmpty(key) && { key }),
       ...(notEmpty(name) && { name }),
       ...(notEmpty(parent) && { parent }),
-      ...(validNumber(status) && { status })
+      ...(validNumber(status) && { status }),
+      ...(notEmpty(args.tenantId) && { tenantId: args.tenantId }),
     });
 
     if (validNumber(page) && validNumber(limit)) {

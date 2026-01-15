@@ -4,7 +4,7 @@ import { SystemService } from "@/monie/system.service";
 import { Injectable } from "@nestjs/common";
 import { BillingService } from "./billing/billing.service";
 import { EnterpriseService } from "./enterprise/enterprise.service";
-import { EnumConverter, EnumUtils } from "@/common/utils/enums";
+import { EnumConverter } from "@/common/utils/enums";
 import { LicenseStatus } from "@/monie/classes/license.class";
 
 @Injectable()

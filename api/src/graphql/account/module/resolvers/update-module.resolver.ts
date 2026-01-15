@@ -7,9 +7,11 @@ import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted
 import { ModuleInput } from "../types/module-input.type";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
 import { UpdateModuleDto } from "@/account/module/dto/update-module.dto";
+import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
+@UseGuards(TenantContextGuard)
 @UseGuards(EditionSelfHostedGuard)
 export class UpdateModuleResolver {
   constructor(

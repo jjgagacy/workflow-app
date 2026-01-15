@@ -4,7 +4,7 @@ import { Injectable, NestMiddleware, NotFoundException } from "@nestjs/common";
 import { NextFunction, Request, Response } from "express";
 
 @Injectable()
-export class TenantMiddleware implements NestMiddleware {
+export class SetTenantMiddleware implements NestMiddleware {
   constructor(
     private readonly tenantService: TenantService,
   ) { }

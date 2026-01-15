@@ -6,7 +6,7 @@ export class QueryDepDto extends QueryDto {
   name?: string;
   parent?: string;
   order?: { [P in 'name' | 'id']?: 'ASC' | 'DESC' };
-  tenantId: string;
+  tenantId?: string;
 
   setQueryArgs(args?: GetDepArgs) {
     if (!args) return;
@@ -14,10 +14,12 @@ export class QueryDepDto extends QueryDto {
     const {
       key,
       name,
-      parent
+      parent,
+      tenantId
     } = args;
 
     Object.assign(this, {
+      ...(notEmpty(tenantId) && { tenantId }),
       ...(notEmpty(key) && { key }),
       ...(notEmpty(name) && { name }),
       ...(notEmpty(parent) && { parent })

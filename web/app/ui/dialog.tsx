@@ -47,7 +47,7 @@ export function Dialog(props: DialogProps) {
                 </h3>
                 <button
                   onClick={onCancel}
-                  className="text-gray-500 hover:text-gray-700 text-xl"
+                  className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-400 text-xl"
                 >
                   &times;
                 </button>

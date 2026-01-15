@@ -7,9 +7,11 @@ import { UseGuards } from "@nestjs/common";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 import { RoleInput } from "../types/role.input.args";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
+import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
+@UseGuards(TenantContextGuard)
 @UseGuards(EditionSelfHostedGuard)
 export class UpdateRoleResolver {
   constructor(private readonly roleService: RoleService) { }

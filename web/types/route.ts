@@ -1,29 +1,29 @@
 import { ReactNode } from "react";
 
 export interface RouteMeta {
-    title: string;
-    hidden?: boolean;
-    requiresAuth?: boolean;
-    roles?: string[];
-    breadcrumb?: boolean;
+  title: string;
+  hidden?: boolean;
+  requiresAuth?: boolean;
+  roles?: string[];
+  breadcrumb?: boolean;
 }
 
 export interface BaseRoute {
-    key: string;
-    title: string;
-    path: string;
-    meta: RouteMeta;
+  key: string;
+  title: string;
+  path: string;
+  meta: RouteMeta;
 }
 
 export interface ParentRoute extends BaseRoute {
-    children?: Route[];
-    icon?: ReactNode;
-    component?: React.ComponentType;
+  children?: Route[];
+  icon?: ReactNode;
+  component?: React.ComponentType;
 }
 
 export interface LeafRoute extends BaseRoute {
-    icon?: ReactNode;
-    component?: React.ComponentType;
+  icon?: ReactNode;
+  component?: React.ComponentType;
 }
 
 export type Route = ParentRoute & LeafRoute;

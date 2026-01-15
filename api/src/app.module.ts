@@ -97,7 +97,7 @@ import { SignUpResolver } from './graphql/account/account/resolvers/signup.resol
 import { GraphQLExceptionFilter } from './common/filters/graphql-exception.filter';
 import { AllExceptionsFilter } from './common/filters/all-exception.filter';
 import { ForgetPasswordResolver } from './graphql/account/account/resolvers/forget-password.resolver';
-import { TenantMiddleware } from './common/middleware/tenant.middleware';
+import { SetTenantMiddleware } from './common/middleware/set-tenant.middleware';
 
 @Module({
   imports: [
@@ -338,7 +338,7 @@ export class AppModule implements NestModule {
     //   .apply(AuthMiddleware)
     //   .forRoutes('graphql');
     consumer
-      .apply(TenantMiddleware)
+      .apply(SetTenantMiddleware)
       .forRoutes('graphql');
 
     consumer

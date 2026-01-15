@@ -9,9 +9,12 @@ import { I18nService } from "nestjs-i18n";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 import { Dep } from "../types/dep.type";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
+import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
+import { GetDepArgs } from "../types/get-dep.args";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
+@UseGuards(TenantContextGuard)
 @UseGuards(EditionSelfHostedGuard)
 export class DepResolver {
   constructor(
@@ -21,9 +24,10 @@ export class DepResolver {
   ) { }
 
   @Query(() => [Dep])
-  async deps(@CurrentTenent() tenant: any): Promise<Dep[]> {
-    const depList = await this.depService.getDeps(tenant.id);
-    const flatternDepTree = (tree: any[], result: Dep[] = []): Dep[] => {
+  async deps(@Args() args: GetDepArgs, @CurrentTenent() tenant: any): Promise<Dep[]> {
+    const depList = await this.depService.getDeps({ ...args, tenantId: tenant.id });
+    return depList.map(this.transformDepToGraphqlType);
+    /*const flatternDepTree = (tree: any[], result: Dep[] = []): Dep[] => {
       return tree.reduce((acc, department) => {
         acc.push(this.transformDepToGraphqlType(department));
         // 递归处理子部门
@@ -34,6 +38,7 @@ export class DepResolver {
       }, result);
     };
     return flatternDepTree(depList);
+    */
   }
 
   transformDepToGraphqlType(department: any): Dep {

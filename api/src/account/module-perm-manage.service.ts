@@ -23,6 +23,10 @@ export class ModulePermManageService {
   async create(args: CreateModulePermArgs): Promise<boolean> {
     this.validateModule(args.module);
 
+    if (!args.tenantId) {
+      throw new BadRequestException(this.i18n.t('tenant.TENANT_ID_NOT_EMPTY'));
+    }
+
     const [module, existingPerm] = await Promise.all([
       this.moduleService.getByKey(args.module, args.tenantId),
       this.modulePermService.getPermission(args.key, args.module, args.tenantId)
@@ -52,6 +56,10 @@ export class ModulePermManageService {
   async update(args: UpdateModulePermArgs): Promise<boolean> {
     this.validateModule(args.module);
 
+    if (!args.tenantId) {
+      throw new BadRequestException(this.i18n.t('tenant.TENANT_ID_NOT_EMPTY'));
+    }
+
     const [module, modulePerm] = await Promise.all([
       this.moduleService.getByKey(args.module, args.tenantId),
       this.modulePermService.getModulePermission(args.module, args.key, args.tenantId)
@@ -72,6 +80,10 @@ export class ModulePermManageService {
 
   async delete(args: DeleteModulePermArgs): Promise<boolean> {
     this.validateModule(args.module);
+
+    if (!args.tenantId) {
+      throw new BadRequestException(this.i18n.t('tenant.TENANT_ID_NOT_EMPTY'));
+    }
 
     if (!args.key?.trim()) {
       throw new BadRequestException(this.i18n.t('system.PERM_KEY_NOT_EMPTY'))

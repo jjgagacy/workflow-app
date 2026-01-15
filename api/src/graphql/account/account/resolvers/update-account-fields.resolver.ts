@@ -8,8 +8,10 @@ import { Args, Mutation } from "@nestjs/graphql";
 import { I18nService } from "nestjs-i18n";
 import { UpdateAccountDto } from "@/account/account/dto/update-account.dto";
 import { UpdateAccountAvatarInput, UpdateAccountLanguageInput, UpdateAccountNameInput, UpdateAccountThemeInput } from "../types/account-input.type";
+import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
 @UseGuards(GqlAuthGuard)
+@UseGuards(TenantContextGuard)
 export class UpdateAccountFieldsResolver {
   constructor(
     private readonly accountService: AccountService,
@@ -26,7 +28,7 @@ export class UpdateAccountFieldsResolver {
       throw AccountNotFoundError.create(this.i18n);
     }
 
-    if (input.username.length < 3 || input.username.length > 30) {
+    if (input.username.length < 2 || input.username.length > 30) {
       throw new BadRequestException("Account name length error.");
     }
 

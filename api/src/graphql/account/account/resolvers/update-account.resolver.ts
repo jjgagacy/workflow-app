@@ -11,10 +11,12 @@ import authConfig from "@/config/auth.config";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 import { AccountResponse } from "../types/account-response.type";
 import { AccountInput } from "../types/account-input.type";
+import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
-@UseGuards(GqlAuthGuard)
-@UseGuards(EditionSelfHostedGuard)
 @Resolver()
+@UseGuards(GqlAuthGuard)
+@UseGuards(TenantContextGuard)
+@UseGuards(EditionSelfHostedGuard)
 export class UpdateAccountResolver {
   constructor(
     private readonly accountService: AccountService,

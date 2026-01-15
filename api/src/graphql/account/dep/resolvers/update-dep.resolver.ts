@@ -6,9 +6,11 @@ import { UseGuards } from "@nestjs/common";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 import { DepInputArgs } from "../types/dep-input.args";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
+import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
+@UseGuards(TenantContextGuard)
 @UseGuards(EditionSelfHostedGuard)
 export class UpdateDepResolver {
   constructor(private readonly depService: DepService) { }

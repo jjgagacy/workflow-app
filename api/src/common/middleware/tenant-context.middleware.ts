@@ -50,7 +50,8 @@ export class TenantContextMiddleware implements NestMiddleware {
    * @returns 
    */
   private getUserId(req: Request): string {
-    return req.body?.user_id ||
+    return req.header['x-tenant-id'] ||
+      req.body?.user_id ||
       req.query?.user_id as string;
   }
 

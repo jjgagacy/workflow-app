@@ -6,9 +6,11 @@ import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted
 import { DepResponse } from "../types/dep-response.type";
 import { DepInputArgs } from "../types/dep-input.args";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
+import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
-@UseGuards(GqlAuthGuard)
 @Resolver()
+@UseGuards(GqlAuthGuard)
+@UseGuards(TenantContextGuard)
 export class CreateDepResolver {
   constructor(private readonly depService: DepService) { }
 

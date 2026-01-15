@@ -1,11 +1,10 @@
 import { Operate } from "@/common/database/entities/fields/operate";
-import { BaseEntity, Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ProviderEntity } from "./provider.entity";
 import { TenantDefaultModelEntity } from "./tenant-default-model.entity";
 import { TenantPreferredProviderEntity } from "./tenant-preferred-provider.entity";
 import { ProviderModelEntity } from "./provider-model.entity";
 import { ProviderModelSettingEntity } from "./provider-model-setting.entity";
-import { AccountEntity } from "./account.entity";
 import { TenantAccountEntity } from "./tenant-account.entity";
 
 @Entity({ name: 'tenant' })

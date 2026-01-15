@@ -112,6 +112,22 @@ export function useAuth() {
     localStorage.removeItem('session:token');
   }, [setAccessToken]);
 
+  const isSuperUser = (user: any): boolean => {
+    if (!user.roles) return false;
+
+    const roles = Array.isArray(user.roles)
+      ? user.roles
+      : [user.roles];
+
+    return roles.some((role: any) => {
+      const roleName = typeof role === 'string'
+        ? role
+        : role?.name || '';
+
+      return roleName.toLowerCase() === 'admin';
+    });
+  }
+
   return {
     isAuthenticated,
     login,
@@ -125,6 +141,7 @@ export function useAuth() {
     removeToken,
     isSuper,
     getTenantId,
-    setCurrentTenant
+    setCurrentTenant,
+    isSuperUser
   };
 }

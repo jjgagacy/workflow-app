@@ -5,6 +5,8 @@ import { treeToFlatten } from "@/utils/trees";
 import { IconCaretUpDown, IconChevronDown, IconChevronRight, IconX } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type FC } from "react";
 import { Checkbox } from "./checkbox";
+import { useActiveTheme } from "../components/active-theme";
+import { getThemeBgClass, getThemeHoverClass, ThemeType } from "@/types/theme";
 
 export type TreeNode = {
   [key: string]: any;
@@ -41,6 +43,7 @@ export const TreeSelect: FC<ITreeSelectProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedArr, setSelectedArr] = useState<(string | number)[]>([]);
   const [expandedNodes, setExpandedNodes] = useState<Set<string | number>>(new Set());
+  const { activeTheme } = useActiveTheme();
 
   const selectRef = useRef<HTMLDivElement>(null);
 
@@ -220,7 +223,7 @@ export const TreeSelect: FC<ITreeSelectProps> = ({
     return (
       <div className="w-full">
         <div
-          className={`flex items-center py-1 px-2 hover:bg-selection-hover cursor-pointer ${selectedValue === node[idKey] ? "bg-blue-50" : ""
+          className={`flex items-center py-1 px-2 ${getThemeHoverClass(activeTheme as ThemeType)} cursor-pointer ${selectedValue === node[idKey] ? `${getThemeBgClass(activeTheme as ThemeType)}` : ""
             }`}
           style={{ paddingLeft: `${level * 16 + 8}px` }}
           onClick={() => handleSelect(node)}
@@ -310,7 +313,7 @@ export const TreeSelect: FC<ITreeSelectProps> = ({
               <input
                 type="text"
                 className="w-full p-1 border border-[var(--border)] rounded-md text-sm"
-                placeholder="搜索..."
+                placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
