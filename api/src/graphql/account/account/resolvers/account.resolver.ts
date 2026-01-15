@@ -19,9 +19,8 @@ import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
-@UseGuards(GqlAuthGuard)
 @Resolver()
-@UseGuards(TenantContextGuard)
+@UseGuards(GqlAuthGuard)
 export class AccountResolver {
   constructor(private readonly accountService: AccountService,
     private readonly authAccountService: AuthAccountService,
@@ -31,6 +30,7 @@ export class AccountResolver {
 
   @Query(() => AccountList)
   @UseGuards(EditionSelfHostedGuard)
+  @UseGuards(TenantContextGuard)
   async accounts(@Args() args: GetAccountArgs, @CurrentUser() user: any, @CurrentTenent() tenant: any): Promise<AccountList> {
     const { data: accountList, total } = await this.accountService.query({ ...args, relations: { roles: true }, tenantId: tenant.id });
     const data: Account[] = accountList.map(this.transformAccountToGQLType);
@@ -67,7 +67,7 @@ export class AccountResolver {
     throw new BadRequestException('Not implemented yet');
   }
 
-  @Query(() => TenantResponse)
+  @Mutation(() => TenantResponse)
   async currentTenant(@CurrentUser() user: any): Promise<TenantResponse> {
     const account = await this.accountService.getById(user?.id);
     if (!account) {

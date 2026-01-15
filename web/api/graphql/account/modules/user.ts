@@ -1,6 +1,6 @@
 import { createQueryHook, useGraphQLMutation, useGraphQLQuery } from "@/hooks/use-graphql";
 import { LOGIN_MUTATION, UPDATE_ACCOUNT_PASSWORD } from "../mutations/account-mutations";
-import { CURRENT_TENANT, GET_ACCOUNT_INFO } from "../queries";
+import { GET_ACCOUNT_INFO } from "../queries";
 import { TenantResponseOutput } from "../types";
 
 // 登录函数（变更操作）
@@ -44,14 +44,3 @@ export const useAccountInfo = () => {
     mutate
   };
 };
-
-export const useCurrentTenant = createQueryHook<
-  { currentTenant: any },
-  {},
-  TenantResponseOutput
->(
-  CURRENT_TENANT,
-  {
-    transform: (data) => data?.currentTenant,
-  }
-);

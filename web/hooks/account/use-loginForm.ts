@@ -10,7 +10,7 @@ export function useLoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [usePassword, setUsePassword] = useState(true);
   const { t } = useTranslation();
-  const { login } = useAuth();
+  const { login, logout, setCurrentTenant } = useAuth();
   const router = useRouter();
   const base = useAuthForm({
     mode: 'login',
@@ -34,6 +34,7 @@ export function useLoginForm() {
   const emailCodeLoginMutaiton = api.account.useEmailCodeLogin();
   const validateEmailMutation = api.account.useValidateEmail();
   const emailPasswordLoginMutation = api.account.useEmailPasswordLogin();
+  const currentTenantMutation = api.account.useCurrentTenant();
 
   const validateForm = useCallback(() => {
     const newErrors: Record<string, string> = {};
@@ -75,7 +76,6 @@ export function useLoginForm() {
     }
 
     login(result.access_token, result.name, result.roles, result.isSuper, '');
-    router.push('/admin');
   }, [emailCodeLoginMutaiton, formData]);
 
   const handleEmailPasswordLogin = useCallback(async () => {
@@ -89,7 +89,6 @@ export function useLoginForm() {
       throw new Error(t('account.login_failed'));
     }
     login(result.access_token, result.name, result.roles, result.isSuper, '');
-    router.push('/admin');
   }, [emailPasswordLoginMutation, formData.email, formData.password]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
@@ -112,6 +111,13 @@ export function useLoginForm() {
       } else {
         await handleEmailCodeLogin();
       }
+      const tenantInfo = await currentTenantMutation({});
+      if (!tenantInfo.tenant_id) {
+        logout();
+        throw new Error('Workspace not found.');
+      }
+      setCurrentTenant(tenantInfo);
+      router.push('/admin');
     } catch (err: any) {
       const errorField = !showVerification ? 'email' : 'submit';
       setErrors({ [errorField]: getErrorMessage(err) });

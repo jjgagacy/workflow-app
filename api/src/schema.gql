@@ -173,6 +173,7 @@ type Mutation {
   createModule(input: ModuleInput!): ModuleResponse!
   createPerm(input: PermInput!): Boolean!
   createRole(input: RoleInput!): RoleResponse!
+  currentTenant: TenantResponse!
   deleteAccount(id: Int!): Boolean!
   deleteDep(id: Int!): Boolean!
   deleteMenu(id: Int!): Boolean!
@@ -234,7 +235,6 @@ input PermInput {
 type Query {
   accountInfo: Account!
   accounts(email: String, id: Int, limit: Int, mobile: String, page: Int, realName: String, roleId: Int, username: String): AccountList!
-  currentTenant: TenantResponse!
   currentUser: UserInfoResponse!
   depInfo(key: String!): Dep!
   deps(key: String, name: String, parent: String): [Dep!]!

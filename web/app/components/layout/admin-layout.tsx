@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { Briefcase, Crown, Fingerprint, Home, List, Sliders, UserCog } from "lucide-react";
 import api from "@/api";
 import { useAuth } from "@/hooks/use-auth";
+import { TenantInfo } from "@/types/tenant";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -32,12 +33,6 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
   const pathname = usePathname();
   const isMobile = useIsMobile();
   const { t } = useTranslation();
-  const useCurrentTenant = api.user.useCurrentTenant();
-  const { setCurrentTenant, getTenantId } = useAuth();
-  let tenantInfo: any;
-  if (!getTenantId()) {
-    const { data: tenantInfo } = useCurrentTenant();
-  }
 
   const toggleMobileSidebar = () => {
     setMobileSidebarOpen(!mobileSidebarOpen);
@@ -66,7 +61,7 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
         { key: 'dep', title: t('system.department'), icon: <Briefcase className="w-4 h-4" />, path: "/admin/system/dep" },
         { key: 'role', title: t('system.role'), icon: <Crown className="w-4 h-4" />, path: "/admin/system/role" },
         { key: 'module', title: t('system.permission_module'), icon: <Fingerprint className="w-4 h-4" />, path: "/admin/system/module" },
-        { key: 'menu', title: t('system.menu'), icon: <List className="w-4 h-4" />, path: "/admin/system/menu" },
+        // { key: 'menu', title: t('system.menu'), icon: <List className="w-4 h-4" />, path: "/admin/system/menu" },
       ]
     },
     // ... other menu items
@@ -124,12 +119,6 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
     }
     return isCollapsed ? 'ml-32' : 'ml-64';
   }, [isCollapsed, isMobile]);
-
-  useEffect(() => {
-    if (tenantInfo) {
-      setCurrentTenant(tenantInfo.tenant_id, tenantInfo.name, tenantInfo.plan);
-    }
-  }, [tenantInfo, setCurrentTenant]);
 
   // theme-xx replace xx to your theme
   return (

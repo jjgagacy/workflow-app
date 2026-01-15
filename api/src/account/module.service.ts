@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ModuleEntity } from "./entities/module.entity";
-import { FindManyOptions, FindOptionsWhere, Not, QueryRunner, Repository } from "typeorm";
+import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, Not, QueryRunner, Repository } from "typeorm";
 import { plainToInstance } from "class-transformer";
 import { QueryModuleDto } from "./module/dto/query-module.dto";
 import { ModulePermEntity } from "./entities/module-perm.entity";
@@ -21,12 +21,12 @@ export class ModuleService {
     private readonly i18n: I18nService<I18nTranslations>,
   ) { }
 
-  async getById(id: number): Promise<ModuleEntity | null> {
-    return await this.moduleRepository.findOneBy({ id });
+  async getById(id: number, relations?: FindOptionsRelations<ModuleEntity>): Promise<ModuleEntity | null> {
+    return await this.moduleRepository.findOne({ where: { id }, relations });
   }
 
-  async getByKey(key: string, tenantId: string): Promise<ModuleEntity | null> {
-    return await this.moduleRepository.findOneBy({ key, tenant: { id: tenantId } });
+  async getByKey(key: string, tenantId: string, relations?: FindOptionsRelations<ModuleEntity>): Promise<ModuleEntity | null> {
+    return await this.moduleRepository.findOne({ where: { key, tenant: { id: tenantId } }, relations });
   }
 
   async create(dto: CreateModuleDto): Promise<ModuleEntity> {
@@ -52,7 +52,7 @@ export class ModuleService {
     const errors = await this.i18n.validate(validateObj);
     throwIfDtoValidateFail(errors);
 
-    const module = await this.getById(dto.id);
+    const module = await this.getById(dto.id, { tenant: true });
     if (!module || module.tenant.id != dto.tenantId) {
       throw new BadRequestException(this.i18n.t('system.MODULE_NOT_EXIST', { args: { name: dto.id } }));
     }
@@ -101,7 +101,7 @@ export class ModuleService {
     const where: FindOptionsWhere<ModuleEntity> = {
       ...(dto.key !== undefined && { key: dto.key }),
       ...(dto.name !== undefined && { name: dto.name }),
-      ...{ tenant: { id: dto.tenantId } },
+      ...(dto.tenantId !== undefined && { tenant: { id: dto.tenantId } }),
     }
 
     // 2. 构建排序条件

@@ -28,7 +28,7 @@ export class ModulePermManageService {
     }
 
     const [module, existingPerm] = await Promise.all([
-      this.moduleService.getByKey(args.module, args.tenantId),
+      this.moduleService.getByKey(args.module, args.tenantId, { tenant: true, perms: true }),
       this.modulePermService.getPermission(args.key, args.module, args.tenantId)
     ]);
 
@@ -61,7 +61,7 @@ export class ModulePermManageService {
     }
 
     const [module, modulePerm] = await Promise.all([
-      this.moduleService.getByKey(args.module, args.tenantId),
+      this.moduleService.getByKey(args.module, args.tenantId, { tenant: true, perms: true }),
       this.modulePermService.getModulePermission(args.module, args.key, args.tenantId)
     ]);
 
@@ -90,7 +90,7 @@ export class ModulePermManageService {
     }
 
     const [module, modulePerm] = await Promise.all([
-      this.moduleService.getByKey(args.module, args.tenantId),
+      this.moduleService.getByKey(args.module, args.tenantId, { tenant: true, perms: true }),
       this.modulePermService.getModulePermission(args.module, args.key, args.tenantId)
     ]);
 

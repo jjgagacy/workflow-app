@@ -6,17 +6,18 @@ export class QueryModuleDto extends QueryDto {
   name?: string;
   relations?: { perms?: boolean, menus?: boolean };
   order?: { [P in 'key' | 'name' | 'id']?: 'ASC' | 'DESC' };
-  tenantId: string;
+  tenantId?: string;
 
   setQueryArgs(args?: GetModuleListArgs) {
     if (!args) return;
 
-    const { key, name, page, limit, relations } = args;
+    const { key, name, page, limit, relations, tenantId } = args;
 
     // 使用对象解构和条件赋值
     Object.assign(this, {
       ...(notEmpty(key) && { key }),
       ...(notEmpty(name) && { name }),
+      ...(notEmpty(tenantId) && { tenantId }),
       ...(typeof relations !== 'undefined' && { relations })
     });
 

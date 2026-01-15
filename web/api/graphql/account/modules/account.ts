@@ -1,6 +1,6 @@
 import { createMutationHook, useGraphQLMutation, useGraphQLQuery } from "@/hooks/use-graphql";
 import { GET_ACCOUNTS } from "../queries";
-import { CREATE_ACCOUNT, DELETE_ACCOUNT, EMAIL_CODE_LOGIN, EMAIL_CODE_LOGIN_SEND, EMAIL_CODE_RESET_PASSWORD_SEND, EMAIL_CODE_SIGNUP, EMAIL_CODE_SIGNUP_SEND, EMAIL_PASSWORD_LOIGN, FORGOT_PASSWORD_CHECK, FORGOT_PASSWORD_RESET, SWITCH_TENANT, TOGGLE_ACCOUNT_STATUS, UPDATE_ACCOUNT, VALIDATE_EMAIL, VALIDATE_USERNAME } from '../mutations/account-mutations';
+import { CREATE_ACCOUNT, CURRENT_TENANT, DELETE_ACCOUNT, EMAIL_CODE_LOGIN, EMAIL_CODE_LOGIN_SEND, EMAIL_CODE_RESET_PASSWORD_SEND, EMAIL_CODE_SIGNUP, EMAIL_CODE_SIGNUP_SEND, EMAIL_PASSWORD_LOIGN, FORGOT_PASSWORD_CHECK, FORGOT_PASSWORD_RESET, SWITCH_TENANT, TOGGLE_ACCOUNT_STATUS, UPDATE_ACCOUNT, VALIDATE_EMAIL, VALIDATE_USERNAME } from '../mutations/account-mutations';
 import { EmailCodeLoginInput, EmailCodeSendInput, EmailCodeSignUpInput, ForgotPasswordCheckInput, ForgotPasswordCheckOutput, ForgotPasswordResetInput, PasswordLoginInput, TenantResponseOutput } from "../types";
 
 // 获取账户列表
@@ -187,6 +187,19 @@ export const useForgotPasswordReset = createMutationHook<
     transform: (data) => data.forgetPasswordReset
   }
 );
+
+
+export const useCurrentTenant = createMutationHook<
+  { currentTenant: any },
+  {},
+  TenantResponseOutput
+>(
+  CURRENT_TENANT,
+  {
+    transform: (data) => data.currentTenant
+  }
+);
+
 
 export const useSwitchTenant = createMutationHook<
   { switchTenant: any },

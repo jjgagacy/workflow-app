@@ -155,7 +155,8 @@ export class ModulePermService {
       key: dto.key,
       name: dto.name,
       restrictLevel: dto.restrictLevel,
-      module
+      module,
+      tenantId: dto.tenantId,
     });
     return this.modulePermRepository.save(modulePerm);
   }

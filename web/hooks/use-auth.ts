@@ -1,3 +1,4 @@
+import { TenantInfo } from '@/types/tenant';
 import { useState, useEffect, useCallback } from 'react';
 
 export function useAuth() {
@@ -32,11 +33,7 @@ export function useAuth() {
   }>(() =>
     getSessionData('session:userinfo', { name: '', roles: [], is_super: false, avatar: undefined })
   );
-  const [tenant, setTenant] = useState<{
-    tenant_id: string;
-    name: string;
-    plan: string
-  }>(() => getSessionData('session:tenantInfo', { tenant_id: '', name: '', plan: '' }));
+  const [tenant, setTenant] = useState<TenantInfo>(() => getSessionData('session:tenantInfo', { tenant_id: '', name: '', plan: '' }));
 
   // 登录方法
   const login = useCallback((
@@ -57,8 +54,7 @@ export function useAuth() {
     setAccessToken(access_token);
   }, [setIsAuthenticated, setUser, setAccessToken]);
 
-  const setCurrentTenant = useCallback((tenant_id: string, name: string, plan: string) => {
-    const tenantInfo = { tenant_id, name, plan };
+  const setCurrentTenant = useCallback((tenantInfo: TenantInfo) => {
     localStorage.setItem("session:tenantInfo", JSON.stringify(tenantInfo));
     setTenant(tenantInfo);
   }, [setTenant]);
@@ -107,6 +103,8 @@ export function useAuth() {
   const isSuper = useCallback(() => user.is_super, [user]);
   const getUserAvatar = useCallback(() => user.avatar, [user]);
   const getTenantId = useCallback(() => tenant.tenant_id, [tenant]);
+  const getCurrentTenant = useCallback(() => tenant, [tenant]);
+  const hasTenant = useCallback(() => !!tenant.tenant_id, [tenant]);
   const removeToken = useCallback(() => {
     setAccessToken('');
     localStorage.removeItem('session:token');
@@ -142,6 +140,8 @@ export function useAuth() {
     isSuper,
     getTenantId,
     setCurrentTenant,
+    getCurrentTenant,
+    hasTenant,
     isSuperUser
   };
 }

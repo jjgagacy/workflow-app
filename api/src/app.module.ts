@@ -170,8 +170,8 @@ import { SetTenantMiddleware } from './common/middleware/set-tenant.middleware';
         },
         retryAttempts: configService.get<number>('POSTGRES_RETRY_ATTEMPTS', 10),        // 重试次数
         retryDelay: configService.get<number>('POSTGRES_RETRY_DELAY', 3000),        // 重试延迟(毫秒)
-        logging: process.env.NODE_ENV !== 'production',
-        logger: 'advanced-console',
+        // logging: process.env.NODE_ENV !== 'production',
+        // logger: 'advanced-console',
       }),
       inject: [ConfigService],
     }),

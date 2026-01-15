@@ -47,7 +47,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
         { key: 'dep', title: t('system.department'), icon: <Briefcase className="w-4 h-4" />, path: "/admin/system/dep" },
         { key: 'role', title: t('system.role'), icon: <Crown className="w-4 h-4" />, path: "/admin/system/role" },
         { key: 'module', title: t('system.permission_module'), icon: <Fingerprint className="w-4 h-4" />, path: "/admin/system/module" },
-        { key: 'menu', title: t('system.menu'), icon: <List className="w-4 h-4" />, path: "/admin/system/menu" },
+        // { key: 'menu', title: t('system.menu'), icon: <List className="w-4 h-4" />, path: "/admin/system/menu" },
       ]
     },
     {

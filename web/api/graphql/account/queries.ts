@@ -163,13 +163,3 @@ export const GET_DEP = gql`
     }
   }
 `;
-
-export const CURRENT_TENANT = gql`
-  query {
-    currentTenant {
-      tenant_id,
-      name,
-      plan
-    }
-  }
-`;
