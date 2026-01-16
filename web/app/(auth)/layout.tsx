@@ -1,6 +1,5 @@
 import React from "react";
 import SwrInitializer from "../components/swr-initializer";
-import Link from "next/link";
 import Logo from "../components/site/header/logo";
 import ThemeToggle from "../components/site/header/themeToggle";
 import { LanguageSelector } from "../components/site/header/languageSelector";

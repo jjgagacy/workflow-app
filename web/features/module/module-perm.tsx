@@ -7,7 +7,7 @@ import api from "@/api";
 import { Dialog } from "@/app/ui/dialog";
 import Button from "@/app/components/base/button";
 import { Input } from "@/app/ui/input";
-import { useModalContext } from "@/hooks/use-model";
+import { useModalContext } from "@/hooks/use-modal";
 import { useTranslation } from "react-i18next";
 
 interface ModulePermProps {
@@ -170,28 +170,29 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
               {isAdding && (
                 <tr>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <Input
+                    <input
                       type="text"
                       value={form.key || ""}
                       onChange={(e) => handleInputChange("key", e.target.value)}
+                      className="border border-[var(--border)]  rounded px-2 py-1 w-full"
                       placeholder=""
                     />
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <Input
+                    <input
                       type="text"
                       value={form.name || ""}
                       onChange={(e) => handleInputChange("name", e.target.value)}
-                      className="border rounded px-2 py-1 w-full"
+                      className="border border-[var(--border)] rounded px-2 py-1 w-full"
                       placeholder=""
                     />
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <Input
+                    <input
                       type="number"
                       value={form.restrictLevel || ''}
                       onChange={(e) => handleInputChange("restrictLevel", parseInt(e.target.value) || 1)}
-                      className="border rounded px-2 py-1 w-full"
+                      className="border border-[var(--border)]  rounded px-2 py-1 w-full"
                       placeholder=""
                     />
                   </td>
@@ -199,14 +200,14 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
                     <Button
                       onClick={handleSave}
                       variant={'warning'}
-                      size={'large'}
+                      size={'small'}
                     >
                       {t('system.save')}
                     </Button>
                     <Button
                       onClick={cancelEdit}
                       variant={'secondary'}
-                      size={'large'}
+                      size={'small'}
                     >
                       {t('system.cancel')}
                     </Button>
@@ -223,7 +224,8 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
                         type="text"
                         value={form.key || ""}
                         onChange={(e) => handleInputChange("key", e.target.value)}
-                        className="border rounded px-2 py-1 w-full"
+                        className="border border-[var(--border)] rounded px-2 py-1 w-full"
+                        disabled={true}
                       />
                     ) : (
                       module.key
@@ -235,7 +237,7 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
                         type="text"
                         value={form.name || ""}
                         onChange={(e) => handleInputChange("name", e.target.value)}
-                        className="border rounded px-2 py-1 w-full"
+                        className="border border-[var(--border)] rounded px-2 py-1 w-full"
                       />
                     ) : (
                       module.name
@@ -247,49 +249,51 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
                         type="number"
                         value={form.restrictLevel || ""}
                         onChange={(e) => handleInputChange("restrictLevel", parseInt(e.target.value) || 1)}
-                        className="border rounded px-2 py-1 w-full"
+                        className="border border-[var(--border)] rounded px-2 py-1 w-full"
                       />
                     ) : (
                       module.restrictLevel
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap flex gap-2">
-                    {editingId === module.key ? (
-                      <>
-                        <Button
-                          onClick={handleSave}
-                          variant={'primary'}
-                          size={'medium'}
-                        >
-                          {t('system.save')}
-                        </Button>
-                        <Button
-                          onClick={cancelEdit}
-                          variant={'secondary'}
-                          size={'medium'}
-                        >
-                          {t('system.cancel')}
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <Button
-                          onClick={() => startEdit(module)}
-                          variant={'primary'}
-                          size={'medium'}
-                        >
-                          {t('system.edit')}
-                        </Button>
-                        <Button
-                          onClick={() => handleDelete(module.key)}
-                          variant={'alert'}
-                          size={'medium'}
-                        >
-                          {t('system.delete')}
-                        </Button>
-                      </>
-                    )}
-                  </td>
+                  {!isAdding && (
+                    <td className="px-6 py-4 whitespace-nowrap flex gap-2">
+                      {editingId === module.key ? (
+                        <>
+                          <Button
+                            onClick={handleSave}
+                            variant={'primary'}
+                            size={'small'}
+                          >
+                            {t('system.save')}
+                          </Button>
+                          <Button
+                            onClick={cancelEdit}
+                            variant={'secondary'}
+                            size={'small'}
+                          >
+                            {t('system.cancel')}
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            onClick={() => startEdit(module)}
+                            variant={'primary'}
+                            size={'small'}
+                          >
+                            {t('system.edit')}
+                          </Button>
+                          <Button
+                            onClick={() => handleDelete(module.key)}
+                            variant={'alert'}
+                            size={'small'}
+                          >
+                            {t('system.delete')}
+                          </Button>
+                        </>
+                      )}
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

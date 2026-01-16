@@ -42,6 +42,7 @@ const translation = {
     monitor: '系统图标',
     sun: '太阳图标',
     moon: '月亮图标',
-  }
+  },
+  back_workspace: '返回工作空间',
 };
 export default translation;

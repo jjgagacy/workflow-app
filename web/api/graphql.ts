@@ -12,6 +12,7 @@ export const getAuthenticatedClient = (token?: string, locale?: string, tenantId
   if (token) headers['Authorization'] = `Bearer ${token}`;
   if (locale) headers['Accept-Language'] = formatAcceptLanguage(locale);
   if (tenantId) headers['x-tenant-id'] = tenantId;
+  // console.log('Final headers:', Date.now(), headers);
 
   return new GraphQLClient(process.env.NEXT_PUBLIC_PUBLIC_API_PREFIX as string, {
     headers
@@ -20,10 +21,10 @@ export const getAuthenticatedClient = (token?: string, locale?: string, tenantId
 
 // 获取当前用户客户端（在组件内使用）
 export const useGraphQLClient = () => {
-  const { accessToken, getTenantId } = useAuth();
+  const { getTenantId, getAccessToken } = useAuth();
   const locale = getClientLocale();
   const tenantId = getTenantId();
-  return getAuthenticatedClient(accessToken, locale, tenantId);
+  return getAuthenticatedClient(getAccessToken(), locale, tenantId);
 }
 
 const formatAcceptLanguage = (locale: string): string => {

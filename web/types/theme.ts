@@ -13,9 +13,9 @@ export const themes: ThemeConfig[] = [
   {
     value: 'default',
     name: 'Default',
-    bgColor: 'bg-gray-50 dark:bg-gray-900',
+    bgColor: 'bg-gray-100 dark:bg-gray-900',
     textColor: 'text-gray-700 dark:text-gray-200',
-    hoverColor: 'hover:bg-gray-100 dark:hover:bg-neutral-700',
+    hoverColor: 'hover:bg-gray-200 dark:hover:bg-neutral-700',
     activeColor: 'text-gray-600 dark:text-gray-300',
   },
   {

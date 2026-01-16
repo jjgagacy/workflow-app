@@ -113,7 +113,7 @@ export const useGraphQLMutation = <
           statusCode: 500
         }
       };
-      throw new Error(JSON.stringify(errorData));
+      throw new Error(errorData.message);
     }
   }
 }

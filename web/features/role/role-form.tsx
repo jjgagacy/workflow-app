@@ -6,7 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/app/ui/input";
 import { toast } from "@/app/ui/toast";
 import { TreeSelect } from "@/app/ui/tree-select";
-import { useModalContext } from "@/hooks/use-model";
+import { useModalContext } from "@/hooks/use-modal";
 import { Role } from "@/types/role";
 import { arrayToTree, filterCurrentAndChildren } from "@/utils/trees";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -82,9 +82,9 @@ export default function RoleForm({
       form.reset({ key: '', name: '', parent: '' });
       onOpenChange(false);
       onSubmitSuccess();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error(t('system.operation_failed'));
+      toast.error(error.message);
     } finally {
       setIsLoading(false);
     }

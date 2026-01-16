@@ -12,7 +12,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Module } from "./data";
 import { columnHelper, createColumns } from "./columns";
 import Button from "@/app/components/base/button";
-import { useModalContext } from "@/hooks/use-model";
+import { useModalContext } from "@/hooks/use-modal";
 import { ModuleForm } from "../module-form";
 import { ModulePermPage } from "../module-perm";
 import { useTranslation } from "react-i18next";

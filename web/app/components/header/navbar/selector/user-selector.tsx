@@ -1,8 +1,8 @@
 import { useAuth } from '@/hooks/use-auth';
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
-import { IconBell, IconChevronDown, IconLogout, IconPercentage50, IconUser, IconUserCog } from "@tabler/icons-react";
+import { ChevronDownIcon, LogOutIcon, UserCogIcon, UserIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { useTranslation } from 'react-i18next';
 
 export function UserSelector() {
@@ -16,9 +16,9 @@ export function UserSelector() {
   }
 
   return (
-    <div className='flex items-center gap-2  rounded-md mx-2'>
+    <div className='flex items-center gap-2 rounded-md mx-2'>
       <Menu as="div" className="relative">
-        <MenuButton className="flex items-center space-x-2 max-w-xs rounded-full focus:outline-none">
+        <MenuButton className="flex items-center p-2 space-x-2 max-w-xs rounded-full focus:outline-none">
           {user?.avatar ? (
             <img
               src={user.avatar}
@@ -33,7 +33,7 @@ export function UserSelector() {
           <span className="text-sm font-medium text-gray-700 dark:text-white">
             {user?.name || t('system.not_logged_in')}
           </span>
-          <IconChevronDown
+          <ChevronDownIcon
             className="h-4 w-4 text-gray-500"
             aria-hidden="true"
           />
@@ -52,21 +52,21 @@ export function UserSelector() {
             <MenuItem>
               {() => (
                 <button
-                  onClick={() => router.push('/profile')}
+                  onClick={() => router.push('/account')}
                   className={`flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white`}
                 >
-                  <IconUser className="mr-2 h-4 w-4" />
-                  {t('system.personal_center')}
+                  <UserIcon className="mr-2 h-4 w-4" />
+                  {t('system.account_settings')}
                 </button>
               )}
             </MenuItem>
             <MenuItem>
               {() => (
                 <button
-                  onClick={() => router.push('/settings')}
+                  onClick={() => router.push('/apps')}
                   className={`flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white`}
                 >
-                  <IconUserCog className="mr-2 h-4 w-4" />
+                  <UserCogIcon className="mr-2 h-4 w-4" />
                   {t('system.system_settings')}
                 </button>
               )}
@@ -77,7 +77,7 @@ export function UserSelector() {
                   onClick={handleLogout}
                   className={`flex items-center px-4 py-2 text-sm text-red-600 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white`}
                 >
-                  <IconLogout className="mr-2 h-4 w-4" />
+                  <LogOutIcon className="mr-2 h-4 w-4" />
                   {t('system.logout')}
                 </button>
               )}

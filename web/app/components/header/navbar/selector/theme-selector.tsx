@@ -26,9 +26,9 @@ export function ThemeSelector() {
   const { activeTheme, setActiveTheme } = useActiveTheme();
 
   return (
-    <div className='flex items-center gap-2 hover:bg-secondary/80 rounded-md mx-2'>
+    <div className='flex items-center gap-2 hover:bg-secondary/80 rounded-lg mx-2'>
       <Menu as="div" className="relative">
-        <MenuButton className="flex items-center space-x-2 max-w-xs rounded-md focus:outline-none px-2 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+        <MenuButton className="flex items-center space-x-2 max-w-xs rounded-md focus:outline-none p-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
           <Palette className="w-5 h-5 text-gray-400 hover:text-gray-500 mr-1" />
           {getThemeName(activeTheme)}
         </MenuButton>

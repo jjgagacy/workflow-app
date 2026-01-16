@@ -2,7 +2,7 @@
 
 import { setClientLocale } from "@/i18n";
 import { getLanguageNameByValue } from "@/i18n/config";
-import { getLanguageByValue, LanguageEmojiDefault, languages } from "@/types/language";
+import { LanguageEmojiDefault, languages } from "@/types/language";
 import { Globe } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -24,7 +24,8 @@ export function LanguageSelector() {
         className="flex items-center gap-2 p-2 w-full h-10 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
         title={i18n.language === 'zh' ? t('app.common.switch_to_english') : t('app.common.switch_to_chinese')}
       >
-        <Globe className="w-5 h-5 text-gray-700 dark:text-gray-300" /> {getLanguageNameByValue(i18n.language)}
+        <Globe className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+        {getLanguageNameByValue(i18n.language)}
       </button>
 
       {showLanguageSelect && (
@@ -35,7 +36,7 @@ export function LanguageSelector() {
             onClick={() => setShowLanguageSelect(false)}
           />
           {/* 下拉菜单 */}
-          <div className="absolute top-6 right-0 mt-2 w-32 bg-white rounded-lg shadow-lg z-20 border border-gray-200">
+          <div className="absolute top-6 right-0 mt-4 w-32 bg-white rounded-lg shadow-lg z-20 border border-gray-200">
             <ul className="py-1">
               {languages.map(lang => (
                 <li key={lang.name} className="flex items-center">

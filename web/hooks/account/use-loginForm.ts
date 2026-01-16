@@ -34,7 +34,6 @@ export function useLoginForm() {
   const emailCodeLoginMutaiton = api.account.useEmailCodeLogin();
   const validateEmailMutation = api.account.useValidateEmail();
   const emailPasswordLoginMutation = api.account.useEmailPasswordLogin();
-  const currentTenantMutation = api.account.useCurrentTenant();
 
   const validateForm = useCallback(() => {
     const newErrors: Record<string, string> = {};
@@ -111,13 +110,7 @@ export function useLoginForm() {
       } else {
         await handleEmailCodeLogin();
       }
-      const tenantInfo = await currentTenantMutation({});
-      if (!tenantInfo.tenant_id) {
-        logout();
-        throw new Error('Workspace not found.');
-      }
-      setCurrentTenant(tenantInfo);
-      router.push('/admin');
+      router.push('/workspace');
     } catch (err: any) {
       const errorField = !showVerification ? 'email' : 'submit';
       setErrors({ [errorField]: getErrorMessage(err) });

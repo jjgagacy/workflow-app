@@ -19,9 +19,10 @@ export function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() =>
     !!getSessionData('session:token', { access_token: '' }).access_token
   );
-  const [accessToken, setAccessToken] = useState<string>(() =>
-    getSessionData('session:token', { access_token: '' }).access_token
-  );
+  const getAccessToken = () => {
+    return getSessionData('session:token', { access_token: '' }).access_token
+  }
+  const [accessToken, setAccessToken] = useState<string>(() => getAccessToken());
   const [routes, setRoutes] = useState<any[]>(() =>
     getSessionData('session:routes', [])
   );
@@ -110,6 +111,7 @@ export function useAuth() {
     localStorage.removeItem('session:token');
   }, [setAccessToken]);
 
+
   const isSuperUser = (user: any): boolean => {
     if (!user.roles) return false;
 
@@ -134,6 +136,7 @@ export function useAuth() {
     getUserName,
     getUserAvatar,
     accessToken,
+    getAccessToken,
     routes,
     getRoles,
     removeToken,

@@ -63,8 +63,12 @@ export class AccountResolver {
   }
 
   @Query(() => Account)
-  async accountInfo(): Promise<Account> {
-    throw new BadRequestException('Not implemented yet');
+  async accountInfo(@CurrentUser() user: any): Promise<Account> {
+    const account = await this.accountService.getById(user?.id);
+    if (!account) {
+      throw new BadRequestException();
+    }
+    return this.transformAccountToGQLType(account);
   }
 
   @Mutation(() => TenantResponse)

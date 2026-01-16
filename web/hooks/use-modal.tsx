@@ -28,10 +28,12 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     setOpenModalId(modalId);
     setModalData(data);
   }
+
   const closeModal = () => {
     setOpenModalId(null);
     setModalData(null);
   }
+
   const isModalOpen = (modalId: ModalType) => openModalId === modalId;
 
   const resetModalData = () => {

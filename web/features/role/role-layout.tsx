@@ -3,7 +3,7 @@
 import Button from "@/app/components/base/button";
 import { Heading } from "@/app/components/base/heading";
 import { Separator } from "@/app/ui/separator";
-import { ModalProvider, useModalContext } from "@/hooks/use-model";
+import { ModalProvider, useModalContext } from "@/hooks/use-modal";
 import { IconPlus } from "@tabler/icons-react";
 import RoleListPage from "./role-list";
 import { useTranslation } from "react-i18next";

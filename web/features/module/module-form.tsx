@@ -10,7 +10,7 @@ import { toast } from "@/app/ui/toast";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/ui/form";
 import { Input } from "@/app/ui/input";
 import { Dialog } from "@/app/ui/dialog";
-import { useModalContext } from "@/hooks/use-model";
+import { useModalContext } from "@/hooks/use-modal";
 import { useTranslation } from "react-i18next";
 
 interface ModuleFormProps {
@@ -23,13 +23,12 @@ interface ModuleFormProps {
 export function ModuleForm({
   isOpen,
   onOpenChange,
-  module,
   onSubmitSuccess
 }: ModuleFormProps) {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
-  const { modalData } = useModalContext();
-  let currentModule = useMemo(() => modalData, [modalData]);
+  const { modalData: module } = useModalContext();
+  let currentModule = useMemo(() => module, [module]);
   const updateModule = api.module.useUpdateModule();
   const createModule = api.module.useCreateModule();
 
@@ -55,7 +54,6 @@ export function ModuleForm({
   useEffect(() => {
     if (!isOpen) {
       form.reset({ key: '', name: '' });
-      module = undefined;
       currentModule = undefined;
     }
   }, [isOpen, form]);
@@ -107,7 +105,7 @@ export function ModuleForm({
                     <FormLabel>{t('system.permission_group_key')}</FormLabel>
                     <FormControl>
                       <Input
-                        disabled={!!module}
+                        disabled={!!currentModule}
                         {...field}
                       />
                     </FormControl>

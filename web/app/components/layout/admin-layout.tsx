@@ -7,7 +7,6 @@ import { Navigation } from "../sidebar/navigation";
 import { Navbar } from "../header/navbar";
 import { usePersistentState } from "@/hooks/use-persistent-state";
 import { MenuItem } from "@/types/menu";
-import { IconAbc, IconAlertSquare } from "@tabler/icons-react";
 import { convertMenuToRoutes, findMatchingRoute } from "@/utils/menu";
 import Keepalive from "../header/keepalive";
 import { usePathname, useRouter } from "next/navigation";
@@ -15,10 +14,7 @@ import { ViewProvider } from "../hooks/use-view";
 import { useTagsViewStore } from "@/hooks/use-tagview-store";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslation } from "react-i18next";
-import { Briefcase, Crown, Fingerprint, Home, List, Sliders, UserCog } from "lucide-react";
-import api from "@/api";
-import { useAuth } from "@/hooks/use-auth";
-import { TenantInfo } from "@/types/tenant";
+import { Briefcase, Crown, Fingerprint, Home, Sliders, UserCog } from "lucide-react";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -42,7 +38,7 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
     {
       key: 'admin',
       title: t('system.home'),
-      icon: <IconAbc className="w-5 h-5" />,
+      icon: <UserCog className="w-5 h-5" />,
       path: "/admin"
     },
     {
@@ -68,12 +64,12 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
     ...(routes?.map(route => ({
       key: route.key,
       title: route.meta?.title || route.title,
-      icon: route.icon ?? <IconAlertSquare className="w-4 h-4" />,
+      icon: route.icon ?? <UserCog className="w-4 h-4" />,
       path: route.path,
       children: route.children?.map(child => ({
         key: child.key,
         title: child.meta?.title || child.title,
-        icon: child.icon ?? <IconAlertSquare className="w-4 h-4" />,
+        icon: child.icon ?? <UserCog className="w-4 h-4" />,
         path: child.path,
       }))
     })) || [])

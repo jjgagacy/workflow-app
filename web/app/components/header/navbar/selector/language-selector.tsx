@@ -16,10 +16,11 @@ export function LanguageSelector() {
   };
 
   return (
-    <div className='flex items-center gap-2 hover:bg-secondary/80 rounded-md mx-2'>
+    <div className='flex items-center gap-2 hover:bg-secondary/80 rounded-lg mx-2'>
       <Menu as="div" className="relative">
-        <MenuButton className="flex items-center space-x-2 max-w-xs rounded-full focus:outline-none">
-          <Globe className="w-5 h-5 text-gray-400 hover:text-gray-500 mr-1" /> {getLanguageNameByValue(i18n.language)}
+        <MenuButton className="flex items-center space-x-2 p-2 max-w-xs rounded-full focus:outline-none">
+          <Globe className="w-5 h-5 text-gray-400 hover:text-gray-500 mr-1" />
+          {getLanguageNameByValue(i18n.language)}
         </MenuButton>
 
         <Transition

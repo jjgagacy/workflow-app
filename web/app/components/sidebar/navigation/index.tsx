@@ -3,7 +3,7 @@
 import { MenuItem } from '@/types/menu';
 
 import { IconChevronDown, IconChevronRight, IconEyeCog } from '@tabler/icons-react';
-import { Briefcase, Cog, Crown, Fingerprint, Home, List, Sliders, UserCheck, UserCog } from 'lucide-react';
+import { Briefcase, Cog, Crown, Fingerprint, Home, LayoutDashboard, List, Sliders, UserCheck, UserCog } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -34,7 +34,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
     {
       key: 'dashboard',
       title: t('system.dashboard'),
-      icon: <Home className="w-5 h-5" />,
+      icon: <LayoutDashboard className="w-5 h-5" />,
       path: "/admin/dashboard"
     },
     {
@@ -168,7 +168,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
   };
 
   return (
-    <div className="bg-white py-2 px-2 dark:bg-gradient-to-br dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 navigation-menu__root space-y-1 relative z-10">
+    <div className={`bg-white py-2 px-2 dark:bg-gradient-to-br dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 navigation-menu__root space-y-1 relative z-10`}>
       {menuItems.map((item) => (
         <div key={item.key}>
           {item.children && collapsed ? (
@@ -179,7 +179,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                 onMouseLeave={handleMouseLeave}
               >
                 <div
-                  className={`navigation-menu__trigger flex items-center px-2 py-2 w-full rounded-lg ${getThemeHoverClass(activeTheme as ThemeType)}${collapsed ? "justify-center" : ""
+                  className={`navigation-menu__trigger flex justify-center items-center px-2 py-2 w-full rounded-lg ${getThemeHoverClass(activeTheme as ThemeType)}${collapsed ? "justify-center" : ""
                     } ${isActive(item.path) ? `${getThemeActiveClass(activeTheme as ThemeType)} ${getThemeBgClass(activeTheme as ThemeType)}` : ""}`}
                   title={item.title}
                 >

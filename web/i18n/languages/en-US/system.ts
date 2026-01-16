@@ -1,8 +1,9 @@
 const translation = {
   // 导航和页面标题
   home: 'Home',
-  dashboard: 'Dashboard',
-  system_settings: 'System Settings',
+  dashboard: 'Workspace',
+  account_settings: 'Account',
+  system_settings: 'Settings',
   account: 'Account',
   department: 'Department',
   role: 'Role',

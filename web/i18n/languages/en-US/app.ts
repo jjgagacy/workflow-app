@@ -44,6 +44,7 @@ const translation = {
     sun: 'Sun icon',
     moon: 'Moon icon',
   },
+  back_workspace: 'Back Workspace',
 };
 
 export default translation;

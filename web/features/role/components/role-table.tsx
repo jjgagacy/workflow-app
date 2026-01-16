@@ -8,7 +8,7 @@ import { ColumnDef, getExpandedRowModel } from "@tanstack/react-table";
 import { parseAsString, useQueryStates } from "nuqs";
 import { useCallback, useEffect, useState } from "react";
 import { columnHelper, createColumns } from "./columns";
-import { useModalContext } from "@/hooks/use-model";
+import { useModalContext } from "@/hooks/use-modal";
 import Button from "@/app/components/base/button";
 import { DataTable } from "@/app/ui/table/data-table";
 import { DataTableToolbar } from "@/app/ui/table/data-table-toolbar";
