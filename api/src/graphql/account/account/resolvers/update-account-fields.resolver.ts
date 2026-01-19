@@ -1,17 +1,17 @@
 import { AccountService } from "@/account/account.service";
 import { CurrentUser } from "@/common/decorators/current-user";
-import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
+import { UniversalAuthGuard } from "@/common/guards/universal-auth.guard";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { AccountNotFoundError } from "@/service/exceptions/account.error";
 import { BadRequestException, UseGuards } from "@nestjs/common";
-import { Args, Mutation } from "@nestjs/graphql";
+import { Args, Mutation, Resolver } from "@nestjs/graphql";
 import { I18nService } from "nestjs-i18n";
 import { UpdateAccountDto } from "@/account/account/dto/update-account.dto";
 import { UpdateAccountAvatarInput, UpdateAccountLanguageInput, UpdateAccountNameInput, UpdateAccountThemeInput } from "../types/account-input.type";
-import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
+import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 
-@UseGuards(GqlAuthGuard)
-@UseGuards(TenantContextGuard)
+@Resolver()
+@UseGuards(EditionSelfHostedGuard)
 export class UpdateAccountFieldsResolver {
   constructor(
     private readonly accountService: AccountService,

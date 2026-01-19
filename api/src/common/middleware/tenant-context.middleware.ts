@@ -66,5 +66,4 @@ export class TenantContextMiddleware implements NestMiddleware {
     // 设置到请求上下文中
     (req as any).tenant = tenant;
   }
-
 }

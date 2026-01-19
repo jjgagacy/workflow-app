@@ -3,7 +3,7 @@ import { X, Menu } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import Button from "@/app/components/base/button";
-import { useMobileMenu } from "@/context/mobileMenuContext";
+import { useMobileMenu } from "@/context/mobile-menu-context";
 import ThemeToggle from "./themeToggle";
 import { setClientLocale } from "@/i18n";
 import { LanguageSelector } from "./languageSelector";

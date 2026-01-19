@@ -84,5 +84,27 @@ const translation = {
   password_reset_success_message: "Your password has been reset successfully. You can now login with your new password.",
   redirecting_to_login: "Redirecting to login page...",
   password_requirements: "Password must be 6-32 characters long, include uppercase and lowercase letters, and at least one special character",
+  my_account: "My Account",
+  manage_your_account_settings: "Manage your account settings",
+  account_id: "Account ID",
+  member_since: "Created At",
+  delete_account: "Delete Account",
+  delete_account_warning: "Deleting your account is an irreversible operation. All your data will be permanently erased, including:",
+  delete_warning_data: "All personal profiles and data",
+  delete_warning_history: "Usage history records",
+  delete_warning_subscription: "Subscription information",
+  delete_warning_access: "Access to all projects and workspaces",
+  username: "Account Name",
+  enter_username_placeholder: "enter your name",
+  change_email: "Change",
+  change_avatar: "Edit profile photo",
+  image_input: {
+    drop_image_here: "Drop your image here, or",
+    browse: 'browse',
+  },
+  image_uploader: {
+    upload_limit_exceeded: "Upload images cannot exceed 3MB",
+    read_error: "Image reading failed"
+  }
 };
 export default translation;

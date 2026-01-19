@@ -1,7 +1,9 @@
 'use client';
 
 import api from "@/api";
+import { toast } from "@/app/ui/toast";
 import { AccountInfo } from "@/types/account";
+import { getErrorMessage } from "@/utils/errors";
 import { createContext, useContext, useEffect, useState } from "react";
 
 export interface AppContextType {
@@ -9,6 +11,7 @@ export interface AppContextType {
 }
 
 const defaultAccountInfo: AccountInfo = {
+  id: '',
   username: '',
   mobile: '',
   roles: [],
@@ -27,7 +30,11 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     if (accountResponse) {
-      setAccountInfo(accountResponse.accountInfo)
+      if (accountResponse.error) {
+        toast.error(getErrorMessage(accountResponse.error))
+      } else {
+        setAccountInfo(accountResponse.accountInfo)
+      }
     }
   }, [accountResponse])
 

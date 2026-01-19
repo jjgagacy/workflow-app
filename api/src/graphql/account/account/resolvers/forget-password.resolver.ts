@@ -15,6 +15,7 @@ import { EmailRateLimiterService } from "@/service/libs/rate-limiter/email-rate-
 import { TOKEN_TYPES, TokenManagerService } from "@/service/libs/token-manager.service";
 import { InvalidEmailError, InvalidTokenError, VerifyCodeError } from "@/service/exceptions/token.error";
 import { UpdateAccountDto } from "@/account/account/dto/update-account.dto";
+import { Public } from "@/common/guards/universal-auth.guard";
 
 @Resolver()
 export class ForgetPasswordResolver {
@@ -27,6 +28,7 @@ export class ForgetPasswordResolver {
     private readonly i18n: I18nService<I18nTranslations>,
   ) { }
 
+  @Public()
   @Mutation(() => String)
   @UseGuards(EnableEmailPasswordLoginGuard)
   async forgetPasswordSendEmail(@Args('input') input: ForgetPasswordInput, @Req() req: Request): Promise<string> {
@@ -43,6 +45,7 @@ export class ForgetPasswordResolver {
     return token;
   }
 
+  @Public()
   @Mutation(() => ForgetPasswordCheckResponse)
   @UseGuards(EnableEmailPasswordLoginGuard)
   async forgetPasswordTokenCheck(@Args('input') input: ForgetPasswordInput): Promise<ForgetPasswordCheckResponse> {
@@ -71,6 +74,7 @@ export class ForgetPasswordResolver {
     return { isValid: true, email: input.email, token: newToken };
   }
 
+  @Public()
   @Mutation(() => Boolean)
   @UseGuards(EnableEmailPasswordLoginGuard)
   async forgetPasswordReset(@Args('input') input: ForgetPasswordResetInput): Promise<boolean> {

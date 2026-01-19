@@ -1,7 +1,6 @@
 import { Args, Mutation, Resolver } from "@nestjs/graphql";
 import { MenuService } from "@/account/menu.service";
 import { validId } from "@/common/utils/strings";
-import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { UseGuards } from "@nestjs/common";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { I18nService } from "nestjs-i18n";
@@ -10,11 +9,8 @@ import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted
 import { MenuResponse } from "../types/menu-response.type";
 import { MenuInput } from "../types/menu-input.type";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
-import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
 @Resolver()
-@UseGuards(GqlAuthGuard)
-@UseGuards(TenantContextGuard)
 @UseGuards(EditionSelfHostedGuard)
 export class UpdateMenuResolver {
   constructor(

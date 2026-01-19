@@ -3,7 +3,6 @@ import { AccountService } from "@/account/account.service";
 import { CurrentUser } from "@/common/decorators/current-user";
 import { UpdateAccountDto } from "@/account/account/dto/update-account.dto";
 import * as bcrypt from 'bcrypt';
-import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { BadRequestException, InternalServerErrorException, UseGuards } from "@nestjs/common";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { I18nService } from "nestjs-i18n";
@@ -11,11 +10,8 @@ import authConfig from "@/config/auth.config";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 import { AccountResponse } from "../types/account-response.type";
 import { AccountInput } from "../types/account-input.type";
-import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
 @Resolver()
-@UseGuards(GqlAuthGuard)
-@UseGuards(TenantContextGuard)
 @UseGuards(EditionSelfHostedGuard)
 export class UpdateAccountResolver {
   constructor(

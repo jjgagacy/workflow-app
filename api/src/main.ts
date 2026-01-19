@@ -32,14 +32,9 @@ async function bootstrap() {
   }));
   */
   app.useGlobalPipes(new I18nValidationPipe());
-  app.useGlobalFilters(
-    new I18nValidationExceptionFilter({ detailedErrors: true }),
-  );
+  app.useGlobalFilters(new I18nValidationExceptionFilter({ detailedErrors: true }));
   app.useGlobalFilters(new AllExceptionsFilter(app.get(GlobalLogger), app.get(I18nHelperService)));
-  const logger = new WinstonLogger(
-    app.get(ConfigService),
-    app.get(MonieConfig),
-  );
+  const logger = new WinstonLogger(app.get(ConfigService), app.get(MonieConfig));
   app.useLogger(
     new GlobalLogger(
       app.get(ConfigService),
@@ -59,8 +54,9 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3001);
   const appUrl = await app.getUrl();
   setModuleRef(app);
+
   // cli and npm levels
-  logger.error(`Application is running on: ${appUrl}`);
+  // logger.error(`Application is running on: ${appUrl}`);
   logger.warn(`Application is running on: ${appUrl}`);
   logger.info(`Application is running on: ${appUrl}`, { foo: 'bar' });
   logger.debug(`Application is running on: ${appUrl}`);

@@ -5,7 +5,7 @@ import { EmailCodeLoginInput, EmailCodeLoginSendEmail, LoginInput, PasswordLogin
 import { AuthService } from "@/auth/auth.service";
 import { CurrentUser } from "@/common/decorators/current-user";
 import { BadRequestException, NotFoundException, UseGuards } from "@nestjs/common";
-import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
+import { UniversalAuthGuard, Public } from "@/common/guards/universal-auth.guard";
 import { AuthAccountService } from "@/service/auth-account.service";
 import { DeviceService } from "@/service/libs/device.service";
 import { EnableEmailPasswordLoginGuard } from "@/common/guards/auth/enable-email-password-login.guard";
@@ -38,7 +38,7 @@ export class LoginResolver {
       });
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(UniversalAuthGuard)
   @Query(() => UserInfoResponse)
   async currentUser(@CurrentUser() user: any): Promise<UserInfoResponse> {
     return {
@@ -47,6 +47,7 @@ export class LoginResolver {
     };
   }
 
+  @Public()
   @Mutation(() => LoginResponse)
   async emailCodeLogin(@Args('input') input: EmailCodeLoginInput, @GqlRequest() req: Request): Promise<LoginResponse> {
     const language = this.deviceService.getLanguageFromHeader(req.headers['accept-language']);
@@ -61,6 +62,7 @@ export class LoginResolver {
       });
   }
 
+  @Public()
   @Mutation(() => LoginResponse)
   async emailPasswordLogin(@Args('input') input: PasswordLoginInput, @GqlRequest() req: Request): Promise<LoginResponse> {
     const language = this.deviceService.getLanguageFromHeader(req.headers['accept-language']);
@@ -81,6 +83,8 @@ export class LoginResolver {
       });
   }
 
+
+  @Public()
   @Mutation(() => String)
   async emailCodeLoginSendEmail(@Args('input') input: EmailCodeLoginSendEmail, @GqlRequest() req: Request): Promise<string> {
     const language = this.deviceService.getLanguageFromHeader(req.headers['accept-language']);
@@ -97,6 +101,7 @@ export class LoginResolver {
     return token;
   }
 
+  @Public()
   @Mutation(() => String)
   @UseGuards(EnableEmailPasswordLoginGuard)
   async resetPasswordSendEmail(@Args('input') input: ResetPasswordSendEmailInput, @GqlRequest() req: Request): Promise<string> {
@@ -114,6 +119,7 @@ export class LoginResolver {
     return token;
   }
 
+  @Public()
   @Mutation(() => Boolean)
   async checkLoginEmail(@Args('email', EmailValidationPipe) email: string): Promise<boolean> {
     const account = await this.accountService.getByEmail(email);
@@ -126,5 +132,4 @@ export class LoginResolver {
     }
     return true;
   }
-
 }

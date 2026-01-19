@@ -192,7 +192,6 @@ type Mutation {
   resetPasswordSendEmail(input: ResetPasswordSendEmailInput!): String!
   setRolePerms(input: RoleSetPermInput!): Boolean!
   switchTenant(tenant_id: String!): TenantResponse!
-  switchWorkspace(tenant_id: String!): Boolean!
   toggleAccountStatus(id: Int!): Boolean!
   updateAccount(input: AccountInput!): AccountResponse!
   updateAccountAvatar(input: UpdateAccountAvatarInput!): Boolean!

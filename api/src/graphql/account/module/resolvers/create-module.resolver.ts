@@ -2,16 +2,12 @@ import { Args, Mutation, Resolver } from "@nestjs/graphql";
 import { ModuleService } from "@/account/module.service";
 import { ModuleResponse } from "../types/module-response.type";
 import { ModuleInput } from "../types/module-input.type";
-import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { UseGuards } from "@nestjs/common";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
 import { CreateModuleDto } from "@/account/module/dto/create-module.dto";
-import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
 @Resolver()
-@UseGuards(GqlAuthGuard)
-@UseGuards(TenantContextGuard)
 @UseGuards(EditionSelfHostedGuard)
 export class CreateModuleResolver {
   constructor(

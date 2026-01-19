@@ -86,5 +86,27 @@ const translation = {
   password_reset_success_message: "您的密码已重置成功，现在可以使用新密码登录。",
   redirecting_to_login: "正在跳转到登录页面...",
   password_requirements: "密码必须为6-32个字符，包含大小写字母和至少一个特殊字符",
+  my_account: "我的账户",
+  manage_your_account_settings: "管理您的账户设置",
+  account_id: "账户ID",
+  member_since: "加入时间",
+  delete_account: "删除账户",
+  delete_account_warning: "删除账户是永久性操作，无法撤销。这将永久删除您的所有数据，包括：",
+  delete_warning_data: "所有个人资料和数据",
+  delete_warning_history: "使用历史记录",
+  delete_warning_subscription: "订阅信息",
+  delete_warning_access: "所有项目和团队访问权限",
+  username: "用户名",
+  enter_username_placeholder: "输入用户名",
+  change_email: "更改",
+  change_avatar: "编辑裁剪头像",
+  image_input: {
+    drop_image_here: "将图片拖放到此处，或",
+    browse: '浏览',
+  },
+  image_uploader: {
+    upload_limit_exceeded: "上传文件不能超过3MB",
+    read_error: "图片文件读取错误"
+  }
 };
 export default translation;

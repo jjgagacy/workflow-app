@@ -5,22 +5,18 @@ import { Account } from "../types/account.type";
 import { formatDate } from "@/common/utils/time";
 import { AccountEntity } from "@/account/entities/account.entity";
 import { validNumber } from "@/common/utils/strings";
-import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { BadRequestException, UseGuards } from "@nestjs/common";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 import { AccountList } from "../types/account-list.type";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
 import { CurrentUser } from "@/common/decorators/current-user";
-import { TenantResponse } from "../types/login-response.type";
 import { TenantService } from "@/service/tenant.service";
 import { AuthAccountService } from "@/service/auth-account.service";
-import { TenantNotFoundError } from "@/service/exceptions/tenant.error";
 import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
 @Resolver()
-@UseGuards(GqlAuthGuard)
 export class AccountResolver {
   constructor(private readonly accountService: AccountService,
     private readonly authAccountService: AuthAccountService,
@@ -71,39 +67,4 @@ export class AccountResolver {
     return this.transformAccountToGQLType(account);
   }
 
-  @Mutation(() => TenantResponse)
-  async currentTenant(@CurrentUser() user: any): Promise<TenantResponse> {
-    const account = await this.accountService.getById(user?.id);
-    if (!account) {
-      throw new BadRequestException();
-    }
-    const currentTenant = await this.authAccountService.getCurrentTenant(account.id);
-    if (!currentTenant) {
-      throw TenantNotFoundError.create(this.i18n);
-    }
-    const tenant = currentTenant.tenant;
-    return {
-      tenant_id: tenant.id,
-      name: tenant.name,
-      plan: tenant.plan
-    } as TenantResponse;
-  }
-
-  @Mutation(() => TenantResponse)
-  async switchTenant(@Args('tenant_id') tenantId: string, @CurrentUser() user: any): Promise<TenantResponse> {
-    const account = await this.accountService.getById(user?.id);
-    if (!account) {
-      throw new BadRequestException();
-    }
-    const tenant = await this.tenantService.getTenant(tenantId);
-    if (!tenant) {
-      throw new BadRequestException();
-    }
-    await this.authAccountService.switchTenant(account, tenantId);
-    return {
-      tenant_id: tenant.id,
-      name: tenant.name,
-      plan: tenant.plan
-    } as TenantResponse;
-  }
 }

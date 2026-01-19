@@ -3,7 +3,7 @@ import { getClientLocale } from "@/i18n";
 import { GraphQLClient } from "graphql-request";
 
 // 基础客户端配置
-const client = new GraphQLClient(process.env.NEXT_PUBLIC_PUBLIC_API_PREFIX as string);
+const client = new GraphQLClient(process.env.NEXT_PUBLIC_GRAPHQL_API_PREFIX as string);
 
 // 带认证的客户端
 export const getAuthenticatedClient = (token?: string, locale?: string, tenantId?: string) => {
@@ -14,7 +14,7 @@ export const getAuthenticatedClient = (token?: string, locale?: string, tenantId
   if (tenantId) headers['x-tenant-id'] = tenantId;
   // console.log('Final headers:', Date.now(), headers);
 
-  return new GraphQLClient(process.env.NEXT_PUBLIC_PUBLIC_API_PREFIX as string, {
+  return new GraphQLClient(process.env.NEXT_PUBLIC_GRAPHQL_API_PREFIX as string, {
     headers
   });
 }

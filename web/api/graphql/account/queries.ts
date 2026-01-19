@@ -42,7 +42,8 @@ export const GET_ACCOUNT_INFO = gql`
       realName,
       mobile,
       email,
-      last_ip
+      last_ip,
+      created_at
     }
   }
 `;

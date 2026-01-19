@@ -55,7 +55,7 @@ import { EncryptionService } from './encryption/encryption.service';
 import { StorageModule } from './storage/storage.module';
 import { LocalFileStorage } from './storage/implements/local-file.storage';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { APP_GUARD } from '@nestjs/core';
 import { UniversalThrottlerGuard } from './common/guards/universal-throttler.guard';
 import { BullModule } from '@nestjs/bull';
 import { MailService } from './mail/mail.service';
@@ -94,10 +94,10 @@ import { DeleteRoleResolver } from './graphql/account/role/resolvers/delete-role
 import { RoleResolver } from './graphql/account/role/resolvers/role.resolver';
 import { UpdateRoleResolver } from './graphql/account/role/resolvers/update-role.resolver';
 import { SignUpResolver } from './graphql/account/account/resolvers/signup.resolver';
-import { GraphQLExceptionFilter } from './common/filters/graphql-exception.filter';
-import { AllExceptionsFilter } from './common/filters/all-exception.filter';
 import { ForgetPasswordResolver } from './graphql/account/account/resolvers/forget-password.resolver';
 import { SetTenantMiddleware } from './common/middleware/set-tenant.middleware';
+import { UniversalAuthGuard } from './common/guards/universal-auth.guard';
+import { FilesController } from './controllers/api/files.controller';
 
 @Module({
   imports: [
@@ -269,7 +269,13 @@ import { SetTenantMiddleware } from './common/middleware/set-tenant.middleware';
     PluginModule,
     ModelRuntimeModule,
   ],
-  controllers: [AppController, InternalPluginApiController, InternalPluginInvokeController, InternalWorkspaceController],
+  controllers: [
+    AppController,
+    FilesController,
+    InternalPluginApiController,
+    InternalPluginInvokeController,
+    InternalWorkspaceController
+  ],
   providers: [
     HelloResolver,
     LocalStrategy,
@@ -318,6 +324,7 @@ import { SetTenantMiddleware } from './common/middleware/set-tenant.middleware';
     EncryptionService,
     LocalFileStorage,
     { provide: APP_GUARD, useClass: UniversalThrottlerGuard },
+    { provide: APP_GUARD, useClass: UniversalAuthGuard },
     MailService,
     EnableEmailPasswordLoginGuard,
     UpdateAccountFieldsResolver,
@@ -328,15 +335,10 @@ import { SetTenantMiddleware } from './common/middleware/set-tenant.middleware';
     PluginModelClientService,
     SignUpResolver,
     ForgetPasswordResolver,
-    //    { provide: APP_FILTER, useClass: GraphQLExceptionFilter },
-    // { provide: APP_FILTER, useClass: AllExceptionsFilter },
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    // consumer
-    //   .apply(AuthMiddleware)
-    //   .forRoutes('graphql');
     consumer
       .apply(SetTenantMiddleware)
       .forRoutes('graphql');

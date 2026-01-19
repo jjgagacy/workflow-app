@@ -1,6 +1,5 @@
 import { Args, Query, Resolver } from "@nestjs/graphql";
 import { DepService } from "@/account/dep.service";
-import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { BadRequestException, UseGuards } from "@nestjs/common";
 import { AccountService } from "@/account/account.service";
 import { AccountEntity } from "@/account/entities/account.entity";
@@ -9,12 +8,9 @@ import { I18nService } from "nestjs-i18n";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 import { Dep } from "../types/dep.type";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
-import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 import { GetDepArgs } from "../types/get-dep.args";
 
 @Resolver()
-@UseGuards(GqlAuthGuard)
-@UseGuards(TenantContextGuard)
 @UseGuards(EditionSelfHostedGuard)
 export class DepResolver {
   constructor(

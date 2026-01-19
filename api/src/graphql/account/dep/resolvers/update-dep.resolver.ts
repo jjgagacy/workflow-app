@@ -1,16 +1,12 @@
 import { Args, Mutation, Resolver } from "@nestjs/graphql";
 import { DepService } from "@/account/dep.service";
 import { DepResponse } from "../types/dep-response.type";
-import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { UseGuards } from "@nestjs/common";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 import { DepInputArgs } from "../types/dep-input.args";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
-import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
 @Resolver()
-@UseGuards(GqlAuthGuard)
-@UseGuards(TenantContextGuard)
 @UseGuards(EditionSelfHostedGuard)
 export class UpdateDepResolver {
   constructor(private readonly depService: DepService) { }

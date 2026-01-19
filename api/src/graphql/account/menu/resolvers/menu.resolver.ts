@@ -1,7 +1,6 @@
 import { Args, Int, Query, Resolver } from "@nestjs/graphql";
 import { MenuService } from "@/account/menu.service";
 import { Menu } from "../types/menu.type";
-import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { BadRequestException, UseGuards } from "@nestjs/common";
 import { ModuleService } from "@/account/module.service";
 import { ModulePermInterface } from "@/account/interfaces/module-perm.interface";
@@ -10,11 +9,8 @@ import { I18nService } from "nestjs-i18n";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 import { GetMenuArgs } from "../types/get-menu.args";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
-import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
 @Resolver()
-@UseGuards(GqlAuthGuard)
-@UseGuards(TenantContextGuard)
 @UseGuards(EditionSelfHostedGuard)
 export class MenuResolver {
   constructor(

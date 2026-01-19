@@ -3,21 +3,19 @@ import { CurrentTenent } from "@/common/decorators/current-tenant";
 import { CurrentUser } from "@/common/decorators/current-user";
 import { AccountNotInFreezeGuard } from "@/common/guards/auth/account-not-infreeze.guard";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
-import { GqlAuthGuard } from "@/common/guards/gql-auth.guard";
 import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 import { I18nTranslations } from "@/generated/i18n.generated";
+import { TenantResponse } from "@/graphql/account/account/types/login-response.type";
 import { WorkspaceDetail, WorkspaceList } from "@/graphql/workspace/types/workspace.type";
 import { AuthAccountService } from "@/service/auth-account.service";
 import { AccountNotFoundError } from "@/service/exceptions/account.error";
 import { TenantNotFoundError } from "@/service/exceptions/tenant.error";
 import { TenantService } from "@/service/tenant.service";
-import { BadRequestException, Req, UseGuards } from "@nestjs/common";
+import { BadRequestException, UseGuards } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { I18nService } from "nestjs-i18n";
 
 @Resolver()
-@UseGuards(GqlAuthGuard)
-@UseGuards(TenantContextGuard)
 @UseGuards(EditionSelfHostedGuard)
 export class WorkspaceResolver {
   constructor(
@@ -71,16 +69,39 @@ export class WorkspaceResolver {
     return workspaceDetail;
   }
 
-  @Mutation(() => Boolean)
-  async switchWorkspace(
-    @Args({ name: 'tenant_id', type: () => String }) tenantId: string,
-    @CurrentUser() user: any,
-  ): Promise<boolean> {
-    const account = await this.accountService.getById(user.id);
+  @Mutation(() => TenantResponse)
+  async currentTenant(@CurrentUser() user: any): Promise<TenantResponse> {
+    const account = await this.accountService.getById(user?.id);
     if (!account) {
-      throw AccountNotFoundError.create(this.i18n);
+      throw new BadRequestException();
+    }
+    const currentTenant = await this.authAccountService.getCurrentTenant(account.id);
+    if (!currentTenant) {
+      throw TenantNotFoundError.create(this.i18n);
+    }
+    const tenant = currentTenant.tenant;
+    return {
+      tenant_id: tenant.id,
+      name: tenant.name,
+      plan: tenant.plan
+    } as TenantResponse;
+  }
+
+  @Mutation(() => TenantResponse)
+  async switchTenant(@Args('tenant_id') tenantId: string, @CurrentUser() user: any): Promise<TenantResponse> {
+    const account = await this.accountService.getById(user?.id);
+    if (!account) {
+      throw new BadRequestException();
+    }
+    const tenant = await this.tenantService.getTenant(tenantId);
+    if (!tenant) {
+      throw new BadRequestException();
     }
     await this.authAccountService.switchTenant(account, tenantId);
-    return true;
+    return {
+      tenant_id: tenant.id,
+      name: tenant.name,
+      plan: tenant.plan
+    } as TenantResponse;
   }
 }

@@ -13,6 +13,7 @@ import { GqlRequest } from '@/common/decorators/gql-request';
 import { LoginResponse } from '../types/login-response.type';
 import { EmailExistingError, EmailInFreezeError } from '@/service/exceptions/account.error';
 import { AuthService } from '@/auth/auth.service';
+import { Public } from '@/common/guards/universal-auth.guard';
 
 @Resolver()
 export class SignUpResolver {
@@ -25,6 +26,7 @@ export class SignUpResolver {
     private readonly featureService: FeatureService,
   ) { }
 
+  @Public()
   @Mutation(() => Boolean)
   async checkSignUpUsername(
     @Args('username') username: string,
@@ -37,6 +39,7 @@ export class SignUpResolver {
     return true;
   }
 
+  @Public()
   @Mutation(() => String)
   async emailCodeSignupSendEmail(
     @Args('input') input: EmailCodeLoginSendEmail,
@@ -56,6 +59,7 @@ export class SignUpResolver {
     return token;
   }
 
+  @Public()
   @Mutation(() => LoginResponse)
   async emailCodeSignUp(@Args('input') input: EmailCodeSignUpInput, @GqlRequest() req: Request): Promise<LoginResponse> {
     const language = this.deviceService.getLanguageFromHeader(req.headers['accept-language']);

@@ -1,15 +1,18 @@
-interface IGraphQLError {
+interface GraphQLError {
   message: string;
+  path?: string[];
   extensions?: {
     statusCode?: number;
     [key: string]: any;
   };
 }
 
-interface INormalizedError {
+interface NormalizedError {
   message: string;
   statusCode?: number;
   details?: any;
+  field?: string;
+  fullPath?: string;
 }
 
 /**
@@ -17,10 +20,37 @@ interface INormalizedError {
  * @param error 捕获的错误对象
  * @returns 标准化错误对象
  */
-export function handleError(error: any): INormalizedError {
+export function handleError(error: any): NormalizedError {
   // 1. 处理GraphQL错误
+  if (error.response?.errors) {
+    const fieldMap: Record<string, string> = {};
+    const extracted = error.response?.errors.map((err: GraphQLError) => {
+      let field: string | undefined;
+      if (err.path && err.path.length > 0) {
+        const lastPath = err.path[err.path.length - 1];
+        field = fieldMap[lastPath] || lastPath;
+      }
+      const code = err.extensions?.code;
+      const fullPath = err.path?.join('.');
+
+      let message = err.message;
+      return {
+        message,
+        field,
+        code,
+        fullPath,
+      };
+    });
+    if (extracted.length > 0) {
+      return {
+        message: extracted.map((e: any) => e.message).join('; '),
+        statusCode: 500,
+      }
+    }
+  }
+
   if (error.graphQLErrors?.[0]) {
-    const gqlError = error.graphQLErrors[0] as IGraphQLError;
+    const gqlError = error.graphQLErrors[0] as GraphQLError;
     return {
       message: gqlError.message,
       statusCode: gqlError.extensions?.statusCode,
@@ -59,7 +89,6 @@ export function handleError(error: any): INormalizedError {
       statusCode: 500,
     };
   }
-
   // 5. 处理未知错误类型
   return {
     message: String(error),

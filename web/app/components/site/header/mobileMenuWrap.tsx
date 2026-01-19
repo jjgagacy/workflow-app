@@ -3,7 +3,7 @@
 import { useTranslation } from "react-i18next";
 import MobileMenu from "./mobileMenu";
 import { useEffect, useState } from "react";
-import { useMobileMenu } from "@/context/mobileMenuContext";
+import { useMobileMenu } from "@/context/mobile-menu-context";
 import { createMobileMenuData } from "../navItems";
 
 export default function MobileMenuWrap() {

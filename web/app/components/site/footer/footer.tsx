@@ -1,6 +1,6 @@
 'use client';
 
-import { useMobileMenu } from "@/context/mobileMenuContext";
+import { useMobileMenu } from "@/context/mobile-menu-context";
 import { setClientLocale } from "@/i18n";
 import { BookOpen, Brain, CreditCard, Globe, Moon, Smartphone, Sun, Users } from "lucide-react";
 import { useState } from "react";

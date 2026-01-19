@@ -1,5 +1,5 @@
 import Header from "./components/site/header/header";
-import { MobileMenuProvider } from "@/context/mobileMenuContext";
+import { MobileMenuProvider } from "@/context/mobile-menu-context";
 import MainContent from "./components/site/main/mainContent";
 import MobileMenuWrap from "./components/site/header/mobileMenuWrap";
 import Footer from "./components/site/footer/footer";

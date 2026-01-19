@@ -6,7 +6,7 @@ import { LanguageSelector } from "../components/site/header/languageSelector";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900/10">
+    <div className="min-h-screen flex flex-col dark:from-gray-900 dark:via-gray-800 dark:to-emerald-900/10">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
