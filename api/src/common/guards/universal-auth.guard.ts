@@ -42,6 +42,7 @@ export class UniversalAuthGuard extends AuthGuard('jwt') {
     }
 
     const publicPaths = [
+      '/',
       '/internal/api',
       '/health',
       '/metrics',

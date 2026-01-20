@@ -27,6 +27,8 @@ import { Response } from 'express';
 import { AccountService } from './account/account.service';
 import { TenantService } from './service/tenant.service';
 import { AccountRole } from './account/account.enums';
+import { Public } from './common/guards/universal-auth.guard';
+import { OpenDALStorage } from './storage/implements/opendal.storage';
 
 class OrderCreatedEvent {
   constructor(private eventObj: { orderId: number; payload: any }) { }
@@ -52,6 +54,7 @@ export class AppController {
     private readonly locationService: LocationService,
     private readonly deviceService: DeviceService,
     private readonly tenantService: TenantService,
+    private readonly openDALStorage: OpenDALStorage,
   ) { }
 
   @Get()
@@ -106,8 +109,13 @@ export class AppController {
     // } else {
     //   console.log('invalid tenant or account', tenant, account);
     // }
-    console.log(await this.authAccountService.getCurrentTenant(204));
-    console.log(await this.i18n.t('common.TIME.SECONDS', { args: { count: 1 } }));
+    // console.log(await this.authAccountService.getCurrentTenant(204));
+    // console.log(await this.i18n.t('common.TIME.SECONDS', { args: { count: 1 } }));
+    // console.log('name', this.configService.get('defaultApplicationName'));
+    // console.log('config', this.configService.get('LOCAL_STORAGE_PATH'));
+    // console.log('scheme', this.configService.get('storage.opendal.scheme'));
+    // await this.openDALStorage.save('a/bar', 'bar');
+    // console.log(await this.openDALStorage.list?.("", { files: true, directories: true }));
     return await this.i18n.t("hello.HELLO");
   }
 

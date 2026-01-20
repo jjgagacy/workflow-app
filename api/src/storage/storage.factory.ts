@@ -6,14 +6,14 @@ import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class StorageFactory {
-    constructor(private readonly configService: ConfigService) { }
+  constructor(private readonly configService: ConfigService) { }
 
-    createStorage(storageType: StorageType): BaseStorage {
-        switch (storageType) {
-            case 'local_file':
-                return new LocalFileStorage(this.configService);
-            default:
-                throw new Error(`Unsupported storage type: ${storageType}`);
-        }
+  createStorage(storageType: StorageType): BaseStorage {
+    switch (storageType) {
+      case 'local_file':
+        return new LocalFileStorage(this.configService);
+      default:
+        throw new Error(`Unsupported storage type: ${storageType}`);
     }
+  }
 }
