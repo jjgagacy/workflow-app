@@ -98,6 +98,7 @@ import { ForgetPasswordResolver } from './graphql/account/account/resolvers/forg
 import { SetTenantMiddleware } from './common/middleware/set-tenant.middleware';
 import { UniversalAuthGuard } from './common/guards/universal-auth.guard';
 import { FilesController } from './controllers/api/files.controller';
+import { PreviewController } from './controllers/files/preview.controller';
 
 @Module({
   imports: [
@@ -274,7 +275,8 @@ import { FilesController } from './controllers/api/files.controller';
     FilesController,
     InternalPluginApiController,
     InternalPluginInvokeController,
-    InternalWorkspaceController
+    InternalWorkspaceController,
+    PreviewController,
   ],
   providers: [
     HelloResolver,

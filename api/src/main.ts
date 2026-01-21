@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { resolve } from 'path';
+import { join, resolve } from 'path';
 import { TrimPipe } from './common/pipes/trim.pipe';
 import { GlobalLogger } from './logger/logger.service';
 import { ConfigService } from '@nestjs/config';
@@ -12,11 +12,15 @@ import { setModuleRef } from './common/modules/global';
 import { ValidationPipe } from '@nestjs/common';
 import { I18nHelperService } from './i18n-global/i18n.service';
 import { AllExceptionsFilter } from './common/filters/all-exception.filter';
+import * as express from 'express';
+import { NestExpressApplication } from '@nestjs/platform-express';
+
 
 async function bootstrap() {
+  const isProduction = process.env.NODE_ENV === 'production';
   process.env.APP_ROOT = resolve(__dirname, '..');
   // create app
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(new TrimPipe());
   /*
   app.useGlobalPipes(new ValidationPipe({
@@ -47,8 +51,16 @@ async function bootstrap() {
   app.enableCors({
     origin: true, // 或指定前端地址如 'http://localhost:3000'
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowHeaders: 'Content-Type, Accept, Authorization',
+    allowedHeaders: 'Content-Type, Accept, Authorization',
     credentials: true, // 如果需要发送 cookies/认证信息
+  });
+  // 配置上传目录
+  const attachedDir = isProduction
+    ? join(__dirname, '..', 'attached')
+    : join(process.cwd(), 'attached');
+  app.useStaticAssets(attachedDir, {
+    prefix: '/attached',
+    index: false,
   });
   // start app
   await app.listen(process.env.PORT ?? 3001);

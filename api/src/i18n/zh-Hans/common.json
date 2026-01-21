@@ -4,5 +4,12 @@
     "MINUTES": "{{count}}分钟",
     "HOURS": "{{count}}小时",
     "DAYS": "{{count}}天"
+  },
+  "FILE": {
+    "FILE_TOO_LARGE": "文件大小超限",
+    "UNSUPPORTED_FILE_TYPE": "不支持的文件类型",
+    "INVALID_FILENAME": "文件名包含无效字符",
+    "FILE_NOT_FOUND": "文件未找到",
+    "INVALID_SIGNATURE": "文件签名错误"
   }
 }

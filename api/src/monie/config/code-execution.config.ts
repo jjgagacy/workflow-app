@@ -5,64 +5,64 @@ import { getSafeNumber } from "../helpers/safe-number";
 
 @Injectable()
 export class CodeExecutionConfig {
-    constructor(protected readonly configService: ConfigService
-    ) { }
+  constructor(protected readonly configService: ConfigService
+  ) { }
 
-    codeExecutionEndPoint(): string {
-        return this.configService.get<string>('CODE_EXECUTION_ENDPOINT', '');
-    }
+  codeExecutionEndPoint(): string {
+    return this.configService.get<string>('CODE_EXECUTION_ENDPOINT', '');
+  }
 
-    codeExecutionApiKey(): string {
-        return this.configService.get<string>('CODE_EXECUTION_API_KEY', '');
-    }
+  codeExecutionApiKey(): string {
+    return this.configService.get<string>('CODE_EXECUTION_API_KEY', '');
+  }
 
-    codeExecutionConnectTimeout(): number {
-        const sec = this.configService.get<number>('CODE_EXECUTION_CONNECT_TIMEOUT', DefaultConfigValues.CODE_EXECUTION_CONNECT_TIMEOUT);
-        return getSafeNumber(sec, DefaultConfigValues.CODE_EXECUTION_CONNECT_TIMEOUT);
-    }
+  codeExecutionConnectTimeout(): number {
+    const sec = this.configService.get<number>('CODE_EXECUTION_CONNECT_TIMEOUT', DefaultConfigValues.CODE_EXECUTION_CONNECT_TIMEOUT);
+    return getSafeNumber(sec, DefaultConfigValues.CODE_EXECUTION_CONNECT_TIMEOUT);
+  }
 
-    codeExecutionReadTimeout(): number {
-        const sec = this.configService.get<number>('CODE_EXECUTION_READ_TIMEOUT', DefaultConfigValues.CODE_EXECUTION_READ_TIMEOUT);
-        return getSafeNumber(sec, DefaultConfigValues.CODE_EXECUTION_READ_TIMEOUT);
-    }
+  codeExecutionReadTimeout(): number {
+    const sec = this.configService.get<number>('CODE_EXECUTION_READ_TIMEOUT', DefaultConfigValues.CODE_EXECUTION_READ_TIMEOUT);
+    return getSafeNumber(sec, DefaultConfigValues.CODE_EXECUTION_READ_TIMEOUT);
+  }
 
-    codeExecutionWriteTimeout(): number {
-        const sec = this.configService.get<number>('CODE_EXECUTION_WRITE_TIMEOUT', DefaultConfigValues.CODE_EXECUTION_WRITE_TIMEOUT);
-        return getSafeNumber(sec, DefaultConfigValues.CODE_EXECUTION_WRITE_TIMEOUT);
-    }
+  codeExecutionWriteTimeout(): number {
+    const sec = this.configService.get<number>('CODE_EXECUTION_WRITE_TIMEOUT', DefaultConfigValues.CODE_EXECUTION_WRITE_TIMEOUT);
+    return getSafeNumber(sec, DefaultConfigValues.CODE_EXECUTION_WRITE_TIMEOUT);
+  }
 
-    codeMaxNumber(): number {
-        const num = this.configService.get<number>('CODE_EXECUTION_MAX_NUMBER', DefaultConfigValues.CODE_EXECUTION_MAX_NUMBER);
-        return getSafeNumber(num, DefaultConfigValues.CODE_EXECUTION_MAX_NUMBER);
-    }
+  codeMaxNumber(): number {
+    const num = this.configService.get<number>('CODE_EXECUTION_MAX_NUMBER', DefaultConfigValues.CODE_EXECUTION_MAX_NUMBER);
+    return getSafeNumber(num, DefaultConfigValues.CODE_EXECUTION_MAX_NUMBER);
+  }
 
-    codeMinNumber(): number {
-        const num = this.configService.get<number>('CODE_EXECUTION_MIN_NUMBER', DefaultConfigValues.CODE_EXECUTION_MIN_NUMBER);
-        return getSafeNumber(num, DefaultConfigValues.CODE_EXECUTION_MIN_NUMBER);
-    }
+  codeMinNumber(): number {
+    const num = this.configService.get<number>('CODE_EXECUTION_MIN_NUMBER', DefaultConfigValues.CODE_EXECUTION_MIN_NUMBER);
+    return getSafeNumber(num, DefaultConfigValues.CODE_EXECUTION_MIN_NUMBER);
+  }
 
-    codeMaxDepth(): number {
-        const num = this.configService.get<number>('CODE_MAX_DEPTH', DefaultConfigValues.CODE_MAX_DEPTH);
-        return getSafeNumber(num, DefaultConfigValues.CODE_MAX_DEPTH);
-    }
+  codeMaxDepth(): number {
+    const num = this.configService.get<number>('CODE_MAX_DEPTH', DefaultConfigValues.CODE_MAX_DEPTH);
+    return getSafeNumber(num, DefaultConfigValues.CODE_MAX_DEPTH);
+  }
 
-    codeMaxPrecision(): number {
-        const num = this.configService.get<number>('CODE_MAX_PRECISION', DefaultConfigValues.CODE_MAX_PRECISION);
-        return getSafeNumber(num, DefaultConfigValues.CODE_MAX_PRECISION);
-    }
+  codeMaxPrecision(): number {
+    const num = this.configService.get<number>('CODE_MAX_PRECISION', DefaultConfigValues.CODE_MAX_PRECISION);
+    return getSafeNumber(num, DefaultConfigValues.CODE_MAX_PRECISION);
+  }
 
-    codeMaxStringLength(): number {
-        const num = this.configService.get<number>('CODE_MAX_STRING_LENGTH', DefaultConfigValues.CODE_MAX_STRING_LENGTH);
-        return getSafeNumber(num, DefaultConfigValues.CODE_MAX_STRING_LENGTH);
-    }
+  codeMaxStringLength(): number {
+    const num = this.configService.get<number>('CODE_MAX_STRING_LENGTH', DefaultConfigValues.CODE_MAX_STRING_LENGTH);
+    return getSafeNumber(num, DefaultConfigValues.CODE_MAX_STRING_LENGTH);
+  }
 
-    codeMaxObjectArrayLength(): number {
-        const num = this.configService.get<number>('CODE_MAX_OBJECT_ARRAY_LENGTH', DefaultConfigValues.CODE_MAX_OBJECT_ARRAY_LENGTH);
-        return getSafeNumber(num, DefaultConfigValues.CODE_MAX_OBJECT_ARRAY_LENGTH);
-    }
+  codeMaxObjectArrayLength(): number {
+    const num = this.configService.get<number>('CODE_MAX_OBJECT_ARRAY_LENGTH', DefaultConfigValues.CODE_MAX_OBJECT_ARRAY_LENGTH);
+    return getSafeNumber(num, DefaultConfigValues.CODE_MAX_OBJECT_ARRAY_LENGTH);
+  }
 
-    codeMaxNumberArrayLength(): number {
-        const num = this.configService.get<number>('CODE_MAX_NUMBER_ARRAY_LENGTH', DefaultConfigValues.CODE_MAX_NUMBER_ARRAY_LENGTH);
-        return getSafeNumber(num, DefaultConfigValues.CODE_MAX_NUMBER_ARRAY_LENGTH);
-    }
+  codeMaxNumberArrayLength(): number {
+    const num = this.configService.get<number>('CODE_MAX_NUMBER_ARRAY_LENGTH', DefaultConfigValues.CODE_MAX_NUMBER_ARRAY_LENGTH);
+    return getSafeNumber(num, DefaultConfigValues.CODE_MAX_NUMBER_ARRAY_LENGTH);
+  }
 }

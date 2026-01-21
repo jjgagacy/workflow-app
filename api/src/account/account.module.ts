@@ -33,6 +33,7 @@ import { ProviderModelSettingEntity } from './entities/provider-model-setting.en
 import { OperationLogsEntity } from './entities/operation-log.entity';
 import { AccountIntegrateEntity } from './entities/account-integrate.entity';
 import { UserEntity } from './entities/user.entity';
+import { UploadFilesEntity } from './entities/upload-files.entity';
 
 @Global()
 @Module({
@@ -56,6 +57,7 @@ import { UserEntity } from './entities/user.entity';
       OperationLogsEntity,
       AccountIntegrateEntity,
       UserEntity,
+      UploadFilesEntity,
     ]),
   ],
   controllers: [],

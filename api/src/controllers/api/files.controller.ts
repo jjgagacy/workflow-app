@@ -1,32 +1,38 @@
-import { Controller, Post, UploadedFile, UploadedFiles, UseInterceptors } from "@nestjs/common";
+import { Controller, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { Express } from "express";
 import { FileInterceptor } from '@nestjs/platform-express';
-import { decodeFilename } from "@/common/utils/decode";
+import { CurrentTenent } from "@/common/decorators/current-tenant";
+import { FileService } from "@/service/file.service";
+import { FileNotFoundError, InvalidFilenameError } from "@/service/exceptions/file.error";
+import { I18nService } from "nestjs-i18n";
+import { I18nTranslations } from "@/generated/i18n.generated";
+import { CreatedRole } from "@/common/types/enums/role.enum";
+import { CurrentUser } from "@/common/decorators/current-user";
 
 @Controller('api/files')
 export class FilesController {
+  constructor(
+    private readonly fileService: FileService,
+    private readonly i18n: I18nService<I18nTranslations>
+  ) { }
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    const filename = decodeFilename(file.originalname);
-    console.log(file);
-    /**
-     * {
-        fieldname: 'file',
-        originalname: 'è¡\x97å¤´è\x89ºæ\x9C¯.jpg',
-        encoding: '7bit',
-        mimetype: 'image/jpeg',
-        buffer: <Buffer ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01 00 01 00 00 ff e2 01 d8 49 43 43 5f 50 52 4f 46 49 4c 45 00 01 01 00 00 01 c8 00 00 00 00 04 30 00 00 ... 135134 more bytes>,
-        size: 135184
-      }
-     */
-    console.log('filename', filename);
-
-    return {
-      filename: file.originalname,
-      size: file.size,
-      path: file.path
-    };
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @CurrentTenent() tenant: any,
+    @CurrentUser() user: any
+  ) {
+    if (file.size == 0) {
+      throw FileNotFoundError.create(this.i18n);
+    }
+    if (file.filename.length === 0) {
+      throw InvalidFilenameError.create(this.i18n);
+    }
+    const uploadFilesEntity = await this.fileService.uploadFile(file, {
+      user: { role: CreatedRole.ACCOUNT, accountId: user.id },
+      tenantId: tenant.id,
+    });
+    return uploadFilesEntity.id;
   }
 }

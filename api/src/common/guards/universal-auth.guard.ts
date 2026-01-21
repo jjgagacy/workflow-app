@@ -42,13 +42,14 @@ export class UniversalAuthGuard extends AuthGuard('jwt') {
     }
 
     const publicPaths = [
-      '/',
       '/internal/api',
       '/health',
       '/metrics',
+      '/favicon.ico',
+      '/files/preview', // TODO: test
     ];
     const isPublicPath = publicPaths.some(path => url.startsWith(path));
-    if (isPublicPath) {
+    if (isPublicPath || url === '/') {
       return true;
     }
 

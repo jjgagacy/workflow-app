@@ -22,6 +22,9 @@ import { ProviderManager } from "@/ai/model_runtime/services/provider-manager";
 import { ProviderService } from "@/ai/model_runtime/services/provider.service";
 import { HostConfiguration } from "@/ai/plugin/services/host-configuration";
 import { LoginRateLimiterService } from "./libs/rate-limiter/login-rate-limiter.service";
+import { FileService } from "./file.service";
+import { UploadFileService } from "./upload-file.service";
+import { FileHelper } from "./libs/helpers/file.helper";
 
 @Global()
 @Module({
@@ -46,6 +49,9 @@ import { LoginRateLimiterService } from "./libs/rate-limiter/login-rate-limiter.
     ProviderService,
     ModelProviderService,
     HostConfiguration,
+    FileService,
+    UploadFileService,
+    FileHelper,
   ],
   exports: [
     AuthAccountService,
@@ -61,6 +67,7 @@ import { LoginRateLimiterService } from "./libs/rate-limiter/login-rate-limiter.
     TokenManagerService,
     LocationService,
     DeviceService,
+    FileService,
   ],
 })
 export class ServiceModule { }

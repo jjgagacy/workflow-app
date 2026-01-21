@@ -50,6 +50,13 @@ export type I18nTranslations = {
             "HOURS": string;
             "DAYS": string;
         };
+        "FILE": {
+            "FILE_TOO_LARGE": string;
+            "UNSUPPORTED_FILE_TYPE": string;
+            "INVALID_FILENAME": string;
+            "FILE_NOT_FOUND": string;
+            "INVALID_SIGNATURE": string;
+        };
     };
     "hello": {
         "HELLO": string;

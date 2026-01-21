@@ -4,5 +4,12 @@
     "MINUTES": "{count} minute(s)",
     "HOURS": "{count} hour(s)",
     "DAYS": "{count} day(s)"
+  },
+  "FILE": {
+    "FILE_TOO_LARGE": "File size exceeded",
+    "UNSUPPORTED_FILE_TYPE": "File type not allowed",
+    "INVALID_FILENAME": "Filename contains invalid characters",
+    "FILE_NOT_FOUND": "File not found",
+    "INVALID_SIGNATURE": "File signature error"
   }
 }

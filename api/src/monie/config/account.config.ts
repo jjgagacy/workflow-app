@@ -4,11 +4,11 @@ import { toBoolean } from "../helpers/to-boolean";
 
 @Injectable()
 export class AccountConfig {
-    constructor(protected readonly configService: ConfigService
-    ) { }
+  constructor(protected readonly configService: ConfigService
+  ) { }
 
-    educationEnabled(): boolean {
-        return toBoolean(this.configService.get<boolean>('EDUCATION_ENABLED', false));
-    }
+  educationEnabled(): boolean {
+    return toBoolean(this.configService.get<boolean>('EDUCATION_ENABLED', false));
+  }
 
 }
