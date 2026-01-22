@@ -15,7 +15,8 @@ export const getAuthenticatedClient = (token?: string, locale?: string, tenantId
   // console.log('Final headers:', Date.now(), headers);
 
   return new GraphQLClient(process.env.NEXT_PUBLIC_GRAPHQL_API_PREFIX as string, {
-    headers
+    headers,
+    credentials: 'include',
   });
 }
 

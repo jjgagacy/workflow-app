@@ -57,6 +57,12 @@ export class UploadFileService {
     });
   }
 
+  async findByIdAndTenant(id: string, tenantId: string): Promise<UploadFilesEntity | null> {
+    return await this.uploadFilesRepository.findOne({
+      where: { id, tenant: { id: tenantId } },
+    });
+  }
+
   async findByKey(key: string, tenantId: string): Promise<UploadFilesEntity | null> {
     return await this.uploadFilesRepository.findOne({
       where: { key, tenant: { id: tenantId } },

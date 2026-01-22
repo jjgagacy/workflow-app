@@ -343,10 +343,10 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(SetTenantMiddleware)
-      .forRoutes('graphql');
+      .forRoutes('/graphql', '/api/*path');
 
     consumer
       .apply(TenantContextMiddleware)
-      .forRoutes('/internal/api');
+      .forRoutes('/internal/api/*path');
   }
 }

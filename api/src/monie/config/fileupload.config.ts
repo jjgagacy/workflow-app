@@ -51,4 +51,8 @@ export class FileUploadConfig {
     const sec = this.configService.get<number>('FILE_SIGNATURE_EXPIRES', DefaultConfigValues.FILE_SIGNATURE_EXPIRES);
     return getSafeNumber(sec, DefaultConfigValues.FILE_SIGNATURE_EXPIRES);
   }
+
+  fileSignaturePermanentSecretKey(): string {
+    return this.configService.get<string>('FILE_SIGNATURE_PERMANENT_SECRET_KEY', DefaultConfigValues.FILE_SIGNATURE_PERMANENT_SECRET_KEY);
+  }
 }

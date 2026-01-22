@@ -24,10 +24,9 @@ const Avatar = ({
 
   if (avatar && !imageError) {
     return (
-      <Image
+      <img
         src={avatar}
         alt={name}
-        fill
         className={cn('object-cover', className)}
         sizes={`${size || 96}px`}
         onError={handleError}

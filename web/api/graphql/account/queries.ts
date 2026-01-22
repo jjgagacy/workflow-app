@@ -43,7 +43,8 @@ export const GET_ACCOUNT_INFO = gql`
       mobile,
       email,
       last_ip,
-      created_at
+      created_at,
+      avatar
     }
   }
 `;

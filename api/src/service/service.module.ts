@@ -68,6 +68,7 @@ import { FileHelper } from "./libs/helpers/file.helper";
     LocationService,
     DeviceService,
     FileService,
+    UploadFileService
   ],
 })
 export class ServiceModule { }

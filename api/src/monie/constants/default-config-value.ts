@@ -44,6 +44,7 @@ export const DefaultConfigValues = {
   // Maximum number of files for workflow file upload
   WORKFLOW_FILE_UPLOAD_LIMIT: 10,
   FILE_SIGNATURE_SECRET_KEY: 'monie-file-signature-secret-key',
+  FILE_SIGNATURE_PERMANENT_SECRET_KEY: 'monie-file-signature-permanent-secret-key',
   FILE_SIGNATURE_EXPIRES: 3600,
 
   HTTP_REQUEST_MAX_CONNECT_TIMEOUT: 10,

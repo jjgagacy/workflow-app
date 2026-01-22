@@ -15,13 +15,15 @@ import { AuthAccountService } from "@/service/auth-account.service";
 import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
+import { FileService } from "@/service/file.service";
 
 @Resolver()
 export class AccountResolver {
   constructor(private readonly accountService: AccountService,
     private readonly authAccountService: AuthAccountService,
     private readonly tenantService: TenantService,
-    private readonly i18n: I18nService<I18nTranslations>
+    private readonly i18n: I18nService<I18nTranslations>,
+    private readonly fileService: FileService
   ) { }
 
   @Query(() => AccountList)
@@ -60,11 +62,18 @@ export class AccountResolver {
 
   @Query(() => Account)
   async accountInfo(@CurrentUser() user: any): Promise<Account> {
-    const account = await this.accountService.getById(user?.id);
-    if (!account) {
+    const accountEntity = await this.accountService.getById(user?.id);
+    if (!accountEntity) {
       throw new BadRequestException();
     }
-    return this.transformAccountToGQLType(account);
+    const account = this.transformAccountToGQLType(accountEntity);
+    if (accountEntity.avatar !== '') {
+      const uploadFileEntity = await this.fileService.getUploadFileEntity(accountEntity.avatar);
+      if (uploadFileEntity) {
+        account.avatar = uploadFileEntity.sourceUrl;
+      }
+    }
+    return account;
   }
 
 }

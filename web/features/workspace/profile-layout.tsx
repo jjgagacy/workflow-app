@@ -16,7 +16,7 @@ export default function ProfileLayout() {
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
-  const { accountInfo } = useAppContext();
+  const { accountInfo, mutateAccountInfo } = useAppContext();
   // 用户数据（示例）
   const [userData, setUserData] = useState({
     username: '',
@@ -77,7 +77,7 @@ export default function ProfileLayout() {
             <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-start space-x-4">
                 {/* 头像区域 */}
-                <AvatarEdit name={userData.username} avatar={userData.avatar} />
+                <AvatarEdit name={userData.username} avatar={userData.avatar} onSave={() => mutateAccountInfo?.()} />
                 {/* 用户名和邮箱 */}
                 <div className="flex-1">
                   <div className="mb-4">

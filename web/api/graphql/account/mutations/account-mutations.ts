@@ -139,3 +139,9 @@ export const SWITCH_TENANT = gql`
     }
   }
 `
+
+export const UPDATE_ACCOUNT_AVATAR = gql`
+  mutation UpdateAccountAvatarMutation($input: UpdateAccountAvatarInput!) {
+    updateAccountAvatar(input: $input)
+  }
+`

@@ -34,4 +34,7 @@ export class Account {
 
   @Field({ nullable: true })
   last_ip?: string;
+
+  @Field({ nullable: true })
+  avatar?: string;
 }

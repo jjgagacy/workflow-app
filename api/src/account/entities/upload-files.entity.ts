@@ -52,8 +52,7 @@ export class UploadFilesEntity extends BaseEntity {
   })
   sourceUrl: string;
 
-  @Column({ nullable: true })
-  @ManyToOne(() => AccountEntity, (account) => account.id)
+  @ManyToOne(() => AccountEntity, (account) => account.id, { nullable: true })
   @JoinColumn({ name: 'created_account', referencedColumnName: 'id' })
   createdAccount: AccountEntity;
 

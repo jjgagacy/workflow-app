@@ -7,6 +7,7 @@ interface UploadOptions {
   headers?: Record<string, string>;
   data?: any;
   token?: string;
+  tenantId?: string;
   xhr: XMLHttpRequest;
   onProgress?: (progress: number) => void;
   // 其他可能的选项
@@ -30,6 +31,7 @@ export async function Uploader({ options, isPublicApi = false, url, searchParams
     url: (url ? `${urlPrefix}${url}` : `${urlPrefix}/files/upload` + (searchParams || '')),
     headers: {
       Authorization: `Bearer ${token}`,
+      ...(options.tenantId ? { 'X-Tenant-ID': options.tenantId } : {})
     },
     data: {},
   };

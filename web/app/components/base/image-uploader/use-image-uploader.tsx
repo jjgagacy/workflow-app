@@ -24,7 +24,7 @@ type LocalFileUploaderProps = {
 
 export default function useLocalFileUploader({ limit, disabled = false, onUpload }: LocalFileUploaderProps) {
   const { t } = useTranslation();
-  const { getAccessToken: authToken } = useAuth();
+  const { getAccessToken: authToken, getTenantId } = useAuth();
 
   const handleLocalFileUpload = useCallback((file: File) => {
     if (disabled)
@@ -55,6 +55,7 @@ export default function useLocalFileUploader({ limit, disabled = false, onUpload
         file,
         isPublic: !authToken(),
         token: authToken(),
+        tenantId: getTenantId(),
         onProgress: (progress: number) => {
           onUpload({ ...imageFile, progress });
         },

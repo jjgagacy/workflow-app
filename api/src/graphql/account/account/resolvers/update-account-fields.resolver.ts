@@ -50,12 +50,11 @@ export class UpdateAccountFieldsResolver {
     if (!account) {
       throw AccountNotFoundError.create(this.i18n);
     }
-
     const dto: UpdateAccountDto = {
+      id: user.id,
       avatar: input.avatar,
       updatedBy: user.name,
     }
-
     await this.accountService.update(dto);
     return true;
   }

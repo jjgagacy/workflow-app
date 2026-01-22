@@ -26,13 +26,13 @@ export class FilesController {
     if (file.size == 0) {
       throw FileNotFoundError.create(this.i18n);
     }
-    if (file.filename.length === 0) {
+    if (file.originalname.length === 0) {
       throw InvalidFilenameError.create(this.i18n);
     }
     const uploadFilesEntity = await this.fileService.uploadFile(file, {
       user: { role: CreatedRole.ACCOUNT, accountId: user.id },
       tenantId: tenant.id,
     });
-    return uploadFilesEntity.id;
+    return { id: uploadFilesEntity.id };
   }
 }

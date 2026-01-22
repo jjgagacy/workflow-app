@@ -19,6 +19,12 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3001',
+        pathname: '/files/**',
+      },
+      {
         protocol: 'https',
         hostname: '**', // 或者指定具体的域名
       },

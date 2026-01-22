@@ -1,3 +1,4 @@
+import api from "@/api";
 import Avatar from "@/app/components/base/avatar";
 import useLocalFileUploader, { ImageFile } from "@/app/components/base/image-uploader/use-image-uploader";
 import ImageInput, { ImageInputInfo, OnImageInput } from "@/app/components/base/photo-picker/image-input";
@@ -20,10 +21,11 @@ interface AvatarEditProps {
 
 export default function AvatarEdit({ onSave, ...props }: AvatarEditProps) {
   const { t } = useTranslation();
-  const [showAvatarPicker, setShowAvatarPicker] = useState(true);
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
 
   const [inputImageInfo, setInputImageInfo] = useState<ImageInputInfo>();
   const [uploading, setUploading] = useState(false);
+  const updateAccountAvatar = api.account.useUpdateAccountAvatar();
 
   const handleImageInput: OnImageInput = useCallback(async (isCropped: boolean, fileOrUrl: string | File, areaPixels?: Area, filename?: string) => {
     setInputImageInfo(
@@ -34,8 +36,9 @@ export default function AvatarEdit({ onSave, ...props }: AvatarEditProps) {
   }, [setInputImageInfo]);
 
   const handleSaveAvatar = useCallback(async (uploadFileId: string) => {
-    // TODO: post to server
-
+    await updateAccountAvatar({ input: { avatar: uploadFileId } });
+    setShowAvatarPicker(false);
+    onSave?.();
   }, [onSave, t]);
 
   const { handleLocalFileUpload } = useLocalFileUploader({
@@ -44,7 +47,7 @@ export default function AvatarEdit({ onSave, ...props }: AvatarEditProps) {
     onUpload: (imageFile: ImageFile) => {
       setUploading(false);
 
-      if (imageFile.progress === 100) {
+      if (imageFile.progress === 100 && imageFile.fileId !== '') {
         setInputImageInfo(undefined);
         handleSaveAvatar(imageFile.fileId);
       }

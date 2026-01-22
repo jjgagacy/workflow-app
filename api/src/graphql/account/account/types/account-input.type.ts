@@ -1,6 +1,6 @@
 import { USERNAME_LENGTH_REGEX, USERNAME_REGEX } from '@/common/constants/regex.constants';
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsNotEmpty, Matches } from 'class-validator';
+import { IsNotEmpty, IsUUID, Matches } from 'class-validator';
 
 @InputType('AccountInput')
 export class AccountInput {
@@ -45,6 +45,7 @@ export class UpdateAccountNameInput {
 export class UpdateAccountAvatarInput {
   @Field({ nullable: false })
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  @IsUUID()
   avatar: string;
 }
 

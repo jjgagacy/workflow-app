@@ -7,7 +7,7 @@ import { CreatedRole } from "@/common/types/enums/role.enum";
 import { decodeFilename } from "@/common/utils/decode";
 import { MonieConfig } from "@/monie/monie.config";
 import { AUDIO_EXTENSIONS, IMAGE_EXTENSIONS, VIDEO_EXTENSIONS } from "@/config/file.constants";
-import { FileTooLargeError } from "./exceptions/file.error";
+import { FileNotFoundError, FileTooLargeError, UnsupportedFileTypeError } from "./exceptions/file.error";
 import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { v4 as uuidv4 } from 'uuid';
@@ -66,9 +66,11 @@ export class FileService {
       createdRole: user.role,
       createdAccount: user.role === CreatedRole.ACCOUNT ? user.accountId : undefined,
       createdUser: user.role === CreatedRole.USER ? user.userId : undefined,
+      storageType: 'opendal',
       hash,
       sourceUrl,
     });
+    // insert to db
     const uploadFilesEntity = await this.uploadFileService.create(createFileDto);
     checkEntityCreatedId(uploadFilesEntity, this.i18n);
 
@@ -77,8 +79,8 @@ export class FileService {
     if (!sourceUrl) {
       uploadFilesEntity.sourceUrl = this.fileHelper.getSignedFileUrl(fileId);
     }
+    // update uploadfiles to db
     await this.uploadFileService.save(uploadFilesEntity);
-
     // save to storage
     await this.openDALStorage.save(uploadFilesEntity.key, buffer);
 
@@ -102,5 +104,34 @@ export class FileService {
     return fileSize <= fileSizeLimit;
   }
 
+  async getImagePreview(fileIdOrEntity: string | UploadFilesEntity, timestamp: string, nonce: string, sign: string): Promise<UploadFilesEntity | null> {
+    const fileId = typeof fileIdOrEntity === 'string' ? fileIdOrEntity : fileIdOrEntity.id;
+
+    const verifySignature = this.fileHelper.verifyFileSignature(fileId, timestamp, nonce, sign);
+    if (!verifySignature) {
+      throw FileNotFoundError.create(this.i18n);
+    }
+
+    const uploadFileEntity = typeof fileIdOrEntity === 'string'
+      ? await this.uploadFileService.findById(fileId)
+      : fileIdOrEntity;
+
+    if (!uploadFileEntity) {
+      throw FileNotFoundError.create(this.i18n);
+    }
+
+    if (!IMAGE_EXTENSIONS.has(uploadFileEntity.extension)) {
+      throw UnsupportedFileTypeError.create(this.i18n);
+    }
+
+    return uploadFileEntity;
+  }
+
+  async getUploadFileEntity(fileId: string): Promise<UploadFilesEntity | null> {
+    if (fileId === '') {
+      return null;
+    }
+    return await this.uploadFileService.findById(fileId);
+  }
 
 }

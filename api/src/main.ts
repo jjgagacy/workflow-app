@@ -49,10 +49,16 @@ async function bootstrap() {
   );
   // 启用 CORS
   app.enableCors({
-    origin: true, // 或指定前端地址如 'http://localhost:3000'
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Accept, Authorization',
-    credentials: true, // 如果需要发送 cookies/认证信息
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Accept',
+      'Authorization',
+      'Accept-Language',
+      'X-Tenant-Id',
+    ],
+    credentials: true,
   });
   // 配置上传目录
   const attachedDir = isProduction

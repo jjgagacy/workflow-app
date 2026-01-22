@@ -8,6 +8,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 export interface AppContextType {
   accountInfo: AccountInfo;
+  mutateAccountInfo?: () => void;
 }
 
 const defaultAccountInfo: AccountInfo = {
@@ -26,20 +27,22 @@ const AppContext = createContext<AppContextType>({
 
 export function AppContextProvider({ children }: { children: React.ReactNode }) {
   const [accountInfo, setAccountInfo] = useState<AccountInfo>(defaultAccountInfo);
-  const accountResponse = api.user.useAccountInfo();
+  const [mutateAccountInfo, setMutateAccountInfo] = useState<(() => Promise<void>) | undefined>();
+  const { error, accountInfo: accountData, mutate } = api.user.useAccountInfo();
 
   useEffect(() => {
-    if (accountResponse) {
-      if (accountResponse.error) {
-        toast.error(getErrorMessage(accountResponse.error))
-      } else {
-        setAccountInfo(accountResponse.accountInfo)
-      }
+    if (error) {
+      toast.error(getErrorMessage(error));
+    } else if (accountData) {
+      setAccountInfo(accountData);
+      setMutateAccountInfo(() => async () => {
+        await mutate();
+      });
     }
-  }, [accountResponse])
+  }, [error, accountData, mutate]);
 
   return (
-    <AppContext.Provider value={{ accountInfo }}>
+    <AppContext.Provider value={{ accountInfo, mutateAccountInfo }}>
       {children}
     </AppContext.Provider>
   );

@@ -102,6 +102,7 @@ export class AccountService {
     const validateObj = plainToInstance(UpdateAccountDto, dto);
     const errors = await this.i18n.validate(validateObj);
     throwIfDtoValidateFail(errors);
+
     if (dto.id === undefined) {
       throw new InvalidInputGraphQLException(this.i18n.t('system.INVALID_PARAM', { args: { name: 'id', value: dto.id } }));
     }

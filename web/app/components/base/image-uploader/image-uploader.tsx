@@ -5,6 +5,7 @@ export type ImageUploaderProps = {
   isPublic?: boolean;
   url?: string;
   token?: string;
+  tenantId?: string;
   onProgress: (progress: number) => void;
   onSuccess: (res: { id: string }) => void;
   onError: (error: Error) => void;
@@ -17,7 +18,8 @@ export default function ImageUploader({
   onError,
   isPublic = false,
   url,
-  token
+  token,
+  tenantId
 }: ImageUploaderProps) {
   const formData = new FormData();
   formData.append('file', file);
@@ -28,6 +30,7 @@ export default function ImageUploader({
       data: formData,
       onProgress,
       token,
+      tenantId
     },
     isPublicApi: isPublic,
     url,
