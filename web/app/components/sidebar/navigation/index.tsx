@@ -168,18 +168,18 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
   };
 
   return (
-    <div className={`bg-white py-2 px-2 dark:bg-gradient-to-br dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 navigation-menu__root space-y-1 relative z-10`}>
+    <div className={`bg-background py-2 px-2 navigation-menu__root space-y-1 relative z-10`}>
       {menuItems.map((item) => (
         <div key={item.key}>
           {item.children && collapsed ? (
             <ul>
               <li
-                className="relative px-2"
+                className={`relative px-2 py-1 rounded-lg ${getThemeHoverClass(activeTheme as ThemeType)}`}
                 onMouseEnter={(e) => handleMouseEnter(e, item.key)}
                 onMouseLeave={handleMouseLeave}
               >
                 <div
-                  className={`navigation-menu__trigger flex justify-center items-center px-2 py-2 w-full rounded-lg ${getThemeHoverClass(activeTheme as ThemeType)}${collapsed ? "justify-center" : ""
+                  className={`navigation-menu__trigger flex justify-center items-center w-full rounded-lg ${collapsed ? "justify-center" : ""
                     } ${isActive(item.path) ? `${getThemeActiveClass(activeTheme as ThemeType)} ${getThemeBgClass(activeTheme as ThemeType)}` : ""}`}
                   title={item.title}
                 >

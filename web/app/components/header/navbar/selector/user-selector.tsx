@@ -1,4 +1,6 @@
+import { useActiveTheme } from '@/app/components/active-theme';
 import { useAuth } from '@/hooks/use-auth';
+import { getThemeBgClass, getThemeHoverClass, ThemeType } from '@/types/theme';
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
 import { ChevronDownIcon, LogOutIcon, UserCogIcon, UserIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -9,6 +11,7 @@ export function UserSelector() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const { t } = useTranslation();
+  const { activeTheme } = useActiveTheme();
 
   const handleLogout = () => {
     logout();
@@ -48,12 +51,12 @@ export function UserSelector() {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <MenuItems className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 ring-opacity-5 py-1 focus:outline-none z-100">
+          <MenuItems className={`bg-background origin-top-right absolute right-0 mt-2 px-2 w-48 rounded-md shadow-2xl border border-[var(--border)] ring-opacity-5 py-2 focus:outline-none z-100`}>
             <MenuItem>
               {() => (
                 <button
                   onClick={() => router.push('/account')}
-                  className={`flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white`}
+                  className={`flex items-center px-4 py-2 text-sm text-gray-700 rounded-md w-full text-left ${getThemeHoverClass(activeTheme as ThemeType)} dark:text-white`}
                 >
                   <UserIcon className="mr-2 h-4 w-4" />
                   {t('system.account_settings')}
@@ -64,7 +67,7 @@ export function UserSelector() {
               {() => (
                 <button
                   onClick={() => router.push('/apps')}
-                  className={`flex items-center px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white`}
+                  className={`flex items-center px-4 py-2 text-sm text-gray-700 rounded-md w-full text-left ${getThemeHoverClass(activeTheme as ThemeType)} dark:text-white`}
                 >
                   <UserCogIcon className="mr-2 h-4 w-4" />
                   {t('system.system_settings')}
@@ -75,7 +78,7 @@ export function UserSelector() {
               {() => (
                 <button
                   onClick={handleLogout}
-                  className={`flex items-center px-4 py-2 text-sm text-red-600 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white`}
+                  className={`flex items-center px-4 py-2 text-sm text-red-600 rounded-md w-full text-left ${getThemeHoverClass(activeTheme as ThemeType)} dark:text-white`}
                 >
                   <LogOutIcon className="mr-2 h-4 w-4" />
                   {t('system.logout')}

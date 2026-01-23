@@ -17,6 +17,7 @@ interface DialogProps {
   destructive?: boolean;
   className?: string;
   isLoading?: boolean;
+  actions?: boolean;
 }
 
 export function Dialog(props: DialogProps) {
@@ -31,7 +32,8 @@ export function Dialog(props: DialogProps) {
     onCancel,
     destructive = false,
     className = "",
-    isLoading = false
+    isLoading = false,
+    actions = true
   } = props;
 
   return (
@@ -63,26 +65,28 @@ export function Dialog(props: DialogProps) {
                 {children}
               </div>
             )}
-            <div className="flex justify-end gap-4 px-6 py-4">
-              {cancelText && (<Button
-                variant={'secondary'}
-                className="inline-flex items-center justify-center"
-                onClick={onCancel}
-              >
-                {cancelText}
-              </Button>)}
-              <Button
-                variant={`${destructive ? 'warning' : 'primary'}`}
-                className={`inline-flex items-center justify-center ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                onClick={onConfirm}
-                disabled={isLoading}
-              >
-                <span className="flex items-center justify-center gap-1">
-                  {confirmText}
-                  {isLoading && <Spinner />}
-                </span>
-              </Button>
-            </div>
+            {actions && (
+              <div className="flex justify-end gap-4 px-6 py-4">
+                {cancelText && (<Button
+                  variant={'secondary'}
+                  className="inline-flex items-center justify-center"
+                  onClick={onCancel}
+                >
+                  {cancelText}
+                </Button>)}
+                <Button
+                  variant={`${destructive ? 'warning' : 'primary'}`}
+                  className={`inline-flex items-center justify-center ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  onClick={onConfirm}
+                  disabled={isLoading}
+                >
+                  <span className="flex items-center justify-center gap-1">
+                    {confirmText}
+                    {isLoading && <Spinner />}
+                  </span>
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </DialogPanel>

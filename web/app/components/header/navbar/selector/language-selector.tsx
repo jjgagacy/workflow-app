@@ -5,9 +5,12 @@ import { useTranslation } from 'react-i18next';
 import { Fragment } from "react";
 import { LanguageEmojiDefault, languages } from '@/types/language';
 import { setClientLocale } from '@/i18n';
+import { useActiveTheme } from '@/app/components/active-theme';
+import { getThemeHoverClass, ThemeType } from '@/types/theme';
 
 export function LanguageSelector() {
   const { t, i18n } = useTranslation();
+  const { activeTheme, setActiveTheme } = useActiveTheme();
 
   const toggleLanguage = async (lng: string) => {
     if (i18n.language === lng) return;
@@ -18,7 +21,7 @@ export function LanguageSelector() {
   return (
     <div className='flex items-center gap-2 hover:bg-secondary/80 rounded-lg mx-2'>
       <Menu as="div" className="relative">
-        <MenuButton className="flex items-center space-x-2 p-2 max-w-xs rounded-full focus:outline-none">
+        <MenuButton className={`flex items-center space-x-2 p-2 max-w-xs rounded-md focus:outline-none ${getThemeHoverClass(activeTheme as ThemeType)}`}>
           <Globe className="w-5 h-5 text-gray-400 hover:text-gray-500 mr-1" />
           {getLanguageNameByValue(i18n.language)}
         </MenuButton>

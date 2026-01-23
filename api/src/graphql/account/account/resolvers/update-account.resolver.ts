@@ -9,7 +9,8 @@ import { I18nService } from "nestjs-i18n";
 import authConfig from "@/config/auth.config";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 import { AccountResponse } from "../types/account-response.type";
-import { AccountInput } from "../types/account-input.type";
+import { AccountInput, UpdateAccountAvatarInput, UpdateAccountLanguageInput, UpdateAccountNameInput, UpdateAccountThemeInput } from "../types/account-input.type";
+import { AccountNotFoundError } from "@/service/exceptions/account.error";
 
 @Resolver()
 @UseGuards(EditionSelfHostedGuard)
@@ -79,6 +80,91 @@ export class UpdateAccountResolver {
       updatedBy: user.name
     }
     await this.accountService.toggleStatus(dto);
+    return true;
+  }
+}
+
+@Resolver()
+@UseGuards(EditionSelfHostedGuard)
+export class UpdateAccountFieldsResolver {
+  constructor(
+    private readonly accountService: AccountService,
+    private readonly i18n: I18nService<I18nTranslations>
+  ) { }
+
+  @Mutation(() => Boolean)
+  async updateAccountName(
+    @Args('input') input: UpdateAccountNameInput,
+    @CurrentUser() user: any
+  ): Promise<boolean> {
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw AccountNotFoundError.create(this.i18n);
+    }
+
+    const dto: UpdateAccountDto = {
+      id: user.id,
+      username: input.username,
+      updatedBy: user.name,
+    };
+
+    await this.accountService.update(dto);
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async updateAccountAvatar(
+    @Args('input') input: UpdateAccountAvatarInput,
+    @CurrentUser() user: any
+  ): Promise<boolean> {
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw AccountNotFoundError.create(this.i18n);
+    }
+    const dto: UpdateAccountDto = {
+      id: user.id,
+      avatar: input.avatar,
+      updatedBy: user.name,
+    };
+    await this.accountService.update(dto);
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async updateAccountLanguage(
+    @Args('input') input: UpdateAccountLanguageInput,
+    @CurrentUser() user: any
+  ): Promise<boolean> {
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw AccountNotFoundError.create(this.i18n);
+    }
+
+    const dto: UpdateAccountDto = {
+      language: input.language,
+      updatedBy: user.name,
+    };
+
+    await this.accountService.update(dto);
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async updateAccountTheme(
+    @Args('input') input: UpdateAccountThemeInput,
+    @CurrentUser() user: any
+  ): Promise<boolean> {
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw AccountNotFoundError.create(this.i18n);
+    }
+
+    const dto: UpdateAccountDto = {
+      theme: input.theme,
+      updatedBy: user.name,
+    };
+
+    await this.accountService.update(dto);
     return true;
   }
 }

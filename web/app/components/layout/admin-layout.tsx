@@ -118,7 +118,7 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
 
   // theme-xx replace xx to your theme
   return (
-    <div className="flex theme-xx min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:bg-gradient-to-br dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900">
+    <div className="flex theme-xx min-h-screen">
       {/* 桌面端侧边栏 */}
       {!isMobile && (
         <Sidebar onToggleCollapse={handleChildEvent} collapsed={isCollapsed}>
@@ -145,7 +145,7 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
           onMenuClick={isMobile ? toggleMobileSidebar : undefined}
         />
         {/* <TagView routes={mergeRoutes} /> */}
-        <div className="flex-1 overflow-y-auto px-4 py-6 bg-gray-50 dark:bg-gray-800">
+        <div className="flex-1 overflow-y-auto px-4 py-6">
           <Keepalive
             active={matchRoute === null ? null : matchRoute.key}
             include={include}

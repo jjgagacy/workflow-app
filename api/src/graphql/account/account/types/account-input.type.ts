@@ -1,4 +1,4 @@
-import { USERNAME_LENGTH_REGEX, USERNAME_REGEX } from '@/common/constants/regex.constants';
+import { USERNAME_LENGTH_REGEX, USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH, USERNAME_REGEX } from '@/common/constants/regex.constants';
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsNotEmpty, IsUUID, Matches } from 'class-validator';
 
@@ -36,8 +36,11 @@ export class AccountInput {
 export class UpdateAccountNameInput {
   @Field({ nullable: false })
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  @Matches(USERNAME_LENGTH_REGEX, { message: 'auth.USERNAME_VALIDATE_LENGTH' })
   @Matches(USERNAME_REGEX, { message: 'auth.USERNAME_INVALID_CHARS' })
+  @Matches(USERNAME_LENGTH_REGEX, {
+    message: 'auth.USERNAME_VALIDATE_LENGTH',
+    context: { minLength: USERNAME_MIN_LENGTH, maxLength: USERNAME_MAX_LENGTH }
+  })
   username: string;
 }
 

@@ -1,7 +1,7 @@
 import { createMutationHook, useGraphQLMutation, useGraphQLQuery } from "@/hooks/use-graphql";
 import { GET_ACCOUNTS } from "../queries";
-import { CREATE_ACCOUNT, CURRENT_TENANT, DELETE_ACCOUNT, EMAIL_CODE_LOGIN, EMAIL_CODE_LOGIN_SEND, EMAIL_CODE_RESET_PASSWORD_SEND, EMAIL_CODE_SIGNUP, EMAIL_CODE_SIGNUP_SEND, EMAIL_PASSWORD_LOIGN, FORGOT_PASSWORD_CHECK, FORGOT_PASSWORD_RESET, SWITCH_TENANT, TOGGLE_ACCOUNT_STATUS, UPDATE_ACCOUNT, UPDATE_ACCOUNT_AVATAR, VALIDATE_EMAIL, VALIDATE_USERNAME } from '../mutations/account-mutations';
-import { EmailCodeLoginInput, EmailCodeSendInput, EmailCodeSignUpInput, ForgotPasswordCheckInput, ForgotPasswordCheckOutput, ForgotPasswordResetInput, PasswordLoginInput, TenantResponseOutput, UpdateAccountAvatarInput } from "../types";
+import { CREATE_ACCOUNT, CURRENT_TENANT, DELETE_ACCOUNT, EMAIL_CODE_LOGIN, EMAIL_CODE_LOGIN_SEND, EMAIL_CODE_RESET_PASSWORD_SEND, EMAIL_CODE_SIGNUP, EMAIL_CODE_SIGNUP_SEND, EMAIL_PASSWORD_LOIGN, FORGOT_PASSWORD_CHECK, FORGOT_PASSWORD_RESET, SWITCH_TENANT, TOGGLE_ACCOUNT_STATUS, UPDATE_ACCOUNT, UPDATE_ACCOUNT_AVATAR, UPDATE_ACCOUNT_NAME, VALIDATE_EMAIL, VALIDATE_USERNAME } from '../mutations/account-mutations';
+import { EmailCodeLoginInput, EmailCodeSendInput, EmailCodeSignUpInput, ForgotPasswordCheckInput, ForgotPasswordCheckOutput, ForgotPasswordResetInput, PasswordLoginInput, TenantResponseOutput, UpdateAccountAvatarInput, UpdateAccountUsernameInput } from "../types";
 
 // 获取账户列表
 export const useGetAccounts = (params: {
@@ -220,6 +220,17 @@ export const useUpdateAccountAvatar = createMutationHook<
   UPDATE_ACCOUNT_AVATAR,
   {
     transform: (data) => data.updateAccountAvatar
+  }
+);
+
+export const useUpdateAccountName = createMutationHook<
+  { updateAccountName: any },
+  { input: UpdateAccountUsernameInput },
+  boolean
+>(
+  UPDATE_ACCOUNT_NAME,
+  {
+    transform: (data) => data.updateAccountName
   }
 );
 

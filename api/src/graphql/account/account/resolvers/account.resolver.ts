@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { AccountService } from "@/account/account.service";
 import { GetAccountArgs } from "../types/get-account.args";
 import { Account } from "../types/account.type";
@@ -16,6 +16,8 @@ import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 import { FileService } from "@/service/file.service";
+import { AccountInput } from "../types/account-input.type";
+import { AccountResponse } from "../types/account-response.type";
 
 @Resolver()
 export class AccountResolver {
@@ -77,3 +79,38 @@ export class AccountResolver {
   }
 
 }
+@Resolver()
+@UseGuards(EditionSelfHostedGuard)
+export class CreateAccountResolver {
+  constructor(private readonly accountService: AccountService) { }
+
+  @Mutation(() => AccountResponse)
+  async createAccount(@Args('input') input: AccountInput, @CurrentUser() user: any): Promise<AccountResponse> {
+    const dto = {
+      username: input.username,
+      realName: input.realName,
+      password: input.password,
+      email: input.email,
+      status: input.status,
+      mobile: input.mobile,
+      createdBy: user.name,
+      roles: input.roles
+    };
+    const createRes = await this.accountService.create(dto);
+    const id = createRes.id;
+    return { id };
+  }
+}
+
+@Resolver()
+@UseGuards(EditionSelfHostedGuard)
+export class DeleteAccountResolver {
+  constructor(private readonly accountService: AccountService) { }
+
+  @Mutation(() => Boolean)
+  async deleteAccount(@Args({ name: 'id', type: () => Int }) id: number): Promise<boolean> {
+    await this.accountService.delete(id);
+    return true;
+  }
+}
+

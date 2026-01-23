@@ -8,6 +8,10 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next"
 import AvatarEdit from "./avatar-edit";
+import api from "@/api";
+import { toast } from "@/app/ui/toast";
+import { Dialog } from "@/app/ui/dialog";
+import ChangeEmailDialog from "./change-email-dialog";
 
 export default function ProfileLayout() {
   const { t } = useTranslation();
@@ -28,6 +32,7 @@ export default function ProfileLayout() {
 
   const [tempUsername, setTempUsername] = useState(userData.username);
   const [tempEmail, setTempEmail] = useState(userData.email);
+  const useUpdateAccountName = api.account.useUpdateAccountName();
 
   useEffect(() => {
     if (accountInfo) {
@@ -47,7 +52,13 @@ export default function ProfileLayout() {
   };
 
   // 保存用户名
-  const handleSaveUsername = () => {
+  const handleSaveUsername = async () => {
+    useUpdateAccountName({ input: { username: tempUsername } }).then(() => {
+      mutateAccountInfo?.();
+      setIsEditingUsername(false);
+    }).catch((error) => {
+      toast.error(error.message);
+    });
   };
 
   // 保存邮箱
@@ -98,7 +109,7 @@ export default function ProfileLayout() {
             </div>
 
             {/* 用户名设置 */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl py-2">
+            <div className="bg-background rounded-xl py-2">
               <div className="justify-between mb-4">
                 <h3 className="text-lg mb-2 font-medium text-gray-900 dark:text-white">
                   {t('account.username')}
@@ -137,7 +148,7 @@ export default function ProfileLayout() {
                         {t('system.save')}
                       </Button>
                       <Button
-                        onClick={() => setIsEditingUsername(false)}
+                        onClick={() => { setIsEditingUsername(false); setTempUsername(userData.username); }}
                         variant={'ghost'}
                         size={'large'}
                       >
@@ -150,7 +161,7 @@ export default function ProfileLayout() {
             </div>
 
             {/* 邮箱设置 */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl py-2">
+            <div className="bg-background rounded-xl py-2">
               <div className="justify-between mb-4">
                 <h3 className="text-lg mb-2 font-medium text-gray-900 dark:text-white">
                   {t('system.email')}
@@ -176,14 +187,14 @@ export default function ProfileLayout() {
                     className="inline-flex items-center"
                   >
                     <Edit className="w-4 h-4 mr-2" />
-                    {t('account.change_email')}
+                    {t('app.actions.change')}
                   </Button>
                 </div>
               </div>
             </div>
 
             {/* 删除账户 - 危险区域 */}
-            <div className="bg-white mt-[40px] dark:bg-gray-800 rounded-xl shadow-sm border border-red-200 dark:border-red-800 p-6">
+            <div className="bg-white mt-[40px] dark:bg-gray-800 rounded-xl shadow-sm border border-red-200 dark:border-red-400 p-6">
               <div className="flex items-start">
                 <div className="flex-shrink-0">
                   <Trash2 className="w-6 h-6 text-red-600 dark:text-red-400" />
@@ -213,10 +224,18 @@ export default function ProfileLayout() {
               </div>
             </div>
 
-
           </div>
         </div>
       </div>
+
+      <ChangeEmailDialog
+        // isOpen={isEditingEmail}
+        isOpen={true}
+        onClose={() => setIsEditingEmail(false)}
+        onSuccess={() => { }}
+        currentEmail={userData.email}
+      />
+
     </>
   )
 }

@@ -17,6 +17,7 @@ const translation = {
     confirm: 'Confirm',
     cancel: 'Cancel',
     close: 'Close',
+    change: 'Change',
   },
   theme: {
     system: 'Follow System',

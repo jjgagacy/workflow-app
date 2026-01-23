@@ -3,6 +3,8 @@ import { MenuItem } from '@/types/menu';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useActiveTheme } from '../../active-theme';
+import { getThemeActiveClass, getThemeBgClass, getThemeHoverClass, ThemeType } from '@/types/theme';
 
 interface NavigationProps {
   collapsed: boolean;
@@ -23,6 +25,7 @@ export const HoverSubmenu = ({
   onMouseLeave
 }: any) => {
   const [mounted, setMounted] = useState(false);
+  const { activeTheme } = useActiveTheme();
 
   useEffect(() => {
     setMounted(true);
@@ -36,7 +39,7 @@ export const HoverSubmenu = ({
 
   return createPortal(
     <div
-      className="fixed bg-white dark:bg-neutral-800 shadow-2xl rounded-lg py-2 z-[2147483647] border border-gray-200 dark:border-gray-700 backdrop-blur-sm"
+      className={`fixed bg-background shadow-2xl rounded-lg py-2 z-[2147483647] border border-[var(--border)] backdrop-blur-sm`}
       style={{
         left: collapsed ? '5rem' : '16rem',
         top: `${menuPosition}px`,
@@ -55,7 +58,7 @@ export const HoverSubmenu = ({
               setHoveredItem('');
             }}
             href={child.path || '#'}
-            className={`flex mb-1 mx-2 items-center px-2 py-1 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700 transition-colors ${isActive(child.path) ? "bg-gray-100 dark:bg-neutral-700 font-medium" : ""}`}
+            className={`flex mb-1 mx-2 items-center px-2 py-1 rounded-md ${getThemeHoverClass(activeTheme as ThemeType)} transition-colors ${isActive(child.path) ? `${getThemeActiveClass(activeTheme as ThemeType)} ${getThemeBgClass(activeTheme as ThemeType)}` : ""}`}
           >
             <span className="mr-3">{child.icon}</span>
             <span>{child.title}</span>

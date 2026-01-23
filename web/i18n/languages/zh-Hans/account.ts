@@ -98,7 +98,7 @@ const translation = {
   delete_warning_access: "所有项目和团队访问权限",
   username: "用户名",
   enter_username_placeholder: "输入用户名",
-  change_email: "更改",
+  change_email: "更改邮箱",
   change_avatar: "编辑裁剪头像",
   image_input: {
     drop_image_here: "将图片拖放到此处，或",
@@ -107,6 +107,6 @@ const translation = {
   image_uploader: {
     upload_limit_exceeded: "上传文件不能超过3MB",
     read_error: "图片文件读取错误"
-  }
+  },
 };
 export default translation;

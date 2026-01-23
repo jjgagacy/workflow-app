@@ -46,3 +46,8 @@ export interface TenantResponseOutput {
 export interface UpdateAccountAvatarInput {
   avatar: string;
 }
+
+export interface UpdateAccountUsernameInput {
+  username: string;
+}
+

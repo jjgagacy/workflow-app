@@ -17,6 +17,7 @@ const translation = {
     confirm: '确定',
     cancel: '取消',
     close: '关闭',
+    change: '更改',
   },
   theme: {
     system: '跟随系统',

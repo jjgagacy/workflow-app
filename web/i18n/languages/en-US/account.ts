@@ -96,7 +96,7 @@ const translation = {
   delete_warning_access: "Access to all projects and workspaces",
   username: "Account Name",
   enter_username_placeholder: "enter your name",
-  change_email: "Change",
+  change_email: "Change email",
   change_avatar: "Edit profile photo",
   image_input: {
     drop_image_here: "Drop your image here, or",
@@ -105,6 +105,6 @@ const translation = {
   image_uploader: {
     upload_limit_exceeded: "Upload images cannot exceed 3MB",
     read_error: "Image reading failed"
-  }
+  },
 };
 export default translation;

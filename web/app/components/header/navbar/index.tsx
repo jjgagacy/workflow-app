@@ -32,7 +32,7 @@ export function Navbar({ routes, onMenuClick }: NavbarProps) {
   }
 
   return (
-    <div className="bg-background shadow-sm flex items-center">
+    <div className="bg-background shadow-sm dark:shadow-gray-700/30 flex items-center rounded-lg mr-2">
       {/* 移动端菜单按钮 */}
       {onMenuClick && (
         <button

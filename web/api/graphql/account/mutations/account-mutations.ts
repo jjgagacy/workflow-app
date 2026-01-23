@@ -145,3 +145,9 @@ export const UPDATE_ACCOUNT_AVATAR = gql`
     updateAccountAvatar(input: $input)
   }
 `
+
+export const UPDATE_ACCOUNT_NAME = gql`
+  mutation UpdateAccountNameMutation($input: UpdateAccountNameInput!) {
+    updateAccountName(input: $input)
+  }
+`
