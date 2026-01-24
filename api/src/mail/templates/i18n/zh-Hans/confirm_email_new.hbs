@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reset Password</title>
+  <title>修改邮箱地址验证</title>
   <style>
     * {
       margin: 0;
@@ -13,7 +13,7 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', sans-serif;
       line-height: 1.4;
       color: #333;
       background: #f8f9fa;
@@ -84,6 +84,25 @@
       margin-top: 8px;
     }
 
+    .email-change-info {
+      background: #f8fafc;
+      padding: 14px;
+      border-radius: 6px;
+      margin: 16px 0;
+      border-left: 3px solid #3b82f6;
+    }
+
+    .info-item {
+      margin: 6px 0;
+      font-size: 13px;
+      color: #555;
+    }
+
+    .info-item strong {
+      color: #333;
+      font-weight: 600;
+    }
+
     .help-text {
       font-size: 12px;
       color: #777;
@@ -124,40 +143,45 @@
 
 <body>
   <div class="email-container">
-    <!-- Header -->
+    <!-- 头部 -->
     <div class="header">
-      <h1 class="title">Reset Password</h1>
+      <h1 class="title">确认邮箱地址变更</h1>
     </div>
 
-    <!-- Greeting -->
-    <p class="greeting">Hello!</p>
+    <!-- 问候语 -->
+    <p class="greeting">您好！</p>
 
-    <!-- Main content -->
+    <!-- 主要内容 -->
     <div class="main-content">
-      <p>We have received your request to reset your Monie account password.</p>
+      <p>请确认变更您 Monie 账户邮箱地址的请求。</p>
     </div>
 
-    <!-- Verification code card -->
+    <!-- 验证码卡片 -->
     <div class="verification-card">
-      <p>Please enter the following verification code to reset your password:</p>
+      <p>请输入以下验证码完成邮箱地址修改：</p>
       <div class="verification-code">
         {{verificationCode}}
       </div>
       <div class="expiry-notice">
-        This verification code will expire in {{expiryMinutes}} minutes
+        此验证码将在 {{expiryMinutes}} 分钟后过期
       </div>
     </div>
 
-    <!-- Help text -->
-    <div class="help-text">
-      <p>If you did not request a password reset, please ignore this email and your password will remain unchanged.</p>
-      <p>For account security, please do not forward this email to others.</p>
+    <!-- 邮箱变更信息 -->
+    <div class="email-change-info">
+      <div class="info-item"><strong>当前邮箱：</strong>{{oldEmail}}</div>
+      <div class="info-item"><strong>新邮箱：</strong>{{newEmail}}</div>
     </div>
 
-    <!-- Footer -->
+    <!-- 帮助文本 -->
+    <div class="help-text">
+      <p>如果您没有请求修改邮箱地址，请立即联系我们的支持团队，并考虑更改您的账户密码。</p>
+    </div>
+
+    <!-- 页脚 -->
     <div class="footer">
-      <p>This email was automatically sent by the Monie system</p>
-      <p>Need help? Contact <a href="mailto:{{supportsEmail}}" class="support-link">{{supportsEmail}}</a></p>
+      <p>此邮件由 Monie 系统自动发送</p>
+      <p>需要帮助？请联系 <a href="mailto:{{supportsEmail}}" class="support-link">{{supportsEmail}}</a></p>
     </div>
   </div>
 </body>

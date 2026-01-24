@@ -1,4 +1,8 @@
+import api from "@/api";
+import Button from "@/app/components/base/button";
 import { Dialog } from "@/app/ui/dialog";
+import { Input } from "@/app/ui/input";
+import { getErrorMessage } from "@/utils/errors";
 import { DialogTitle } from "@headlessui/react";
 import { CheckCircleIcon, MailIcon, ShieldCheck, ShieldCheckIcon, XIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -22,6 +26,11 @@ export default function ChangeEmailDialog({
   const { t } = useTranslation();
   const [step, setStep] = useState<Step>('verify-old');
   const [loading, setLoading] = useState(false);
+  const useChangeEmailOld = api.account.useChangeEmailOldSend();
+  const useValidatechangeEmailOld = api.account.useValidateEmailOld();
+  const useConfirmEmailNew = api.account.useConfirmEmailNewSend();
+  const useUpdateAccountNewEmail = api.account.useUpdateAccountNewEmail();
+
 
   // 第一步：验证旧邮箱
   const [oldEmailCode, setOldEmailCode] = useState('');
@@ -40,6 +49,8 @@ export default function ChangeEmailDialog({
   const oldEmailCodeRef = useRef<HTMLInputElement>(null);
   const newEmailRef = useRef<HTMLInputElement>(null);
   const newEmailCodeRef = useRef<HTMLInputElement>(null);
+
+  const [stepToken, setStepToken] = useState<string>('');
 
   // 重置状态
   const resetState = () => {
@@ -99,12 +110,13 @@ export default function ChangeEmailDialog({
 
     try {
       // 这里调用 API 发送验证码
-      await new Promise(resolve => setTimeout(resolve, 1000)); // 模拟 API 调用
+      const token = await useChangeEmailOld({ input: {} });
+      setStepToken(token);
 
       setOldEmailSent(true);
       setOldEmailCountdown(60); // 60秒倒计时
-    } catch (error) {
-      setErrors({ send: '发送验证码失败，请重试' });
+    } catch (error: any) {
+      setErrors({ send: getErrorMessage(error) });
     } finally {
       setLoading(false);
     }
@@ -122,7 +134,8 @@ export default function ChangeEmailDialog({
 
     try {
       // 这里调用 API 验证验证码
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const newToken = await useValidatechangeEmailOld({ input: { token: stepToken, code: oldEmailCode } });
+      setStepToken(newToken);
 
       // 验证成功后进入下一步
       setStep('set-new');
@@ -158,7 +171,8 @@ export default function ChangeEmailDialog({
 
     try {
       // 这里调用 API 发送新邮箱验证码
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const token = await useConfirmEmailNew({ input: { token: stepToken, newEmail, code: oldEmailCode } });
+      setStepToken(token);
 
       setNewEmailSent(true);
       setNewEmailCountdown(60); // 60秒倒计时
@@ -181,7 +195,7 @@ export default function ChangeEmailDialog({
 
     try {
       // 这里调用 API 提交更改
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await useUpdateAccountNewEmail({ input: { token: stepToken, newEmail, code: newEmailCode } });
 
       // 成功
       onSuccess?.();
@@ -198,7 +212,6 @@ export default function ChangeEmailDialog({
       onClose();
     }
   };
-
 
   return (
     <>
@@ -219,10 +232,7 @@ export default function ChangeEmailDialog({
             <div className="flex items-center">
               {/* 第一步 */}
               <div className="flex flex-col items-center">
-                <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${step === 'verify-old'
-                  ? 'border-blue-500 bg-blue-50 text-blue-500'
-                  : 'border-green-500 bg-green-50 text-green-500'
-                  }`}>
+                <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 border-green-500 bg-green-50 text-green-500`}>
                   {step === 'verify-old' ? (
                     <ShieldCheck className="h-5 w-5" />
                   ) : (
@@ -240,7 +250,7 @@ export default function ChangeEmailDialog({
               <div className="flex flex-col items-center">
                 <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${step === 'verify-old'
                   ? 'border-gray-300 text-gray-400'
-                  : 'border-blue-500 bg-blue-50 text-blue-500'
+                  : 'border-green-500 bg-green-50 text-green-500'
                   }`}>
                   <MailIcon className="h-5 w-5" />
                 </div>
@@ -277,13 +287,15 @@ export default function ChangeEmailDialog({
             {!oldEmailSent ? (
               <div className="space-y-4">
                 <div className="flex space-x-3">
-                  <button
+                  <Button
                     onClick={sendOldEmailCode}
                     disabled={loading}
-                    className="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    loading={loading}
+                    className="flex-1 disabled:cursor-not-allowed"
+                    size={'large'}
                   >
                     {loading ? '发送中...' : '发送验证码'}
-                  </button>
+                  </Button>
                 </div>
               </div>
             ) : (
@@ -293,14 +305,14 @@ export default function ChangeEmailDialog({
                   <label htmlFor="oldEmailCode" className="block text-sm font-medium text-gray-700 mb-1">
                     验证码
                   </label>
-                  <input
+                  <Input
                     ref={oldEmailCodeRef}
                     type="text"
                     id="oldEmailCode"
                     value={oldEmailCode}
                     onChange={(e) => setOldEmailCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     placeholder="请输入6位数字验证码"
-                    className={`w-full px-3 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.code ? 'border-red-300' : 'border-gray-300'
+                    className={`w-full  ${errors.code ? 'border-red-300' : 'border-gray-300'
                       }`}
                     disabled={loading}
                   />
@@ -315,23 +327,23 @@ export default function ChangeEmailDialog({
                     {oldEmailCountdown > 0 ? (
                       <span>{oldEmailCountdown}秒后可重新发送</span>
                     ) : (
-                      <button
+                      <Button
                         onClick={sendOldEmailCode}
-                        className="text-blue-600 hover:text-blue-800"
                         disabled={loading}
+                        variant={'ghost'}
                       >
                         重新发送验证码
-                      </button>
+                      </Button>
                     )}
                   </div>
 
-                  <button
+                  <Button
                     onClick={verifyOldEmailCode}
                     disabled={loading || !oldEmailCode.trim()}
-                    className="bg-blue-600 text-white py-2.5 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="font-medium  disabled:cursor-not-allowed"
                   >
                     {loading ? '验证中...' : '下一步'}
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -346,7 +358,7 @@ export default function ChangeEmailDialog({
               <label htmlFor="newEmail" className="block text-sm font-medium text-gray-700 mb-1">
                 新邮箱地址
               </label>
-              <input
+              <Input
                 ref={newEmailRef}
                 type="email"
                 id="newEmail"
@@ -356,8 +368,7 @@ export default function ChangeEmailDialog({
                   if (errors.newEmail) setErrors({ ...errors, newEmail: '' });
                 }}
                 placeholder="请输入新的邮箱地址"
-                className={`w-full px-3 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.newEmail ? 'border-red-300' : 'border-gray-300'
-                  }`}
+                className={`w-full border ${errors.newEmail ? 'border-red-300' : 'border-gray-300'}`}
                 disabled={newEmailSent || loading}
               />
               {errors.newEmail && (
@@ -367,13 +378,14 @@ export default function ChangeEmailDialog({
 
             {/* 发送新邮箱验证码 */}
             {!newEmailSent ? (
-              <button
+              <Button
                 onClick={sendNewEmailCode}
                 disabled={loading || !newEmail.trim()}
-                className="w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full font-medium disabled:cursor-not-allowed"
+                size={'large'}
               >
                 {loading ? '发送中...' : '发送验证码'}
-              </button>
+              </Button>
             ) : (
               <>
                 {/* 新邮箱验证码输入 */}
@@ -381,7 +393,7 @@ export default function ChangeEmailDialog({
                   <label htmlFor="newEmailCode" className="block text-sm font-medium text-gray-700 mb-1">
                     新邮箱验证码
                   </label>
-                  <input
+                  <Input
                     ref={newEmailCodeRef}
                     type="text"
                     id="newEmailCode"
@@ -391,7 +403,7 @@ export default function ChangeEmailDialog({
                       if (errors.newCode) setErrors({ ...errors, newCode: '' });
                     }}
                     placeholder="请输入6位数字验证码"
-                    className={`w-full px-3 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.newCode ? 'border-red-300' : 'border-gray-300'
+                    className={`w-full ${errors.newCode ? 'border-red-300' : 'border-gray-300'
                       }`}
                     disabled={loading}
                   />
@@ -406,31 +418,33 @@ export default function ChangeEmailDialog({
                     {newEmailCountdown > 0 ? (
                       <span>{newEmailCountdown}秒后可重新发送验证码</span>
                     ) : (
-                      <button
+                      <Button
                         onClick={sendNewEmailCode}
-                        className="text-blue-600 hover:text-blue-800"
                         disabled={loading}
+                        loading={loading}
+                        variant={'ghost'}
                       >
                         重新发送验证码
-                      </button>
+                      </Button>
                     )}
                   </div>
 
                   <div className="flex space-x-3">
-                    <button
+                    <Button
                       onClick={() => setStep('verify-old')}
                       disabled={loading}
-                      className="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50"
+                      className="flex-1 font-medium"
+                      variant={'secondary'}
                     >
                       上一步
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={submitChangeEmail}
                       disabled={loading || !newEmailCode.trim()}
-                      className="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 font-medium"
                     >
                       {loading ? '提交中...' : '确认更改'}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </>

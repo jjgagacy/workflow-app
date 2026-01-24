@@ -151,3 +151,27 @@ export const UPDATE_ACCOUNT_NAME = gql`
     updateAccountName(input: $input)
   }
 `
+
+export const CHANGE_EMAIL_OLD_SEND = gql`
+  mutation ChangeEmailOldSendMutation($input: ChangeEmailSendInput!) {
+    changeEmailOldSend(input: $input)
+  }
+`
+
+export const CONFIRM_EMAIL_NEW_SEND = gql`
+  mutation ConfirmEmailNewSendMutation($input: ConfirmEmailNewInput!) {
+      confirmEmailNewSend(input: $input)
+  }
+`
+
+export const UPDATE_ACCOUNT_NEW_EMAIL = gql`
+  mutation UpdateAccountNewEmailMutation($input: UpdateAccountNewEmailInput!) {
+    updateAccountNewEmail(input: $input)
+  }
+`
+
+export const VALIDATE_CHANGE_EMAIL_OLD = gql`
+  mutation ValidateChangeEmailOldMutation($input: ValidateChangeEmailOldInput!) {
+    validateChangeEmailOld(input: $input)
+  }
+`

@@ -116,6 +116,12 @@ export class AccountService {
         throw new BadRequestException(this.i18n.t('account.ACCOUNT_EXIST', { args: { name: dto.username } }))
       }
     }
+    if (dto.email && dto.email !== account.email) {
+      const emailWithSameAccount = await this.getByEmail(dto.email);
+      if (emailWithSameAccount) {
+        throw new BadRequestException(this.i18n.t('account.EMAIL_EXIST', { args: { name: dto.email } }))
+      }
+    }
 
     const updatedFields = {
       ...this.mapBaseFields(dto),

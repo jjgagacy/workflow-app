@@ -2,7 +2,7 @@ import { Queue } from "bull";
 import { MailSender } from "../sender/mail.sender";
 import { LoggerService } from "@nestjs/common";
 import { EmailLanguage } from "../mail-i18n.service";
-import { AccountDeletionOptions, ChangeEmailOldOptions, EmailCodeLoginOptions, InviteMumberOptions, ResetPasswordOptions } from "../interfaces/mail.interface";
+import { AccountDeletionOptions, ChangeEmailOldOptions, ConfirmEmailNewOptions, EmailCodeLoginOptions, InviteMumberOptions, ResetPasswordOptions } from "../interfaces/mail.interface";
 
 export class MailQueue {
   constructor(
@@ -79,12 +79,28 @@ export class MailQueue {
       to,
       verificationCode,
       expiryMinutes,
+      language = EmailLanguage.ZH_HANS
+    } = options;
+
+    await this.queue.add('change_email_old', {
+      to,
+      verificationCode,
+      expiryMinutes,
+      language
+    });
+  }
+
+  async sendConfirmEmailNew(options: ConfirmEmailNewOptions) {
+    const {
+      to,
+      verificationCode,
+      expiryMinutes,
       oldEmail,
       newEmail,
       language = EmailLanguage.ZH_HANS
     } = options;
 
-    await this.queue.add('change_email_old', {
+    await this.queue.add('confirm_email_new', {
       to,
       verificationCode,
       expiryMinutes,

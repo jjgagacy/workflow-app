@@ -116,7 +116,7 @@ export class AuthAccountService {
     return token;
   }
 
-  async sendChangeEmailVerification(account: AccountEntity, newEmail: string, language: EmailLanguage): Promise<string> {
+  async sendChangeEmailVerification(account: AccountEntity, language: EmailLanguage, codeProvide?: string): Promise<string> {
     const accountEmail = account?.email;
     if (!accountEmail) {
       throw new BadRequestException(this.i18n.t('account.EMAIL_NOT_EMPTY'));
@@ -129,7 +129,7 @@ export class AuthAccountService {
     }
 
     // generate code
-    const code = await this.generateChangeEmailCode();
+    const code = codeProvide || this.generateChangeEmailCode();
     const token = await this.tokenManagerService.generateToken(TOKEN_TYPES.CHANGE_EMAIL, undefined, accountEmail, { code });
 
     // send email
@@ -137,13 +137,41 @@ export class AuthAccountService {
       to: accountEmail,
       verificationCode: code,
       language,
-      newEmail,
       expiryMinutes: this.monieConfig.changeEmailTokenExpiryMinutes(),
-      oldEmail: accountEmail,
     });
     await this.emailRateLimiter.incrementRateLimited(accountEmail, EMAIL_RATE_LIMITER_CONFIGS['change_email']);
     return token;
   }
+
+  async sendConfirmEmailVerification(account: AccountEntity, newEmail: string, language: EmailLanguage, codeProvide?: string): Promise<string> {
+    const accountEmail = account?.email;
+    if (!accountEmail) {
+      throw new BadRequestException(this.i18n.t('account.EMAIL_NOT_EMPTY'));
+    }
+    language = language || EmailLanguage.ZH_HANS;
+    const isRateLimited = await this.emailRateLimiter.isRateLimited(accountEmail, EMAIL_RATE_LIMITER_CONFIGS['confirm_email']);
+    if (isRateLimited) {
+      const timeWindowMinutes = TimeConverter.secondsToMinutes(EMAIL_RATE_LIMITER_CONFIGS['confirm_email'].timeWindow);
+      throw AccountChangeEmailRateLimitError.create(this.i18n, timeWindowMinutes);
+    }
+
+    // generate code
+    const code = codeProvide || this.generateChangeEmailCode();
+    const token = await this.tokenManagerService.generateToken(TOKEN_TYPES.CONFIRM_EMAIL, undefined, newEmail, { code });
+
+    // send email
+    await this.mailService.queue.sendConfirmEmailNew({
+      to: newEmail,
+      verificationCode: code,
+      language,
+      newEmail,
+      expiryMinutes: this.monieConfig.changeEmailTokenExpiryMinutes(),
+      oldEmail: accountEmail,
+    });
+    await this.emailRateLimiter.incrementRateLimited(accountEmail, EMAIL_RATE_LIMITER_CONFIGS['confirm_email']);
+    return token;
+  }
+
 
   async sendEmailCodeLogin(email: string, language?: EmailLanguage, location?: string, deviceInfo?: string, codeProvide?: string): Promise<string> {
     language = language || EmailLanguage.ZH_HANS;
@@ -154,7 +182,7 @@ export class AuthAccountService {
     }
 
     // generate code
-    const code = codeProvide || await this.generateEmailLoginCode();
+    const code = codeProvide || this.generateEmailLoginCode();
     const token = await this.tokenManagerService.generateToken(TOKEN_TYPES.EMAIL_VERIFICATION, undefined, email, { code });
 
     // send email
@@ -250,18 +278,20 @@ export class AuthAccountService {
   }
 
   private async generateResetPasswordToken(email: string, account?: AccountEntity): Promise<{ code: string; token: string; }> {
-    const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
     const token = await this.tokenManagerService.generateToken(TOKEN_TYPES.RESET_PASSWORD, account, email, { code });
 
     return { code, token };
   }
 
-  private async generateEmailLoginCode(): Promise<string> {
-    return Math.random().toString(36).substring(2, 8).toUpperCase();
+  private generateEmailLoginCode(): string {
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    return code;
   }
 
-  private async generateChangeEmailCode(): Promise<string> {
-    return Math.random().toString(36).substring(2, 8).toUpperCase();
+  private generateChangeEmailCode(): string {
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    return code;
   }
 
   private async generateAccountDeletionToken(email: string): Promise<{ code: string; token: string; }> {
@@ -486,6 +516,7 @@ export class AuthAccountService {
     await workManager.remove(tenantAccount);
   }
 
+
   @Transactional()
   async switchTenant(user: AccountEntity, tenantId: string, entityManager?: EntityManager): Promise<void> {
     if (!tenantId) {
@@ -640,6 +671,34 @@ export class AuthAccountService {
   async resetChangeEmailErrorRateLimit(email: string): Promise<void> {
     const key = `auth:change_email_error_rate_limit:${email}`;
     await this.cacheService.del(key);
+  }
+
+  async validateChangeEmailCode(email: string, token: string, code: string) {
+    const tokenData = await this.tokenManagerService.validateToken(token, TOKEN_TYPES.CHANGE_EMAIL);
+    if (!tokenData) {
+      throw InvalidTokenError.create(this.i18n);
+    }
+    if (tokenData.email != email) {
+      throw InvalidEmailError.create(this.i18n);
+    }
+    if (tokenData.code != code) {
+      throw VerifyCodeError.create(this.i18n);
+    }
+
+    await this.tokenManagerService.removeToken(token, TOKEN_TYPES.CHANGE_EMAIL);
+  }
+
+  async validateAccountNewEmailCode(newEmail: string, token: string, code: string) {
+    const tokenData = await this.tokenManagerService.validateToken(token, TOKEN_TYPES.CONFIRM_EMAIL);
+    if (!tokenData) {
+      throw InvalidTokenError.create(this.i18n);
+    }
+    if (tokenData.email != newEmail) {
+      throw InvalidEmailError.create(this.i18n);
+    }
+    if (tokenData.code != code) {
+      throw VerifyCodeError.create(this.i18n);
+    }
   }
 }
 

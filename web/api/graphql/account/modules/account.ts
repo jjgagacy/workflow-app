@@ -1,7 +1,7 @@
 import { createMutationHook, useGraphQLMutation, useGraphQLQuery } from "@/hooks/use-graphql";
 import { GET_ACCOUNTS } from "../queries";
-import { CREATE_ACCOUNT, CURRENT_TENANT, DELETE_ACCOUNT, EMAIL_CODE_LOGIN, EMAIL_CODE_LOGIN_SEND, EMAIL_CODE_RESET_PASSWORD_SEND, EMAIL_CODE_SIGNUP, EMAIL_CODE_SIGNUP_SEND, EMAIL_PASSWORD_LOIGN, FORGOT_PASSWORD_CHECK, FORGOT_PASSWORD_RESET, SWITCH_TENANT, TOGGLE_ACCOUNT_STATUS, UPDATE_ACCOUNT, UPDATE_ACCOUNT_AVATAR, UPDATE_ACCOUNT_NAME, VALIDATE_EMAIL, VALIDATE_USERNAME } from '../mutations/account-mutations';
-import { EmailCodeLoginInput, EmailCodeSendInput, EmailCodeSignUpInput, ForgotPasswordCheckInput, ForgotPasswordCheckOutput, ForgotPasswordResetInput, PasswordLoginInput, TenantResponseOutput, UpdateAccountAvatarInput, UpdateAccountUsernameInput } from "../types";
+import { CHANGE_EMAIL_OLD_SEND, CONFIRM_EMAIL_NEW_SEND, CREATE_ACCOUNT, CURRENT_TENANT, DELETE_ACCOUNT, EMAIL_CODE_LOGIN, EMAIL_CODE_LOGIN_SEND, EMAIL_CODE_RESET_PASSWORD_SEND, EMAIL_CODE_SIGNUP, EMAIL_CODE_SIGNUP_SEND, EMAIL_PASSWORD_LOIGN, FORGOT_PASSWORD_CHECK, FORGOT_PASSWORD_RESET, SWITCH_TENANT, TOGGLE_ACCOUNT_STATUS, UPDATE_ACCOUNT, UPDATE_ACCOUNT_AVATAR, UPDATE_ACCOUNT_NAME, UPDATE_ACCOUNT_NEW_EMAIL, VALIDATE_CHANGE_EMAIL_OLD, VALIDATE_EMAIL, VALIDATE_USERNAME } from '../mutations/account-mutations';
+import { ChangeEmailOldInput, ConfirmEmailNewInput, EmailCodeLoginInput, EmailCodeSendInput, EmailCodeSignUpInput, ForgotPasswordCheckInput, ForgotPasswordCheckOutput, ForgotPasswordResetInput, PasswordLoginInput, TenantResponseOutput, UpdateAccountAvatarInput, UpdateAccountNewEmailInput, UpdateAccountUsernameInput, ValidateChangeEmailOldInput } from "../types";
 
 // 获取账户列表
 export const useGetAccounts = (params: {
@@ -234,3 +234,46 @@ export const useUpdateAccountName = createMutationHook<
   }
 );
 
+export const useChangeEmailOldSend = createMutationHook<
+  { changeEmailOldSend: string },
+  { input: ChangeEmailOldInput },
+  string
+>(
+  CHANGE_EMAIL_OLD_SEND,
+  {
+    transform: (data) => data.changeEmailOldSend
+  }
+);
+
+export const useConfirmEmailNewSend = createMutationHook<
+  { confirmEmailNewSend: string },
+  { input: ConfirmEmailNewInput },
+  string
+>(
+  CONFIRM_EMAIL_NEW_SEND,
+  {
+    transform: (data) => data.confirmEmailNewSend
+  }
+);
+
+export const useUpdateAccountNewEmail = createMutationHook<
+  { updateAccountNewEmail: boolean },
+  { input: UpdateAccountNewEmailInput },
+  boolean
+>(
+  UPDATE_ACCOUNT_NEW_EMAIL,
+  {
+    transform: (data) => data.updateAccountNewEmail
+  }
+);
+
+export const useValidateEmailOld = createMutationHook<
+  { validateChangeEmailOld: string },
+  { input: ValidateChangeEmailOldInput },
+  string
+>(
+  VALIDATE_CHANGE_EMAIL_OLD,
+  {
+    transform: (data) => data.validateChangeEmailOld
+  }
+);

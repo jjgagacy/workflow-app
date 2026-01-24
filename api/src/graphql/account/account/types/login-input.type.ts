@@ -84,3 +84,58 @@ export class PasswordLoginInput {
   @Field({ nullable: true })
   token?: string; // TODO: 可选的安全令牌，如验证码
 }
+
+@InputType('ChangeEmailSendInput')
+export class ChangeEmailSendInput {
+  @Field({ nullable: true })
+  language?: string;
+}
+
+@InputType('ValidateChangeEmailOldInput')
+export class ValidateChangeEmailOldInput {
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  token: string;
+
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  code: string;
+}
+
+@InputType('ConfirmEmailNewInput')
+export class ConfirmEmailNewInput {
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  token: string;
+
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  @Matches(EMAIL_REGEX, { message: 'auth.INVALID_EMAIL' })
+  newEmail: string;
+
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  code: string;
+
+  @Field({ nullable: true })
+  language?: string;
+}
+
+@InputType('UpdateAccountNewEmailInput')
+export class UpdateAccountNewEmailInput {
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  token: string;
+
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  @Matches(EMAIL_REGEX, { message: 'auth.INVALID_EMAIL' })
+  newEmail: string;
+
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  code: string;
+
+  @Field({ nullable: true })
+  language?: string;
+}

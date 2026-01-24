@@ -2,160 +2,199 @@
 <html lang="zh-CN">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>账户删除验证</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>账户删除验证</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        .email-container {
-            background: white;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', sans-serif;
+      line-height: 1.4;
+      color: #333;
+      background: #f8f9fa;
+      max-width: 460px;
+      margin: 0 auto;
+      padding: 12px;
+    }
 
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #d69e2e;
-        }
+    .email-container {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
 
-        .title {
-            color: #2d3748;
-            font-size: 24px;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
+    .header {
+      text-align: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #eaeaea;
+    }
 
-        .warning-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
+    .title {
+      color: #222;
+      font-size: 18px;
+      font-weight: 600;
+    }
 
-        .greeting {
-            font-size: 16px;
-            margin-bottom: 20px;
-            color: #4a5568;
-        }
+    .greeting {
+      font-size: 13px;
+      margin-bottom: 12px;
+      color: #666;
+    }
 
-        .verification-card {
-            background: #fffaf0;
-            padding: 25px;
-            border-radius: 6px;
-            margin: 20px 0;
-            border: 2px solid #d69e2e;
-            text-align: center;
-        }
+    .main-content {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
 
-        .verification-code {
-            font-size: 32px;
-            font-weight: bold;
-            color: #d69e2e;
-            letter-spacing: 8px;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-        }
+    .verification-card {
+      background: #f8faf8;
+      padding: 16px;
+      border-radius: 6px;
+      margin: 16px 0;
+      border: 1px solid #10b981;
+      text-align: center;
+    }
 
-        .expiry-notice {
-            text-align: center;
-            font-size: 14px;
-            color: #718096;
-            margin-top: 15px;
-        }
+    .verification-code {
+      font-size: 24px;
+      font-weight: 700;
+      color: #10b981;
+      letter-spacing: 4px;
+      margin: 12px 0;
+      font-family: 'Courier New', monospace;
+      padding: 10px;
+      border-radius: 4px;
+      background: white;
+      border: 1px solid #e0e0e0;
+    }
 
-        .warning-section {
-            background: #fed7d7;
-            padding: 15px;
-            border-radius: 6px;
-            margin: 20px 0;
-            border-left: 4px solid #e53e3e;
-        }
+    .expiry-notice {
+      font-size: 12px;
+      color: #888;
+      margin-top: 8px;
+    }
 
-        .warning-title {
-            font-weight: 600;
-            color: #c53030;
-            margin-bottom: 8px;
-        }
+    .warning-section {
+      background: #fff5f5;
+      padding: 14px;
+      border-radius: 6px;
+      margin: 16px 0;
+      border-left: 3px solid #dc2626;
+    }
 
-        .help-text {
-            font-size: 14px;
-            color: #718096;
-            margin: 20px 0;
-        }
+    .warning-title {
+      font-weight: 600;
+      color: #dc2626;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
 
-        .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e2e8f0;
-            font-size: 14px;
-            color: #718096;
-            text-align: center;
-        }
+    .warning-section ul {
+      padding-left: 18px;
+      margin-top: 6px;
+    }
 
-        .support-link {
-            color: #d69e2e;
-            text-decoration: none;
-        }
-    </style>
+    .warning-section li {
+      margin-bottom: 3px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .help-text {
+      font-size: 12px;
+      color: #777;
+      margin: 16px 0;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 4px;
+    }
+
+    .footer {
+      margin-top: 20px;
+      padding-top: 14px;
+      border-top: 1px solid #eaeaea;
+      font-size: 11px;
+      color: #999;
+      text-align: center;
+    }
+
+    .support-link {
+      color: #10b981;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .support-link:hover {
+      text-decoration: underline;
+    }
+
+    p {
+      margin-bottom: 8px;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+  </style>
 </head>
 
 <body>
-    <div class="email-container">
-        <!-- 头部 -->
-        <div class="header">
-            <div class="warning-icon">⚠️</div>
-            <h1 class="title">账户删除验证</h1>
-        </div>
-
-        <!-- 问候语 -->
-        <p class="greeting">您好！</p>
-
-        <!-- 主要内容 -->
-        <p>我们收到了您删除 Monie 账户的请求。这是一个不可逆的操作，请谨慎处理。</p>
-
-        <!-- 验证码卡片 -->
-        <div class="verification-card">
-            <p>请输入以下验证码完成账户删除操作：</p>
-            <div class="verification-code">
-                {{verificationCode}}
-            </div>
-            <div class="expiry-notice">
-                此验证码将在 {{expiryMinutes}} 分钟后过期
-            </div>
-        </div>
-
-        <!-- 警告信息 -->
-        <div class="warning-section">
-            <div class="warning-title">重要提醒</div>
-            <p>账户删除后：</p>
-            <ul>
-                <li>所有数据将被永久删除，无法恢复</li>
-                <li>您将失去对所有工作空间的访问权限</li>
-                <li>所有订阅和付费服务将立即终止</li>
-            </ul>
-        </div>
-
-        <!-- 帮助文本 -->
-        <div class="help-text">
-            <p>如果您没有请求删除账户，请立即联系我们的支持团队，并考虑更改您的账户密码。</p>
-        </div>
-
-        <!-- 页脚 -->
-        <div class="footer">
-            <p>此邮件由 Monie 系统自动发送</p>
-            <p>需要帮助？请联系 <a href="mailto:{{supportsEmail}}" class="support-link">{{supportsEmail}}</a></p>
-        </div>
+  <div class="email-container">
+    <!-- 头部 -->
+    <div class="header">
+      <h1 class="title">账户删除验证</h1>
     </div>
+
+    <!-- 问候语 -->
+    <p class="greeting">您好！</p>
+
+    <!-- 主要内容 -->
+    <div class="main-content">
+      <p>我们收到了您删除 Monie 账户的请求。这是一个不可逆的操作，请谨慎处理。</p>
+    </div>
+
+    <!-- 验证码卡片 -->
+    <div class="verification-card">
+      <p>请输入以下验证码完成账户删除操作：</p>
+      <div class="verification-code">
+        {{verificationCode}}
+      </div>
+      <div class="expiry-notice">
+        此验证码将在 {{expiryMinutes}} 分钟后过期
+      </div>
+    </div>
+
+    <!-- 警告信息 -->
+    <div class="warning-section">
+      <div class="warning-title">重要提醒</div>
+      <ul>
+        <li>所有数据将被永久删除，无法恢复</li>
+        <li>您将失去对所有工作空间的访问权限</li>
+        <li>所有订阅和付费服务将立即终止</li>
+      </ul>
+    </div>
+
+    <!-- 帮助文本 -->
+    <div class="help-text">
+      <p>如果您没有请求删除账户，请立即联系我们的支持团队，并考虑更改您的账户密码。</p>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="footer">
+      <p>此邮件由 Monie 系统自动发送</p>
+      <p>需要帮助？请联系 <a href="mailto:{{supportsEmail}}" class="support-link">{{supportsEmail}}</a></p>
+    </div>
+  </div>
 </body>
 
 </html>

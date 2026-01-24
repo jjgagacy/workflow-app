@@ -16,6 +16,7 @@ export const TOKEN_TYPES = {
   ACCOUNT_DELETION: 'account_deletion',
   EMAIL_VERIFICATION: 'email_verification',
   CHANGE_EMAIL: 'change_email',
+  CONFIRM_EMAIL: 'confirm_email',
 } as const;
 
 type TokenTypeKey = keyof typeof TOKEN_TYPES;

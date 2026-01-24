@@ -48,7 +48,7 @@ export class MailProcessor {
       workspaceName,
       expiryHours,
       invitationUrl,
-      language = EmailLanguage.ZH_HANS,
+      language = EmailLanguage.EN_US,
     } = job.data;
 
     const emailLanguage = language as EmailLanguage;
@@ -63,7 +63,7 @@ export class MailProcessor {
 
   @Process('account_deletion_verification')
   async handleAccountDeletionVerification(job: Job) {
-    const { to, deletionUrl, expiryMinutes, verificationCode, language = EmailLanguage.ZH_HANS } = job.data;
+    const { to, deletionUrl, expiryMinutes, verificationCode, language = EmailLanguage.EN_US } = job.data;
 
     const emailLanguage = language as EmailLanguage;
     const emailContent = await this.mailI18nService.getEmailContent(
@@ -89,7 +89,7 @@ export class MailProcessor {
 
   @Process('email_code_login')
   async handleEmailCodeLogin(job: Job) {
-    const { to, verificationCode, expiryMinutes, userEmail, requestTime, location, deviceInfo, language = EmailLanguage.ZH_HANS } = job.data;
+    const { to, verificationCode, expiryMinutes, userEmail, requestTime, location, deviceInfo, language = EmailLanguage.EN_US } = job.data;
 
     const emailLanguage = language as EmailLanguage;
     const emailContent = await this.mailI18nService.getEmailContent(
@@ -118,7 +118,7 @@ export class MailProcessor {
 
   @Process('reset_password')
   async handleResetPassword(job: Job) {
-    const { to, resetUrl, expiryMinutes, language = EmailLanguage.ZH_HANS, verificationCode } = job.data;
+    const { to, resetUrl, expiryMinutes, language = EmailLanguage.EN_US, verificationCode } = job.data;
 
     const emailLanguage = language as EmailLanguage;
     const emailContent = await this.mailI18nService.getEmailContent(
@@ -142,13 +142,13 @@ export class MailProcessor {
     );
   }
 
-  @Process('change_email_old')
-  async handleChangeEmailOld(job: Job) {
-    const { to, verificationCode, expiryMinutes, oldEmail, newEmail, language = EmailLanguage.ZH_HANS } = job.data;
+  @Process('confirm_email_new')
+  async handleConfirmEmailNew(job: Job) {
+    const { to, verificationCode, expiryMinutes, oldEmail, newEmail, language = EmailLanguage.EN_US } = job.data;
 
     const emailLanguage = language as EmailLanguage;
     const emailContent = await this.mailI18nService.getEmailContent(
-      EmailType.CHANGE_EMAIL_OLD,
+      EmailType.CONFIRM_EMAIL_NEW,
       emailLanguage,
       {
         verificationCode,
@@ -166,6 +166,31 @@ export class MailProcessor {
       to,
       emailContent.subject || '',
       emailContent,
+    );
+  }
+
+  @Process('change_email_old')
+  async handleChangeEmailOld(job: Job) {
+    const { to, verificationCode, expiryMinutes, language = EmailLanguage.EN_US } = job.data;
+
+    const emailLanguage = language as EmailLanguage;
+    const emailContent = await this.mailI18nService.getEmailContent(
+      EmailType.CHANGE_EMAIL_OLD,
+      emailLanguage,
+      {
+        verificationCode,
+        expiryMinutes,
+      }
+    );
+
+    if (this.mailService.isHtmlString(emailContent)) {
+      throw new Error('Invalid email content type ');
+    }
+
+    await this.mailService.sender.send(
+      to,
+      emailContent.subject || '',
+      emailContent
     );
   }
 

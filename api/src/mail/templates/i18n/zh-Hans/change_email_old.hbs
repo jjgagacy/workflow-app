@@ -2,146 +2,182 @@
 <html lang="zh-CN">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>修改邮箱地址验证</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>修改邮箱地址验证</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        .email-container {
-            background: white;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', sans-serif;
+      line-height: 1.4;
+      color: #333;
+      background: #f8f9fa;
+      max-width: 460px;
+      margin: 0 auto;
+      padding: 12px;
+    }
 
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #3182ce;
-        }
+    .email-container {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
 
-        .title {
-            color: #2d3748;
-            font-size: 24px;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
+    .header {
+      text-align: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #eaeaea;
+    }
 
-        .greeting {
-            font-size: 16px;
-            margin-bottom: 20px;
-            color: #4a5568;
-        }
+    .title {
+      color: #222;
+      font-size: 18px;
+      font-weight: 600;
+    }
 
-        .verification-card {
-            background: #ebf8ff;
-            padding: 25px;
-            border-radius: 6px;
-            margin: 20px 0;
-            border: 2px solid #3182ce;
-            text-align: center;
-        }
+    .greeting {
+      font-size: 13px;
+      margin-bottom: 12px;
+      color: #666;
+    }
 
-        .verification-code {
-            font-size: 32px;
-            font-weight: bold;
-            color: #3182ce;
-            letter-spacing: 8px;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-        }
+    .main-content {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
 
-        .expiry-notice {
-            text-align: center;
-            font-size: 14px;
-            color: #718096;
-            margin-top: 15px;
-        }
+    .verification-card {
+      background: #f0f7ff;
+      padding: 16px;
+      border-radius: 6px;
+      margin: 16px 0;
+      border: 1px solid #10b981;
+      text-align: center;
+    }
 
-        .email-change-info {
-            background: #f7fafc;
-            padding: 15px;
-            border-radius: 6px;
-            margin: 20px 0;
-        }
+    .verification-code {
+      font-size: 24px;
+      font-weight: 700;
+      color: #10b981;
+      letter-spacing: 4px;
+      margin: 12px 0;
+      font-family: 'Courier New', monospace;
+      padding: 10px;
+      border-radius: 4px;
+      background: white;
+      border: 1px solid #e0e0e0;
+    }
 
-        .info-item {
-            margin: 8px 0;
-        }
+    .expiry-notice {
+      font-size: 12px;
+      color: #888;
+      margin-top: 8px;
+    }
 
-        .help-text {
-            font-size: 14px;
-            color: #718096;
-            margin: 20px 0;
-        }
+    .email-change-info {
+      background: #f8fafc;
+      padding: 14px;
+      border-radius: 6px;
+      margin: 16px 0;
+      border-left: 3px solid #3b82f6;
+    }
 
-        .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e2e8f0;
-            font-size: 14px;
-            color: #718096;
-            text-align: center;
-        }
+    .info-item {
+      margin: 6px 0;
+      font-size: 13px;
+      color: #555;
+    }
 
-        .support-link {
-            color: #3182ce;
-            text-decoration: none;
-        }
-    </style>
+    .info-item strong {
+      color: #333;
+      font-weight: 600;
+    }
+
+    .help-text {
+      font-size: 12px;
+      color: #777;
+      margin: 16px 0;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 4px;
+    }
+
+    .footer {
+      margin-top: 20px;
+      padding-top: 14px;
+      border-top: 1px solid #eaeaea;
+      font-size: 11px;
+      color: #999;
+      text-align: center;
+    }
+
+    .support-link {
+      color: #10b981;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .support-link:hover {
+      text-decoration: underline;
+    }
+
+    p {
+      margin-bottom: 8px;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+  </style>
 </head>
 
 <body>
-    <div class="email-container">
-        <!-- 头部 -->
-        <div class="header">
-            <h1 class="title">修改邮箱地址验证</h1>
-        </div>
-
-        <!-- 问候语 -->
-        <p class="greeting">您好！</p>
-
-        <!-- 主要内容 -->
-        <p>我们收到了您修改 Monie 账户邮箱地址的请求。</p>
-
-        <!-- 验证码卡片 -->
-        <div class="verification-card">
-            <p>请输入以下验证码完成邮箱地址修改：</p>
-            <div class="verification-code">
-                {{verificationCode}}
-            </div>
-            <div class="expiry-notice">
-                此验证码将在 {{expiryMinutes}} 分钟后过期
-            </div>
-        </div>
-
-        <!-- 邮箱变更信息 -->
-        <div class="email-change-info">
-            <div class="info-item"><strong>当前邮箱：</strong>{{oldEmail}}</div>
-            <div class="info-item"><strong>新邮箱：</strong>{{newEmail}}</div>
-        </div>
-
-        <!-- 帮助文本 -->
-        <div class="help-text">
-            <p>如果您没有请求修改邮箱地址，请立即联系我们的支持团队，并考虑更改您的账户密码。</p>
-        </div>
-
-        <!-- 页脚 -->
-        <div class="footer">
-            <p>此邮件由 Monie 系统自动发送</p>
-            <p>需要帮助？请联系 <a href="mailto:{{supportsEmail}}" class="support-link">{{supportsEmail}}</a></p>
-        </div>
+  <div class="email-container">
+    <!-- 头部 -->
+    <div class="header">
+      <h1 class="title">修改邮箱地址验证</h1>
     </div>
+
+    <!-- 问候语 -->
+    <p class="greeting">您好！</p>
+
+    <!-- 主要内容 -->
+    <div class="main-content">
+      <p>我们收到了您修改 Monie 账户邮箱地址的请求。</p>
+    </div>
+
+    <!-- 验证码卡片 -->
+    <div class="verification-card">
+      <p>请输入以下验证码完成邮箱地址修改：</p>
+      <div class="verification-code">
+        {{verificationCode}}
+      </div>
+      <div class="expiry-notice">
+        此验证码将在 {{expiryMinutes}} 分钟后过期
+      </div>
+    </div>
+
+    <!-- 帮助文本 -->
+    <div class="help-text">
+      <p>如果您没有请求修改邮箱地址，请立即联系我们的支持团队，并考虑更改您的账户密码。</p>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="footer">
+      <p>此邮件由 Monie 系统自动发送</p>
+      <p>需要帮助？请联系 <a href="mailto:{{supportsEmail}}" class="support-link">{{supportsEmail}}</a></p>
+    </div>
+  </div>
 </body>
 
 </html>

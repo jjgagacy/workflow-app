@@ -51,3 +51,26 @@ export interface UpdateAccountUsernameInput {
   username: string;
 }
 
+export interface ChangeEmailOldInput {
+  language?: string;
+}
+
+export interface ConfirmEmailNewInput {
+  token: string;
+  newEmail: string;
+  code: string;
+  language?: string;
+}
+
+export interface UpdateAccountNewEmailInput {
+  token: string;
+  newEmail: string;
+  code: string;
+  language?: string;
+}
+
+export interface ValidateChangeEmailOldInput {
+  token: string;
+  code: string;
+}
+

@@ -71,7 +71,7 @@ import { AccountResolver } from './graphql/account/account/resolvers/account.res
 import { CreateAccountResolver } from "./graphql/account/account/resolvers/account.resolver";
 import { DeleteAccountResolver } from "./graphql/account/account/resolvers/account.resolver";
 import { LoginResolver } from './graphql/account/account/resolvers/login.resolver';
-import { UpdateAccountFieldsResolver } from "./graphql/account/account/resolvers/update-account.resolver";
+import { ChangeEmailResolver, UpdateAccountFieldsResolver } from "./graphql/account/account/resolvers/update-account.resolver";
 import { UpdateAccountResolver } from './graphql/account/account/resolvers/update-account.resolver';
 import { CreateDepResolver } from './graphql/account/dep/resolvers/create-dep.resolver';
 import { DeleteDepResolver } from './graphql/account/dep/resolvers/delete-dep.resolver';
@@ -337,6 +337,7 @@ import { PreviewController } from './controllers/files/preview.controller';
     PluginModelClientService,
     SignUpResolver,
     ForgetPasswordResolver,
+    ChangeEmailResolver,
   ],
 })
 export class AppModule implements NestModule {

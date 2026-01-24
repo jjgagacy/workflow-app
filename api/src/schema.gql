@@ -38,6 +38,17 @@ type AccountResponse {
   id: Int!
 }
 
+input ChangeEmailSendInput {
+  language: String
+}
+
+input ConfirmEmailNewInput {
+  code: String!
+  language: String
+  newEmail: String!
+  token: String!
+}
+
 """Date custom scalar type"""
 scalar Date
 
@@ -166,8 +177,10 @@ type ModuleResponse {
 }
 
 type Mutation {
+  changeEmailOldSend(input: ChangeEmailSendInput!): String!
   checkLoginEmail(email: String!): Boolean!
   checkSignUpUsername(username: String!): Boolean!
+  confirmEmailNewSend(input: ConfirmEmailNewInput!): String!
   createAccount(input: AccountInput!): AccountResponse!
   createDep(input: DepInput!): DepResponse!
   createMenu(input: MenuInput!): MenuResponse!
@@ -198,6 +211,7 @@ type Mutation {
   updateAccountAvatar(input: UpdateAccountAvatarInput!): Boolean!
   updateAccountLanguage(input: UpdateAccountLanguageInput!): Boolean!
   updateAccountName(input: UpdateAccountNameInput!): Boolean!
+  updateAccountNewEmail(input: UpdateAccountNewEmailInput!): Boolean!
   updateAccountPassword(newPassword: String!, password: String!): Boolean!
   updateAccountTheme(input: UpdateAccountThemeInput!): Boolean!
   updateDep(input: DepInput!): DepResponse!
@@ -205,6 +219,7 @@ type Mutation {
   updateModule(input: ModuleInput!): ModuleResponse!
   updatePerm(input: PermInput!): Boolean!
   updateRole(input: RoleInput!): RoleResponse!
+  validateChangeEmailOld(input: ValidateChangeEmailOldInput!): String!
 }
 
 type PageInfo {
@@ -332,6 +347,13 @@ input UpdateAccountNameInput {
   username: String!
 }
 
+input UpdateAccountNewEmailInput {
+  code: String!
+  language: String
+  newEmail: String!
+  token: String!
+}
+
 input UpdateAccountThemeInput {
   theme: String!
 }
@@ -339,6 +361,11 @@ input UpdateAccountThemeInput {
 type UserInfoResponse {
   id: Float
   name: String
+}
+
+input ValidateChangeEmailOldInput {
+  code: String!
+  token: String!
 }
 
 type WorkspaceDetail {

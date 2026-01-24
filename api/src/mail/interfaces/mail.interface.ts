@@ -39,7 +39,15 @@ export interface ChangeEmailOldOptions {
   to: string;
   verificationCode: string;
   expiryMinutes: number;
+  language?: EmailLanguage;
+}
+
+export interface ConfirmEmailNewOptions {
+  to: string;
+  verificationCode: string;
+  expiryMinutes: number;
   oldEmail: string;
   newEmail: string;
   language?: EmailLanguage;
 }
+

@@ -3,7 +3,7 @@ import { AccountService } from "@/account/account.service";
 import { CurrentUser } from "@/common/decorators/current-user";
 import { UpdateAccountDto } from "@/account/account/dto/update-account.dto";
 import * as bcrypt from 'bcrypt';
-import { BadRequestException, InternalServerErrorException, UseGuards } from "@nestjs/common";
+import { BadRequestException, InternalServerErrorException, NotFoundException, UseGuards } from "@nestjs/common";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { I18nService } from "nestjs-i18n";
 import authConfig from "@/config/auth.config";
@@ -11,6 +11,15 @@ import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted
 import { AccountResponse } from "../types/account-response.type";
 import { AccountInput, UpdateAccountAvatarInput, UpdateAccountLanguageInput, UpdateAccountNameInput, UpdateAccountThemeInput } from "../types/account-input.type";
 import { AccountNotFoundError } from "@/service/exceptions/account.error";
+import { ChangeEmailSendInput, ConfirmEmailNewInput, UpdateAccountNewEmailInput, ValidateChangeEmailOldInput } from "../types/login-input.type";
+import { GqlRequest } from "@/common/decorators/gql-request";
+import { DeviceService } from "@/service/libs/device.service";
+import { convertLanguageCode } from "@/mail/mail-i18n.service";
+import { getMappedLang } from "@/i18n-global/langmap";
+import { AuthAccountService } from "@/service/auth-account.service";
+import { AccountEntity } from "@/account/entities/account.entity";
+import { TOKEN_TYPES, TokenManagerService } from "@/service/libs/token-manager.service";
+import { UnionDefinitionFactory } from "@nestjs/graphql/dist/schema-builder/factories/union-definition.factory";
 
 @Resolver()
 @UseGuards(EditionSelfHostedGuard)
@@ -161,6 +170,88 @@ export class UpdateAccountFieldsResolver {
 
     const dto: UpdateAccountDto = {
       theme: input.theme,
+      updatedBy: user.name,
+    };
+
+    await this.accountService.update(dto);
+    return true;
+  }
+
+}
+
+@Resolver()
+@UseGuards(EditionSelfHostedGuard)
+export class ChangeEmailResolver {
+  constructor(
+    private readonly accountService: AccountService,
+    private readonly i18n: I18nService<I18nTranslations>,
+    private readonly deviceService: DeviceService,
+    private readonly authAccountService: AuthAccountService,
+    private readonly tokenManagerService: TokenManagerService
+  ) { }
+
+  @Mutation(() => String)
+  async changeEmailOldSend(
+    @Args('input') input: ChangeEmailSendInput,
+    @GqlRequest() req: Request,
+    @CurrentUser() user: any
+  ): Promise<string> {
+    const language = this.deviceService.getLanguageFromHeader(input.language || req.headers['accept-language']);
+    const translatedLanguage = convertLanguageCode(getMappedLang(language));
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw new NotFoundException();
+    }
+    const token = await this.authAccountService.sendChangeEmailVerification(account, translatedLanguage);
+    return token;
+  }
+
+  @Mutation(() => String)
+  async validateChangeEmailOld(
+    @Args('input') input: ValidateChangeEmailOldInput,
+    @CurrentUser() user: any
+  ): Promise<string> {
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw new NotFoundException();
+    }
+    await this.authAccountService.validateChangeEmailCode(account.email, input.token, input.code);
+
+    // Verified, revoke the token
+    await this.tokenManagerService.removeToken(input.token, TOKEN_TYPES.CHANGE_EMAIL);
+    // Refresh token
+    const newToken = await this.tokenManagerService.generateToken(TOKEN_TYPES.CHANGE_EMAIL, undefined, account.email, { code: input.code });
+    return newToken;
+  }
+
+  @Mutation(() => String)
+  async confirmEmailNewSend(
+    @Args('input') input: ConfirmEmailNewInput,
+    @GqlRequest() req: Request,
+    @CurrentUser() user: any
+  ): Promise<string> {
+    const language = this.deviceService.getLanguageFromHeader(req.headers['accept-language']);
+    const translatedLanguage = convertLanguageCode(getMappedLang(language));
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw new NotFoundException();
+    }
+    await this.authAccountService.validateChangeEmailCode(account.email, input.token, input.code);
+    // send new code to new email
+    const token = await this.authAccountService.sendConfirmEmailVerification(account, input.newEmail, translatedLanguage);
+    return token;
+  }
+
+  @Mutation(() => Boolean)
+  async updateAccountNewEmail(
+    @Args('input') input: UpdateAccountNewEmailInput,
+    @CurrentUser() user: any
+  ): Promise<boolean> {
+    await this.authAccountService.validateAccountNewEmailCode(input.newEmail, input.token, input.code);
+
+    const dto: UpdateAccountDto = {
+      id: user.id,
+      email: input.newEmail,
       updatedBy: user.name,
     };
 
