@@ -98,7 +98,6 @@ const translation = {
   delete_warning_access: "所有项目和团队访问权限",
   username: "用户名",
   enter_username_placeholder: "输入用户名",
-  change_email: "更改邮箱",
   change_avatar: "编辑裁剪头像",
   image_input: {
     drop_image_here: "将图片拖放到此处，或",
@@ -108,5 +107,56 @@ const translation = {
     upload_limit_exceeded: "上传文件不能超过3MB",
     read_error: "图片文件读取错误"
   },
+  change_email: {
+    // 对话框标题和按钮
+    title: '修改邮箱',
+    cancel: '取消',
+    confirm: '确认',
+
+    // 步骤指示器
+    step_verify_old: '验证旧邮箱',
+    step_set_new: '设置新邮箱',
+
+    // 第一步：验证旧邮箱
+    old_email_section_title: '验证当前邮箱',
+    old_email_description: '为了保护您的账户安全，我们将向您的当前邮箱 {{email}} 发送验证码。',
+    send_code: '发送验证码',
+    sending: '发送中...',
+    resend_code: '重新发送验证码',
+    verification_code: '验证码',
+    verification_code_placeholder: '请输入6位数字验证码',
+    next_step: '下一步',
+    verifying: '验证中...',
+    seconds_to_resend: '{{count}}秒后可重新发送',
+
+    // 第二步：设置新邮箱
+    new_email_section_title: '设置新邮箱',
+    new_email_label: '新邮箱地址',
+    new_email_placeholder: '请输入新的邮箱地址',
+    new_verification_code: '新邮箱验证码',
+    new_verification_code_placeholder: '请输入6位数字验证码',
+    previous_step: '上一步',
+    submit_changes: '确认更改',
+    submitting: '提交中...',
+
+    // 错误信息
+    error_code_required: '请输入验证码',
+    error_code_invalid: '验证码错误或已过期',
+    error_email_required: '请输入邮箱地址',
+    error_email_invalid: '邮箱格式不正确',
+    error_email_same: '新邮箱不能与当前邮箱相同',
+    error_send_failed: '发送验证码失败，请重试',
+    error_verification_failed: '验证失败，请检查验证码',
+
+    // 安全提示
+    security_tip: '邮箱更改后，您将使用新邮箱登录。所有通知和密码重置都将发送到新邮箱。',
+
+    // 成功消息
+    success_message: '邮箱修改成功',
+
+    // 倒计时文本
+    countdown_format: '剩余{{seconds}}秒',
+    can_resend: '可重新发送验证码',
+  }
 };
 export default translation;

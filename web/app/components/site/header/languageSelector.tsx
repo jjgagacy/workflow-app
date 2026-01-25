@@ -36,13 +36,13 @@ export function LanguageSelector() {
             onClick={() => setShowLanguageSelect(false)}
           />
           {/* 下拉菜单 */}
-          <div className="absolute top-6 right-0 mt-4 w-32 bg-white rounded-lg shadow-lg z-20 border border-gray-200">
+          <div className="absolute top-6 right-0 px-2 py-1 mt-6 w-36 bg-white shadow-lg z-20 border border-gray-200">
             <ul className="py-1">
               {languages.map(lang => (
                 <li key={lang.name} className="flex items-center">
                   <button
                     onClick={() => toggleLanguage(lang.value)}
-                    className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                    className="w-full text-left px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
                   >
                     <span className="text-lg">{lang.emoji || LanguageEmojiDefault}</span>
                     <span>{lang.name}</span>

@@ -134,11 +134,13 @@ export default function MainContent() {
   return (
     <main className="pt-16">
       {/* Hero Section */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 relative overflow-hidden">
+      <section
+        className="mx-auto px-4 sm:px-6 lg:px-8 py-20 relative bg-gradient-to-b from-green-50 to-white dark:from-gray-900 dark:to-gray-800 overflow-hidden flex justify-center"
+      >
         {/* 内容 */}
-        <div className="relative z-10">
+        <div className="container relative z-10 ">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+            <h1 className="text-3xl md:text-4xl font-bold mb-6">
               <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
                 {t('home.hero.title')}
               </span>
@@ -212,7 +214,7 @@ export default function MainContent() {
       </section>
 
       {/* Why Choose Monie */}
-      <section className="py-20 bg-amber-50 dark:bg-amber-900/50">
+      <section className="py-20 bg-amber-50 dark:bg-amber-900/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>

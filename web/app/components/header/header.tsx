@@ -2,10 +2,10 @@
 
 import { ArrowUpRight, LayoutDashboard, Workflow } from "lucide-react";
 import Button from "../base/button";
-import { LanguageSelector } from "../site/header/languageSelector";
 import Logo from "../site/header/logo";
 import Avatar from "./avatar";
 import { useTranslation } from "react-i18next";
+import { LanguageSelector } from "./navbar/selector/language-selector";
 
 export default function Header() {
   const { t } = useTranslation();
@@ -25,7 +25,7 @@ export default function Header() {
                 {t('app.back_workspace')}
                 <ArrowUpRight className="w-5 h-5 ml-1" />
               </Button>
-              <LanguageSelector />
+              <LanguageSelector reloadPage={false} />
               <Avatar />
             </div>
           </div>

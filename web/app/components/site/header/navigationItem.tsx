@@ -44,25 +44,18 @@ export default function NavigationItem({ item }: NavigationitemProps) {
     const dropdown = dropdownRef.current;
     if (!dropdown) return;
 
-    const rect = dropdown.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
+    const dropdownWidth = dropdown.offsetWidth;
     const margin = 16; // 安全边距
 
-    let translateX = -50; // 默认 -50%
+    // 计算下拉框在页面中间的位置
+    const leftPosition = (viewportWidth - dropdownWidth) / 2;
 
-    // 左侧溢出
-    if (rect.left < margin) {
-      const overflow = margin - rect.left;
-      translateX += (overflow / rect.width) * 100;
-    }
+    // 确保不会超出视口边界
+    const safeLeft = Math.max(margin, Math.min(leftPosition, viewportWidth - dropdownWidth - margin));
 
-    // 右侧溢出
-    if (rect.right > viewportWidth - margin) {
-      const overflow = rect.right - (viewportWidth - margin);
-      translateX -= (overflow / rect.width) * 100;
-    }
-
-    dropdown.style.transform = `translateX(${translateX}%)`;
+    dropdown.style.left = `${safeLeft}px`;
+    dropdown.style.transform = 'none'; // 移除 transform
   };
 
   useEffect(() => {
@@ -90,8 +83,12 @@ export default function NavigationItem({ item }: NavigationitemProps) {
           {isOpen && (
             <div
               ref={dropdownRef}
-              className="absolute left-1/2 transform mt-2 md:w-[600px] lg:w-[800px] max-w-[90vw] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50 animate-[fadeIn_0.2s_ease-out]"
-              style={{ transform: 'translateX(-50%)' }}
+              className="fixed top-16 z-50 md:w-[600px] lg:w-[800px] max-w-[90vw] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden animate-[fadeIn_0.2s_ease-out]"
+              style={{
+                // 初始位置设置为页面中间
+                left: '50%',
+                transform: 'translateX(-50%)'
+              }}
               onMouseEnter={handleDropdownMouseEnter}
               onMouseLeave={handleDropdownMouseLeave}
             >

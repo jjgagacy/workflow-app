@@ -8,14 +8,14 @@ import { setClientLocale } from '@/i18n';
 import { useActiveTheme } from '@/app/components/active-theme';
 import { getThemeHoverClass, ThemeType } from '@/types/theme';
 
-export function LanguageSelector() {
+export function LanguageSelector({ reloadPage = false }: { reloadPage?: boolean }) {
   const { t, i18n } = useTranslation();
   const { activeTheme, setActiveTheme } = useActiveTheme();
 
   const toggleLanguage = async (lng: string) => {
     if (i18n.language === lng) return;
     await setClientLocale(lng, false);
-    location.reload();
+    if (reloadPage) location.reload();
   };
 
   return (
@@ -35,10 +35,10 @@ export function LanguageSelector() {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <MenuItems className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 py-1 focus:outline-none z-100">
+          <MenuItems className="origin-top-right absolute px-2 py-1 right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none z-100">
             {languages.map(lang => (
               <MenuItem key={lang.value}>
-                <div className="flex items-center justify-between px-4 py-2 text-sm text-gray-700 w-full text-left hover:bg-selection-hover dark:text-white">
+                <div className={`flex items-center justify-between px-4 py-2 rounded-lg text-sm text-gray-700 w-full text-left ${getThemeHoverClass(activeTheme as ThemeType)}  dark:text-white`}>
                   <button
                     onClick={() => toggleLanguage(lang.value)}
                     className='w-full text-left flex flex-1 items-center'

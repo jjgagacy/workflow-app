@@ -229,13 +229,11 @@ export default function ProfileLayout() {
       </div>
 
       <ChangeEmailDialog
-        // isOpen={isEditingEmail}
-        isOpen={true}
+        isOpen={isEditingEmail}
         onClose={() => setIsEditingEmail(false)}
         onSuccess={() => { }}
         currentEmail={userData.email}
       />
-
     </>
   )
 }

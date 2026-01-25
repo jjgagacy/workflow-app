@@ -51,7 +51,7 @@ const translation = {
 
   // Hero区域
   hero: {
-    title: 'Monie（萌艺）',
+    title: 'Monie',
     subtitle: '智能体应用平台',
     description: '一个开放、灵活的智能体应用平台，致力于让每个人都能轻松构建属于自己的AI驱动应用。无论您是开发者、创作者还是企业，Monie 都为您提供了一站式的智能体设计、部署与管理体验。',
     cta_primary: '免费开始使用',

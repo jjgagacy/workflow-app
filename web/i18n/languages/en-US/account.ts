@@ -96,7 +96,6 @@ const translation = {
   delete_warning_access: "Access to all projects and workspaces",
   username: "Account Name",
   enter_username_placeholder: "enter your name",
-  change_email: "Change email",
   change_avatar: "Edit profile photo",
   image_input: {
     drop_image_here: "Drop your image here, or",
@@ -106,5 +105,54 @@ const translation = {
     upload_limit_exceeded: "Upload images cannot exceed 3MB",
     read_error: "Image reading failed"
   },
+  change_email: {
+    // 对话框标题和按钮
+    title: 'Change Email',
+
+    // 步骤指示器
+    step_verify_old: 'Verify Old Email',
+    step_set_new: 'Set New Email',
+
+    // 第一步：验证旧邮箱
+    old_email_section_title: 'Verify Current Email',
+    old_email_description: 'To protect your account security, we will send a verification code to your current email address: {{email}}.',
+    send_code: 'Send Verification Code',
+    sending: 'Sending...',
+    resend_code: 'Resend Verification Code',
+    verification_code: 'Verification Code',
+    verification_code_placeholder: 'Enter 6-digit verification code',
+    next_step: 'Next Step',
+    verifying: 'Verifying...',
+    seconds_to_resend: '{{count}} seconds until resend',
+
+    // 第二步：设置新邮箱
+    new_email_section_title: 'Set New Email',
+    new_email_label: 'New Email Address',
+    new_email_placeholder: 'Enter new email address',
+    send_new_code: 'Send Verification Code',
+    new_verification_code: 'New Email Verification Code',
+    previous_step: 'Previous Step',
+    submit_changes: 'Confirm Changes',
+    submitting: 'Submitting...',
+
+    // 错误信息
+    error_code_required: 'Please enter verification code',
+    error_code_invalid: 'Verification code is incorrect or expired',
+    error_email_required: 'Please enter email address',
+    error_email_invalid: 'Email format is incorrect',
+    error_email_same: 'New email cannot be the same as current email',
+    error_send_failed: 'Failed to send verification code, please try again',
+    error_verification_failed: 'Verification failed, please check the code',
+
+    // 安全提示
+    security_tip: 'After changing your email, you will log in using the new email. All notifications and password resets will be sent to the new email.',
+
+    // 成功消息
+    success_message: 'Email changed successfully',
+
+    // 倒计时文本
+    countdown_format: '{{seconds}} seconds remaining',
+    can_resend: 'Can resend verification code',
+  }
 };
 export default translation;
