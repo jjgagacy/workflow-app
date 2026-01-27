@@ -5,7 +5,7 @@ import { Account } from "../types/account.type";
 import { formatDate } from "@/common/utils/time";
 import { AccountEntity } from "@/account/entities/account.entity";
 import { validNumber } from "@/common/utils/strings";
-import { BadRequestException, UseGuards } from "@nestjs/common";
+import { BadRequestException, NotFoundException, UseGuards } from "@nestjs/common";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 import { AccountList } from "../types/account-list.type";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
@@ -16,8 +16,14 @@ import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 import { FileService } from "@/service/file.service";
-import { AccountInput } from "../types/account-input.type";
+import { AccountInput, DeleteAccountEmailSendInput, DeleteAccountInput, ValidateDeleteAccountCodeInput } from "../types/account-input.type";
 import { AccountResponse } from "../types/account-response.type";
+import { GqlRequest } from "@/common/decorators/gql-request";
+import { DeviceService } from "@/service/libs/device.service";
+import { getMappedLang } from "@/i18n-global/langmap";
+import { convertLanguageCode } from "@/mail/mail-i18n.service";
+import { TOKEN_TYPES, TokenManagerService } from "@/service/libs/token-manager.service";
+import { InvalidEmailError, InvalidTokenError, VerifyCodeError } from "@/service/exceptions/token.error";
 
 @Resolver()
 export class AccountResolver {
@@ -103,14 +109,63 @@ export class CreateAccountResolver {
 }
 
 @Resolver()
-@UseGuards(EditionSelfHostedGuard)
 export class DeleteAccountResolver {
-  constructor(private readonly accountService: AccountService) { }
+  constructor(
+    private readonly accountService: AccountService,
+    private readonly deviceService: DeviceService,
+    private readonly authAccountService: AuthAccountService,
+    private readonly tokenManagerService: TokenManagerService,
+  ) { }
 
   @Mutation(() => Boolean)
-  async deleteAccount(@Args({ name: 'id', type: () => Int }) id: number): Promise<boolean> {
-    await this.accountService.delete(id);
+  async deleteAccount(
+    @Args('input') input: DeleteAccountInput,
+    @CurrentUser() user: any
+  ): Promise<boolean> {
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw new NotFoundException();
+    }
+    await this.authAccountService.validateAccountDeleteEmailCode(account, input.token, input.code);
+    // revoke token
+    await this.tokenManagerService.removeToken(input.token, TOKEN_TYPES.ACCOUNT_DELETION);
+    await this.accountService.deleteAccount(account);
     return true;
   }
+
+  @Mutation(() => String)
+  async deleteAccountEmailSend(
+    @Args('input') input: DeleteAccountEmailSendInput,
+    @GqlRequest() req: Request,
+    @CurrentUser() user: any
+  ): Promise<string> {
+    const language = this.deviceService.getLanguageFromHeader(input.language || req.headers['accept-language']);
+    const translatedLanguage = convertLanguageCode(getMappedLang(language));
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw new NotFoundException();
+    }
+    const token = await this.authAccountService.sendAccountDeletionEmail(account, translatedLanguage);
+    return token;
+  }
+
+  @Mutation(() => String)
+  async validateDeleteAccountEmailCode(
+    @Args('input') input: ValidateDeleteAccountCodeInput,
+    @CurrentUser() user: any
+  ): Promise<string> {
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw new NotFoundException();
+    }
+    await this.authAccountService.validateAccountDeleteEmailCode(account, input.token, input.code);
+
+    // revoke token
+    await this.tokenManagerService.removeToken(input.token, TOKEN_TYPES.ACCOUNT_DELETION);
+    // refresh token
+    const newToken = await this.tokenManagerService.generateToken(TOKEN_TYPES.ACCOUNT_DELETION, undefined, account.email, { code: input.code });
+    return newToken;
+  }
+
 }
 

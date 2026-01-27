@@ -74,3 +74,6 @@ export interface ValidateChangeEmailOldInput {
   code: string;
 }
 
+export interface DeleteAccountEmailSendInput {
+  language?: string;
+}

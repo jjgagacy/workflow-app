@@ -52,6 +52,15 @@ input ConfirmEmailNewInput {
 """Date custom scalar type"""
 scalar Date
 
+input DeleteAccountEmailSendInput {
+  language: String
+}
+
+input DeleteAccountInput {
+  code: String!
+  token: String!
+}
+
 type Dep {
   id: Int!
   key: String!
@@ -188,7 +197,8 @@ type Mutation {
   createPerm(input: PermInput!): Boolean!
   createRole(input: RoleInput!): RoleResponse!
   currentTenant: TenantResponse!
-  deleteAccount(id: Int!): Boolean!
+  deleteAccount(input: DeleteAccountInput!): Boolean!
+  deleteAccountEmailSend(input: DeleteAccountEmailSendInput!): String!
   deleteDep(id: Int!): Boolean!
   deleteMenu(id: Int!): Boolean!
   deleteModule(id: Int!): Boolean!
@@ -220,6 +230,7 @@ type Mutation {
   updatePerm(input: PermInput!): Boolean!
   updateRole(input: RoleInput!): RoleResponse!
   validateChangeEmailOld(input: ValidateChangeEmailOldInput!): String!
+  validateDeleteAccountEmailCode(input: ValidateDeleteAccountCodeInput!): String!
 }
 
 type PageInfo {
@@ -364,6 +375,11 @@ type UserInfoResponse {
 }
 
 input ValidateChangeEmailOldInput {
+  code: String!
+  token: String!
+}
+
+input ValidateDeleteAccountCodeInput {
   code: String!
   token: String!
 }

@@ -19,6 +19,8 @@ import { EditionType } from "@/monie/enums/version.enum";
 import authConfig from "@/config/auth.config";
 import { getPaginationOptions } from "@/common/database/dto/query.dto";
 import { isPaginator } from "@/common/database/utils/pagination";
+import { InjectQueue } from "@nestjs/bull";
+import { Queue } from "bull";
 
 @Injectable()
 export class AccountService {
@@ -28,6 +30,7 @@ export class AccountService {
     private readonly roleService: RoleService,
     private readonly i18n: I18nService<I18nTranslations>,
     private readonly monieConifg: MonieConfig,
+    @InjectQueue('account') private readonly accountQueue: Queue,
   ) { }
 
   async getByUserName(username: string, roles: boolean = false): Promise<AccountEntity | null> {
@@ -296,6 +299,13 @@ export class AccountService {
     }
 
     return { valid: true };
+  }
+
+  async deleteAccount(account: AccountEntity) {
+    this.accountQueue.add('account_delete', {
+      id: account.id,
+      email: account.email,
+    });
   }
 }
 

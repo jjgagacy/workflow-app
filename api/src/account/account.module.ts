@@ -34,6 +34,8 @@ import { OperationLogsEntity } from './entities/operation-log.entity';
 import { AccountIntegrateEntity } from './entities/account-integrate.entity';
 import { UserEntity } from './entities/user.entity';
 import { UploadFilesEntity } from './entities/upload-files.entity';
+import { BullModule } from '@nestjs/bull';
+import { AccountProcessor } from './processors/account.processor';
 
 @Global()
 @Module({
@@ -59,6 +61,9 @@ import { UploadFilesEntity } from './entities/upload-files.entity';
       UserEntity,
       UploadFilesEntity,
     ]),
+    BullModule.registerQueue({
+      name: 'account',
+    }),
   ],
   controllers: [],
   providers: [
@@ -77,6 +82,7 @@ import { UploadFilesEntity } from './entities/upload-files.entity';
     JwtService,
     MonieConfig,
     SystemService,
+    AccountProcessor,
   ],
   exports: [
     AccountService,

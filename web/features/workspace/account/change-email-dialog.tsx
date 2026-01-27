@@ -1,11 +1,12 @@
 import api from "@/api";
 import Button from "@/app/components/base/button";
+import Countdown, { CountdownRef } from "@/app/components/base/countdown";
 import { Dialog } from "@/app/ui/dialog";
 import { Input } from "@/app/ui/input";
 import { getErrorMessage } from "@/utils/errors";
 import { DialogTitle } from "@headlessui/react";
 import { CheckCircleIcon, MailIcon, ShieldCheck, ShieldCheckIcon, XIcon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface ChangeEmailDialogProps {
@@ -31,15 +32,16 @@ export default function ChangeEmailDialog({
   const useConfirmEmailNew = api.account.useConfirmEmailNewSend();
   const useUpdateAccountNewEmail = api.account.useUpdateAccountNewEmail();
 
+  const oldEmailCountdownRef = useRef<CountdownRef>(null);
+  const newEmailCountdownRef = useRef<CountdownRef>(null);
+
   // 第一步：验证旧邮箱
   const [oldEmailCode, setOldEmailCode] = useState('');
-  const [oldEmailCountdown, setOldEmailCountdown] = useState(0);
   const [oldEmailSent, setOldEmailSent] = useState(false);
 
   // 第二步：设置新邮箱
   const [newEmail, setNewEmail] = useState('');
   const [newEmailCode, setNewEmailCode] = useState('');
-  const [newEmailCountdown, setNewEmailCountdown] = useState(0);
   const [newEmailSent, setNewEmailSent] = useState(false);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -55,11 +57,9 @@ export default function ChangeEmailDialog({
   const resetState = () => {
     setStep('verify-old');
     setOldEmailCode('');
-    setOldEmailCountdown(0);
     setOldEmailSent(false);
     setNewEmail('');
     setNewEmailCode('');
-    setNewEmailCountdown(0);
     setNewEmailSent(false);
     setErrors({});
   };
@@ -71,29 +71,8 @@ export default function ChangeEmailDialog({
     }
   }, [isOpen]);
 
-  // 倒计时处理
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (oldEmailCountdown > 0) {
-      timer = setTimeout(() => {
-        setOldEmailCountdown(oldEmailCountdown - 1);
-      }, 1000);
-    }
-    return () => clearTimeout(timer);
-  }, [oldEmailCountdown]);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (newEmailCountdown > 0) {
-      timer = setTimeout(() => {
-        setNewEmailCountdown(newEmailCountdown - 1);
-      }, 1000);
-    }
-    return () => clearTimeout(timer);
-  }, [newEmailCountdown]);
-
   // 发送旧邮箱验证码
-  const sendOldEmailCode = async () => {
+  const sendOldEmailCode = useCallback(async () => {
     setLoading(true);
     setErrors({});
 
@@ -101,13 +80,15 @@ export default function ChangeEmailDialog({
       const token = await useChangeEmailOld({ input: {} });
       setStepToken(token);
       setOldEmailSent(true);
-      setOldEmailCountdown(60);
+      oldEmailCountdownRef.current?.reset(59);
+      return true;
     } catch (error: any) {
       setErrors({ send: getErrorMessage(error) });
     } finally {
       setLoading(false);
     }
-  };
+    return false;
+  }, []);
 
   // 验证旧邮箱验证码
   const verifyOldEmailCode = async () => {
@@ -137,32 +118,31 @@ export default function ChangeEmailDialog({
   const sendNewEmailCode = async () => {
     if (!newEmail.trim()) {
       setErrors({ newEmail: t('account.change_email.error_email_required') });
-      return;
+      return false;
     }
-
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
       setErrors({ newEmail: t('account.change_email.error_email_invalid') });
-      return;
+      return false;
     }
-
     if (newEmail === currentEmail) {
       setErrors({ newEmail: t('account.change_email.error_email_same') });
-      return;
+      return false;
     }
 
     setLoading(true);
     setErrors({});
-
     try {
       const token = await useConfirmEmailNew({ input: { token: stepToken, newEmail, code: oldEmailCode } });
       setStepToken(token);
       setNewEmailSent(true);
-      setNewEmailCountdown(60);
+      newEmailCountdownRef.current?.reset(59);
+      return true;
     } catch (error) {
       setErrors({ sendNew: t('account.change_email.error_send_failed') });
     } finally {
       setLoading(false);
     }
+    return false;
   };
 
   // 提交更改
@@ -174,7 +154,6 @@ export default function ChangeEmailDialog({
 
     setLoading(true);
     setErrors({});
-
     try {
       await useUpdateAccountNewEmail({ input: { token: stepToken, newEmail, code: newEmailCode } });
       onSuccess?.();
@@ -301,21 +280,7 @@ export default function ChangeEmailDialog({
 
                 {/* 倒计时和重发 */}
                 <div className="flex items-center justify-between">
-                  <div className="text-sm text-gray-500">
-                    {oldEmailCountdown > 0 ? (
-                      <span>
-                        {t('account.change_email.seconds_to_resend', { count: oldEmailCountdown })}
-                      </span>
-                    ) : (
-                      <Button
-                        onClick={sendOldEmailCode}
-                        disabled={loading}
-                        variant={'ghost'}
-                      >
-                        {t('account.change_email.resend_code')}
-                      </Button>
-                    )}
-                  </div>
+                  <Countdown ref={oldEmailCountdownRef} onResend={sendOldEmailCode} initialCount={60} />
 
                   <Button
                     onClick={verifyOldEmailCode}
@@ -398,22 +363,7 @@ export default function ChangeEmailDialog({
 
                 {/* 倒计时和操作按钮 */}
                 <div className="space-y-4">
-                  <div className="text-sm text-gray-500">
-                    {newEmailCountdown > 0 ? (
-                      <span>
-                        {t('account.change_email.seconds_to_resend', { count: newEmailCountdown })}
-                      </span>
-                    ) : (
-                      <Button
-                        onClick={sendNewEmailCode}
-                        disabled={loading}
-                        loading={loading}
-                        variant={'ghost'}
-                      >
-                        {t('account.change_email.resend_code')}
-                      </Button>
-                    )}
-                  </div>
+                  <Countdown ref={newEmailCountdownRef} onResend={sendNewEmailCode} initialCount={59} />
 
                   <div className="flex space-x-3">
                     <Button

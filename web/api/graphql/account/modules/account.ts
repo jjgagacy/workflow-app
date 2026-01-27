@@ -1,7 +1,7 @@
 import { createMutationHook, useGraphQLMutation, useGraphQLQuery } from "@/hooks/use-graphql";
 import { GET_ACCOUNTS } from "../queries";
-import { CHANGE_EMAIL_OLD_SEND, CONFIRM_EMAIL_NEW_SEND, CREATE_ACCOUNT, CURRENT_TENANT, DELETE_ACCOUNT, EMAIL_CODE_LOGIN, EMAIL_CODE_LOGIN_SEND, EMAIL_CODE_RESET_PASSWORD_SEND, EMAIL_CODE_SIGNUP, EMAIL_CODE_SIGNUP_SEND, EMAIL_PASSWORD_LOIGN, FORGOT_PASSWORD_CHECK, FORGOT_PASSWORD_RESET, SWITCH_TENANT, TOGGLE_ACCOUNT_STATUS, UPDATE_ACCOUNT, UPDATE_ACCOUNT_AVATAR, UPDATE_ACCOUNT_NAME, UPDATE_ACCOUNT_NEW_EMAIL, VALIDATE_CHANGE_EMAIL_OLD, VALIDATE_EMAIL, VALIDATE_USERNAME } from '../mutations/account-mutations';
-import { ChangeEmailOldInput, ConfirmEmailNewInput, EmailCodeLoginInput, EmailCodeSendInput, EmailCodeSignUpInput, ForgotPasswordCheckInput, ForgotPasswordCheckOutput, ForgotPasswordResetInput, PasswordLoginInput, TenantResponseOutput, UpdateAccountAvatarInput, UpdateAccountNewEmailInput, UpdateAccountUsernameInput, ValidateChangeEmailOldInput } from "../types";
+import { CHANGE_EMAIL_OLD_SEND, CONFIRM_EMAIL_NEW_SEND, CREATE_ACCOUNT, CURRENT_TENANT, DELETE_ACCOUNT, DELETE_ACCOUNT_EMAIL_SEND, EMAIL_CODE_LOGIN, EMAIL_CODE_LOGIN_SEND, EMAIL_CODE_RESET_PASSWORD_SEND, EMAIL_CODE_SIGNUP, EMAIL_CODE_SIGNUP_SEND, EMAIL_PASSWORD_LOIGN, FORGOT_PASSWORD_CHECK, FORGOT_PASSWORD_RESET, SWITCH_TENANT, TOGGLE_ACCOUNT_STATUS, UPDATE_ACCOUNT, UPDATE_ACCOUNT_AVATAR, UPDATE_ACCOUNT_NAME, UPDATE_ACCOUNT_NEW_EMAIL, VALIDATE_CHANGE_EMAIL_OLD, VALIDATE_DELETE_ACCOUNT_CODE, VALIDATE_EMAIL, VALIDATE_USERNAME } from '../mutations/account-mutations';
+import { ChangeEmailOldInput, ConfirmEmailNewInput, DeleteAccountEmailSendInput, EmailCodeLoginInput, EmailCodeSendInput, EmailCodeSignUpInput, ForgotPasswordCheckInput, ForgotPasswordCheckOutput, ForgotPasswordResetInput, PasswordLoginInput, TenantResponseOutput, UpdateAccountAvatarInput, UpdateAccountNewEmailInput, UpdateAccountUsernameInput, ValidateChangeEmailOldInput } from "../types";
 
 // 获取账户列表
 export const useGetAccounts = (params: {
@@ -54,16 +54,6 @@ export const useUpdateAccount = () => {
     const { id, username, password, realName, mobile, email, roles, status } = params;
     const response = await mutation({ input: { id, username, password, realName, mobile, email, roles, status } });
     return response.updateAccount;
-  };
-};
-
-// 删除账户
-export const useDeleteAccount = () => {
-  const mutation = useGraphQLMutation<{ deleteAccount: any }, { id: number }>(DELETE_ACCOUNT);
-
-  return async (id: number) => {
-    const response = await mutation({ id });
-    return response.deleteAccount;
   };
 };
 
@@ -275,5 +265,38 @@ export const useValidateEmailOld = createMutationHook<
   VALIDATE_CHANGE_EMAIL_OLD,
   {
     transform: (data) => data.validateChangeEmailOld
+  }
+);
+
+export const useDeleteAccountEmailSend = createMutationHook<
+  { deleteAccountEmailSend: string },
+  { input: DeleteAccountEmailSendInput },
+  string
+>(
+  DELETE_ACCOUNT_EMAIL_SEND,
+  {
+    transform: (data) => data.deleteAccountEmailSend
+  }
+);
+
+export const useValidateDeleteAccountEmailCode = createMutationHook<
+  { validateDeleteAccountEmailCode: string },
+  { input: { token: string; code: string } },
+  string
+>(
+  VALIDATE_DELETE_ACCOUNT_CODE,
+  {
+    transform: (data) => data.validateDeleteAccountEmailCode
+  }
+);
+
+export const useDeleteAccount = createMutationHook<
+  { deleteAccount: boolean },
+  { input: { token: string; code: string } },
+  boolean
+>(
+  DELETE_ACCOUNT,
+  {
+    transform: (data) => data.deleteAccount
   }
 );

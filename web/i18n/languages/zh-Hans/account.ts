@@ -107,6 +107,15 @@ const translation = {
     upload_limit_exceeded: "上传文件不能超过3MB",
     read_error: "图片文件读取错误"
   },
+  countdown: {
+    seconds_to_resend: '{{count}}秒后可重新发送',
+    // 倒计时文本
+    countdown_format: '剩余{{seconds}}秒',
+    can_resend: '可重新发送验证码',
+    resend_code: '重新发送验证码',
+    resend: '重新发送',
+    didnot_receive_code: '未收到验证码？',
+  },
   change_email: {
     // 对话框标题和按钮
     title: '修改邮箱',
@@ -122,12 +131,10 @@ const translation = {
     old_email_description: '为了保护您的账户安全，我们将向您的当前邮箱 {{email}} 发送验证码。',
     send_code: '发送验证码',
     sending: '发送中...',
-    resend_code: '重新发送验证码',
     verification_code: '验证码',
     verification_code_placeholder: '请输入6位数字验证码',
     next_step: '下一步',
     verifying: '验证中...',
-    seconds_to_resend: '{{count}}秒后可重新发送',
 
     // 第二步：设置新邮箱
     new_email_section_title: '设置新邮箱',
@@ -153,10 +160,29 @@ const translation = {
 
     // 成功消息
     success_message: '邮箱修改成功',
-
-    // 倒计时文本
-    countdown_format: '剩余{{seconds}}秒',
-    can_resend: '可重新发送验证码',
+  },
+  delete: {
+    title: "删除账户",
+    warning_title: "重要警告",
+    warning_description: "您即将永久删除您的账户。此操作不可逆，请谨慎考虑。",
+    warning_1: "所有账户数据将被永久删除",
+    warning_2: "所有工作空间和项目将被移除",
+    warning_3: "所有订阅和付费服务将立即终止",
+    warning_4: "此操作无法撤销",
+    verification_will_send: "我们将向 {{email}} 发送验证邮件以确认此操作",
+    continue: "继续删除",
+    verification_sent: "验证码已发送至 {{email}}",
+    verification_instruction: "请输入邮件中的6位验证码以继续",
+    verification_code: "验证码",
+    verification_code_required: "请输入验证码",
+    invalid_verification_code: "验证码无效",
+    verification_failed: "验证失败，请重试",
+    resend_code: "重新发送",
+    confirm_title: "最终确认",
+    confirm_warning: "这是最后的确认步骤，点击确认后账户将立即被删除",
+    confirm_description: "您确定要永久删除您的账户吗？",
+    confirm_note: "账户删除后，您将失去所有数据和访问权限",
+    confirm_button: "确认删除"
   }
 };
 export default translation;

@@ -18,6 +18,8 @@ const translation = {
     cancel: 'Cancel',
     close: 'Close',
     change: 'Change',
+    verify: 'Verify',
+    back: 'Back',
   },
   theme: {
     system: 'Follow System',

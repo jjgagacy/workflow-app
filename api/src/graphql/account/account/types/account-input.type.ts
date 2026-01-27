@@ -66,3 +66,31 @@ export class UpdateAccountThemeInput {
   theme: string;
 }
 
+@InputType('DeleteAccountInput')
+export class DeleteAccountInput {
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  token: string;
+
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  code: string;
+}
+
+@InputType('DeleteAccountEmailSendInput')
+export class DeleteAccountEmailSendInput {
+  @Field({ nullable: true })
+  language?: string;
+}
+
+@InputType('ValidateDeleteAccountCodeInput')
+export class ValidateDeleteAccountCodeInput {
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  token: string;
+
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  code: string;
+}
+

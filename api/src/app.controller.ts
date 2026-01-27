@@ -103,7 +103,8 @@ export class AppController {
     // const encryptedPassword = await this.accountService.hashPassword(password, salt);
     // console.log('verify password', await this.accountService.verifyPassword(password, encryptedPassword));
     // const tenant = await this.tenantService.getTenant('');
-    // const account = await this.accountService.getById(204);
+    const account = await this.accountService.getById(204);
+    await this.accountService.deleteAccount(account!);
     // if (tenant && account) {
     //   await this.tenantService.addAccountTenantMembership(account, tenant, AccountRole.ADMIN);
     // } else {

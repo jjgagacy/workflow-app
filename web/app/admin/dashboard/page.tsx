@@ -2,6 +2,7 @@
 
 import { Badge } from "@/app/components/base/badge";
 import Button from "@/app/components/base/button";
+import Countdown, { CountdownRef } from "@/app/components/base/countdown";
 import { useDialog } from "@/app/components/hooks/use-dialog";
 import { Accordion } from "@/app/ui/accordion";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/ui/card";
@@ -16,11 +17,12 @@ import { Textarea } from "@/app/ui/textarea";
 import { toast } from "@/app/ui/toast";
 import { TreeNode, TreeSelect } from "@/app/ui/tree-select";
 import { arrayToTree, treeToFlatten } from "@/utils/trees";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Page() {
   const [openDialog, setOpenDialog] = useState(false);
   const { showDialog, showAlert, showConfirm } = useDialog();
+  const countdownRef = useRef<CountdownRef>(null);
 
   const handleDelete = async () => {
     // use dialog
@@ -94,7 +96,12 @@ export default function Page() {
       title: "How long does delivery take?",
       description: "Delivery usually takes 3-5 business days depending on your location."
     }
-  ]
+  ];
+
+  useEffect(() => {
+    // Start countdown example
+    countdownRef.current?.reset();
+  }, []);
 
   return (
     <div>
@@ -196,6 +203,8 @@ export default function Page() {
       >
         this is content dialog
       </Dialog>
+
+      <Countdown ref={countdownRef} />
     </div>
   );
 }

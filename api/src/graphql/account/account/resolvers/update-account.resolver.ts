@@ -17,9 +17,7 @@ import { DeviceService } from "@/service/libs/device.service";
 import { convertLanguageCode } from "@/mail/mail-i18n.service";
 import { getMappedLang } from "@/i18n-global/langmap";
 import { AuthAccountService } from "@/service/auth-account.service";
-import { AccountEntity } from "@/account/entities/account.entity";
 import { TOKEN_TYPES, TokenManagerService } from "@/service/libs/token-manager.service";
-import { UnionDefinitionFactory } from "@nestjs/graphql/dist/schema-builder/factories/union-definition.factory";
 
 @Resolver()
 @UseGuards(EditionSelfHostedGuard)

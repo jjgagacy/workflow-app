@@ -175,3 +175,16 @@ export const VALIDATE_CHANGE_EMAIL_OLD = gql`
     validateChangeEmailOld(input: $input)
   }
 `
+
+export const DELETE_ACCOUNT_EMAIL_SEND = gql`
+  mutation DeleteAccountEmailSendMutation($input: DeleteAccountEmailSendInput!) {
+    deleteAccountEmailSend(input: $input)
+  }
+`
+
+export const VALIDATE_DELETE_ACCOUNT_CODE = gql`
+  mutation ValidateDeleteAccountCodeMutation($input: ValidateDeleteAccountCodeInput!) {
+    validateDeleteAccountEmailCode(input: $input)
+  }
+`
+

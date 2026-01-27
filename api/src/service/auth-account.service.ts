@@ -296,7 +296,7 @@ export class AuthAccountService {
 
   private async generateAccountDeletionToken(email: string): Promise<{ code: string; token: string; }> {
     const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const token = await this.tokenManagerService.generateToken(TOKEN_TYPES.ACCOUNT_DELETION, undefined, email, { code })
+    const token = await this.tokenManagerService.generateToken(TOKEN_TYPES.ACCOUNT_DELETION, undefined, email, { code });
     return { code, token };
   }
 
@@ -700,6 +700,20 @@ export class AuthAccountService {
       throw VerifyCodeError.create(this.i18n);
     }
   }
+
+  async validateAccountDeleteEmailCode(account: AccountEntity, token: string, code: string) {
+    const tokenData = await this.tokenManagerService.validateToken(token, TOKEN_TYPES.ACCOUNT_DELETION);
+    if (!tokenData) {
+      throw InvalidTokenError.create(this.i18n);
+    }
+    if (tokenData.email != account.email) {
+      throw InvalidEmailError.create(this.i18n);
+    }
+    if (tokenData.code != code) {
+      throw VerifyCodeError.create(this.i18n);
+    }
+  }
+
 }
 
 

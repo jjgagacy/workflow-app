@@ -105,6 +105,14 @@ const translation = {
     upload_limit_exceeded: "Upload images cannot exceed 3MB",
     read_error: "Image reading failed"
   },
+  countdown: {
+    seconds_to_resend: '{{count}} seconds until resend',
+    countdown_format: '{{seconds}} seconds remaining',
+    can_resend: 'Can resend verification code',
+    resend_code: 'Resend Verification Code',
+    resend: 'Resend',
+    didnot_receive_code: 'Didn’t receive the code?'
+  },
   change_email: {
     // 对话框标题和按钮
     title: 'Change Email',
@@ -118,12 +126,10 @@ const translation = {
     old_email_description: 'To protect your account security, we will send a verification code to your current email address: {{email}}.',
     send_code: 'Send Verification Code',
     sending: 'Sending...',
-    resend_code: 'Resend Verification Code',
     verification_code: 'Verification Code',
     verification_code_placeholder: 'Enter 6-digit verification code',
     next_step: 'Next Step',
     verifying: 'Verifying...',
-    seconds_to_resend: '{{count}} seconds until resend',
 
     // 第二步：设置新邮箱
     new_email_section_title: 'Set New Email',
@@ -149,10 +155,29 @@ const translation = {
 
     // 成功消息
     success_message: 'Email changed successfully',
-
-    // 倒计时文本
-    countdown_format: '{{seconds}} seconds remaining',
-    can_resend: 'Can resend verification code',
+  },
+  delete: {
+    title: "Delete Account",
+    warning_title: "Important Warning",
+    warning_description: "You are about to permanently delete your account. This action is irreversible, please consider carefully.",
+    warning_1: "All account data will be permanently deleted",
+    warning_2: "All workspaces and projects will be removed",
+    warning_3: "All subscriptions and paid services will be terminated immediately",
+    warning_4: "This action cannot be undone",
+    verification_will_send: "We will send a verification email to {{email}} to confirm this action",
+    continue: "Continue to Delete",
+    verification_sent: "Verification code has been sent to {{email}}",
+    verification_instruction: "Please enter the 6-digit verification code from the email to continue",
+    verification_code: "Verification Code",
+    verification_code_required: "Please enter verification code",
+    invalid_verification_code: "Invalid verification code",
+    verification_failed: "Verification failed, please try again",
+    resend_code: "Resend Code",
+    confirm_title: "Final Confirmation",
+    confirm_warning: "This is the final confirmation step, your account will be deleted immediately after clicking confirm",
+    confirm_description: "Are you sure you want to permanently delete your account?",
+    confirm_note: "After account deletion, you will lose all data and access",
+    confirm_button: "Confirm Deletion"
   }
 };
 export default translation;

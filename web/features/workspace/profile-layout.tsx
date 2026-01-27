@@ -7,14 +7,19 @@ import { ChevronRight, Edit, Edit2, Edit2Icon, Key, Mail, Shield, Trash2, User }
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next"
-import AvatarEdit from "./avatar-edit";
+import AvatarEdit from "./account/avatar-edit";
 import api from "@/api";
 import { toast } from "@/app/ui/toast";
 import { Dialog } from "@/app/ui/dialog";
-import ChangeEmailDialog from "./change-email-dialog";
+import ChangeEmailDialog from "./account/change-email-dialog";
+import AccountDeleteDialog from "./account/account-delete";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function ProfileLayout() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const { logout } = useAuth();
 
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
@@ -67,6 +72,9 @@ export default function ProfileLayout() {
 
   // 删除账户
   const handleDeleteAccount = async () => {
+    setShowDeleteConfirm(false);
+    logout();
+    router.push('/login');
   };
 
   return (
@@ -233,6 +241,13 @@ export default function ProfileLayout() {
         onClose={() => setIsEditingEmail(false)}
         onSuccess={() => { }}
         currentEmail={userData.email}
+      />
+
+      <AccountDeleteDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onSuccess={() => handleDeleteAccount}
+        userEmail={userData.email}
       />
     </>
   )

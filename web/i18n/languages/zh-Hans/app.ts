@@ -1,3 +1,5 @@
+import { verify } from "crypto";
+
 const translation = {
   blog: '博客',
   go_to_login: '去登录',
@@ -18,6 +20,8 @@ const translation = {
     cancel: '取消',
     close: '关闭',
     change: '更改',
+    verify: '验证',
+    back: '返回',
   },
   theme: {
     system: '跟随系统',
