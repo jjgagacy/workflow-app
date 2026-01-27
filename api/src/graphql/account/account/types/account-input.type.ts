@@ -5,31 +5,31 @@ import { IsNotEmpty, IsUUID, Matches } from 'class-validator';
 @InputType('AccountInput')
 export class AccountInput {
   @Field({ nullable: true })
-  id: number;
+  id?: number;
 
   @Field({ nullable: true })
-  username: string;
+  username?: string;
 
   @Field({ nullable: true })
-  password: string;
+  password?: string;
 
   @Field({ nullable: true })
-  realName: string;
+  realName?: string;
 
   @Field({ nullable: true })
-  email: string;
+  email?: string;
 
   @Field({ nullable: true })
-  mobile: string;
+  mobile?: string;
 
   @Field((type) => Int, { nullable: true })
-  status: number;
+  status?: number;
 
   @Field((type) => [Int], { nullable: true })
-  roles: number[];
+  roles?: number[];
 
   @Field({ nullable: true })
-  emailCode: string;
+  emailCode?: string;
 }
 
 @InputType('UpdateAccountNameInput')

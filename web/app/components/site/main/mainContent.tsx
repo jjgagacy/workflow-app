@@ -132,11 +132,9 @@ export default function MainContent() {
     ]
   };
   return (
-    <main className="pt-16">
+    <main className="pt-16 bg-gradient-to-b from-green-50 to-white dark:from-gray-900 dark:to-gray-800">
       {/* Hero Section */}
-      <section
-        className="mx-auto px-4 sm:px-6 lg:px-8 py-20 relative bg-gradient-to-b from-green-50 to-white dark:from-gray-900 dark:to-gray-800 overflow-hidden flex justify-center"
-      >
+      <section className="mx-auto px-4 sm:px-6 lg:px-8 py-20 relative  overflow-hidden flex justify-center border-b border-gray-200 dark:border-gray-700">
         {/* 内容 */}
         <div className="container relative z-10 ">
           <div className="max-w-4xl mx-auto text-center">
@@ -173,7 +171,7 @@ export default function MainContent() {
       </section >
 
       {/* Platform Features */}
-      <section id="features" className="py-20 bg-gray-50 dark:bg-gray-900/50">
+      <section id="features" className="py-20 border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
@@ -214,7 +212,7 @@ export default function MainContent() {
       </section>
 
       {/* Why Choose Monie */}
-      <section className="py-20 bg-amber-50 dark:bg-amber-900/30">
+      <section className="py-20 border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>

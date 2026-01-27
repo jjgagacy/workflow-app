@@ -96,7 +96,7 @@ export function ModuleForm({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="grid grid-cols-12 gap-4 mb-4">
-            <div className="col-span-full p-4 space-y-4 rounded">
+            <div className="col-span-full space-y-4 rounded">
               <FormField
                 control={form.control}
                 name='key'

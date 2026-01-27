@@ -6,6 +6,11 @@ export class EndPointConfig {
   constructor(protected readonly configService: ConfigService
   ) { }
 
+  // Base url for site
+  siteBaseUrl(): string {
+    return this.configService.get<string>('SITE_BASE_URL', '');
+  }
+
   // Base url for API endpoints
   apiBaseUrl(): string {
     return this.configService.get<string>('API_BASE_URL', '');

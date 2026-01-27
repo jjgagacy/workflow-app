@@ -1,15 +1,14 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ModuleEntity } from "./entities/module.entity";
-import { FindManyOptions, FindOneOptions, FindOptionsWhere, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { ModulePermEntity } from "./entities/module-perm.entity";
 import { PermEntity } from "./entities/perm.entity";
-import { plainToInstance } from "class-transformer";
 import { CreateModulePermDto } from "./perm/dto/create-module-perm.dto";
 import { UpdateModulePermDto } from "./perm/dto/update-module-perm.dto";
 import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
-import { throwIfDtoValidateFail } from "@/common/utils/validation";
+import { validateDto } from "@/common/utils/validation";
 
 @Injectable()
 export class ModulePermService {
@@ -138,9 +137,7 @@ export class ModulePermService {
    * @returns 
    */
   async createPermission(dto: CreateModulePermDto): Promise<ModulePermEntity> {
-    const validateObj = plainToInstance(CreateModulePermDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+    await validateDto(CreateModulePermDto, dto, this.i18n);
 
     if (await this.getPermission(dto.key, dto.moduleId, dto.tenantId)) {
       throw new BadRequestException(this.i18n.t('system.PERM_KEY_EXISTS', { args: { key: dto.key } }));
@@ -167,9 +164,7 @@ export class ModulePermService {
    * @returns 
    */
   async updatePermission(dto: UpdateModulePermDto): Promise<ModulePermEntity> {
-    const validateObj = plainToInstance(UpdateModulePermDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+    await validateDto(UpdateModulePermDto, dto, this.i18n);
 
     const permission = await this.getPermission(dto.key, dto.module, dto.tenantId);
     if (!permission) {

@@ -99,7 +99,7 @@ export default function DepartmentForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="grid grid-cols-12 gap-4 mb-8">
-              <div className="col-span-6 p-4 space-y-4 rounded">
+              <div className="col-span-6 space-y-4 rounded">
 
                 <FormField
                   control={form.control}
@@ -175,7 +175,7 @@ export default function DepartmentForm({
               </div>
             </div>
 
-            <Button className="ml-4" type="submit" disabled={isLoading} loading={isLoading}>{updateDepKey ? t('system.edit_department') : t('system.add_department')}</Button>
+            <Button type="submit" disabled={isLoading} loading={isLoading}>{updateDepKey ? t('system.edit_department') : t('system.add_department')}</Button>
           </form>
         </Form>
       </CardContent>

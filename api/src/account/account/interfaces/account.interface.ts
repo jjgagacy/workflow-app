@@ -12,3 +12,8 @@ export interface AccountInterface extends CreatedUpdatedInterface {
   lastIp?: string;
   roles?: RoleInterface[];
 }
+
+export interface CreateAccountOptions {
+  checkEmailExistence?: boolean;
+  inviterName?: string;
+}

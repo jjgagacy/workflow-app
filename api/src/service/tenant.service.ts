@@ -3,8 +3,7 @@ import { BadRequestException, ConflictException, Injectable } from "@nestjs/comm
 import { I18nService } from "nestjs-i18n";
 import { CreateTenantDto } from "./dto/tenant.dto";
 import { DataSource, EntityManager, In } from "typeorm";
-import { plainToInstance } from "class-transformer";
-import { throwIfDtoValidateFail } from "@/common/utils/validation";
+import { validateDto } from "@/common/utils/validation";
 import { SystemService } from "@/monie/system.service";
 import { TenantEntity } from "@/account/entities/tenant.entity";
 import { AccountRole } from "@/account/account.enums";
@@ -32,9 +31,7 @@ export class TenantService {
   ) { }
 
   async createTenant(dto: CreateTenantDto, isSetup = false, entityManager?: EntityManager): Promise<TenantEntity> {
-    const validateObj = plainToInstance(CreateTenantDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+    await validateDto(CreateTenantDto, dto, this.i18n);
 
     if (!this.systemService.allowCreateWorkspace && !isSetup) {
       throw new BadRequestException(this.i18n.t('tenant.WORKSPACE_CREATE_NOT_ALLOWD'));

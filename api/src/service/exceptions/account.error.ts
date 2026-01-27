@@ -89,3 +89,14 @@ export class AccountNotInitializedError extends UnauthorizedException {
     return new AccountNotInitializedError(i18n.t('account.ACCOUNT_NOT_INITIALIZED'));
   }
 }
+
+export class AccountAlreadyInTenantError extends BadRequestException {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AccountAlreadyInTenantError';
+  }
+
+  static create(i18n: I18nService<I18nTranslations>): AccountAlreadyInTenantError {
+    return new AccountAlreadyInTenantError(i18n.t('account.ACCOUNT_ALREADY_IN_TENANT'));
+  }
+}

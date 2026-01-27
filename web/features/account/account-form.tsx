@@ -49,7 +49,6 @@ export default function AccountForm({
     mobile: z.string(),
     email: z.union([
       z.email({ error: t('system.email_format_error') }).nullable().optional(),
-      z.string().min(0)
     ]),
     roles: z.array(z.string()).min(1, {
       error: t('system.select_at_least_one_role'),
@@ -159,10 +158,8 @@ export default function AccountForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 
-            <div className="grid grid-
-            s-12 gap-4 mb-8">
-              <div className="col-span-6 p-4 space-y-4 rounded">
-
+            <div className="grid grid-cols-12 gap-4 mb-8">
+              <div className="col-span-6 space-y-4 rounded">
                 <FormField
                   control={form.control}
                   name="username"
@@ -181,6 +178,24 @@ export default function AccountForm({
 
                 <FormField
                   control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('system.email')}</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          {...field}
+                          value={field.value ?? ""}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="password"
                   render={({ field }) => (
                     <FormItem>
@@ -189,6 +204,31 @@ export default function AccountForm({
                         <Input
                           type="password"
                           {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="col-span-6 space-y-4 rounded">
+
+                <FormField
+                  control={form.control}
+                  name="roles"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('system.role')}</FormLabel>
+                      <FormControl>
+                        <TreeSelect
+                          options={roleSelectList}
+                          idKey="key"
+                          labelKey="name"
+                          multiple={true}
+                          search={false}
+                          selectedIdKey={account?.roleKeys}
+                          onChange={(e) => field.onChange(e)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -228,72 +268,10 @@ export default function AccountForm({
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('system.email')}</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          {...field}
-                          value={field.value ?? ""}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-              </div>
-              <div className="col-span-6 p-4 space-y-4 rounded">
-                <FormField
-                  control={form.control}
-                  name="roles"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('system.role')}</FormLabel>
-                      <FormControl>
-                        <TreeSelect
-                          options={roleSelectList}
-                          idKey="key"
-                          labelKey="name"
-                          multiple={true}
-                          search={false}
-                          selectedIdKey={account?.roleKeys}
-                          onChange={(e) => field.onChange(e)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('system.status')}</FormLabel>
-                      <RadioGroup
-                        name='status'
-                        defaultValue={field.value}
-                        value={field.value}
-                        onValueChange={(e) => field.onChange(e)}
-                        orientation='horizontal'
-                      >
-                        <RadioGroupItem value={1}>{t('system.enable')}</RadioGroupItem>
-                        <RadioGroupItem value={0}>{t('system.disable')}</RadioGroupItem>
-                      </RadioGroup>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
             </div>
 
-            <Button className="ml-4" type="submit" disabled={isLoading} loading={isLoading}>{updateAccountId ? t('system.edit_account') : t('system.add_account')}</Button>
+            <Button type="submit" disabled={isLoading} loading={isLoading}>{updateAccountId ? t('system.edit_account') : t('system.add_account')}</Button>
           </form>
         </Form>
       </CardContent>

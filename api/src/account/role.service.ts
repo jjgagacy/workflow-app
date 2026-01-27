@@ -15,7 +15,6 @@ import { MenuEntity } from './entities/menu.entity';
 import { MenuRoleEntity } from './entities/menu-role.entity';
 import { ModulePermEntity } from './entities/module-perm.entity';
 import { CreateRoleDto } from './role/dto/create-role.dto';
-import { plainToInstance } from 'class-transformer';
 import { QueryRoleDto } from './role/dto/query-role.dto';
 import { MenuItem, SetRolePermsDto } from './perm/dto/set-role-perms.dto';
 import { RolePermsInterface } from './perm/interfaces/role-perms.interface';
@@ -23,7 +22,7 @@ import { scopeStringToObject } from './interfaces/scope.interface';
 import { UpdateRoleDto } from './role/dto/update-role.dto';
 import { I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '@/generated/i18n.generated';
-import { throwIfDtoValidateFail } from '@/common/utils/validation';
+import { validateDto } from '@/common/utils/validation';
 import { isPaginator } from '@/common/database/utils/pagination';
 import { getPaginationOptions } from '@/common/database/dto/query.dto';
 
@@ -56,9 +55,7 @@ export class RoleService {
    * 创建角色
    */
   async create(dto: CreateRoleDto): Promise<RoleEntity> {
-    const validateObj = plainToInstance(CreateRoleDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+    await validateDto(CreateRoleDto, dto, this.i18n);
 
     // 并行检查唯一性
     const [existingByKey, existingByName] = await Promise.all([
@@ -104,9 +101,7 @@ export class RoleService {
    * 更新角色
    */
   async update(dto: Partial<UpdateRoleDto>): Promise<RoleEntity | null> {
-    const validateObj = plainToInstance(UpdateRoleDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+    await validateDto(UpdateRoleDto, dto, this.i18n);
 
     if (!dto.id) {
       throw new BadRequestException(
@@ -245,9 +240,7 @@ export class RoleService {
    * 设置角色权限
    */
   async setRolePerms(dto: SetRolePermsDto): Promise<void> {
-    const validateObj = plainToInstance(SetRolePermsDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+    await validateDto(SetRolePermsDto, dto, this.i18n);
 
     const role = await this.getRoleByKey(dto.key, dto.tenantId);
     if (!role) {

@@ -3,6 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { DefaultConfigValues } from "../constants/default-config-value";
 import { getSafeNumber } from "../helpers/safe-number";
 import { toBoolean } from "../helpers/to-boolean";
+import { TimeConverter } from "@/service/libs/time-converter.service";
 
 @Injectable()
 export class SecurityConfig {
@@ -33,6 +34,11 @@ export class SecurityConfig {
   accountDeletionTokenExpiryMinutes(): number {
     const min = this.configService.get<number>('ACCOUNT_DELETION_TOKEN_EXPIRY_MINUTES', DefaultConfigValues.ACCOUNT_DELETION_TOKEN_EXPIRY_MINUTES);
     return getSafeNumber(min, DefaultConfigValues.ACCOUNT_DELETION_TOKEN_EXPIRY_MINUTES);
+  }
+
+  inviteMemberTokenExpiryHours(): number {
+    const min = this.configService.get<number>('INVITE_MEMBER_TOKEN_EXPIRY_MINUTES', DefaultConfigValues.INVITE_MEMBER_TOKEN_EXPIRY_MINUTES);
+    return TimeConverter.secondsToHours(min * 60);
   }
 
   loginCheckDisabled(): boolean {

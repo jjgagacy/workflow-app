@@ -6,10 +6,9 @@ import { CreateAccountDto } from "./account/dto/create-account.dto";
 import * as bcrypt from 'bcrypt';
 import { BCRYPT_SALT_ROUNDS, PASSWORD_SALT } from "@/config/constants";
 import { RoleService } from "@/account/role.service";
-import { plainToInstance } from "class-transformer";
 import { UpdateAccountDto } from "./account/dto/update-account.dto";
 import { QueryAccountDto } from "./account/dto/query-account.dto";
-import { throwIfDtoValidateFail } from "@/common/utils/validation";
+import { validateDto } from "@/common/utils/validation";
 import { I18nService } from "nestjs-i18n";
 import { InvalidInputGraphQLException } from "@/common/exceptions";
 import { I18nTranslations } from "@/generated/i18n.generated";
@@ -21,6 +20,7 @@ import { getPaginationOptions } from "@/common/database/dto/query.dto";
 import { isPaginator } from "@/common/database/utils/pagination";
 import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
+import { AccountStatus } from "./account.enums";
 
 @Injectable()
 export class AccountService {
@@ -55,11 +55,11 @@ export class AccountService {
   }
 
   async create(dto: CreateAccountDto, entityManager?: EntityManager): Promise<AccountEntity> {
-    const accountRepository = entityManager ?
-      entityManager.getRepository(AccountEntity) : this.accountRepository;
-    const validateObj = plainToInstance(CreateAccountDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+    const accountRepository = entityManager
+      ? entityManager.getRepository(AccountEntity)
+      : this.accountRepository;
+
+    const dtoInstance = await validateDto(CreateAccountDto, dto, this.i18n);
 
     if (dto.username !== '') {
       const existingAccount = await this.getByUserName(dto.username!);
@@ -74,26 +74,28 @@ export class AccountService {
         throw new BadRequestException(this.i18n.t('system.EMPTY_PARAM', { args: { name: 'username' } }));
       if (dto.password === '')
         throw new BadRequestException(this.i18n.t('account.PASSWORD_NOT_EMPTY'));
-
     } else if (edition === EditionType.CLOUD) {
       if (dto.email === '')
         throw new BadRequestException(this.i18n.t('account.EMAIL_NOT_EMPTY'));
+    }
+
+    if (dto.email !== undefined) {
       const existingAccount = await this.getByEmail(dto.email || '');
       if (existingAccount) {
         throw new BadRequestException(this.i18n.t('account.EMAIL_EXIST', { args: { name: dto.email } }));
       }
     }
 
-    if (dto.password != '') {
-      this.validPassword(dto.password);
+    if (dto.password !== undefined) {
+      this.validPassword(dto.password!);
     }
 
     const salt = dto.password !== '' ? await this.generateSaltString() : '';
     const accountEntity = this.accountRepository.create({
-      ...this.mapBaseFields(validateObj),
+      ...this.mapBaseFields(dtoInstance),
       salt,
-      password: dto.password !== '' ? await this.hashPassword(dto.password, salt) : '',
-      operate: this.mapOperateFields(validateObj),
+      ...(dto.password !== undefined && { password: await this.hashPassword(dto.password!, salt) }),
+      operate: this.mapOperateFields(dtoInstance),
       roles: await this.roleService.resolveRoles(dto.roles)
     });
 
@@ -102,9 +104,7 @@ export class AccountService {
   }
 
   async update(dto: UpdateAccountDto): Promise<AccountEntity | null> {
-    const validateObj = plainToInstance(UpdateAccountDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+    const dtoInstance = await validateDto(UpdateAccountDto, dto, this.i18n);
 
     if (dto.id === undefined) {
       throw new InvalidInputGraphQLException(this.i18n.t('system.INVALID_PARAM', { args: { name: 'id', value: dto.id } }));
@@ -127,8 +127,8 @@ export class AccountService {
     }
 
     const updatedFields = {
-      ...this.mapBaseFields(dto),
-      operate: this.mapOperateFields(dto),
+      ...this.mapBaseFields(dtoInstance),
+      operate: this.mapOperateFields(dtoInstance),
     };
 
     if (dto.password) {
@@ -306,6 +306,21 @@ export class AccountService {
       id: account.id,
       email: account.email,
     });
+  }
+
+  getAccountStatusName(accountStatus: AccountStatus): string {
+    switch (accountStatus) {
+      case AccountStatus.ACTIVE:
+        return this.i18n.t('account.STATUS.ACTIVE');
+      case AccountStatus.BANNED:
+        return this.i18n.t('account.STATUS.BANNED');
+      case AccountStatus.CLOSED:
+        return this.i18n.t('account.STATUS.CLOSED');
+      case AccountStatus.UNINITIALIZED:
+        return this.i18n.t('account.STATUS.UNINITIALIZED');
+      default:
+        return '';
+    }
   }
 }
 

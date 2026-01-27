@@ -1,5 +1,7 @@
-import { ValidationError } from "class-validator";
+import { validate, ValidationError } from "class-validator";
 import { ValidationGraphQLException } from "../exceptions";
+import { ClassConstructor, plainToInstance } from "class-transformer";
+import { group } from "console";
 
 export interface ValidationErrorInfo {
   field: string;
@@ -57,10 +59,29 @@ export function formatValidationErrors(errors: ValidationError[]): FormatValidat
   };
 }
 
-export function throwIfDtoValidateFail(errors: ValidationError[]) {
-  const formatted = formatValidationErrors(errors);
-  if (!formatted.isValid) {
-    // todo 现在只返回第一个错误字段，并且后面的日志也记录第一个
-    throw new ValidationGraphQLException(formatted.firstError);
+export async function validateDto<T extends object, V>(
+  dtoClass: ClassConstructor<T>,
+  data: V,
+  i18nService?: any,
+  groups?: string[],
+): Promise<T> {
+  const dtoInstance = plainToInstance(dtoClass, data);
+
+  let errors: ValidationError[] = [];
+
+  if (i18nService) {
+    errors = await i18nService.validate(dtoInstance, { groups });
+  } else {
+    errors = await validate(dtoInstance, { groups });
   }
+
+  if (errors.length > 0) {
+    const formatted = formatValidationErrors(errors);
+    if (!formatted.isValid) {
+      // todo 现在只返回第一个错误字段，并且后面的日志也记录第一个
+      throw new ValidationGraphQLException(formatted.firstError);
+    }
+  }
+  return dtoInstance;
 }
+

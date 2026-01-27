@@ -2,7 +2,6 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { MenuEntity } from "./entities/menu.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindManyOptions, FindOptionsWhere, In, Not, Repository } from "typeorm";
-import { plainToInstance } from "class-transformer";
 import { ModuleEntity } from "./entities/module.entity";
 import { QueryMenuDto } from "./menu/dto/query-menu.dto";
 import { MenuRoleService } from "./menu-role.service";
@@ -14,7 +13,7 @@ import { UpdateMenuDto } from "./menu/dto/update-menu.dto";
 import { MenuInterface } from "./menu/interfaces/menu.interface";
 import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
-import { throwIfDtoValidateFail } from "@/common/utils/validation";
+import { validateDto } from "@/common/utils/validation";
 import { getPaginationOptions } from "@/common/database/dto/query.dto";
 import { isPaginator } from "@/common/database/utils/pagination";
 
@@ -55,9 +54,7 @@ export class MenuService {
    * @throws ConflictException 当key或name重复时
    */
   async create(dto: CreateMenuDto): Promise<MenuEntity | null> {
-    const validateObj = plainToInstance(CreateMenuDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+    await validateDto(CreateMenuDto, dto, this.i18n);
 
     // 并行检查key和name唯一性
     const [existingByKey, existingByName] = await Promise.all([
@@ -110,9 +107,7 @@ export class MenuService {
    * @throws BadRequestException 当尝试修改parent时
    */
   async update(dto: UpdateMenuDto): Promise<MenuEntity> {
-    const validateObj = plainToInstance(UpdateMenuDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+    await validateDto(UpdateMenuDto, dto, this.i18n);
 
     const menu = await this.menuRepository.findOne({ where: { key: dto.key, tenant: { id: dto.tenantId } }, relations: { module: true } });
     if (!menu) {

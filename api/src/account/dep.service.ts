@@ -2,7 +2,6 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { DepEntity } from "./entities/dep.entity";
 import { EntityManager, FindManyOptions, FindOptionsWhere, In, Like, Not, QueryRunner, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import { plainToInstance } from "class-transformer";
 import { QueryDepDto } from "./dep/dto/query-dep.dto";
 import { DepInterface } from "./interfaces/dep.interface";
 import { AccountService } from "@/account/account.service";
@@ -10,10 +9,9 @@ import { CreateDepDto } from "./dep/dto/create-dep.dto";
 import { UpdateDepDto } from "./dep/dto/update-dep.dto";
 import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
-import { throwIfDtoValidateFail } from "@/common/utils/validation";
+import { validateDto } from "@/common/utils/validation";
 import { InvalidInputGraphQLException } from "@/common/exceptions";
 import { isPaginator } from "@/common/database/utils/pagination";
-import { QueryRoleDto } from "./role/dto/query-role.dto";
 
 @Injectable()
 export class DepService {
@@ -37,9 +35,7 @@ export class DepService {
   }
 
   async create(dto: CreateDepDto): Promise<DepEntity> {
-    const validateObj = plainToInstance(CreateDepDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+    await validateDto(CreateDepDto, dto, this.i18n);
 
     const [existingByKey] = await Promise.all([
       this.depRepository.findOneBy({ key: dto.key, tenant: { id: dto.tenantId } }),
@@ -80,9 +76,7 @@ export class DepService {
   }
 
   async update(dto: UpdateDepDto): Promise<DepEntity | null> {
-    const validateObj = plainToInstance(UpdateDepDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+    await validateDto(UpdateDepDto, dto, this.i18n);
     const dep = await this.depRepository.findOneBy({ key: dto.key, tenant: { id: dto.tenantId } });
     if (!dep) {
       throw new BadRequestException(this.i18n.t('system.DEP_KEY_NOT_EXIST', { args: { key: dto.key } }));

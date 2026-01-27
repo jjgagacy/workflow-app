@@ -2,7 +2,7 @@ import { Global, Module } from "@nestjs/common";
 import { AuthAccountService } from "./auth-account.service";
 import { EnhanceCacheService } from "../common/services/cache/enhance-cache.service";
 import { BillingService } from "./billing/billing.service";
-import { TenantService } from "./tenant.service";
+import { TenantAccountService, TenantService } from "./tenant.service";
 import { GeneralCacheService } from "../common/services/cache/general-cache.service";
 import { EnterpriseService } from "./enterprise/enterprise.service";
 import { FeatureService } from "./feature.service";
@@ -52,6 +52,7 @@ import { FileHelper } from "./libs/helpers/file.helper";
     FileService,
     UploadFileService,
     FileHelper,
+    TenantAccountService,
   ],
   exports: [
     AuthAccountService,

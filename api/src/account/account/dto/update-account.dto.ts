@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 import { BaseAccountDto } from './base-account.dto';
 
 export class UpdateAccountDto extends BaseAccountDto {
@@ -7,4 +7,7 @@ export class UpdateAccountDto extends BaseAccountDto {
   password?: string;
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   updatedBy: string;
+  @IsOptional()
+  @IsEmail()
+  email?: string;
 }

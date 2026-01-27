@@ -5,9 +5,8 @@ import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, Like, Repository }
 import { CommonUploadFileDto, CreateUploadFileDto, QueryUploadFileDto } from "./dto/file.dto";
 import { getPaginationOptions } from "@/common/database/dto/query.dto";
 import { isPaginator } from "@/common/database/utils/pagination";
-import { plainToInstance } from "class-transformer";
 import { I18nService } from "nestjs-i18n";
-import { throwIfDtoValidateFail } from "@/common/utils/validation";
+import { validateDto } from "@/common/utils/validation";
 
 @Injectable()
 export class UploadFileService {
@@ -19,12 +18,10 @@ export class UploadFileService {
 
   async create(dto: CreateUploadFileDto): Promise<UploadFilesEntity> {
     const uploadFilesRepository = this.uploadFilesRepository;
-    const validateObj = plainToInstance(CreateUploadFileDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+    const dtoInstance = await validateDto(CreateUploadFileDto, dto, this.i18n);
 
     const uploadFilesEntity = uploadFilesRepository.create({
-      ...this.mapUploadFilesBaseFields(validateObj),
+      ...this.mapUploadFilesBaseFields(dtoInstance),
       createdRole: dto.createdRole as string,
       ...(dto.createdAccount !== undefined && { createdAccount: { id: dto.createdAccount } }),
       ...(dto.createdUser !== undefined && { createdUser: dto.createdUser }),

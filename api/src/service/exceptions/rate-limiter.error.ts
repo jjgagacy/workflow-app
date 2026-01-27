@@ -68,3 +68,13 @@ export class EmailPasswordLoginInvalidCredentialError extends UnauthorizedExcept
   }
 }
 
+export class InviteMemberRateLimitError extends BadRequestException {
+  constructor(message: string) {
+    super(message);
+    this.name = 'InviteMemberRateLimitError';
+  }
+
+  static create(i18n: I18nService<I18nTranslations>, timeWindow?: number): InviteMemberRateLimitError {
+    return new InviteMemberRateLimitError(i18n.t('auth.INVITE_MEMBER_RATE_LIMIT_EXCEEDED', { args: { timeWindow } }))
+  }
+}

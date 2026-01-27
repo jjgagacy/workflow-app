@@ -26,9 +26,12 @@ import { DeviceService } from './service/libs/device.service';
 import { Response } from 'express';
 import { AccountService } from './account/account.service';
 import { TenantService } from './service/tenant.service';
-import { AccountRole } from './account/account.enums';
+import { AccountRole, AccountStatus } from './account/account.enums';
 import { Public } from './common/guards/universal-auth.guard';
 import { OpenDALStorage } from './storage/implements/opendal.storage';
+import { EnumConverter, EnumUtils } from './common/utils/enums';
+import { CreateAccountDto } from './account/account/dto/create-account.dto';
+import { validateDto } from './common/utils/validation';
 
 class OrderCreatedEvent {
   constructor(private eventObj: { orderId: number; payload: any }) { }
@@ -103,8 +106,21 @@ export class AppController {
     // const encryptedPassword = await this.accountService.hashPassword(password, salt);
     // console.log('verify password', await this.accountService.verifyPassword(password, encryptedPassword));
     // const tenant = await this.tenantService.getTenant('');
-    const account = await this.accountService.getById(204);
-    await this.accountService.deleteAccount(account!);
+    // const account = await this.accountService.getById(204);
+    //await this.accountService.deleteAccount(account!);
+    // const active = EnumConverter.toEnum(AccountStatus, 0);
+    // console.log(active, this.accountService.getAccountStatusName(active as AccountStatus));
+    // console.log(this.accountService.getAccountStatusName(AccountStatus.ACTIVE));
+    const dto: CreateAccountDto = {
+      username: '123',
+      email: "511268609@qq.com",
+      createdBy: 'aa',
+    };
+    const tenantId = '272635fa-c96f-4ad4-b7c6-9406332ae89c';
+    // const tenant = await this.tenantService.getTenant('272635fa-c96f-4ad4-b7c6-9406332ae89c');
+    // await this.authAccountService.createAccountForTenant(dto, tenant!, { checkEmailExistence: true });
+    await this.authAccountService.sendInviteMemberEmail({ email: '511268609@qq.com', tenantId });
+    // console.log('validate', await validateDto(CreateAccountDto, dto, this.i18n));
     // if (tenant && account) {
     //   await this.tenantService.addAccountTenantMembership(account, tenant, AccountRole.ADMIN);
     // } else {

@@ -1,4 +1,4 @@
-import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { AccountService } from "@/account/account.service";
 import { GetAccountArgs } from "../types/get-account.args";
 import { Account } from "../types/account.type";
@@ -23,7 +23,8 @@ import { DeviceService } from "@/service/libs/device.service";
 import { getMappedLang } from "@/i18n-global/langmap";
 import { convertLanguageCode } from "@/mail/mail-i18n.service";
 import { TOKEN_TYPES, TokenManagerService } from "@/service/libs/token-manager.service";
-import { InvalidEmailError, InvalidTokenError, VerifyCodeError } from "@/service/exceptions/token.error";
+import { DataSource } from "typeorm";
+import { TenantEntity } from "@/account/entities/tenant.entity";
 
 @Resolver()
 export class AccountResolver {
@@ -88,22 +89,45 @@ export class AccountResolver {
 @Resolver()
 @UseGuards(EditionSelfHostedGuard)
 export class CreateAccountResolver {
-  constructor(private readonly accountService: AccountService) { }
+  constructor(
+    private readonly accountService: AccountService,
+    private readonly authAccountService: AuthAccountService,
+    private readonly tenantService: TenantService,
+    private readonly deviceService: DeviceService,
+  ) { }
 
   @Mutation(() => AccountResponse)
-  async createAccount(@Args('input') input: AccountInput, @CurrentUser() user: any): Promise<AccountResponse> {
+  async createAccount(
+    @Args('input') input: AccountInput,
+    @CurrentUser() user: any,
+    @CurrentTenent() tenant: any,
+    @GqlRequest() req: Request,
+  ): Promise<AccountResponse> {
+    const language = this.deviceService.getLanguageFromHeader(req.headers['accept-language']);
+    const translatedLanguage = convertLanguageCode(getMappedLang(language));
     const dto = {
-      username: input.username,
-      realName: input.realName,
-      password: input.password,
+      username: input.username || '',
+      realName: input.realName || '',
+      password: input.password || '',
       email: input.email,
-      status: input.status,
       mobile: input.mobile,
       createdBy: user.name,
       roles: input.roles
     };
-    const createRes = await this.accountService.create(dto);
-    const id = createRes.id;
+    const tenantEntity = await this.tenantService.getTenant(tenant.id);
+    if (!tenantEntity) {
+      throw new NotFoundException();
+    }
+    const accountEntity = await this.accountService.getById(user.id);
+    const inviterName = accountEntity?.realName || accountEntity?.username || user.name;
+
+    const createdAccount = await this.authAccountService.createAccountForTenant(
+      dto,
+      tenantEntity,
+      { checkEmailExistence: true, inviterName },
+      translatedLanguage,
+    );
+    const id = createdAccount.id;
     return { id };
   }
 }

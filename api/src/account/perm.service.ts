@@ -3,12 +3,11 @@ import { PermEntity } from "./entities/perm.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindManyOptions, FindOptionsWhere, Repository } from "typeorm";
 import { CreatePermDto } from "./perm/dto/create-perm.dto";
-import { plainToInstance } from "class-transformer";
 import { QueryPermDto } from "./perm/dto/query-perm.dto";
 import { UpdatePermDto } from "./perm/dto/update-perm.dto";
 import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
-import { throwIfDtoValidateFail } from "@/common/utils/validation";
+import { validateDto } from "@/common/utils/validation";
 import { getPaginationOptions } from "@/common/database/dto/query.dto";
 import { isPaginator } from "@/common/database/utils/pagination";
 
@@ -36,9 +35,7 @@ export class PermService {
    * @throws BadRequestException 当DTO验证失败或key已存在时
    */
   async create(dto: CreatePermDto): Promise<PermEntity> {
-    const validateObj = plainToInstance(CreatePermDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+    await validateDto(CreatePermDto, dto, this.i18n);
 
     if (await this.getByKey(dto.key)) {
       throw new BadRequestException(this.i18n.t('system.PERM_LEVEL_KEY_EXISTS', { args: { key: dto.key } }));
@@ -60,9 +57,7 @@ export class PermService {
    * @throws BadRequestException 当权限等级不存在时
    */
   async update(dto: UpdatePermDto): Promise<PermEntity> {
-    const validateObj = plainToInstance(UpdatePermDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+    await validateDto(UpdatePermDto, dto, this.i18n);
 
     const permLevel = await this.getByKey(dto.key);
     if (!permLevel) {

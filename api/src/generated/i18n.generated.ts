@@ -16,10 +16,18 @@ export type I18nTranslations = {
         "ACCOUNT_EXIST": string;
         "ACCOUNT_NOT_INITIALIZED": string;
         "ACCOUNT_ID_NOT_EXISTS": string;
+        "ACCOUNT_ALREADY_IN_TENANT": string;
         "EMAIL_NOT_EMPTY": string;
         "EMAIL_NOT_EXIST": string;
         "EMAIL_EXIST": string;
         "EMAIL_IN_FREEZE": string;
+        "STATUS": {
+            "ACTIVE": string;
+            "PENDING": string;
+            "BANNED": string;
+            "UNINITIALIZED": string;
+            "CLOSED": string;
+        };
     };
     "auth": {
         "PASSWORD_INVALID": string;
@@ -27,6 +35,7 @@ export type I18nTranslations = {
         "ACCOUNT_DELETION_RATE_LIMIT_EXCEEDED": string;
         "EMAIL_LOGIN_RATE_LIMIT_EXCEEDED": string;
         "EMAIL_CHANGE_RATE_LIMIT_EXCEEDED": string;
+        "INVITE_MEMBER_RATE_LIMIT_EXCEEDED": string;
         "INVALID_TOKEN": string;
         "INVALID_EMAIL": string;
         "INVALID_ACCOUNT": string;

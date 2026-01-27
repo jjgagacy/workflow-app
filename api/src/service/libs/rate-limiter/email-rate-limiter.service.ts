@@ -7,6 +7,7 @@ export enum EmailRateLimitType {
   EMAIL_CODE_ACCOUNT_DELETION = 'email_code_account_deletion',
   CHANGE_EMAIL = 'change_email',
   CONFIRM_EMAIL = 'confirm_email',
+  INVITE_MEMBER = 'invite_member',
 }
 
 export interface EmailRateLimitOptions {

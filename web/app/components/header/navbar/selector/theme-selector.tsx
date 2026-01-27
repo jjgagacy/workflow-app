@@ -4,7 +4,6 @@ import { Fragment } from "react";
 import { IconCheck } from "@tabler/icons-react";
 import { Palette } from "lucide-react";
 import { getActiveThemeClass, getThemeHoverClass, ThemeType } from "@/types/theme";
-import { get } from "http";
 
 const DEFAULT_THEMES = [
   { name: 'Default', value: 'default' },
@@ -20,7 +19,7 @@ const SCALED_THEMES = [
 function getThemeName(value: string) {
   const allThemes = [...DEFAULT_THEMES, ...SCALED_THEMES];
   const theme = allThemes.find(theme => theme.value === value);
-  return theme ? theme.name : 'Unknown Theme';
+  return theme ? theme.name : 'Default';
 }
 
 export function ThemeSelector() {

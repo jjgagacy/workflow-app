@@ -2,9 +2,10 @@ import { EnumUtils } from "@/common/utils/enums"
 
 export enum AccountStatus {
   ACTIVE = 0,
-  BANNED = 1,
+  PENDING = 1,
   UNINITIALIZED = 2,
   CLOSED = 3,
+  BANNED = 4
 }
 
 export const getAccountStatusText = (accountStatus: number): string => {
@@ -23,3 +24,5 @@ export enum MemberAction {
   REMOVE = 'remove',
   UPDATE = 'update',
 }
+
+export const DEFAULT_ACCOUNT_CREATED_ROLE = AccountRole.ADMIN;

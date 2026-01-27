@@ -14,6 +14,7 @@ export const DEFAULT_TOKEN_TYPE_EXPIRY: Record<TokenType, number> = {
   'email_verification': Number(process.env.EMAIL_CODE_LOGIN_EXPIRY_MINUTES || 60), // minutes
   'reset_password': Number(process.env.RESET_PASSWORD_TOKEN_EXPIRY_MINUTES || 5), // minutes
   'confirm_email': Number(process.env.CONFIRM_EMAIL_TOKEN_EXPIRY_MINUTES || 5), // minutes
+  'invite_member': Number(process.env.INVITE_MEMBER_TOKEN_EXPIRY_MINUTES || 24 * 60), // minutes
 };
 export const DEFAULT_LANG = 'en_US';
 export const HIDDEN_VALUE = '[__HIDDEN__]';

@@ -3,7 +3,7 @@ import { AccountEntity } from "@/account/entities/account.entity";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { Cache } from "cache-manager";
-import { DataSource, EntityManager } from "typeorm";
+import { DataSource, EntityManager, Transaction } from "typeorm";
 import { EnhanceCacheService } from "../common/services/cache/enhance-cache.service";
 import { BillingService } from "./billing/billing.service";
 import { AccountSignUpDto } from "./dto/account.dto";
@@ -12,25 +12,24 @@ import { DatabaseGraphQLException } from "@/common/exceptions";
 import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { AccountIntegrateEntity } from "@/account/entities/account-integrate.entity";
-import { plainToInstance } from "class-transformer";
-import { throwIfDtoValidateFail } from "@/common/utils/validation";
-import { TenantService } from "./tenant.service";
+import { validateDto } from "@/common/utils/validation";
+import { TenantAccountService, TenantService } from "./tenant.service";
 import { SystemService } from "@/monie/system.service";
 import { TenantEntity, TenantStatus } from "@/account/entities/tenant.entity";
-import { AccountRole, MemberAction } from "@/account/account.enums";
+import { AccountRole, AccountStatus, DEFAULT_ACCOUNT_CREATED_ROLE, MemberAction } from "@/account/account.enums";
 import { Transactional } from "@/common/decorators/transaction.decorator";
 import { TenantAccountEntity } from "@/account/entities/tenant-account.entity";
 import { EnumConverter, EnumUtils } from "@/common/utils/enums";
 import { AccountNotLinkTenantError, CanNotOperateSelfError, InvalidActionError, MemberNotInTenantError, NoPermissionError, permissionMap, RoleAlreadyAssignedError } from "@/account/errors";
 import { EmailRateLimiterService } from "./libs/rate-limiter/email-rate-limiter.service";
 import { EmailLanguage } from "@/mail/mail-i18n.service";
-import { defaultSendResetPasswordEmailParams, SendResetPasswordEmailParams } from "./interfaces/account.interface";
-import { AccountChangeEmailRateLimitError, AccountDeletionRateLimitError, AccountResetPasswordRateLimitError, EmailCodeLoginRateLimitError, EmailPasswordLoginInvalidCredentialError, EmailPasswordLoginRateLimitError } from "./exceptions/rate-limiter.error";
+import { defaultSendResetPasswordEmailParams, SendInviteMemberEmailParams, SendResetPasswordEmailParams } from "./interfaces/account.interface";
+import { AccountChangeEmailRateLimitError, AccountDeletionRateLimitError, AccountResetPasswordRateLimitError, EmailCodeLoginRateLimitError, EmailPasswordLoginInvalidCredentialError, EmailPasswordLoginRateLimitError, InviteMemberRateLimitError } from "./exceptions/rate-limiter.error";
 import { TOKEN_TYPES, TokenManagerService } from "./libs/token-manager.service";
 import { MailService } from "@/mail/mail.service";
 import { MonieConfig } from "@/monie/monie.config";
 import { InvalidEmailError, InvalidTokenError, VerifyCodeError } from "./exceptions/token.error";
-import { EmailInFreezeError } from "./exceptions/account.error";
+import { AccountAlreadyInTenantError, AccountNotFoundError, EmailExistingError, EmailInFreezeError } from "./exceptions/account.error";
 import { GlobalLogger } from "@/logger/logger.service";
 import { FeatureService } from "./feature.service";
 import authConfig from "@/config/auth.config";
@@ -38,6 +37,7 @@ import { TimeConverter } from "./libs/time-converter.service";
 import { RoleEntity } from "@/account/entities/role.entity";
 import { EMAIL_RATE_LIMITER_CONFIGS, LOGIN_RATE_LIMITER_CONFIGS } from "./configs/rate-limiter.config";
 import { LoginRateLimiterService } from "./libs/rate-limiter/login-rate-limiter.service";
+import { CreateAccountOptions } from "@/account/account/interfaces/account.interface";
 
 @Injectable()
 export class AuthAccountService {
@@ -50,6 +50,7 @@ export class AuthAccountService {
     private readonly dataSource: DataSource,
     private readonly i18n: I18nService<I18nTranslations>,
     private readonly tenantService: TenantService,
+    private readonly tenantAccountService: TenantAccountService,
     private readonly emailRateLimiter: EmailRateLimiterService,
     private readonly loginRateLimiter: LoginRateLimiterService,
     private readonly tokenManagerService: TokenManagerService,
@@ -201,6 +202,43 @@ export class AuthAccountService {
     return token;
   }
 
+  async sendInviteMemberEmail({ email, tenantId, language = EmailLanguage.EN_US, ...props }: SendInviteMemberEmailParams) {
+    if (email === '') {
+      throw new BadRequestException(this.i18n.t('account.EMAIL_NOT_EMPTY'));
+    }
+    const isRateLimited = await this.emailRateLimiter.isRateLimited(email, EMAIL_RATE_LIMITER_CONFIGS['invite_member']);
+    if (isRateLimited) {
+      const timeWindowMinutes = TimeConverter.secondsToMinutes(EMAIL_RATE_LIMITER_CONFIGS['invite_member'].timeWindow);
+      throw InviteMemberRateLimitError.create(this.i18n, timeWindowMinutes);
+    }
+    const tenantEntity = await this.tenantService.getTenant(tenantId);
+    const workspaceName = String(props.workspaceName || tenantEntity?.name || '');
+    const baseUrl = this.monieConfig.siteBaseUrl() || 'http://localhost:3000';
+    const inviterName = String(props.inviterName || 'Monie');
+
+    const { token } = await this.generateInviteMemberToken(email, tenantId);
+    const invitationUrl = `${baseUrl}/activate?token=${token}`;
+    // send invite email
+    await this.mailService.queue.sendInviteNumber({
+      to: email,
+      expiryHours: this.monieConfig.inviteMemberTokenExpiryHours(),
+      inviterName: inviterName || tenantId,
+      workspaceName,
+      invitationUrl,
+      language,
+    });
+
+    await this.emailRateLimiter.incrementRateLimited(email, EMAIL_RATE_LIMITER_CONFIGS['invite_member']);
+    return token;
+  }
+
+  private async generateInviteMemberToken(email: string, tenantId: string): Promise<{
+    token: string;
+  }> {
+    const token = await this.tokenManagerService.generateToken(TOKEN_TYPES.INVITE_MEMBER, undefined, email, { tenantId });
+    return { token };
+  }
+
   async validateEmailCodeLogin(email: string, token: string, code: string, language: string, username?: string, entityManager?: EntityManager): Promise<AccountEntity> {
     const tokenData = await this.tokenManagerService.validateToken(token, TOKEN_TYPES.EMAIL_VERIFICATION);
     if (!tokenData) {
@@ -308,10 +346,12 @@ export class AuthAccountService {
   }
 
   @Transactional()
-  async register(dto: AccountSignUpDto, isSetup = false, entityManager?: EntityManager) {
-    const validateObj = plainToInstance(AccountSignUpDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+  async register(dto: AccountSignUpDto, isSetup = false, entityManager?: EntityManager): Promise<{
+    account: AccountEntity,
+    tenant: TenantEntity | undefined,
+    linkIntegrate: AccountIntegrateEntity | undefined
+  }> {
+    await validateDto(AccountSignUpDto, dto, this.i18n);
 
     const workManager = entityManager ? entityManager : this.dataSource.manager;
 
@@ -714,6 +754,61 @@ export class AuthAccountService {
     }
   }
 
+  @Transactional()
+  async createAccountForTenant(dto: CreateAccountDto, tenant: TenantEntity, options?: CreateAccountOptions, language?: EmailLanguage, entityManager?: EntityManager): Promise<AccountEntity> {
+    validateDto(CreateAccountDto, dto, this.i18n);
+    const workManager = entityManager ? entityManager : this.dataSource.manager;
+    let accountEntity: AccountEntity | null = null;
+    if (dto.id) {
+      accountEntity = await this.accountService.getById(dto.id);
+      if (!accountEntity) {
+        throw AccountNotFoundError.create(this.i18n);
+      }
+    } else if (dto.email) {
+      accountEntity = await this.accountService.getByEmail(dto.email);
+      if (options?.checkEmailExistence && accountEntity !== null) {
+        throw EmailExistingError.create(this.i18n);
+      }
+    }
+
+    if (!accountEntity) {
+      // set account default status
+      dto.status = AccountStatus.PENDING;
+      accountEntity = await this.accountService.create(dto, workManager);
+      if (!accountEntity) {
+        throw new DatabaseGraphQLException(this.i18n.t('system.CREATE_FAILED_ID_INVALID'));
+      }
+    }
+
+    let tenantAccountEntity: TenantAccountEntity | null;
+    tenantAccountEntity = await this.tenantAccountService.getTenanatMember(tenant, accountEntity, workManager);
+
+    if (!tenantAccountEntity) {
+      tenantAccountEntity = await this.tenantService.addAccountTenantMembership(
+        accountEntity,
+        tenant,
+        DEFAULT_ACCOUNT_CREATED_ROLE,
+        workManager
+      );
+    } else {
+      if (accountEntity.status != AccountStatus.PENDING) {
+        throw AccountAlreadyInTenantError.create(this.i18n);
+      }
+    }
+
+    if (accountEntity.status === AccountStatus.PENDING) {
+      // sending invite email
+      await this.sendInviteMemberEmail({
+        email: accountEntity.email,
+        tenantId: tenant.id as string,
+        inviterName: options?.inviterName,
+        workspaceName: tenant.name as string,
+        language
+      });
+    }
+
+    return accountEntity;
+  }
 }
 
 

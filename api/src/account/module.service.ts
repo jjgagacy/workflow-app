@@ -2,14 +2,13 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ModuleEntity } from "./entities/module.entity";
 import { FindManyOptions, FindOptionsRelations, FindOptionsWhere, Not, QueryRunner, Repository } from "typeorm";
-import { plainToInstance } from "class-transformer";
 import { QueryModuleDto } from "./module/dto/query-module.dto";
 import { ModulePermEntity } from "./entities/module-perm.entity";
 import { CreateModuleDto } from "./module/dto/create-module.dto";
 import { UpdateModuleDto } from "./module/dto/update-module.dto";
 import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
-import { throwIfDtoValidateFail } from "@/common/utils/validation";
+import { validateDto } from "@/common/utils/validation";
 import { isPaginator } from "@/common/database/utils/pagination";
 import { getPaginationOptions } from "@/common/database/dto/query.dto";
 
@@ -30,9 +29,7 @@ export class ModuleService {
   }
 
   async create(dto: CreateModuleDto): Promise<ModuleEntity> {
-    const validateObj = plainToInstance(CreateModuleDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+    await validateDto(CreateModuleDto, dto, this.i18n);
 
     const existingModule = await this.getByKey(dto.key, dto.tenantId);
     if (existingModule) {
@@ -48,9 +45,7 @@ export class ModuleService {
   }
 
   async update(dto: UpdateModuleDto): Promise<ModuleEntity> {
-    const validateObj = plainToInstance(UpdateModuleDto, dto);
-    const errors = await this.i18n.validate(validateObj);
-    throwIfDtoValidateFail(errors);
+    await validateDto(UpdateModuleDto, dto, this.i18n);
 
     const module = await this.getById(dto.id, { tenant: true });
     if (!module || module.tenant.id != dto.tenantId) {
