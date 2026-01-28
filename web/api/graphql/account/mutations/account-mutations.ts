@@ -194,3 +194,19 @@ export const VALIDATE_DELETE_ACCOUNT_CODE = gql`
   }
 `
 
+export const INVITE_TOKEN_CHECK = gql`
+  mutation InviteTokenCheckMutation($token: String!) {
+    inviteTokenCheck(token: $token) {
+      inviteeEmail,
+      inviteeName,
+      workspaceId,
+      workspaceName
+    }
+  }
+`;
+
+export const INVITE_MEMBER_ACTIVATION = gql`
+  mutation InviteMemberActivationMutation($input: InviteMemberActivationInput!) {
+    inviteMemberActivation(input: $input)
+  }
+`;

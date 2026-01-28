@@ -8,6 +8,7 @@
   "ACCOUNT_NOT_EXIST": "Account does not exist, {name}",
   "ACCOUNT_EXIST": "Account already exists, {name}",
   "ACCOUNT_NOT_INITIALIZED": "Account not initialized.",
+  "ACCOUNT_ALREADY_ACTIVATED": "Account has alrady been activated.",
   "ACCOUNT_ID_NOT_EXISTS": "Login account ID does not exist",
   "ACCOUNT_ALREADY_IN_TENANT": "Account already in worksapce",
   "ACCOUNT_BANNED": "Account already banned",
@@ -23,4 +24,3 @@
     "CLOSED": "Closed"
   }
 }
-

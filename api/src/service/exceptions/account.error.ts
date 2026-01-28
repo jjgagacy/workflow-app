@@ -35,6 +35,17 @@ export class AccountNotFoundError extends NotFoundException {
   }
 }
 
+export class AccountAlreadyActivatedError extends BadRequestException {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AccountAlreadyActivatedError';
+  }
+
+  static create(i18n: I18nService<I18nTranslations>): AccountAlreadyActivatedError {
+    return new AccountAlreadyActivatedError(i18n.t('account.ACCOUNT_ALREADY_ACTIVATED'));
+  }
+}
+
 export class EmailChangeErrorRateLimit extends BadRequestException {
   constructor(message: string) {
     super(message);

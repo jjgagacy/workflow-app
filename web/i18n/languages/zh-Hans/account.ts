@@ -186,5 +186,7 @@ const translation = {
   },
   activate_account: '激活账户',
   activate_account_button: '激活账户',
+  activation_success: '账户激活成功！您现在可以登录了。',
+  activation_failed: '账户激活失败。请检查您的激活链接或联系支持人员。'
 };
 export default translation;

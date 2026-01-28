@@ -120,6 +120,20 @@ input ForgetPasswordResetInput {
   token: String!
 }
 
+input InviteMemberActivationInput {
+  inviteeEmail: String!
+  inviteeName: String!
+  token: String!
+  workspaceId: String!
+}
+
+type InviterResponse {
+  inviteeEmail: String!
+  inviteeName: String!
+  workspaceId: String!
+  workspaceName: String!
+}
+
 input LoginInput {
   password: String!
   username: String!
@@ -213,6 +227,8 @@ type Mutation {
   forgetPasswordReset(input: ForgetPasswordResetInput!): Boolean!
   forgetPasswordSendEmail(input: ForgetPasswordInput!): String!
   forgetPasswordTokenCheck(input: ForgetPasswordInput!): ForgetPasswordCheckResponse!
+  inviteMemberActivation(input: InviteMemberActivationInput!): Boolean!
+  inviteTokenCheck(token: String!): InviterResponse!
   login(input: LoginInput!): LoginResponse!
   removeAccount(id: Int!): Boolean!
   resetPasswordSendEmail(input: ResetPasswordSendEmailInput!): String!

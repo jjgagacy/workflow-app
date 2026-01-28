@@ -1,7 +1,7 @@
 import { createMutationHook, useGraphQLMutation, useGraphQLQuery } from "@/hooks/use-graphql";
 import { GET_ACCOUNTS } from "../queries";
-import { CHANGE_EMAIL_OLD_SEND, CONFIRM_EMAIL_NEW_SEND, CREATE_ACCOUNT, CURRENT_TENANT, DELETE_ACCOUNT, DELETE_ACCOUNT_EMAIL_SEND, EMAIL_CODE_LOGIN, EMAIL_CODE_LOGIN_SEND, EMAIL_CODE_RESET_PASSWORD_SEND, EMAIL_CODE_SIGNUP, EMAIL_CODE_SIGNUP_SEND, EMAIL_PASSWORD_LOIGN, FORGOT_PASSWORD_CHECK, FORGOT_PASSWORD_RESET, REMOVE_ACCOUNT, SWITCH_TENANT, TOGGLE_ACCOUNT_STATUS, UPDATE_ACCOUNT, UPDATE_ACCOUNT_AVATAR, UPDATE_ACCOUNT_NAME, UPDATE_ACCOUNT_NEW_EMAIL, VALIDATE_CHANGE_EMAIL_OLD, VALIDATE_DELETE_ACCOUNT_CODE, VALIDATE_EMAIL, VALIDATE_USERNAME } from '../mutations/account-mutations';
-import { ChangeEmailOldInput, ConfirmEmailNewInput, DeleteAccountEmailSendInput, EmailCodeLoginInput, EmailCodeSendInput, EmailCodeSignUpInput, ForgotPasswordCheckInput, ForgotPasswordCheckOutput, ForgotPasswordResetInput, PasswordLoginInput, TenantResponseOutput, UpdateAccountAvatarInput, UpdateAccountNewEmailInput, UpdateAccountUsernameInput, ValidateChangeEmailOldInput } from "../types";
+import { CHANGE_EMAIL_OLD_SEND, CONFIRM_EMAIL_NEW_SEND, CREATE_ACCOUNT, CURRENT_TENANT, DELETE_ACCOUNT, DELETE_ACCOUNT_EMAIL_SEND, EMAIL_CODE_LOGIN, EMAIL_CODE_LOGIN_SEND, EMAIL_CODE_RESET_PASSWORD_SEND, EMAIL_CODE_SIGNUP, EMAIL_CODE_SIGNUP_SEND, EMAIL_PASSWORD_LOIGN, FORGOT_PASSWORD_CHECK, FORGOT_PASSWORD_RESET, INVITE_MEMBER_ACTIVATION, INVITE_TOKEN_CHECK, REMOVE_ACCOUNT, SWITCH_TENANT, TOGGLE_ACCOUNT_STATUS, UPDATE_ACCOUNT, UPDATE_ACCOUNT_AVATAR, UPDATE_ACCOUNT_NAME, UPDATE_ACCOUNT_NEW_EMAIL, VALIDATE_CHANGE_EMAIL_OLD, VALIDATE_DELETE_ACCOUNT_CODE, VALIDATE_EMAIL, VALIDATE_USERNAME } from '../mutations/account-mutations';
+import { ChangeEmailOldInput, ConfirmEmailNewInput, DeleteAccountEmailSendInput, EmailCodeLoginInput, EmailCodeSendInput, EmailCodeSignUpInput, ForgotPasswordCheckInput, ForgotPasswordCheckOutput, ForgotPasswordResetInput, InviteTokenCheckResponse, PasswordLoginInput, TenantResponseOutput, UpdateAccountAvatarInput, UpdateAccountNewEmailInput, UpdateAccountUsernameInput, ValidateChangeEmailOldInput } from "../types";
 
 // 获取账户列表
 export const useGetAccounts = (params: {
@@ -307,5 +307,27 @@ export const useDeleteAccount = createMutationHook<
   DELETE_ACCOUNT,
   {
     transform: (data) => data.deleteAccount
+  }
+);
+
+export const useInviteTokenCheck = createMutationHook<
+  { inviteTokenCheck: any },
+  { token: string },
+  InviteTokenCheckResponse
+>(
+  INVITE_TOKEN_CHECK,
+  {
+    transform: (data) => data.inviteTokenCheck
+  }
+);
+
+export const useInviteMemberActivation = createMutationHook<
+  { inviteMemberActivation: any },
+  { input: { inviteeName: string; inviteeEmail: string; workspaceId: string; token: string } },
+  boolean
+>(
+  INVITE_MEMBER_ACTIVATION,
+  {
+    transform: (data) => data.inviteMemberActivation
   }
 );

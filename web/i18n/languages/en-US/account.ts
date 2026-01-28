@@ -181,5 +181,7 @@ const translation = {
   },
   activate_account: 'Activate Account',
   activate_account_button: 'Activate Account',
+  activation_success: 'Account activated successfully! You can now log in.',
+  activation_failed: 'Account activation failed. Please check your activation link or contact support.'
 };
 export default translation;

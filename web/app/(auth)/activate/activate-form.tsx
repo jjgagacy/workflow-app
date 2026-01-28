@@ -1,24 +1,111 @@
 'use client';
 
+import api from "@/api";
 import { Button } from "@/app/components/base/button";
+import { toast } from "@/app/ui/toast";
+import { useAuthForm } from "@/hooks/account/use-authForm";
+import { getErrorMessage } from "@/utils/errors";
 import { AlertCircle, CheckCircle, User } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { set } from "zod";
+
+interface ActivateFormData {
+  username: string;
+  email: string;
+  workspaceId: string;
+}
 
 export default function ActivateForm() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token') || '';
   const { t } = useTranslation();
-  const [formData, setFormData] = useState<{ username: string }>({ username: '' });
+  const [formData, setFormData] = useState<ActivateFormData>({ username: '', email: '', workspaceId: '' });
+  const [workspaceName, setWorkspaceName] = useState<string>('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const useInviteTokenCheck = api.account.useInviteTokenCheck();
+  const useInviteMemberActivation = api.account.useInviteMemberActivation();
+  const router = useRouter();
 
-  console.log('Activation token:', token);
+  const base = useAuthForm({ mode: 'signup' });
+  const {
+    validateField,
+    setFormData: setBaseFormData
+  } = base;
 
-  const handleSubmit = () => {
+  // 使用 useCallback 包装获取数据的函数
+  const fetchTokenData = useCallback(async () => {
+    if (!token) return;
+    try {
+      const checkData = await useInviteTokenCheck({ token });
+      setFormData(prev => ({
+        ...prev,
+        username: checkData.inviteeName,
+        email: checkData.inviteeEmail,
+        workspaceId: checkData.workspaceId
+      }));
+      setWorkspaceName(checkData.workspaceName);
+      setBaseFormData(prev => ({
+        ...prev,
+        email: checkData.inviteeEmail,
+        username: checkData.inviteeName
+      }));
+    } catch (error) {
+      console.error('Failed to check invite token:', error);
+      toast.error(getErrorMessage(error));
+    }
+  }, [token]);
 
-  };
+  // 在 useEffect 中调用
+  useEffect(() => {
+    fetchTokenData();
+  }, [fetchTokenData]);
+
+  const validateForm = useCallback(() => {
+    const newErrors: Record<string, string> = {};
+
+    const usernameError = validateField('username');
+    if (usernameError) {
+      newErrors.username = usernameError;
+    }
+
+    return newErrors;
+  }, [validateField, formData]);
+
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
+    setErrors({});
+    setIsLoading(true);
+    try {
+      const activationResult = await useInviteMemberActivation({
+        input: {
+          inviteeName: formData.username,
+          inviteeEmail: formData.email,
+          workspaceId: formData.workspaceId,
+          token
+        }
+      });
+      if (!activationResult) {
+        toast.error(t('account.activation_failed'));
+        return;
+      }
+      toast.success(t('account.activation_success'));
+      router.push('login');
+    } catch (error) {
+      console.error('Failed to activate account:', error);
+      setErrors({ submit: getErrorMessage(error) });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [formData, token, setIsLoading, useInviteMemberActivation, validateForm]);
 
   return (
     <div className="w-full max-w-md">
@@ -45,6 +132,10 @@ export default function ActivateForm() {
                 value={formData.username}
                 onChange={(e) => {
                   setFormData({ ...formData, username: e.target.value });
+                  setBaseFormData(prev => ({
+                    ...prev,
+                    username: e.target.value
+                  }));
                   setErrors({});
                 }}
                 className={`block w-full pl-10 pr-3 py-3 border ${errors.username ? 'border-red-300' : 'border-gray-300 dark:border-gray-600'
@@ -72,7 +163,6 @@ export default function ActivateForm() {
               </p>
             </div>
           </div>
-
 
           {/* 错误提示 */}
           {errors.submit && (

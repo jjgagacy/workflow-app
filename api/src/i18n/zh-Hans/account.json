@@ -7,6 +7,7 @@
   "ACCOUNT_NOT_FOUND": "账户未找到",
   "ACCOUNT_NOT_EXIST": "账户不存在, {name}",
   "ACCOUNT_EXIST": "账户已存在, {name}",
+  "ACCOUNT_ALREADY_ACTIVATED": "账户已经激活过了",
   "ACCOUNT_NOT_INITIALIZED": "账户未初始化完成",
   "ACCOUNT_ID_NOT_EXISTS": "登录账户ID不存在",
   "ACCOUNT_ALREADY_IN_TENANT": "账户已经在当前工作空间了",
@@ -23,4 +24,3 @@
     "CLOSED": "已关闭"
   }
 }
-

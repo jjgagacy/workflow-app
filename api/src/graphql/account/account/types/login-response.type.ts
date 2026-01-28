@@ -36,3 +36,16 @@ export class TenantResponse {
   @Field()
   plan: string;
 }
+
+@ObjectType('InviterResponse')
+export class InviterResponse {
+  @Field()
+  workspaceName: string;
+  @Field()
+  workspaceId: string;
+  @Field()
+  inviteeEmail: string;
+  @Field()
+  inviteeName: string;
+}
+

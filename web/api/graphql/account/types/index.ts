@@ -77,3 +77,10 @@ export interface ValidateChangeEmailOldInput {
 export interface DeleteAccountEmailSendInput {
   language?: string;
 }
+
+export interface InviteTokenCheckResponse {
+  inviteeEmail: string;
+  inviteeName: string;
+  workspaceId: string;
+  workspaceName: string;
+}

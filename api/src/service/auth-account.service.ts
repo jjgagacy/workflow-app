@@ -38,6 +38,7 @@ import { RoleEntity } from "@/account/entities/role.entity";
 import { EMAIL_RATE_LIMITER_CONFIGS, LOGIN_RATE_LIMITER_CONFIGS } from "./configs/rate-limiter.config";
 import { LoginRateLimiterService } from "./libs/rate-limiter/login-rate-limiter.service";
 import { CreateAccountOptions } from "@/account/account/interfaces/account.interface";
+import { TenantNotFoundError } from "./exceptions/tenant.error";
 
 @Injectable()
 export class AuthAccountService {
@@ -808,6 +809,37 @@ export class AuthAccountService {
     }
 
     return accountEntity;
+  }
+
+  async validateInvitationToken(token: string): Promise<{
+    account: AccountEntity,
+    tenant: TenantEntity,
+  }> {
+    const tokenData = await this.tokenManagerService.getTokenData(token, TOKEN_TYPES.INVITE_MEMBER);
+    if (!tokenData) {
+      throw InvalidTokenError.create(this.i18n);
+    }
+    const inviteeEmail = tokenData.email;
+    const tenantId = tokenData.tenantId as string;
+    if (inviteeEmail === '' || tenantId === '') {
+      throw InvalidTokenError.create(this.i18n);
+    }
+
+    const accountEntity = await this.accountService.getByEmail(inviteeEmail);
+    const tenantEntity = await this.tenantService.getTenant(tenantId);
+    if (!accountEntity) {
+      throw AccountNotFoundError.create(this.i18n);
+    }
+    if (!tenantEntity) {
+      throw TenantNotFoundError.create(this.i18n);
+    }
+
+    const tenantAccountEntity = await this.tenantAccountService.getTenanatMember(tenantEntity, accountEntity);
+    if (!tenantAccountEntity) {
+      throw InvalidTokenError.create(this.i18n);
+    }
+
+    return { account: accountEntity, tenant: tenantEntity };
   }
 }
 

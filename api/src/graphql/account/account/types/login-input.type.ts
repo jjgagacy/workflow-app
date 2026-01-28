@@ -139,3 +139,23 @@ export class UpdateAccountNewEmailInput {
   @Field({ nullable: true })
   language?: string;
 }
+
+@InputType('InviteMemberActivationInput')
+export class InviteMemberActivationInput {
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  token: string;
+
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  @Matches(EMAIL_REGEX, { message: 'auth.INVALID_EMAIL' })
+  inviteeEmail: string;
+
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  inviteeName: string;
+
+  @Field()
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  workspaceId: string;
+}
