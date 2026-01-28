@@ -17,6 +17,7 @@ import { RadioGroup, RadioGroupItem } from "@/app/ui/radio-group";
 import { toast } from "@/app/ui/toast";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { getErrorMessage } from "@/utils/errors";
 
 export default function AccountForm({
   accountId,
@@ -31,6 +32,7 @@ export default function AccountForm({
   const [updateAccountId] = useState<number>((accountId && Number.isFinite(parseInt(accountId)) ? parseInt(accountId) : 0));
   const updateAccount = api.account.useUpdateAccount();
   const createAccount = api.account.useCreateAccount();
+  const [isUpdate] = useState(updateAccountId > 0);
   const router = useRouter();
   const { t } = useTranslation();
   // get account info if accountId is not empty, and set default values
@@ -134,7 +136,7 @@ export default function AccountForm({
       router.push('/admin/system/account');
     } catch (error) {
       console.error(error);
-      toast.error(t('system.operation_failed'));
+      toast.error(getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
@@ -169,6 +171,7 @@ export default function AccountForm({
                       <FormControl>
                         <Input
                           {...field}
+                          disabled={isUpdate}
                         />
                       </FormControl>
                       <FormMessage />
@@ -187,6 +190,7 @@ export default function AccountForm({
                           type="email"
                           {...field}
                           value={field.value ?? ""}
+                          disabled={isUpdate}
                         />
                       </FormControl>
                       <FormMessage />
@@ -204,6 +208,7 @@ export default function AccountForm({
                         <Input
                           type="password"
                           {...field}
+                          disabled={isUpdate}
                         />
                       </FormControl>
                       <FormMessage />
@@ -261,6 +266,7 @@ export default function AccountForm({
                       <FormControl>
                         <Input
                           {...field}
+                          disabled={isUpdate}
                         />
                       </FormControl>
                       <FormMessage />

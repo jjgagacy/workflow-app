@@ -267,10 +267,8 @@ export class TenantAccountService {
     const workManager = entityManager || this.dataSource.manager;
 
     await workManager.delete(TenantAccountEntity, {
-      where: {
-        tenant: { id: tenant.id },
-        account: { id: account.id },
-      },
+      tenant: { id: tenant.id },
+      account: { id: account.id },
     });
   }
 }

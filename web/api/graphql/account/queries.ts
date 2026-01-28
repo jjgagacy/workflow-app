@@ -28,7 +28,8 @@ export const GET_ACCOUNTS = gql`
         roles,
         roleKeys,
         created_at,
-        created_by
+        created_by,
+        isOwner
       }
     }
   }

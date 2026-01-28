@@ -18,12 +18,16 @@ import { convertLanguageCode } from "@/mail/mail-i18n.service";
 import { getMappedLang } from "@/i18n-global/langmap";
 import { AuthAccountService } from "@/service/auth-account.service";
 import { TOKEN_TYPES, TokenManagerService } from "@/service/libs/token-manager.service";
+import { CurrentTenent } from "@/common/decorators/current-tenant";
+import { TenantAccountService, TenantService } from "@/service/tenant.service";
 
 @Resolver()
 @UseGuards(EditionSelfHostedGuard)
 export class UpdateAccountResolver {
   constructor(
     private readonly accountService: AccountService,
+    private readonly tenantService: TenantService,
+    private readonly tenantAccountService: TenantAccountService,
     private readonly i18n: I18nService<I18nTranslations>
   ) { }
 
@@ -31,11 +35,7 @@ export class UpdateAccountResolver {
   async updateAccount(@Args('input') input: AccountInput, @CurrentUser() user: any): Promise<AccountResponse> {
     const dto: UpdateAccountDto = {
       id: input.id,
-      username: input.username,
       realName: input.realName,
-      email: input.email,
-      status: input.status,
-      mobile: input.mobile,
       updatedBy: user.name,
       roles: input.roles
     };
@@ -81,12 +81,51 @@ export class UpdateAccountResolver {
   }
 
   @Mutation(() => Boolean)
-  async toggleAccountStatus(@CurrentUser() user: any, @Args({ name: 'id', type: () => Int }) id: number): Promise<Boolean> {
+  async toggleAccountStatus(
+    @CurrentUser() user: any,
+    @CurrentTenent() tenant: any,
+    @Args({ name: 'id', type: () => Int }) id: number
+  ): Promise<boolean> {
+    const tenantEntity = await this.tenantService.getTenant(tenant.id);
+    if (!tenantEntity) {
+      throw new NotFoundException();
+    }
+    const accountEntity = await this.accountService.getById(user.id);
+    if (!accountEntity) {
+      throw new NotFoundException();
+    }
+    const tenantAccountEntity = await this.tenantAccountService.getTenanatMember(tenant, accountEntity);
+    if (!tenantAccountEntity) {
+      throw new NotFoundException();
+    }
     const dto: UpdateAccountDto = {
       id: id,
       updatedBy: user.name
     }
     await this.accountService.toggleStatus(dto);
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async removeAccount(
+    @CurrentUser() user: any,
+    @CurrentTenent() tenant: any,
+    @Args({ name: 'id', type: () => Int }) id: number,
+  ): Promise<boolean> {
+    const tenantEntity = await this.tenantService.getTenant(tenant.id);
+    if (!tenantEntity) {
+      throw new NotFoundException();
+    }
+    const accountEntity = await this.accountService.getById(user.id);
+    if (!accountEntity) {
+      throw new NotFoundException();
+    }
+    const tenantAccountEntity = await this.tenantAccountService.getTenanatMember(tenant, accountEntity);
+    if (!tenantAccountEntity) {
+      throw new NotFoundException();
+    }
+
+    await this.tenantAccountService.removeTenantMember(tenantEntity, accountEntity);
     return true;
   }
 }

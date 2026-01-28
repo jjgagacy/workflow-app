@@ -10,6 +10,7 @@
   "ACCOUNT_NOT_INITIALIZED": "Account not initialized.",
   "ACCOUNT_ID_NOT_EXISTS": "Login account ID does not exist",
   "ACCOUNT_ALREADY_IN_TENANT": "Account already in worksapce",
+  "ACCOUNT_BANNED": "Account already banned",
   "EMAIL_NOT_EMPTY": "Email cannot be empty",
   "EMAIL_NOT_EXIST": "Email does not exists, {email}",
   "EMAIL_EXIST": "Email already exists",
@@ -22,3 +23,4 @@
     "CLOSED": "Closed"
   }
 }
+

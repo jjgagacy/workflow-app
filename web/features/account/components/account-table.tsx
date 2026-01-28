@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { toast } from "@/app/ui/toast";
 import { useAuth } from "@/hooks/use-auth";
+import { getErrorMessage } from "@/utils/errors";
 
 interface AccountTableParams<TData, TValue> {
   data: TData[];
@@ -32,9 +33,9 @@ export function AccountTable<TData, TValue>({ }: AccountTableParams<TData, TValu
   const { search, page, pageSize } = queryStates;
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   const toggleStatusMutation = api.account.useToggleAccountStatus();
-  const deleteAccount = api.account.useDeleteAccount();
+  const removeAccountMutation = api.account.useRemoveAccount();
   const { t } = useTranslation();
-  const { isSuperUser } = useAuth();
+  const { isOwner } = useAuth();
 
   useEffect(() => {
     //if (search === '') return;
@@ -64,19 +65,27 @@ export function AccountTable<TData, TValue>({ }: AccountTableParams<TData, TValu
 
   const onDelete = async (account: Account) => {
     if (confirm(t('system.confirm_delete'))) {
-      await deleteAccount(account.id);
-      setData(prev =>
-        prev.filter((item) => item.id !== account.id)
-      );
+      try {
+        await removeAccountMutation(account.id);
+        setData(prev =>
+          prev.filter((item) => item.id !== account.id)
+        );
+      } catch (error) {
+        toast.error(getErrorMessage(error));
+      }
     }
   }
 
   const onToggleStatus = async (account: Account) => {
     const newStatus = account.status === 0 ? 1 : 0;
-    await toggleStatusMutation(account.id);
-    setData(prev =>
-      prev.map((item) => item.id === account.id ? { ...item, status: newStatus } : item)
-    );
+    try {
+      await toggleStatusMutation(account.id);
+      setData(prev =>
+        prev.map((item) => item.id === account.id ? { ...item, status: newStatus } : item)
+      );
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
   }
 
   const columns = createColumns(t);
@@ -89,7 +98,7 @@ export function AccountTable<TData, TValue>({ }: AccountTableParams<TData, TValu
       cell: ({ row }) => {
         const account = row.original;
 
-        if (isSuperUser(account)) {
+        if (isOwner(account)) {
           return null;
         }
 

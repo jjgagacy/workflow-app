@@ -128,6 +128,10 @@ export function useAuth() {
     });
   }
 
+  const isOwner = (user: any): boolean => {
+    return user.isOwner === true;
+  }
+
   return {
     isAuthenticated,
     login,
@@ -145,6 +149,7 @@ export function useAuth() {
     setCurrentTenant,
     getCurrentTenant,
     hasTenant,
-    isSuperUser
+    isSuperUser,
+    isOwner,
   };
 }

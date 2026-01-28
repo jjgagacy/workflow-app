@@ -10,6 +10,7 @@
   "ACCOUNT_NOT_INITIALIZED": "账户未初始化完成",
   "ACCOUNT_ID_NOT_EXISTS": "登录账户ID不存在",
   "ACCOUNT_ALREADY_IN_TENANT": "账户已经在当前工作空间了",
+  "ACCOUNT_BANNED": "账户已封禁",
   "EMAIL_NOT_EMPTY": "邮箱不能为空",
   "EMAIL_NOT_EXIST": "邮箱不存在, {email}",
   "EMAIL_EXIST": "邮箱已存在",
@@ -22,3 +23,4 @@
     "CLOSED": "已关闭"
   }
 }
+

@@ -37,4 +37,7 @@ export class Account {
 
   @Field({ nullable: true })
   avatar?: string;
+
+  @Field({ nullable: true })
+  isOwner?: boolean;
 }

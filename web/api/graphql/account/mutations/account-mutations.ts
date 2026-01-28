@@ -46,6 +46,12 @@ export const TOGGLE_ACCOUNT_STATUS = gql`
   }
 `;
 
+export const REMOVE_ACCOUNT = gql`
+  mutation RemoveAccountMutation($id: Int!) {
+    removeAccount(id: $id)
+  }
+`;
+
 export const VALIDATE_USERNAME = gql`
   mutation ValidateUsernameMutation($username: String!) {
     checkSignUpUsername(username: $username)

@@ -3,8 +3,8 @@
 import { useTitle } from "ahooks";
 
 export default function usePageTitle(title: string) {
-    const prefix = title ? `${title} - Dashboard` : '';
-    let titleStr = '';
-    titleStr = `${prefix}`;
-    useTitle(titleStr);
+  const prefix = title ? `${title} - Monie` : 'Monie';
+  let titleStr = '';
+  titleStr = `${prefix}`;
+  useTitle(titleStr);
 }

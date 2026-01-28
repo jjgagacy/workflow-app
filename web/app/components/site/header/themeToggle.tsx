@@ -13,12 +13,12 @@ export default function ThemeToggle() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { activeTheme, setActiveTheme } = useActiveTheme();
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const { t, i18n } = useTranslation();
 
   // 初始化主题
   useEffect(() => {
-    const initialTheme = activeTheme || 'system';
+    const initialTheme = theme || 'system';
     setActiveTheme(initialTheme);
     applyTheme(initialTheme as Theme);
   }, [activeTheme]);

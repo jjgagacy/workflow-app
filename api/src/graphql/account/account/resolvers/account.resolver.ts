@@ -23,8 +23,7 @@ import { DeviceService } from "@/service/libs/device.service";
 import { getMappedLang } from "@/i18n-global/langmap";
 import { convertLanguageCode } from "@/mail/mail-i18n.service";
 import { TOKEN_TYPES, TokenManagerService } from "@/service/libs/token-manager.service";
-import { DataSource } from "typeorm";
-import { TenantEntity } from "@/account/entities/tenant.entity";
+import { maskMobileSafely, maskUsernameSafely } from "@/monie/helpers/account-fields.helper";
 
 @Resolver()
 export class AccountResolver {
@@ -38,9 +37,23 @@ export class AccountResolver {
   @Query(() => AccountList)
   @UseGuards(EditionSelfHostedGuard)
   @UseGuards(TenantContextGuard)
-  async accounts(@Args() args: GetAccountArgs, @CurrentUser() user: any, @CurrentTenent() tenant: any): Promise<AccountList> {
+  async accounts(
+    @Args() args: GetAccountArgs,
+    @CurrentUser() user: any,
+    @CurrentTenent() tenant: any
+  ): Promise<AccountList> {
     const { data: accountList, total } = await this.accountService.query({ ...args, relations: { roles: true }, tenantId: tenant.id });
-    const data: Account[] = accountList.map(this.transformAccountToGQLType);
+    const tenantEntity = await this.tenantService.getTenant(tenant.id);
+    const owner = tenantEntity ? await this.tenantService.getOwner(tenantEntity) : null;
+    const data: Account[] = accountList.map((account) =>
+      this.transformAccountToGQLType(account, {
+        maskUsername: (account: AccountEntity) =>
+          shouldMaskAccountfields(account, user.id) ? maskUsernameSafely(account.username) : account.username,
+        maskMobile: (account: AccountEntity) =>
+          shouldMaskAccountfields(account, user.id) ? maskMobileSafely(account.mobile) : account.mobile,
+        isOwner: (account: AccountEntity) => account.id === owner?.id,
+      })
+    );
     return {
       data,
       ...(validNumber(args.page) && validNumber(args.limit) && {
@@ -53,29 +66,45 @@ export class AccountResolver {
     };
   }
 
-  private transformAccountToGQLType(account: AccountEntity): Account {
+  private transformAccountToGQLType(account: AccountEntity, options: {
+    maskUsername?: (account: AccountEntity) => string;
+    maskMobile?: (account: AccountEntity) => string;
+    isOwner?: (account: AccountEntity) => boolean,
+  } = {}): Account {
     const { roles } = account;
     return {
       id: account.id,
-      username: account.username,
+      username: options?.maskUsername?.(account) ?? maskUsernameSafely(account.username),
       email: account.email,
-      mobile: account.mobile,
+      mobile: options?.maskMobile?.(account) ?? maskMobileSafely(account.mobile),
       status: account.status,
       realName: account.realName,
       created_at: formatDate(new Date(account.operate.createdAt)),
       created_by: account.operate.createdBy,
       roles: roles?.map((role) => role.name),
       roleKeys: roles?.map((role) => role.key),
+      isOwner: options?.isOwner?.(account),
     } as Account;
   }
 
   @Query(() => Account)
-  async accountInfo(@CurrentUser() user: any): Promise<Account> {
+  async accountInfo(
+    @CurrentUser() user: any,
+    @CurrentTenent() tenant: any
+  ): Promise<Account> {
+    const tenantEntity = await this.tenantService.getTenant(tenant.id);
+    const owner = tenantEntity ? await this.tenantService.getOwner(tenantEntity) : null;
     const accountEntity = await this.accountService.getById(user?.id);
     if (!accountEntity) {
       throw new BadRequestException();
     }
-    const account = this.transformAccountToGQLType(accountEntity);
+    const account = this.transformAccountToGQLType(accountEntity, {
+      maskUsername: (account: AccountEntity) =>
+        shouldMaskAccountfields(account, user.id) ? maskUsernameSafely(account.username) : account.username,
+      maskMobile: (account: AccountEntity) =>
+        shouldMaskAccountfields(account, user.id) ? maskMobileSafely(account.mobile) : account.mobile,
+      isOwner: (account: AccountEntity) => account.id === owner?.id,
+    });
     if (accountEntity.avatar !== '') {
       const uploadFileEntity = await this.fileService.getUploadFileEntity(accountEntity.avatar);
       if (uploadFileEntity) {
@@ -193,3 +222,4 @@ export class DeleteAccountResolver {
 
 }
 
+const shouldMaskAccountfields = (account: AccountEntity, user_id: any) => account.id !== user_id;

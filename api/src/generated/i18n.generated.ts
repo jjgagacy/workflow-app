@@ -17,6 +17,7 @@ export type I18nTranslations = {
         "ACCOUNT_NOT_INITIALIZED": string;
         "ACCOUNT_ID_NOT_EXISTS": string;
         "ACCOUNT_ALREADY_IN_TENANT": string;
+        "ACCOUNT_BANNED": string;
         "EMAIL_NOT_EMPTY": string;
         "EMAIL_NOT_EXIST": string;
         "EMAIL_EXIST": string;

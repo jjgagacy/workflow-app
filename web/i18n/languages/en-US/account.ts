@@ -178,6 +178,8 @@ const translation = {
     confirm_description: "Are you sure you want to permanently delete your account?",
     confirm_note: "After account deletion, you will lose all data and access",
     confirm_button: "Confirm Deletion"
-  }
+  },
+  activate_account: 'Activate Account',
+  activate_account_button: 'Activate Account',
 };
 export default translation;

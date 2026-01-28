@@ -8,6 +8,7 @@ type Account {
   created_by: String!
   email: String!
   id: Int!
+  isOwner: Boolean
   last_ip: String
   mobile: String!
   realName: String!
@@ -213,6 +214,7 @@ type Mutation {
   forgetPasswordSendEmail(input: ForgetPasswordInput!): String!
   forgetPasswordTokenCheck(input: ForgetPasswordInput!): ForgetPasswordCheckResponse!
   login(input: LoginInput!): LoginResponse!
+  removeAccount(id: Int!): Boolean!
   resetPasswordSendEmail(input: ResetPasswordSendEmailInput!): String!
   setRolePerms(input: RoleSetPermInput!): Boolean!
   switchTenant(tenant_id: String!): TenantResponse!

@@ -21,6 +21,7 @@ import { isPaginator } from "@/common/database/utils/pagination";
 import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
 import { AccountStatus } from "./account.enums";
+import { AccountBannedError, AccountInPendingError, AccountNotInitializedError } from "@/service/exceptions/account.error";
 
 @Injectable()
 export class AccountService {
@@ -86,7 +87,7 @@ export class AccountService {
       }
     }
 
-    if (dto.password !== undefined) {
+    if (dto.password) {
       this.validPassword(dto.password!);
     }
 
@@ -94,7 +95,7 @@ export class AccountService {
     const accountEntity = this.accountRepository.create({
       ...this.mapBaseFields(dtoInstance),
       salt,
-      ...(dto.password !== undefined && { password: await this.hashPassword(dto.password!, salt) }),
+      ...(dto.password && { password: await this.hashPassword(dto.password!, salt) }),
       operate: this.mapOperateFields(dtoInstance),
       roles: await this.roleService.resolveRoles(dto.roles)
     });
@@ -244,16 +245,29 @@ export class AccountService {
     }
   }
 
+  private accountStatusCheck(account: AccountEntity) {
+    if (account.status === AccountStatus.PENDING) {
+      throw AccountInPendingError.create(this.i18n);
+    }
+    if (account.status === AccountStatus.UNINITIALIZED) {
+      throw AccountNotInitializedError.create(this.i18n);
+    }
+    if (account.status === AccountStatus.BANNED) {
+      throw AccountBannedError.create(this.i18n);
+    }
+  }
+
   async toggleStatus(dto: UpdateAccountDto): Promise<void> {
     const accountId = dto.id;
     if (!accountId) {
-      throw new InvalidInputGraphQLException(this.i18n.t('system.INVALID_PARAM', { args: { name: 'id', alue: dto.id } }))
+      throw new BadRequestException(this.i18n.t('system.INVALID_PARAM', { args: { name: 'id', alue: dto.id } }))
     }
     const existingAccount = await this.getById(accountId);
     if (!existingAccount) {
-      throw new InvalidInputGraphQLException(this.i18n.t('account.ACCOUNT_ID_NOT_EXISTS'));
+      throw new BadRequestException(this.i18n.t('account.ACCOUNT_ID_NOT_EXISTS'));
     }
-    const newStatus = existingAccount.status === 1 ? 0 : 1;
+    this.accountStatusCheck(existingAccount);
+    const newStatus = existingAccount.status === AccountStatus.CLOSED ? AccountStatus.ACTIVE : AccountStatus.CLOSED;
     const updateFields = {
       status: newStatus,
       operate: this.mapOperateFields(dto),

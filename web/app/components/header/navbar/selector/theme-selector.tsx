@@ -60,8 +60,8 @@ export function ThemeSelector() {
                 )}
               </MenuItem>
             ))}
-            <hr className="border-[var(--border)]" />
-            <div className="text-gray-600 px-4 my-2 font-bold">Scaled</div>
+            <hr className="my-2 border-[var(--border)]" />
+            <div className="text-gray-600 text-sm px-4 my-2 font-bold">Scaled</div>
             {SCALED_THEMES.map(theme => (
               <MenuItem key={theme.name}>
                 {() => (

@@ -99,6 +99,7 @@ import { SetTenantMiddleware } from './common/middleware/set-tenant.middleware';
 import { UniversalAuthGuard } from './common/guards/universal-auth.guard';
 import { FilesController } from './controllers/api/files.controller';
 import { PreviewController } from './controllers/files/preview.controller';
+import { TenantAccountService } from './service/tenant.service';
 
 @Module({
   imports: [
@@ -290,6 +291,7 @@ import { PreviewController } from './controllers/files/preview.controller';
     MenuService,
     AccountRoleService,
     MenuRoleService,
+    TenantAccountService,
     RoleMenuService,
     ModuleService,
     ModulePermService,

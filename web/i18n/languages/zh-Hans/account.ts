@@ -183,6 +183,8 @@ const translation = {
     confirm_description: "您确定要永久删除您的账户吗？",
     confirm_note: "账户删除后，您将失去所有数据和访问权限",
     confirm_button: "确认删除"
-  }
+  },
+  activate_account: '激活账户',
+  activate_account_button: '激活账户',
 };
 export default translation;

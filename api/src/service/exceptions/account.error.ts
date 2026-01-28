@@ -90,6 +90,28 @@ export class AccountNotInitializedError extends UnauthorizedException {
   }
 }
 
+export class AccountInPendingError extends UnauthorizedException {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AccountInPendingError';
+  }
+
+  static create(i18n: I18nService<I18nTranslations>): AccountInPendingError {
+    return new AccountInPendingError(i18n.t('auth.INVALID_ACCOUNT'));
+  }
+}
+
+export class AccountBannedError extends UnauthorizedException {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AccountBannedError';
+  }
+
+  static create(i18n: I18nService<I18nTranslations>): AccountBannedError {
+    return new AccountBannedError(i18n.t('account.ACCOUNT_BANNED'));
+  }
+}
+
 export class AccountAlreadyInTenantError extends BadRequestException {
   constructor(message: string) {
     super(message);
