@@ -1,5 +1,5 @@
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
-import { useActiveTheme } from "../../../active-theme";
+import { useActiveAppearance } from "../../../appearance";
 import { Fragment } from "react";
 import { IconCheck } from "@tabler/icons-react";
 import { Palette } from "lucide-react";
@@ -23,7 +23,7 @@ function getThemeName(value: string) {
 }
 
 export function ThemeSelector() {
-  const { activeTheme, setActiveTheme } = useActiveTheme();
+  const { activeAppearance: activeTheme, setActiveAppearance: setActiveTheme } = useActiveAppearance();
 
   return (
     <div className='flex items-center gap-2 hover:bg-secondary/80 rounded-lg mx-2'>
@@ -48,7 +48,7 @@ export function ThemeSelector() {
                 {() => (
                   <div className={`flex items-center justify-between px-4 py-2 rounded-md text-sm text-gray-700 w-full text-left ${getThemeHoverClass(activeTheme as ThemeType)}  dark:text-white`}>
                     <button
-                      className={`w-full text-left flex-1 ${getActiveThemeClass(activeTheme as ThemeType, theme.value as ThemeType)}`}
+                      className={`w-full font-medium text-left flex-1 ${getActiveThemeClass(activeTheme as ThemeType, theme.value as ThemeType)}`}
                       onClick={() => setActiveTheme(theme.value)}
                     >
                       {theme.name}
@@ -66,7 +66,7 @@ export function ThemeSelector() {
               <MenuItem key={theme.name}>
                 {() => (
                   <div className={`flex items-center justify-between px-4 py-2 rounded-md text-sm text-gray-700 w-full text-left ${getThemeHoverClass(activeTheme as ThemeType)}  dark:text-white`}>
-                    <button className="w-full text-left flex-1" onClick={() => setActiveTheme(theme.value)}>
+                    <button className="w-full font-medium text-left flex-1" onClick={() => setActiveTheme(theme.value)}>
                       {theme.name}
                     </button>
                     {theme.value === activeTheme && (

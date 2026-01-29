@@ -26,7 +26,6 @@ export default function ProfileLayout() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const { accountInfo, mutateAccountInfo } = useAppContext();
-  // 用户数据（示例）
   const [userData, setUserData] = useState({
     username: '',
     email: '',

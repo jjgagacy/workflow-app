@@ -6,7 +6,7 @@ import { cn } from "@/utils/classnames";
 import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
 import { Suspense } from "react";
-import Loading from "../../loading";
+import Loading from "../../../loading";
 import DepartmentListPage from "@/features/dep/dep-list";
 import { getServerLocale, useTranslation } from "@/i18n/server";
 import { Metadata } from "next";
@@ -30,7 +30,7 @@ export default async function Page() {
             title={t('department_management')}
             description={t('manage_company_departments')} />
           <Link
-            href="/admin/system/dep/new"
+            href="/workspace/system/dep/new"
             className={cn(buttonVariants(), 'text-xs md:text-sm')}
           >
             <IconPlus className="mr-2 h-4 w-4" /> {t('add_department')}

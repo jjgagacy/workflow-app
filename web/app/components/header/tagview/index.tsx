@@ -47,7 +47,7 @@ export function TagView({ routes }: TagViewProps) {
       const remainingPaths = aliveList
         .filter(tag => tag.key !== key)
         .map(tag => tag.path);
-      const targetPath = remainingPaths.length > 0 ? remainingPaths[remainingPaths.length - 1] : "/admin";
+      const targetPath = remainingPaths.length > 0 ? remainingPaths[remainingPaths.length - 1] : "/workspace";
       router.push(targetPath);
     }
   }, [activeTag, router, removeTag, aliveList]);

@@ -3,7 +3,7 @@ import { MenuItem } from '@/types/menu';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useActiveTheme } from '../../active-theme';
+import { useActiveAppearance } from '../../appearance';
 import { getThemeActiveClass, getThemeBgClass, getThemeHoverClass, ThemeType } from '@/types/theme';
 
 interface NavigationProps {
@@ -25,7 +25,7 @@ export const HoverSubmenu = ({
   onMouseLeave
 }: any) => {
   const [mounted, setMounted] = useState(false);
-  const { activeTheme } = useActiveTheme();
+  const { activeAppearance: activeTheme } = useActiveAppearance();
 
   useEffect(() => {
     setMounted(true);

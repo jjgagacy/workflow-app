@@ -9,7 +9,6 @@ import { AlertCircle, CheckCircle, User } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { set } from "zod";
 
 interface ActivateFormData {
   username: string;

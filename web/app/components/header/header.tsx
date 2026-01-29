@@ -19,7 +19,7 @@ export default function Header() {
             <div className="flex items-center space-x-4">
               <Button variant={'ghost'}
                 className='flex items-center'
-                onClick={() => location.href = '/admin'}
+                onClick={() => location.href = '/workspace'}
               >
                 <LayoutDashboard className="mr-2 w-5 h-5" />
                 {t('app.back_workspace')}

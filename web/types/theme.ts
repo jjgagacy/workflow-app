@@ -13,9 +13,9 @@ export const themes: ThemeConfig[] = [
   {
     value: 'default',
     name: 'Default',
-    bgColor: 'bg-gray-100 dark:bg-gray-900',
+    bgColor: 'bg-gray-50 dark:bg-gray-900',
     textColor: 'text-gray-700 dark:text-gray-200',
-    hoverColor: 'hover:bg-gray-200 dark:hover:bg-neutral-700',
+    hoverColor: 'hover:bg-gray-100 dark:hover:bg-neutral-700',
     activeColor: 'text-gray-600 dark:text-gray-300',
   },
   {
@@ -23,7 +23,7 @@ export const themes: ThemeConfig[] = [
     name: 'Blue',
     bgColor: 'bg-blue-50 dark:bg-blue-900',
     textColor: 'text-blue-700 dark:text-blue-200',
-    hoverColor: 'hover:bg-blue-100 dark:hover:bg-blue-800',
+    hoverColor: 'hover:bg-blue-50 dark:hover:bg-blue-800',
     activeColor: 'text-blue-600 dark:text-blue-300',
   },
   {
@@ -31,7 +31,7 @@ export const themes: ThemeConfig[] = [
     name: 'Green',
     bgColor: 'bg-green-50 dark:bg-green-900',
     textColor: 'text-green-700 dark:text-green-200',
-    hoverColor: 'hover:bg-green-100 dark:hover:bg-green-800',
+    hoverColor: 'hover:bg-green-50 dark:hover:bg-green-800',
     activeColor: 'text-green-600 dark:text-green-300',
   },
   {
@@ -39,7 +39,7 @@ export const themes: ThemeConfig[] = [
     name: 'Amber',
     bgColor: 'bg-amber-50 dark:bg-amber-900',
     textColor: 'text-amber-700 dark:text-amber-200',
-    hoverColor: 'hover:bg-amber-100 dark:hover:bg-amber-800',
+    hoverColor: 'hover:bg-amber-50 dark:hover:bg-amber-800',
     activeColor: 'text-amber-600 dark:text-amber-300',
   },
 ];

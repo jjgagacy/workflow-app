@@ -20,7 +20,7 @@ export default function WorkspaceSelector() {
           return;
         }
         setCurrentTenant(tenantInfo);
-        router.push('/admin');
+        router.push('/workspace');
       } catch (error) {
         console.error('Failed to fetch tenant:', error);
         // 处理错误，比如跳转到错误页面或显示错误信息

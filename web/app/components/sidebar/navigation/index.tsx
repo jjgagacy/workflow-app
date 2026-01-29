@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { HoverSubmenu } from './hover-submenu';
 import { useTranslation } from 'react-i18next';
-import { useActiveTheme } from '../../active-theme';
+import { useActiveAppearance } from '../../appearance';
 import { getThemeActiveClass, getThemeBgClass, getThemeHoverClass, ThemeType } from '@/types/theme';
 
 interface NavigationProps {
@@ -28,36 +28,36 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
   const subMenuRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hoverRef = useRef<{ key: string; timeout: NodeJS.Timeout | null }>({ key: '', timeout: null });
-  const { activeTheme } = useActiveTheme();
+  const { activeAppearance: activeTheme } = useActiveAppearance();
 
   const defaultMenus: MenuItem[] = [
     {
       key: 'dashboard',
       title: t('system.dashboard'),
       icon: <LayoutDashboard className="w-5 h-5" />,
-      path: "/admin/dashboard"
+      path: "/workspace",
     },
     {
       key: 'system',
       title: t('system.system_settings'),
       icon: <Sliders className="w-5 h-5" />,
-      path: '/admin/system',
+      path: '/workspace/system',
       children: [
-        { key: 'account', title: t('system.account'), icon: <UserCog className="w-4 h-4" />, path: "/admin/system/account" },
-        { key: 'dep', title: t('system.department'), icon: <Briefcase className="w-4 h-4" />, path: "/admin/system/dep" },
-        { key: 'role', title: t('system.role'), icon: <Crown className="w-4 h-4" />, path: "/admin/system/role" },
-        { key: 'module', title: t('system.permission_module'), icon: <Fingerprint className="w-4 h-4" />, path: "/admin/system/module" },
-        // { key: 'menu', title: t('system.menu'), icon: <List className="w-4 h-4" />, path: "/admin/system/menu" },
+        { key: 'account', title: t('system.account'), icon: <UserCog className="w-4 h-4" />, path: "/workspace/system/account" },
+        { key: 'dep', title: t('system.department'), icon: <Briefcase className="w-4 h-4" />, path: "/workspace/system/dep" },
+        { key: 'role', title: t('system.role'), icon: <Crown className="w-4 h-4" />, path: "/workspace/system/role" },
+        { key: 'module', title: t('system.permission_module'), icon: <Fingerprint className="w-4 h-4" />, path: "/workspace/system/module" },
+        // { key: 'menu', title: t('system.menu'), icon: <List className="w-4 h-4" />, path: "/workspace/system/menu" },
       ]
     },
     {
       key: 'foo',
       title: "Foo",
       icon: <UserCog className="w-5 h-5" />,
-      path: '/admin/foo',
+      path: '/workspace/foo',
       children: [
-        { key: 'foo', title: "Foo", icon: <UserCog className="w-4 h-4" />, path: "/admin/foo/foo" },
-        { key: 'bar', title: "Boo", icon: <UserCog className="w-4 h-4" />, path: "/admin/foo/bar" },
+        { key: 'foo', title: "Foo", icon: <UserCog className="w-4 h-4" />, path: "/workspace/foo/foo" },
+        { key: 'bar', title: "Boo", icon: <UserCog className="w-4 h-4" />, path: "/workspace/foo/bar" },
       ]
     },
     {
@@ -193,12 +193,12 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                 <Link
                   href={item.path || '#'}
                   onClick={() => toggleMobileSidebar?.()}
-                  className={`flex items-center`}
+                  className={`flex items-center font-medium`}
                   title={item.title}
                 >
                   <div className="flex items-center">
                     <span>{item.icon}</span>
-                    {!collapsed && (<span className="ml-3">{item.title}</span>)}
+                    {!collapsed && (<span className="ml-3 font-medium">{item.title}</span>)}
                   </div>
                   {!collapsed && (<span>&nbsp;</span>)}
                 </Link>
@@ -208,12 +208,12 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
             <div>
               <div
                 className={`flex items-center px-2 py-1 rounded-lg ${getThemeHoverClass(activeTheme as ThemeType)} cursor-pointer ${collapsed ? "justify-center" : "justify-between"
-                  } ${item.children.some(c => isActive(c.path)) ? `${getThemeActiveClass(activeTheme as ThemeType)} ${getThemeBgClass(activeTheme as ThemeType)}` : ""}`}
+                  }`}
                 onClick={() => toggleSubmenu(item.title)}
               >
                 <div className="flex items-center">
                   <span>{item.icon}</span>
-                  {!collapsed && <span className="ml-3">{item.title}</span>}
+                  {!collapsed && <span className="ml-3 font-medium">{item.title}</span>}
                 </div>
                 {!collapsed && (
                   <span>
@@ -233,10 +233,10 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                       onClick={() => toggleMobileSidebar?.()}
                       href={child.path || '#'}
                       className={`flex items-center px-2 py-1 mb-1 rounded-lg ${getThemeHoverClass(activeTheme as ThemeType)} ${collapsed ? "justify-center" : ""
-                        } ${isActive(child.path) ? `${getThemeActiveClass(activeTheme as ThemeType)} ${getThemeBgClass(activeTheme as ThemeType)}` : ""}`}
+                        } ${isActive(child.path) ? `${getThemeActiveClass(activeTheme as ThemeType)} ${getThemeBgClass(activeTheme as ThemeType)} border border-[var(--border)]` : ""}`}
                     >
                       <span>{child.icon}</span>
-                      <span className="ml-3">{child.title}</span>
+                      <span className="ml-3 font-medium">{child.title}</span>
                     </Link>
                   ))}
                 </div>

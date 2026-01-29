@@ -1,7 +1,7 @@
 import React from "react";
 import SwrInitializer from "../components/swr-initializer";
 import Logo from "../components/site/header/logo";
-import ThemeToggle from "../components/site/header/themeToggle";
+import ThemeToggle from "../components/site/header/appearanceToggle";
 import { LanguageSelector } from "../components/site/header/languageSelector";
 
 export default function Layout({ children }: { children: React.ReactNode }) {

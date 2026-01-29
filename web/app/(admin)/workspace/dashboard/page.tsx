@@ -3,6 +3,7 @@
 import { Badge } from "@/app/components/base/badge";
 import Button from "@/app/components/base/button";
 import Countdown, { CountdownRef } from "@/app/components/base/countdown";
+import Loading from "@/app/components/base/loading";
 import { useDialog } from "@/app/components/hooks/use-dialog";
 import { Accordion } from "@/app/ui/accordion";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/ui/card";
@@ -18,6 +19,7 @@ import { toast } from "@/app/ui/toast";
 import { TreeNode, TreeSelect } from "@/app/ui/tree-select";
 import { arrayToTree, treeToFlatten } from "@/utils/trees";
 import { useEffect, useRef, useState } from "react";
+// import Loading from "../../loading";
 
 export default function Page() {
   const [openDialog, setOpenDialog] = useState(false);
@@ -106,6 +108,8 @@ export default function Page() {
   return (
     <div>
       <h1 className="mt-4">Dashboard</h1>
+      {/* <Loading /> */}
+      <Loading />
       <div className="flex gap-2">
         <Button variant={'primary'}>primary</Button>
         <Button variant={'secondary'}>secondary</Button>

@@ -5,12 +5,12 @@ import { useTranslation } from 'react-i18next';
 import { Fragment } from "react";
 import { LanguageEmojiDefault, languages } from '@/types/language';
 import { setClientLocale } from '@/i18n';
-import { useActiveTheme } from '@/app/components/active-theme';
+import { useActiveAppearance } from '@/app/components/appearance';
 import { getThemeHoverClass, ThemeType } from '@/types/theme';
 
 export function LanguageSelector({ reloadPage = false }: { reloadPage?: boolean }) {
   const { t, i18n } = useTranslation();
-  const { activeTheme, setActiveTheme } = useActiveTheme();
+  const { activeAppearance: activeTheme, setActiveAppearance: setActiveTheme } = useActiveAppearance();
 
   const toggleLanguage = async (lng: string) => {
     if (i18n.language === lng) return;
@@ -44,7 +44,7 @@ export function LanguageSelector({ reloadPage = false }: { reloadPage?: boolean 
                     className='w-full text-left flex flex-1 items-center'
                   >
                     <span className="text-lg mr-2">{lang.emoji || LanguageEmojiDefault}</span>
-                    <span>{lang.name}</span>
+                    <h3 className='font-medium'>{lang.name}</h3>
                   </button>
                 </div>
               </MenuItem>

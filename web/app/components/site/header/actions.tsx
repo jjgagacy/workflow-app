@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Button from "@/app/components/base/button";
 import { useMobileMenu } from "@/context/mobile-menu-context";
-import ThemeToggle from "./themeToggle";
+import ThemeToggle from "./appearanceToggle";
 import { setClientLocale } from "@/i18n";
 import { LanguageSelector } from "./languageSelector";
 
