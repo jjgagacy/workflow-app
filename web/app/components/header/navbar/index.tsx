@@ -1,17 +1,13 @@
 'use client';
 
-import { useAuth } from "@/hooks/use-auth";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { IconPercentage50 } from "@tabler/icons-react";
 import { Breadcrumbs } from "./breadcrumbs";
 import { Route } from "@/types/route";
-import { usePersistentState } from "@/hooks/use-persistent-state";
-import { useTheme } from "next-themes";
 import { ThemeSelector } from "./selector/theme-selector";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { UserSelector } from "./selector/user-selector";
 import { LanguageSelector } from "./selector/language-selector";
+import { useAppearance } from "@/hooks/use-appearance";
 
 interface NavbarProps {
   routes: Route[];
@@ -19,17 +15,8 @@ interface NavbarProps {
 }
 
 export function Navbar({ routes, onMenuClick }: NavbarProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [darkMode, setDarkMode] = usePersistentState<boolean>('darkMode', false);
-  const { theme, setTheme } = useTheme();
-  const router = useRouter();
-  const { user, logout } = useAuth();
   const isMobile = useIsMobile();
-
-  const handleLogout = () => {
-    logout();
-    router.push('/login');
-  }
+  const { toggleTheme } = useAppearance();
 
   return (
     <div className="bg-background shadow-sm dark:shadow-gray-700/30 flex items-center rounded-lg mr-2">
@@ -63,11 +50,7 @@ export function Navbar({ routes, onMenuClick }: NavbarProps) {
               <button
                 type="button"
                 className="p-1 mr-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none"
-                onClick={() => {
-                  const newTheme = theme === 'dark' ? 'light' : 'dark';
-                  setTheme(newTheme);
-                  setDarkMode(newTheme === 'dark' ? true : false);
-                }}
+                onClick={toggleTheme}
               >
                 <span className="sr-only">View notifications</span>
                 <IconPercentage50 className="h-6 w-6" aria-hidden="true" />

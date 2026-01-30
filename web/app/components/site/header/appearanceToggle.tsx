@@ -1,60 +1,21 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Sun, Moon, Monitor } from 'lucide-react';
-import { useActiveAppearance } from '@/app/components/appearance';
-import { useTheme } from 'next-themes';
 import { useTranslation } from 'react-i18next';
-import { AppearanceOptions, AppearanceType } from '@/types/appearance';
+import { AppearanceType } from '@/types/appearance';
+import { useAppearance } from '@/hooks/use-appearance';
 
-export const getAppearanceIcon = (activeTheme: string) => {
-  if (activeTheme === 'system') {
-    return <Monitor className="w-5 h-5" />;
-  } else if (activeTheme === 'light') {
-    return <Sun className="w-5 h-5" />;
-  } else {
-    return <Moon className="w-5 h-5" />;
-  }
-};
 
-export const getAppearanceOptions = function (resolvedAppearance: AppearanceType, t: any): AppearanceOptions[] {
-  const appearanceOptions: AppearanceOptions[] = [
-    {
-      value: 'system',
-      label: resolvedAppearance === 'light' ? t('app.theme.system_light') : t('app.theme.system_dark'),
-      icon: Monitor,
-      description: t('theme.descriptions.system')
-    },
-    {
-      value: 'light',
-      label: t('app.theme.light'),
-      icon: Sun,
-      description: t('theme.descriptions.light')
-    },
-    {
-      value: 'dark',
-      label: t('app.theme.dark'),
-      icon: Moon,
-      description: t('theme.descriptions.dark')
-    }
-  ];
-  return appearanceOptions;
-}
-
-export default function ThemeToggle() {
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
+export default function AppearanceToggle() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { activeAppearance: activeTheme, setActiveAppearance: setActiveTheme } = useActiveAppearance();
-  const { theme, setTheme } = useTheme();
   const { t, i18n } = useTranslation();
-
-  // 初始化主题
-  useEffect(() => {
-    const initialTheme = theme || 'system';
-    setActiveTheme(initialTheme);
-    applyTheme(initialTheme as AppearanceType);
-  }, [activeTheme]);
+  const {
+    resolvedTheme,
+    selectAppearance,
+    appearanceOptions,
+    currentAppearanceIcon,
+  } = useAppearance();
 
   // 点击外部关闭下拉
   useEffect(() => {
@@ -67,38 +28,15 @@ export default function ThemeToggle() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const applyTheme = (selectedTheme: AppearanceType) => {
-    const root = document.documentElement;
-    root.classList.remove('light', 'dark');
-
-    if (selectedTheme === 'system') {
-      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (isDark) {
-        setResolvedTheme('dark');
-      } else {
-        setResolvedTheme('light');
-      }
-    } else if (selectedTheme === 'dark') {
-      setResolvedTheme('dark');
-    } else {
-      setResolvedTheme('light');
-    }
-  };
 
   const handleThemeSelect = (selectedTheme: AppearanceType) => {
-    setActiveTheme(selectedTheme);
-    applyTheme(selectedTheme);
-    setTheme(selectedTheme);
+    selectAppearance(selectedTheme);
     setIsOpen(false);
   };
 
-
-  const appearanceOptions = useCallback(() => {
-    return getAppearanceOptions(resolvedTheme, t);
-  }, [resolvedTheme, t]);
-
-  const getCurrentTheme = () => {
-    return appearanceOptions().find(option => option.value === activeTheme) || appearanceOptions()[0];
+  const getAppearanceIcon = (size: number = 4) => {
+    const Icon = currentAppearanceIcon;
+    return <Icon className={`w-${size} h-${size}`} />;
   };
 
   return (
@@ -113,9 +51,9 @@ export default function ThemeToggle() {
         "
         aria-label={t('app.theme.select_theme')}
         aria-expanded={isOpen}
-        title={t('app.theme.current_theme', { theme: getCurrentTheme().label })}
+        title={t('app.theme.current_theme', { theme: resolvedTheme })}
       >
-        {getAppearanceIcon(activeTheme)}
+        {getAppearanceIcon(4)}
       </button>
 
       {isOpen && (
@@ -128,7 +66,7 @@ export default function ThemeToggle() {
           animate-[fadeIn_0.2s_ease-out]
         ">
           <div className="p-2">
-            {appearanceOptions().map((option) => (
+            {appearanceOptions.map((option) => (
               <button
                 key={option.value}
                 onClick={() => handleThemeSelect(option.value)}
@@ -139,14 +77,14 @@ export default function ThemeToggle() {
                   rounded-md 
                   text-left 
                   transition-colors
-                  ${activeTheme === option.value
+                  ${resolvedTheme === option.value
                     ? 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400'
                     : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                   }
                 `}
                 aria-label={option.label}
               >
-                <div className={`p-1.5 rounded ${activeTheme === option.value ? 'bg-green-100 dark:bg-green-900/50' : 'bg-gray-100 dark:bg-gray-700'}`}>
+                <div className={`p-1.5 rounded ${resolvedTheme === option.value ? 'bg-green-100 dark:bg-green-900/50' : 'bg-gray-100 dark:bg-gray-700'}`}>
                   <option.icon className={`w-4 h-4`} />
                 </div>
                 <span className="font-medium text-sm">{option.label}</span>

@@ -1,4 +1,4 @@
-import { useActiveAppearance } from '@/app/components/appearance';
+import { useCustomTheme } from '@/app/components/provider/customThemeProvider';
 import { useAuth } from '@/hooks/use-auth';
 import { getThemeBgClass, getThemeHoverClass, ThemeType } from '@/types/theme';
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
@@ -11,7 +11,7 @@ export function UserSelector() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const { t } = useTranslation();
-  const { activeAppearance: activeTheme } = useActiveAppearance();
+  const { activeTheme: activeTheme } = useCustomTheme();
 
   const handleLogout = () => {
     logout();

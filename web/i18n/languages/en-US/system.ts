@@ -147,5 +147,54 @@ const translation = {
   network_error: 'Network error, please check your connection',
   unauthorized: 'Unauthorized access',
   forbidden: 'Access forbidden',
+  timezone: {
+    "Asia/Shanghai": "China Standard Time (UTC+8)",
+    "Asia/Tokyo": "Japan Standard Time (UTC+9)",
+    "Asia/Seoul": "Korea Standard Time (UTC+9)",
+    "Asia/Taipei": "Taipei Time (UTC+8)",
+    "Asia/Hong_Kong": "Hong Kong Time (UTC+8)",
+    "Asia/Singapore": "Singapore Time (UTC+8)",
+    "Asia/Bangkok": "Bangkok Time (UTC+7)",
+    "Asia/Ho_Chi_Minh": "Ho Chi Minh City Time (UTC+7)",
+    "Asia/Jakarta": "Western Indonesia Time (UTC+7)",
+    "Asia/Manila": "Philippine Time (UTC+8)",
+    "Asia/Kolkata": "India Standard Time (UTC+5:30)",
+
+    "Europe/London": "Greenwich Mean Time/British Summer Time (UTC+0/+1)",
+    "Europe/Paris": "Paris Time (UTC+1/+2)",
+    "Europe/Berlin": "Berlin Time (UTC+1/+2)",
+    "Europe/Madrid": "Madrid Time (UTC+1/+2)",
+    "Europe/Rome": "Rome Time (UTC+1/+2)",
+    "Europe/Moscow": "Moscow Time (UTC+3)",
+
+    "America/New_York": "Eastern Time (UTC-5/-4)",
+    "America/Los_Angeles": "Pacific Time (UTC-8/-7)",
+    "America/Toronto": "Eastern Time (UTC-5/-4)",
+    "America/Sao_Paulo": "Brasilia Time (UTC-3)",
+
+    "Africa/Cairo": "Cairo Time (UTC+2)",
+    "Africa/Johannesburg": "South Africa Standard Time (UTC+2)",
+
+    "Australia/Sydney": "Australian Eastern Time (UTC+10/+11)",
+    "Pacific/Auckland": "New Zealand Time (UTC+12/+13)",
+
+    "UTC": "Coordinated Universal Time (UTC)",
+    "GMT": "Greenwich Mean Time (GMT)"
+  },
+  theme: {
+    default: 'Default',
+    blue: 'Blue',
+    green: 'Green',
+    amber: 'Amber',
+  },
+  settings: 'Settings',
+  accounts: 'Accounts',
+  no_username: 'No Name',
+  general: 'General',
+  language_settings: 'Language',
+  appearance_settings: 'Appearance',
+  theme_settings: 'Theme',
+  timezone_settings: 'Timezone',
+  save_settings: 'Save Settings',
 };
 export default translation;

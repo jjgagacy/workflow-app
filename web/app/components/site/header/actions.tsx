@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Button from "@/app/components/base/button";
 import { useMobileMenu } from "@/context/mobile-menu-context";
-import ThemeToggle from "./appearanceToggle";
+import AppearanceToggle from "./appearanceToggle";
 import { setClientLocale } from "@/i18n";
 import { LanguageSelector } from "./languageSelector";
 
@@ -56,7 +56,7 @@ export default function Actions() {
         )}
       </button>
       {/* 主题切换 */}
-      <ThemeToggle />
+      <AppearanceToggle />
     </div>
   )
 }

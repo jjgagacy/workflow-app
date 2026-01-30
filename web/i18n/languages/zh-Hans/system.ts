@@ -147,5 +147,55 @@ const translation = {
   network_error: '网络错误，请检查连接',
   unauthorized: '未授权访问',
   forbidden: '禁止访问',
+
+  timezone: {
+    "Asia/Shanghai": "中国标准时间 (UTC+8)",
+    "Asia/Tokyo": "日本标准时间 (UTC+9)",
+    "Asia/Seoul": "韩国标准时间 (UTC+9)",
+    "Asia/Taipei": "台北时间 (UTC+8)",
+    "Asia/Hong_Kong": "香港时间 (UTC+8)",
+    "Asia/Singapore": "新加坡时间 (UTC+8)",
+    "Asia/Bangkok": "曼谷时间 (UTC+7)",
+    "Asia/Ho_Chi_Minh": "胡志明市时间 (UTC+7)",
+    "Asia/Jakarta": "印度尼西亚西部时间 (UTC+7)",
+    "Asia/Manila": "菲律宾时间 (UTC+8)",
+    "Asia/Kolkata": "印度标准时间 (UTC+5:30)",
+
+    "Europe/London": "格林威治标准时间/英国夏令时 (UTC+0/+1)",
+    "Europe/Paris": "巴黎时间 (UTC+1/+2)",
+    "Europe/Berlin": "柏林时间 (UTC+1/+2)",
+    "Europe/Madrid": "西班牙时间 (UTC+1/+2)",
+    "Europe/Rome": "罗马时间 (UTC+1/+2)",
+    "Europe/Moscow": "莫斯科时间 (UTC+3)",
+
+    "America/New_York": "美国东部时间 (UTC-5/-4)",
+    "America/Los_Angeles": "美国太平洋时间 (UTC-8/-7)",
+    "America/Toronto": "加拿大东部时间 (UTC-5/-4)",
+    "America/Sao_Paulo": "巴西利亚时间 (UTC-3)",
+
+    "Africa/Cairo": "开罗时间 (UTC+2)",
+    "Africa/Johannesburg": "南非标准时间 (UTC+2)",
+
+    "Australia/Sydney": "澳大利亚东部时间 (UTC+10/+11)",
+    "Pacific/Auckland": "新西兰时间 (UTC+12/+13)",
+
+    "UTC": "协调世界时 (UTC)",
+    "GMT": "格林威治标准时间 (GMT)"
+  },
+  theme: {
+    default: '默认主题',
+    blue: '蓝色主题',
+    green: '绿色主题',
+    amber: '琥珀主题',
+  },
+  settings: '设置',
+  accounts: '账户',
+  not_username: '未设置',
+  general: '通用',
+  language_settings: '语言设置',
+  appearance_settings: '外观设置',
+  theme_settings: '主题设置',
+  timezone_settings: '时区设置',
+  save_settings: '保存设置',
 };
 export default translation;

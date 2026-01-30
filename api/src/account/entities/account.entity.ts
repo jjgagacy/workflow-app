@@ -71,6 +71,12 @@ export class AccountEntity extends BaseEntity {
   })
   timezone: string;
 
+  @Column({
+    nullable: false,
+    default: '',
+  })
+  appearance: string;
+
   // 0开启 1关闭
   @Column({
     nullable: false,

@@ -5,7 +5,7 @@ import { treeToFlatten } from "@/utils/trees";
 import { IconCaretUpDown, IconChevronDown, IconChevronRight, IconX } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type FC } from "react";
 import { Checkbox } from "./checkbox";
-import { useActiveAppearance } from "../components/appearance";
+import { useCustomTheme } from "../components/provider/customThemeProvider";
 import { getThemeBgClass, getThemeHoverClass, ThemeType } from "@/types/theme";
 
 export type TreeNode = {
@@ -43,7 +43,7 @@ export const TreeSelect: FC<ITreeSelectProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedArr, setSelectedArr] = useState<(string | number)[]>([]);
   const [expandedNodes, setExpandedNodes] = useState<Set<string | number>>(new Set());
-  const { activeAppearance: activeTheme } = useActiveAppearance();
+  const { activeTheme: activeTheme } = useCustomTheme();
 
   const selectRef = useRef<HTMLDivElement>(null);
 

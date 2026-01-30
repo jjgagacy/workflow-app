@@ -5,7 +5,7 @@ import { setClientLocale } from "@/i18n";
 import { BookOpen, Brain, CreditCard, Globe, Moon, Smartphone, Sun, Users } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next"
-import { useActiveAppearance } from "../../appearance";
+import { useCustomTheme } from "../../provider/customThemeProvider";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 
@@ -13,7 +13,7 @@ export default function Footer() {
   const { t, i18n } = useTranslation();
   const [showLanguageSelect, setShowLanguageSelect] = useState(false);
   const { isMobileMenuOpen, setIsMobileMenuOpen } = useMobileMenu();
-  const { activeAppearance: activeTheme, setActiveAppearance: setActiveTheme } = useActiveAppearance();
+  const { activeTheme: activeTheme, setActiveTheme: setActiveTheme } = useCustomTheme();
   const { setTheme } = useTheme();
 
   const toggleLanguage = async () => {

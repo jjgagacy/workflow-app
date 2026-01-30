@@ -7,4 +7,5 @@ export abstract class BaseAccountDto {
   roles?: number[];
   language?: string;
   theme?: string;
+  appearance?: string;
 }

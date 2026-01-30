@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { HoverSubmenu } from './hover-submenu';
 import { useTranslation } from 'react-i18next';
-import { useActiveAppearance } from '../../appearance';
+import { useCustomTheme } from '../../provider/customThemeProvider';
 import { getThemeActiveClass, getThemeBgClass, getThemeHoverClass, ThemeType } from '@/types/theme';
 
 interface NavigationProps {
@@ -28,7 +28,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
   const subMenuRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hoverRef = useRef<{ key: string; timeout: NodeJS.Timeout | null }>({ key: '', timeout: null });
-  const { activeAppearance: activeTheme } = useActiveAppearance();
+  const { activeTheme: activeTheme } = useCustomTheme();
 
   const defaultMenus: MenuItem[] = [
     {

@@ -2,10 +2,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import I18nServer from "./components/i18n-server";
 import { getServerLocale } from "@/i18n/server";
-import { ThemeProvider } from "next-themes";
 import { cookies } from "next/headers";
-import Providers from "./components/layout/providers";
+import Providers from "./components/provider/providers";
 import { generateMetadata as Metadata } from "./components/layout/metadata";
+import { ThemeProvider } from "next-themes";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +27,7 @@ export default async function RootLayout({
   const locale = await getServerLocale();
   const cookieStore = await cookies();
   const activeThemeValue = cookieStore.get('active_theme')?.value;
+  const activeAppearanceValue = cookieStore.get('active_color_theme')?.value;
 
   return (
     <html lang={locale ?? 'en'} suppressHydrationWarning>
@@ -40,7 +41,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <I18nServer>
-            <Providers activeThemeValue={activeThemeValue || 'Default'}>
+            <Providers activeThemeValue={activeThemeValue || 'system'} activeColorThemeValue={activeAppearanceValue || 'default'}>
               {children}
             </Providers>
           </I18nServer>

@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import ProfileContent from "./content/profile-content";
 import SettingContent from "./content/setting-content";
-import { useActiveAppearance } from "../../appearance";
+import { useCustomTheme } from "../../provider/customThemeProvider";
 import { getThemeActiveClass, getThemeBgClass, ThemeType } from "@/types/theme";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 
@@ -22,25 +22,27 @@ type MenuItem = {
   description?: string;
 };
 
-const MENU_ITEMS: MenuItem[] = [
-  {
-    key: 'profile',
-    label: '账户',
-    icon: <User className="w-5 h-5" />,
-    description: ''
-  },
-  {
-    key: 'setting',
-    label: '设置',
-    icon: <CogIcon className="w-5 h-5" />,
-    description: ''
-  }
-] as const;
 
 export default function AccountSettingsLayout() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { activeAppearance: activeTheme } = useActiveAppearance();
+  const { activeTheme: activeTheme } = useCustomTheme();
+
+
+  const MENU_ITEMS: MenuItem[] = [
+    {
+      key: 'profile',
+      label: t('system.accounts'),
+      icon: <User className="w-5 h-5" />,
+      description: ''
+    },
+    {
+      key: 'setting',
+      label: t('system.settings'),
+      icon: <CogIcon className="w-5 h-5" />,
+      description: ''
+    }
+  ] as const;
 
   const menuOptions = MENU_ITEMS.map(item => item.key);
   const [activeMenu, setActiveMenu] = useQueryState(
@@ -72,7 +74,7 @@ export default function AccountSettingsLayout() {
         <div className="container mx-auto">
           <div className="pb-4 border-b border-[var(--border)]/30">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              设置
+              {t('system.settings')}
             </h1>
           </div>
           <div className="flex flex-1 min-h-[600]">

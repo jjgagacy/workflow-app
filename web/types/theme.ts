@@ -1,4 +1,4 @@
-export type ThemeType = 'default' | 'blue' | 'green' | 'amber';
+export type ThemeType = 'default' | 'blue' | 'green' | 'amber' | 'default-scaled';
 
 export interface ThemeConfig {
   value: ThemeType;

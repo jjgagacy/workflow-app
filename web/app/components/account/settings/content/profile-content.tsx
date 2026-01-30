@@ -45,7 +45,7 @@ export default function ProfileContent() {
 
   return (
     <ContentSection
-      title="账户"
+      title={t('system.accounts')}
       description=""
     >
       <div className="flex justify-between bg-background">
@@ -56,7 +56,7 @@ export default function ProfileContent() {
           <div className="flex-1">
             <div className="mb-4">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                {userData.username || '未设置用户名'}
+                {userData.username || t('system.no_name')}
               </h2>
               <p className="text-gray-600 dark:text-gray-400 flex items-center mt-1">
                 <Mail className="w-4 h-4 mr-2" />
@@ -64,8 +64,8 @@ export default function ProfileContent() {
               </p>
             </div>
             <div className="text-sm text-gray-500 dark:text-gray-400">
-              <p>{t('account.account_id') || '账户ID'}: {userData.id}</p>
-              <p className="mt-1">{t('account.member_since') || '加入时间'}: {userData.created_at}</p>
+              <p>{t('account.account_id')}: {userData.id}</p>
+              <p className="mt-1">{t('account.member_since')}: {userData.created_at}</p>
             </div>
           </div>
         </div>
@@ -75,12 +75,12 @@ export default function ProfileContent() {
               <button
                 onClick={handleViewProfile}
                 className="flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 dark:bg-neutral-700 hover:bg-gray-200 dark:hover:bg-neutral-600 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
-                aria-label="编辑账户"
+                aria-label={t('system.edit_account')}
               >
                 <EditIcon className="h-5 w-5" />
               </button>
               <div className="absolute right-0 top-full mt-2 px-3 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-neutral-800 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                编辑账户
+                {t('system.edit_account')}
                 <div className="absolute -top-1 right-3 w-2 h-2 bg-gray-900 dark:bg-neutral-800 transform rotate-45"></div>
               </div>
             </div>
@@ -93,7 +93,7 @@ export default function ProfileContent() {
                 <LogOutIcon className="h-5 w-5" />
               </button>
               <div className="absolute right-0 top-full mt-2 px-3 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-neutral-800 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                退出登录
+                {t('system.logout')}
                 <div className="absolute -top-1 right-3 w-2 h-2 bg-gray-900 dark:bg-neutral-800 transform rotate-45"></div>
               </div>
             </div>

@@ -1,79 +1,125 @@
-import { Check, ChevronDown, Globe, Monitor, Moon, Sun } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { ContentSection } from "../content-section";
 import { useTranslation } from "react-i18next";
-import { useCallback, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { languages, LanguageType } from "@/types/language";
 import { ThemeType } from "@/types/theme";
 import { AppearanceType } from "@/types/appearance";
-import { getAppearanceOptions } from "@/app/components/site/header/appearanceToggle";
-import { useActiveAppearance } from "@/app/components/appearance";
 import Button from "@/app/components/base/button";
+import { TIME_ZONES } from "@/i18n/timezone";
+import { useAppearance } from "@/hooks/use-appearance";
 
 export default function SettingContent() {
   const { t, i18n } = useTranslation();
   const [language, setLanguage] = useState<LanguageType>((i18n.language || 'en-US') as LanguageType);
-  const { activeAppearance: activeTheme, setActiveAppearance: setActiveTheme } = useActiveAppearance();
-  const [appearance, setAppearance] = useState<AppearanceType>(activeTheme as AppearanceType);
   const [theme, setTheme] = useState<ThemeType>('default');
   const [timezone, setTimezone] = useState('Asia/Shanghai');
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
   const [isTimezoneDropdownOpen, setIsTimezoneDropdownOpen] = useState(false);
+  const { selectAppearance, resolvedTheme, appearanceOptions } = useAppearance();
+  const [appearance, setAppearance] = useState<AppearanceType>(resolvedTheme);
+
+  // 使用 ref 来获取下拉菜单的 DOM 元素
+  const languageDropdownRef = useRef<HTMLDivElement>(null);
+  const themeDropdownRef = useRef<HTMLDivElement>(null);
+  const timezoneDropdownRef = useRef<HTMLDivElement>(null);
 
   const themeOptions = [
-    { id: 'default', label: '默认主题', color: 'bg-gradient-to-r from-gray-100 to-gray-200' },
-    { id: 'blue', label: '蓝色主题', color: 'bg-gradient-to-r from-blue-100 to-blue-200' },
-    { id: 'green', label: '绿色主题', color: 'bg-gradient-to-r from-green-100 to-green-200' },
-    { id: 'amber', label: '琥珀主题', color: 'bg-gradient-to-r from-amber-100 to-amber-200' }
+    { id: 'default', label: t('system.theme.default'), color: 'bg-gradient-to-r from-gray-500 to-gray-600' },
+    { id: 'blue', label: t('system.theme.blue'), color: 'bg-gradient-to-r from-blue-500 to-blue-600' },
+    { id: 'green', label: t('system.theme.green'), color: 'bg-gradient-to-r from-green-500 to-green-600' },
+    { id: 'amber', label: t('system.theme.amber'), color: 'bg-gradient-to-r from-amber-500 to-amber-600' }
   ];
 
-  const timezones = [
-    { id: 'Asia/Shanghai', label: '中国标准时间 (UTC+8)' },
-    { id: 'Asia/Tokyo', label: '日本标准时间 (UTC+9)' },
-    { id: 'Asia/Seoul', label: '韩国标准时间 (UTC+9)' },
-    { id: 'America/New_York', label: '美国东部时间 (UTC-5)' },
-    { id: 'America/Los_Angeles', label: '美国太平洋时间 (UTC-8)' },
-    { id: 'Europe/London', label: '格林威治标准时间 (UTC+0)' },
-    { id: 'Europe/Paris', label: '中欧时间 (UTC+1)' },
-    { id: 'Australia/Sydney', label: '澳大利亚东部时间 (UTC+10)' }
-  ];
+  const timezones = TIME_ZONES.map(timezone => ({
+    id: timezone.id,
+    label: t(`system.${timezone.labelKey}`),
+  }))
 
-  const handleLanguageChange = (lang: any) => {
+  const handleLanguageChange = (lang: LanguageType) => {
+    setLanguage(lang);
+    setIsLanguageDropdownOpen(false);
   }
 
-  const handleThemeChange = (newTheme: any) => {
+  const handleThemeChange = (newTheme: ThemeType) => {
+    setTheme(newTheme);
+    setIsThemeDropdownOpen(false);
   }
 
-  const handleAppearanceChange = (mode: any) => {
+  const handleAppearanceChange = (mode: AppearanceType) => {
+    selectAppearance(mode);
+    setAppearance(mode);
   }
 
-  const handleReset = () => {
-  }
+  useEffect(() => {
+    setAppearance(resolvedTheme);
+  }, [resolvedTheme, setAppearance]);
 
-  const appearanceOptions = useCallback(() => {
-    return getAppearanceOptions(appearance, t);
-  }, [appearance, t]);
+  const toggleDropdown = (type: 'language' | 'theme' | 'timezone') => {
+    switch (type) {
+      case 'language':
+        setIsLanguageDropdownOpen(!isLanguageDropdownOpen);
+        setIsThemeDropdownOpen(false);
+        setIsTimezoneDropdownOpen(false);
+        break;
+      case 'theme':
+        setIsThemeDropdownOpen(!isThemeDropdownOpen);
+        setIsLanguageDropdownOpen(false);
+        setIsTimezoneDropdownOpen(false);
+        break;
+      case 'timezone':
+        setIsTimezoneDropdownOpen(!isTimezoneDropdownOpen);
+        setIsLanguageDropdownOpen(false);
+        setIsThemeDropdownOpen(false);
+        break;
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isLanguageDropdownOpen &&
+        languageDropdownRef.current &&
+        !languageDropdownRef.current.contains(event.target as Node)) {
+        setIsLanguageDropdownOpen(false);
+      }
+      if (isThemeDropdownOpen &&
+        themeDropdownRef.current &&
+        !themeDropdownRef.current.contains(event.target as Node)) {
+        setIsThemeDropdownOpen(false);
+      }
+      if (isTimezoneDropdownOpen &&
+        timezoneDropdownRef.current &&
+        !timezoneDropdownRef.current.contains(event.target as Node)) {
+        setIsTimezoneDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isLanguageDropdownOpen, isThemeDropdownOpen, isTimezoneDropdownOpen]);
 
 
   return (
     <ContentSection
-      title="设置"
+      title={t('system.settings')}
       description=""
     >
       <header className="mb-8">
-        <h1 className="text-md font-bold text-gray-500 dark:text-white">通用</h1>
+        <h1 className="text-md font-bold text-gray-500 dark:text-white">{t('system.general')}</h1>
       </header>
 
       <div className="space-y-8">
         {/* 语言设置 */}
         <div className="bg-background rounded-2xl">
           <div className="flex items-center mb-6">
-            <h2 className="text-md font-semibold text-gray-900 dark:text-white">语言设置</h2>
+            <h2 className="text-md font-semibold text-gray-900 dark:text-white">{t('system.language_settings')}</h2>
           </div>
 
-          <div className="relative">
+          <div className="relative" ref={languageDropdownRef}>
             <button
-              onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
+              onClick={() => toggleDropdown('language')}
               className="w-full flex items-center justify-between px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-md bg-white dark:bg-neutral-900 hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors"
             >
               <div className="flex items-center">
@@ -112,11 +158,11 @@ export default function SettingContent() {
         {/* 外观设置 */}
         <div className="bg-background rounded-2xl">
           <div className="flex items-center mb-6">
-            <h2 className="text-md font-semibold text-gray-900 dark:text-white">外观设置</h2>
+            <h2 className="text-md font-semibold text-gray-900 dark:text-white">{t('system.appearance_settings')}</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {appearanceOptions().map((option) => {
+            {appearanceOptions.map((option) => {
               const Icon = option.icon;
               return (
                 <button
@@ -140,26 +186,67 @@ export default function SettingContent() {
                     }`}>
                     {option.label}
                   </span>
-                  {appearance === option.value && (
-                    <div className="mt-3 px-2 py-1 bg-green-600 text-white text-xs font-medium rounded-full">
-                      已选择
-                    </div>
-                  )}
                 </button>
               );
             })}
           </div>
         </div>
 
+        {/* 主题设置 */}
+        <div className="bg-background rounded-2xl">
+          <div className="flex items-center mb-6">
+            <div>
+              <h2 className="text-md font-semibold text-gray-900 dark:text-white">{t('system.theme_settings')}</h2>
+            </div>
+          </div>
+
+          <div className="relative mb-4" ref={themeDropdownRef}>
+            <button
+              onClick={() => toggleDropdown('theme')}
+              className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-900 hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors"
+            >
+              <div className="flex items-center">
+                <div className={`w-6 h-6 rounded-full mr-3 ${themeOptions.find(t => t.id === theme)?.color}`} />
+                <span className="font-medium text-gray-900 dark:text-white">
+                  {themeOptions.find(t => t.id === theme)?.label}
+                </span>
+              </div>
+              <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${isThemeDropdownOpen ? 'rotate-180' : ''
+                }`} />
+            </button>
+
+            {isThemeDropdownOpen && (
+              <div className="absolute z-50 w-full mt-2 bg-white dark:bg-neutral-900 border border-gray-300 dark:border-neutral-700 rounded-xl shadow-lg overflow-hidden">
+                {themeOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    onClick={() => handleThemeChange(option.id as ThemeType)}
+                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors"
+                  >
+                    <div className="flex items-center">
+                      <div className={`w-6 h-6 rounded-full mr-3 ${option.color}`} />
+                      <span className="font-medium text-gray-900 dark:text-white">{option.label}</span>
+                    </div>
+                    {theme === option.id && (
+                      <Check className="w-5 h-5 text-blue-500" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+        </div>
+
         {/* 时区设置 */}
         <div className="bg-background">
           <div className="flex items-center mb-6">
-            <h2 className="text-md font-semibold text-gray-900 dark:text-white">时区设置</h2>
+            <h2 className="text-md font-semibold text-gray-900 dark:text-white">{t('system.timezone_settings')}</h2>
           </div>
 
-          <div className="relative">
+          <div className="relative" ref={timezoneDropdownRef}>
             <button
-              onClick={() => setIsTimezoneDropdownOpen(!isTimezoneDropdownOpen)}
+              onClick={() => toggleDropdown('timezone')}
               className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-900 hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors"
             >
               <span className="font-medium text-gray-900 dark:text-white">
@@ -202,7 +289,7 @@ export default function SettingContent() {
             size={'large'}
             className="px-8 py-3"
           >
-            保存设置
+            {t('system.save_settings')}
           </Button>
         </div>
 

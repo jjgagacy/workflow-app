@@ -3,7 +3,7 @@
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import { ReactNode } from "react";
-import { useActiveAppearance } from "../appearance";
+import { useCustomTheme } from "../provider/customThemeProvider";
 import { getThemeHoverClass, ThemeType } from "@/types/theme";
 
 interface SidebarProps {
@@ -13,7 +13,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ collapsed, onToggleCollapse, children }: SidebarProps) {
-  const { activeAppearance: activeTheme } = useActiveAppearance();
+  const { activeTheme: activeTheme } = useCustomTheme();
   return (
     <aside className="fixed left-0 top-0 h-screen">
       <div className="flex relative bg-gray-100 flex-col">
