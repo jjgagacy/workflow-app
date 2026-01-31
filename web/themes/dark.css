@@ -35,4 +35,6 @@ html[data-theme="dark"] {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.439 0 0);
+  --color-component: oklch(82.344% 0.00009 271.152);
+  --color-component-active: oklch(0.8 0 0);
 }

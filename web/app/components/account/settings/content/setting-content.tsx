@@ -328,21 +328,6 @@ export default function SettingContent() {
           </div>
         </div>
 
-        {/* 操作按钮 */}
-        <div className="flex justify-between items-center">
-          <Button
-            onClick={() => {
-              // 保存设置的逻辑
-              alert('设置已保存！');
-            }}
-            variant={'primary'}
-            size={'large'}
-            className="px-8 py-3"
-          >
-            {t('system.save_settings')}
-          </Button>
-        </div>
-
       </div>
 
     </ContentSection>

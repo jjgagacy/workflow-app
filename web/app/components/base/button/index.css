@@ -28,11 +28,11 @@
   }
 
   .btn-medium {
-    @apply px-3.5 h-8 rounded-lg text-[13px] leading-4 font-medium;
+    @apply px-3.5 h-9 rounded-lg text-[13px] leading-4 font-medium;
   }
 
   .btn-large {
-    @apply px-4 h-9 rounded-md text-sm font-semibold;
+    @apply px-4 h-10 rounded-md text-sm font-semibold;
   }
 
   .btn-disabled {

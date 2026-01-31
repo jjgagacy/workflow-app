@@ -39,7 +39,7 @@ export const HoverSubmenu = ({
 
   return createPortal(
     <div
-      className={`fixed bg-background shadow-2xl rounded-lg py-2 z-[2147483647] border border-[var(--border)] backdrop-blur-sm`}
+      className={`fixed bg-background shadow-2xl rounded-lg py-2 z-[2147483647] border border-[var(--border)] backdrop-blur-sm text-component`}
       style={{
         left: collapsed ? '5rem' : '16rem',
         top: `${menuPosition}px`,

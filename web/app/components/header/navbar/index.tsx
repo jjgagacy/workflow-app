@@ -43,7 +43,7 @@ export function Navbar({ routes, onMenuClick }: NavbarProps) {
               </div>
             )}
             {/* Right user info */}
-            <div className={`flex items-center ${isMobile ? 'flex-1 justify-end' : ''}`}>
+            <div className={`flex items-center text-component ${isMobile ? 'flex-1 justify-end' : ''}`}>
               <LanguageSelector reloadPage={true} />
               <ThemeSelector />
               <button

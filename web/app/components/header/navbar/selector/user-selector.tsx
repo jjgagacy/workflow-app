@@ -1,10 +1,11 @@
 import { useCustomTheme } from '@/app/components/provider/customThemeProvider';
+import { useAppContext } from '@/context/app-context';
 import { useAuth } from '@/hooks/use-auth';
 import { getThemeBgClass, getThemeHoverClass, ThemeType } from '@/types/theme';
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
 import { ChevronDownIcon, CogIcon, LogOutIcon, UserCogIcon, UserIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 
 export function UserSelector() {
@@ -12,6 +13,7 @@ export function UserSelector() {
   const router = useRouter();
   const { t } = useTranslation();
   const { activeColorTheme } = useCustomTheme();
+  const { accountInfo } = useAppContext();
 
   const handleLogout = () => {
     logout();
@@ -22,19 +24,19 @@ export function UserSelector() {
     <div className='flex items-center gap-2 rounded-md mx-2'>
       <Menu as="div" className="relative">
         <MenuButton className="flex items-center p-2 space-x-2 max-w-xs rounded-full focus:outline-none">
-          {user?.avatar ? (
+          {accountInfo?.avatar ? (
             <img
-              src={user.avatar}
+              src={accountInfo.avatar}
               alt={t('system.user_avatar')}
               className="h-8 w-8 rounded-full"
             />
           ) : (
             <div className="h-6 w-6 rounded-full bg-gray-700 flex items-center justify-center text-white">
-              {user?.name?.charAt(0)}
+              {accountInfo?.username?.charAt(0)}
             </div>
           )}
           <span className="text-sm font-medium text-gray-700 dark:text-white">
-            {user?.name || t('system.not_logged_in')}
+            {accountInfo?.username || t('system.not_logged_in')}
           </span>
           <ChevronDownIcon
             className="h-4 w-4 text-gray-500"

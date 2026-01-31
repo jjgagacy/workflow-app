@@ -109,7 +109,7 @@ export function AccountTable<TData, TValue>({ }: AccountTableParams<TData, TValu
               className=""
               size={'small'}
             >
-              <Link href={`/admin/system/account/${account.id}`}>
+              <Link href={`/workspace/system/account/${account.id}`}>
                 {t('system.edit')}
               </Link>
             </Button>
