@@ -7,4 +7,8 @@ export type AccountInfo = {
   isSuper: boolean;
   roles: string[];
   created_at?: string;
+  theme?: string;
+  appearance?: string;
+  timezone?: string;
+  language?: string;
 }

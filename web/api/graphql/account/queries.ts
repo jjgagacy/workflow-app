@@ -45,7 +45,11 @@ export const GET_ACCOUNT_INFO = gql`
       email,
       last_ip,
       created_at,
-      avatar
+      avatar,
+      language,
+      theme,
+      appearance,
+      timezone
     }
   }
 `;

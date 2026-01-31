@@ -8,4 +8,5 @@ export abstract class BaseAccountDto {
   language?: string;
   theme?: string;
   appearance?: string;
+  timezone?: string;
 }

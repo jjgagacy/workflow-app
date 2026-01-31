@@ -20,6 +20,7 @@ import { AuthAccountService } from "@/service/auth-account.service";
 import { TOKEN_TYPES, TokenManagerService } from "@/service/libs/token-manager.service";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
 import { TenantAccountService, TenantService } from "@/service/tenant.service";
+import { RequiredStringPipe } from "@/common/pipes/required-string.pipe";
 
 @Resolver()
 @UseGuards(EditionSelfHostedGuard)
@@ -187,6 +188,7 @@ export class UpdateAccountFieldsResolver {
     }
 
     const dto: UpdateAccountDto = {
+      id: account.id,
       language: input.language,
       updatedBy: user.name,
     };
@@ -206,7 +208,48 @@ export class UpdateAccountFieldsResolver {
     }
 
     const dto: UpdateAccountDto = {
+      id: account.id,
       theme: input.theme,
+      updatedBy: user.name,
+    };
+
+    await this.accountService.update(dto);
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async updateAccountAppearance(
+    @Args({ name: 'appearance', type: () => String }, RequiredStringPipe) appearance: string,
+    @CurrentUser() user: any
+  ): Promise<boolean> {
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw AccountNotFoundError.create(this.i18n);
+    }
+
+    const dto: UpdateAccountDto = {
+      id: account.id,
+      appearance,
+      updatedBy: user.name,
+    };
+
+    await this.accountService.update(dto);
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async updateAccountTimezone(
+    @Args({ name: 'timezone', type: () => String }, RequiredStringPipe) timezone: string,
+    @CurrentUser() user: any
+  ): Promise<boolean> {
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw AccountNotFoundError.create(this.i18n);
+    }
+
+    const dto: UpdateAccountDto = {
+      id: account.id,
+      timezone,
       updatedBy: user.name,
     };
 

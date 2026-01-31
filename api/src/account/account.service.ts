@@ -172,6 +172,7 @@ export class AccountService {
       prefer_language: dto.language,
       theme: dto.theme,
       appearance: dto.appearance,
+      timezone: dto.timezone,
       ...(dto.language && { timezone: getSafeTimezone(dto.language || '') }),
     };
   }

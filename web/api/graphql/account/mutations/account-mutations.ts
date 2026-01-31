@@ -210,3 +210,28 @@ export const INVITE_MEMBER_ACTIVATION = gql`
     inviteMemberActivation(input: $input)
   }
 `;
+
+export const UPDATE_ACCOUNT_LANGUAGE = gql`
+  mutation UpdateAccountLanguageMutation($input: UpdateAccountLanguageInput!) {
+    updateAccountLanguage(input: $input)
+  }
+`
+
+export const UPDATE_ACCOUNT_THEME = gql`
+  mutation UpdateAccountThemeMutation($input: UpdateAccountThemeInput!) {
+    updateAccountTheme(input: $input)
+  }
+`
+
+export const UPDATE_ACCOUNT_APPEARANCE = gql`
+  mutation UpdateAccountAppearanceMutation($appearance: String!) {
+    updateAccountAppearance(appearance: $appearance)
+  }
+`
+
+export const UPDATE_ACCOUNT_TIMEZONE = gql`
+  mutation UpdateAccountTimezoneMutation($timezone: String!) {
+    updateAccountTimezone(timezone: $timezone)
+  }
+`
+

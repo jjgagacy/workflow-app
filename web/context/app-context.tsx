@@ -18,7 +18,11 @@ const defaultAccountInfo: AccountInfo = {
   roles: [],
   avatar: '',
   email: '',
-  isSuper: false
+  isSuper: false,
+  language: 'en-US',
+  theme: 'system',
+  appearance: 'system',
+  timezone: 'America/New_York'
 }
 
 const AppContext = createContext<AppContextType>({

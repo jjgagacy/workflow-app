@@ -3,18 +3,22 @@
 # ------------------------------------------------------
 
 type Account {
+  appearance: String!
   avatar: String
   created_at: String!
   created_by: String!
   email: String!
   id: Int!
   isOwner: Boolean
+  language: String!
   last_ip: String
   mobile: String!
   realName: String!
   roleKeys: [String!]
   roles: [String!]
   status: Int!
+  theme: String!
+  timezone: String!
   username: String!
 }
 
@@ -236,12 +240,14 @@ type Mutation {
   switchTenant(tenant_id: String!): TenantResponse!
   toggleAccountStatus(id: Int!): Boolean!
   updateAccount(input: AccountInput!): AccountResponse!
+  updateAccountAppearance(appearance: String!): Boolean!
   updateAccountAvatar(input: UpdateAccountAvatarInput!): Boolean!
   updateAccountLanguage(input: UpdateAccountLanguageInput!): Boolean!
   updateAccountName(input: UpdateAccountNameInput!): Boolean!
   updateAccountNewEmail(input: UpdateAccountNewEmailInput!): Boolean!
   updateAccountPassword(newPassword: String!, password: String!): Boolean!
   updateAccountTheme(input: UpdateAccountThemeInput!): Boolean!
+  updateAccountTimezone(timezone: String!): Boolean!
   updateDep(input: DepInput!): DepResponse!
   updateMenu(input: MenuInput!): MenuResponse!
   updateModule(input: ModuleInput!): ModuleResponse!

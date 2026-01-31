@@ -8,17 +8,28 @@ import { AppearanceType } from "@/types/appearance";
 import Button from "@/app/components/base/button";
 import { TIME_ZONES } from "@/i18n/timezone";
 import { useAppearance } from "@/hooks/use-appearance";
+import api from "@/api";
+import { toast } from "@/app/ui/toast";
+import { getErrorMessage } from "@/utils/errors";
+import { useAppContext } from "@/context/app-context";
+import { delayed } from "@/utils/time";
+import { setClientLocale } from "@/i18n";
 
 export default function SettingContent() {
   const { t, i18n } = useTranslation();
   const [language, setLanguage] = useState<LanguageType>((i18n.language || 'en-US') as LanguageType);
   const [theme, setTheme] = useState<ThemeType>('default');
-  const [timezone, setTimezone] = useState('Asia/Shanghai');
+  const [timezone, setTimezone] = useState('America/New_York');
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
   const [isTimezoneDropdownOpen, setIsTimezoneDropdownOpen] = useState(false);
-  const { selectAppearance, resolvedTheme, appearanceOptions } = useAppearance();
+  const { selectAppearance, resolvedTheme, appearanceOptions, setActiveColorTheme } = useAppearance();
   const [appearance, setAppearance] = useState<AppearanceType>(resolvedTheme);
+  const useUpdateAccountLanguage = api.account.useUpdateAccountLanguage();
+  const useUpdateAccountTheme = api.account.useUpdateAccountTheme();
+  const useUpdateAccountTimezone = api.account.useUpdateAccountTimezone();
+  const useUpdateAccountAppearance = api.account.useUpdateAccountAppearance();
+  const { accountInfo } = useAppContext();
 
   // 使用 ref 来获取下拉菜单的 DOM 元素
   const languageDropdownRef = useRef<HTMLDivElement>(null);
@@ -29,7 +40,8 @@ export default function SettingContent() {
     { id: 'default', label: t('system.theme.default'), color: 'bg-gradient-to-r from-gray-500 to-gray-600' },
     { id: 'blue', label: t('system.theme.blue'), color: 'bg-gradient-to-r from-blue-500 to-blue-600' },
     { id: 'green', label: t('system.theme.green'), color: 'bg-gradient-to-r from-green-500 to-green-600' },
-    { id: 'amber', label: t('system.theme.amber'), color: 'bg-gradient-to-r from-amber-500 to-amber-600' }
+    { id: 'amber', label: t('system.theme.amber'), color: 'bg-gradient-to-r from-amber-500 to-amber-600' },
+    { id: 'default-scaled', label: t('system.theme.scaled'), color: 'bg-gradient-to-r from-indigo-500 to-purple-500' }
   ];
 
   const timezones = TIME_ZONES.map(timezone => ({
@@ -37,19 +49,54 @@ export default function SettingContent() {
     label: t(`system.${timezone.labelKey}`),
   }))
 
-  const handleLanguageChange = (lang: LanguageType) => {
-    setLanguage(lang);
+  const handleLanguageChange = async (language: LanguageType) => {
+    setLanguage(language);
     setIsLanguageDropdownOpen(false);
+
+    try {
+      await setClientLocale(language, false);
+      await useUpdateAccountLanguage({ input: { language } });
+      toast.success(t('system.operation_successed'));
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
   }
 
-  const handleThemeChange = (newTheme: ThemeType) => {
+  const handleThemeChange = async (newTheme: ThemeType) => {
     setTheme(newTheme);
     setIsThemeDropdownOpen(false);
+
+    try {
+      setActiveColorTheme(newTheme);
+      await useUpdateAccountTheme({ input: { theme: newTheme } });
+      toast.success(t('system.operation_successed'));
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
   }
 
-  const handleAppearanceChange = (mode: AppearanceType) => {
+  const handleAppearanceChange = async (mode: AppearanceType) => {
     selectAppearance(mode);
     setAppearance(mode);
+
+    try {
+      await useUpdateAccountAppearance({ appearance: mode });
+      toast.success(t('system.operation_successed'));
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
+  }
+
+  const handleTimezoneChange = async (timezone: string) => {
+    setTimezone(timezone);
+    setIsTimezoneDropdownOpen(false);
+
+    try {
+      await useUpdateAccountTimezone({ timezone });
+      toast.success(t('system.operation_successed'));
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
   }
 
   useEffect(() => {
@@ -100,6 +147,12 @@ export default function SettingContent() {
     }
   }, [isLanguageDropdownOpen, isThemeDropdownOpen, isTimezoneDropdownOpen]);
 
+  useEffect(() => {
+    setLanguage((accountInfo.language !== '' ? accountInfo.language! : 'en-US') as LanguageType);
+    setTheme((accountInfo.theme !== '' ? accountInfo.theme! : 'default') as ThemeType);
+    setTimezone(accountInfo.timezone !== '' ? accountInfo.timezone! : 'America/New_York');
+    setAppearance((accountInfo.appearance !== '' ? accountInfo.appearance! : 'system') as AppearanceType);
+  }, [accountInfo]);
 
   return (
     <ContentSection
@@ -261,10 +314,7 @@ export default function SettingContent() {
                 {timezones.map((tz) => (
                   <button
                     key={tz.id}
-                    onClick={() => {
-                      setTimezone(tz.id);
-                      setIsTimezoneDropdownOpen(false);
-                    }}
+                    onClick={() => handleTimezoneChange(tz.id)}
                     className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors"
                   >
                     <span className="font-medium text-gray-900 dark:text-white">{tz.label}</span>
