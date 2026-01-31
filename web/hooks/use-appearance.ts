@@ -93,6 +93,17 @@ const handleSystemPreferenceChange = (
 };
 
 /**
+ * 根据 document.documentElement.dataset.theme 判断是否是深色模式
+ * @returns 'dark' 如果是深色模式，否则返回当前主题值
+ */
+function getThemeFromDataset(): string | null {
+  if (typeof document === 'undefined') return null;
+
+  const datasetTheme = document.documentElement.dataset.theme;
+  return datasetTheme || null;
+}
+
+/**
  * 自定义外观主题 Hook
  */
 export function useAppearance() {
@@ -226,7 +237,7 @@ export function useAppearance() {
     toggleTheme: () => {
       // 确定当前应该基于哪个主题进行切换
       const baseTheme = activeTheme === APPEARANCE_VALUES.SYSTEM
-        ? resolvedTheme
+        ? (getThemeFromDataset() === 'dark' ? APPEARANCE_VALUES.DARK : APPEARANCE_VALUES.LIGHT)
         : activeTheme;
 
       // 计算新主题

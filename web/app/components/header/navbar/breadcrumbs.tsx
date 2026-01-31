@@ -15,23 +15,23 @@ export function Breadcrumbs({ routes }: BreadcrumbsProps) {
   const isMobile = useIsMobile();
 
   return (
-    <div className={`flex items-center ${isMobile ? 'hidden' : ''} justify-between space-x-2`}>
+    <div className={`flex items-center ${isMobile ? 'hidden' : ''} justify-between space-x-1`}>
       <nav aria-label="Breadcrumb">
-        <ol className="flex items-center space-x-2">
+        <ol className="flex items-center space-x-1">
           {crumbs.map((crumb, index) => (
             <li key={crumb.link} className="flex items-center">
               {index < crumbs.length - 1 ? (
                 <>
                   <Link
                     href={crumb.link}
-                    className="text-gray-500 hover:text-gray-500"
+                    className="text-gray-400 hover:text-gray-400 text-sm"
                   >
                     {crumb.title}
                   </Link>
-                  <IconChevronRight className="mx-2 h-4 w-4 text-gray-400" />
+                  <IconChevronRight className="mx-1 h-2 w-2 text-gray-400" />
                 </>
               ) : (
-                <span className="text-gray-800 dark:text-gray-400">{crumb.title}</span>
+                <span className="text-gray-500 dark:text-gray-500 text-sm">{crumb.title}</span>
               )}
             </li>
           ))}

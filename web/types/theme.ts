@@ -7,6 +7,7 @@ export interface ThemeConfig {
   bgColor: string;
   textColor: string;
   hoverColor: string;
+  selectedColor: string;
 }
 
 export const themes: ThemeConfig[] = [
@@ -17,6 +18,7 @@ export const themes: ThemeConfig[] = [
     textColor: 'text-gray-700 dark:text-gray-200',
     hoverColor: 'hover:bg-gray-100 dark:hover:bg-neutral-700',
     activeColor: 'text-gray-600 dark:text-gray-300',
+    selectedColor: 'bg-gray-100 dark:bg-neutral-700',
   },
   {
     value: 'blue',
@@ -25,6 +27,7 @@ export const themes: ThemeConfig[] = [
     textColor: 'text-blue-700 dark:text-blue-200',
     hoverColor: 'hover:bg-blue-50 dark:hover:bg-blue-800',
     activeColor: 'text-blue-600 dark:text-blue-300',
+    selectedColor: 'bg-blue-100 dark:bg-neutral-700',
   },
   {
     value: 'green',
@@ -33,6 +36,7 @@ export const themes: ThemeConfig[] = [
     textColor: 'text-green-700 dark:text-green-200',
     hoverColor: 'hover:bg-green-50 dark:hover:bg-green-800',
     activeColor: 'text-green-600 dark:text-green-300',
+    selectedColor: 'bg-green-100 dark:bg-neutral-700',
   },
   {
     value: 'amber',
@@ -41,6 +45,7 @@ export const themes: ThemeConfig[] = [
     textColor: 'text-amber-700 dark:text-amber-200',
     hoverColor: 'hover:bg-amber-50 dark:hover:bg-amber-800',
     activeColor: 'text-amber-600 dark:text-amber-300',
+    selectedColor: 'bg-amber-100 dark:bg-neutral-700',
   },
 ];
 
@@ -76,4 +81,9 @@ export function getThemeHoverClass(themeValue: ThemeType): string {
 // 获取主题active色
 export function getThemeActiveClass(themeValue: ThemeType): string {
   return getThemeConfig(themeValue).activeColor;
+}
+
+// 获取主题selected色
+export function getThemeSelectedClass(themeValue: ThemeType): string {
+  return getThemeConfig(themeValue).selectedColor;
 }

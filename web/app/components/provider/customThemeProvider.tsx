@@ -37,7 +37,6 @@ export function CustomThemeProvider({
   initialTheme,
   initialColorTheme
 }: { children: ReactNode; initialTheme?: string, initialColorTheme?: string }) {
-  console.log(',,', initialColorTheme)
   const [activeTheme, setActiveTheme] = useState<string>(
     () => initialTheme || DEFAULT_THEME
   );
@@ -84,4 +83,3 @@ export function useCustomTheme() {
   }
   return context;
 }
-

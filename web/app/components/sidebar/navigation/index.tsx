@@ -3,14 +3,15 @@
 import { MenuItem } from '@/types/menu';
 
 import { IconChevronDown, IconChevronRight, IconEyeCog } from '@tabler/icons-react';
-import { Briefcase, Cog, Crown, Fingerprint, Home, LayoutDashboard, List, Sliders, UserCheck, UserCog } from 'lucide-react';
+import { List, UserCog } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { HoverSubmenu } from './hover-submenu';
 import { useTranslation } from 'react-i18next';
 import { useCustomTheme } from '../../provider/customThemeProvider';
-import { getThemeActiveClass, getThemeBgClass, getThemeHoverClass, ThemeType } from '@/types/theme';
+import { getThemeActiveClass, getThemeBgClass, getThemeHoverClass, getThemeSelectedClass, ThemeType } from '@/types/theme';
+import { useMenus } from '../../hooks/use-menus';
 
 interface NavigationProps {
   collapsed: boolean;
@@ -28,36 +29,19 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
   const subMenuRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hoverRef = useRef<{ key: string; timeout: NodeJS.Timeout | null }>({ key: '', timeout: null });
-  const { activeTheme: activeTheme } = useCustomTheme();
+  const { activeColorTheme } = useCustomTheme();
+  const { defaultMenuItems } = useMenus();
 
   const defaultMenus: MenuItem[] = [
-    {
-      key: 'dashboard',
-      title: t('system.dashboard'),
-      icon: <LayoutDashboard className="w-5 h-5" />,
-      path: "/workspace",
-    },
-    {
-      key: 'system',
-      title: t('system.system_settings'),
-      icon: <Sliders className="w-5 h-5" />,
-      path: '/workspace/system',
-      children: [
-        { key: 'account', title: t('system.account'), icon: <UserCog className="w-4 h-4" />, path: "/workspace/system/account" },
-        { key: 'dep', title: t('system.department'), icon: <Briefcase className="w-4 h-4" />, path: "/workspace/system/dep" },
-        { key: 'role', title: t('system.role'), icon: <Crown className="w-4 h-4" />, path: "/workspace/system/role" },
-        { key: 'module', title: t('system.permission_module'), icon: <Fingerprint className="w-4 h-4" />, path: "/workspace/system/module" },
-        // { key: 'menu', title: t('system.menu'), icon: <List className="w-4 h-4" />, path: "/workspace/system/menu" },
-      ]
-    },
+    ...defaultMenuItems,
     {
       key: 'foo',
       title: "Foo",
       icon: <UserCog className="w-5 h-5" />,
       path: '/workspace/foo',
       children: [
-        { key: 'foo', title: "Foo", icon: <UserCog className="w-4 h-4" />, path: "/workspace/foo/foo" },
-        { key: 'bar', title: "Boo", icon: <UserCog className="w-4 h-4" />, path: "/workspace/foo/bar" },
+        { key: 'foo', title: "Foo", icon: <UserCog className="w-5 h-5" />, path: "/workspace/foo/foo" },
+        { key: 'bar', title: "Bar", icon: <UserCog className="w-5 h-5" />, path: "/workspace/foo/bar" },
       ]
     },
     {
@@ -71,12 +55,12 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
     ...(routes?.filter(route => route.fetched).map(route => ({
       key: route.key,
       title: route.meta?.title || route.title,
-      icon: route.icon ?? <List className="w-4 h-4" />,
+      icon: route.icon ?? <List className="w-5 h-5" />,
       path: route.path,
       children: route.children?.map(child => ({
         key: child.key,
         title: child.meta?.title || child.title,
-        icon: child.icon ?? <List className="w-4 h-4" />,
+        icon: child.icon ?? <List className="w-5 h-5" />,
         path: child.path,
       }))
     })) || [])
@@ -167,6 +151,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
     }, 500);
   };
 
+
   return (
     <div className={`bg-background py-2 px-2 navigation-menu__root space-y-1 relative z-10`}>
       {menuItems.map((item) => (
@@ -174,13 +159,13 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
           {item.children && collapsed ? (
             <ul>
               <li
-                className={`relative px-2 py-1 rounded-lg ${getThemeHoverClass(activeTheme as ThemeType)}`}
+                className={`relative px-2 py-2 rounded-lg ${getThemeHoverClass(activeColorTheme as ThemeType)} ${isActive(item.path) || item.children.some(c => isActive(c.path)) ? `${getThemeSelectedClass(activeColorTheme as ThemeType)} jj` : ""}`}
                 onMouseEnter={(e) => handleMouseEnter(e, item.key)}
                 onMouseLeave={handleMouseLeave}
               >
                 <div
                   className={`navigation-menu__trigger flex justify-center items-center w-full rounded-lg ${collapsed ? "justify-center" : ""
-                    } ${isActive(item.path) ? `${getThemeActiveClass(activeTheme as ThemeType)} ${getThemeBgClass(activeTheme as ThemeType)}` : ""}`}
+                    } ${isActive(item.path) ? `${getThemeActiveClass(activeColorTheme as ThemeType)} ${getThemeBgClass(activeColorTheme as ThemeType)}` : ""}`}
                   title={item.title}
                 >
                   {item.icon}
@@ -189,7 +174,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
             </ul>
           ) : !item.children ? (
             <div className='relative'>
-              <div className={`flex items-center px-2 py-1 rounded-lg ${getThemeHoverClass(activeTheme as ThemeType)} cursor-pointer ${collapsed ? "justify-center" : "justify-between"}`}>
+              <div className={`flex items-center px-2 py-2 rounded-lg ${getThemeHoverClass(activeColorTheme as ThemeType)} cursor-pointer ${collapsed ? "justify-center" : "justify-between"}`}>
                 <Link
                   href={item.path || '#'}
                   onClick={() => toggleMobileSidebar?.()}
@@ -207,7 +192,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
           ) : (
             <div>
               <div
-                className={`flex items-center px-2 py-1 rounded-lg ${getThemeHoverClass(activeTheme as ThemeType)} cursor-pointer ${collapsed ? "justify-center" : "justify-between"
+                className={`flex items-center px-2 py-2 rounded-lg ${getThemeHoverClass(activeColorTheme as ThemeType)} cursor-pointer ${collapsed ? "justify-center" : "justify-between"
                   }`}
                 onClick={() => toggleSubmenu(item.title)}
               >
@@ -232,8 +217,8 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                       key={child.key}
                       onClick={() => toggleMobileSidebar?.()}
                       href={child.path || '#'}
-                      className={`flex items-center px-2 py-1 mb-1 rounded-lg ${getThemeHoverClass(activeTheme as ThemeType)} ${collapsed ? "justify-center" : ""
-                        } ${isActive(child.path) ? `${getThemeActiveClass(activeTheme as ThemeType)} ${getThemeBgClass(activeTheme as ThemeType)} border border-[var(--border)]` : ""}`}
+                      className={`flex items-center px-2 py-2 mb-1 rounded-lg ${getThemeHoverClass(activeColorTheme as ThemeType)} ${collapsed ? "justify-center" : ""
+                        } ${isActive(child.path) ? `${getThemeSelectedClass(activeColorTheme as ThemeType)} shadow-[inset_0_0_0_1px_white,inset_0_0_0_2px_rgba(255,255,255,0.2)]` : ""}`}
                     >
                       <span>{child.icon}</span>
                       <span className="ml-3 font-medium">{child.title}</span>

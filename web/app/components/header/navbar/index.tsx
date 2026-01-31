@@ -46,7 +46,6 @@ export function Navbar({ routes, onMenuClick }: NavbarProps) {
             <div className={`flex items-center ${isMobile ? 'flex-1 justify-end' : ''}`}>
               <LanguageSelector reloadPage={true} />
               <ThemeSelector />
-
               <button
                 type="button"
                 className="p-1 mr-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none"
@@ -55,7 +54,6 @@ export function Navbar({ routes, onMenuClick }: NavbarProps) {
                 <span className="sr-only">View notifications</span>
                 <IconPercentage50 className="h-6 w-6" aria-hidden="true" />
               </button>
-
               <UserSelector />
             </div>
           </div>

@@ -58,7 +58,7 @@ export const HoverSubmenu = ({
               setHoveredItem('');
             }}
             href={child.path || '#'}
-            className={`flex mb-1 mx-2 items-center px-2 py-1 rounded-md ${getThemeHoverClass(activeTheme as ThemeType)} transition-colors ${isActive(child.path) ? `${getThemeActiveClass(activeTheme as ThemeType)} ${getThemeBgClass(activeTheme as ThemeType)}` : ""}`}
+            className={`flex mb-1 mx-2 items-center px-2 py-1 rounded-md ${getThemeHoverClass(activeTheme as ThemeType)} transition-colors ${isActive(child.path) ? `${getThemeActiveClass(activeTheme as ThemeType)} ${getThemeBgClass(activeTheme as ThemeType)} border border-[var(--border)]` : ""}`}
           >
             <span className="mr-3">{child.icon}</span>
             <span>{child.title}</span>

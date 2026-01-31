@@ -11,7 +11,7 @@ export function UserSelector() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const { t } = useTranslation();
-  const { activeTheme: activeTheme } = useCustomTheme();
+  const { activeColorTheme } = useCustomTheme();
 
   const handleLogout = () => {
     logout();
@@ -56,7 +56,7 @@ export function UserSelector() {
               {() => (
                 <button
                   onClick={() => router.push('/account')}
-                  className={`flex font-medium items-center px-4 py-2 text-sm text-gray-700 rounded-md w-full text-left ${getThemeHoverClass(activeTheme as ThemeType)} dark:text-white`}
+                  className={`flex font-medium items-center px-4 py-2 text-sm text-gray-700 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)} dark:text-white`}
                 >
                   <UserIcon className="mr-2 h-4 w-4" />
                   {t('system.account_settings')}
@@ -67,7 +67,7 @@ export function UserSelector() {
               {() => (
                 <button
                   onClick={() => router.push('/settings?tab=setting')}
-                  className={`flex font-medium items-center px-4 py-2 text-sm text-gray-700 rounded-md w-full text-left ${getThemeHoverClass(activeTheme as ThemeType)} dark:text-white`}
+                  className={`flex font-medium items-center px-4 py-2 text-sm text-gray-700 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)} dark:text-white`}
                 >
                   <CogIcon className="mr-2 h-4 w-4" />
                   {t('system.system_settings')}
@@ -78,7 +78,7 @@ export function UserSelector() {
               {() => (
                 <button
                   onClick={handleLogout}
-                  className={`flex font-medium items-center px-4 py-2 text-sm text-red-600 rounded-md w-full text-left ${getThemeHoverClass(activeTheme as ThemeType)} dark:text-white`}
+                  className={`flex font-medium items-center px-4 py-2 text-sm text-red-600 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)} dark:text-white`}
                 >
                   <LogOutIcon className="mr-2 h-4 w-4" />
                   {t('system.logout')}

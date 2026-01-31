@@ -10,7 +10,7 @@ import { getThemeHoverClass, ThemeType } from '@/types/theme';
 
 export function LanguageSelector({ reloadPage = false }: { reloadPage?: boolean }) {
   const { t, i18n } = useTranslation();
-  const { activeTheme: activeTheme, setActiveTheme: setActiveTheme } = useCustomTheme();
+  const { activeColorTheme, setActiveTheme: setActiveTheme } = useCustomTheme();
 
   const toggleLanguage = async (lng: string) => {
     if (i18n.language === lng) return;
@@ -21,7 +21,7 @@ export function LanguageSelector({ reloadPage = false }: { reloadPage?: boolean 
   return (
     <div className='flex items-center gap-2 hover:bg-secondary/80 rounded-lg mx-2'>
       <Menu as="div" className="relative">
-        <MenuButton className={`flex items-center space-x-2 p-2 max-w-xs rounded-md focus:outline-none ${getThemeHoverClass(activeTheme as ThemeType)}`}>
+        <MenuButton className={`flex items-center space-x-2 p-2 max-w-xs rounded-md focus:outline-none ${getThemeHoverClass(activeColorTheme as ThemeType)}`}>
           <Globe className="w-5 h-5 text-gray-400 hover:text-gray-500 mr-1" />
           {getLanguageNameByValue(i18n.language)}
         </MenuButton>
@@ -38,7 +38,7 @@ export function LanguageSelector({ reloadPage = false }: { reloadPage?: boolean 
           <MenuItems className="origin-top-right absolute px-2 py-1 right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none z-100">
             {languages.map(lang => (
               <MenuItem key={lang.value}>
-                <div className={`flex items-center justify-between px-4 py-2 rounded-lg text-sm text-gray-700 w-full text-left ${getThemeHoverClass(activeTheme as ThemeType)}  dark:text-white`}>
+                <div className={`flex items-center justify-between px-4 py-2 rounded-lg text-sm text-gray-700 w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}  dark:text-white`}>
                   <button
                     onClick={() => toggleLanguage(lang.value)}
                     className='w-full text-left flex flex-1 items-center'

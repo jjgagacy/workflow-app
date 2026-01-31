@@ -12,16 +12,12 @@
 .light {
   --color-background: #ffffff;
   --color-foreground: #0a0a0a;
-  --color-primary: #3b82f6;
-  --color-secondary: #6b7280;
 }
 
 /* 暗色模式变量 */
 .dark {
   --color-background: #0a0a0a;
   --color-foreground: #ededed;
-  --color-primary: #60a5fa;
-  --color-secondary: #9ca3af;
 }
 
 /* 系统偏好 */
