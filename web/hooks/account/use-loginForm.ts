@@ -110,7 +110,7 @@ export function useLoginForm() {
       } else {
         await handleEmailCodeLogin();
       }
-      router.push('/workspace/select');
+      router.push('/workspace-select');
     } catch (err: any) {
       const errorField = !showVerification ? 'email' : 'submit';
       setErrors({ [errorField]: getErrorMessage(err) });
