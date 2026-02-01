@@ -139,7 +139,7 @@ export default function ProfileLayout() {
                         setIsEditingUsername(true);
                       }}
                       variant={'ghost'}
-                      size={'large'}
+                      size={'medium'}
                       className="inline-flex items-center"
                     >
                       <Edit className="w-4 h-4 mr-2" />
@@ -150,14 +150,14 @@ export default function ProfileLayout() {
                       <Button
                         onClick={handleSaveUsername}
                         variant={'primary'}
-                        size={'large'}
+                        size={'medium'}
                       >
                         {t('system.save')}
                       </Button>
                       <Button
                         onClick={() => { setIsEditingUsername(false); setTempUsername(userData.username); }}
                         variant={'ghost'}
-                        size={'large'}
+                        size={'medium'}
                       >
                         {t('system.cancel')}
                       </Button>
@@ -190,7 +190,7 @@ export default function ProfileLayout() {
                       setIsEditingEmail(true);
                     }}
                     variant={'ghost'}
-                    size={'large'}
+                    size={'medium'}
                     className="inline-flex items-center"
                   >
                     <Edit className="w-4 h-4 mr-2" />

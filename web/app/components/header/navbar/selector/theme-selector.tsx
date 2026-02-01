@@ -41,8 +41,8 @@ export function ThemeSelector() {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <MenuItems className="origin-top-right absolute right-0 px-2 py-1 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none z-100">
-            <div className="text-gray-600 px-4 text-sm my-2 font-bold">Default</div>
+          <MenuItems className="bg-muted-light origin-top-right absolute right-0 px-2 py-1 mt-2 w-48 rounded-md shadow-lg  border border-[var(--border)] focus:outline-none z-100">
+            <div className="text-gray-400 px-4 text-sm my-2 font-bold">Default</div>
             {DEFAULT_THEMES.map(item => (
               <MenuItem key={item.name}>
                 {() => (
@@ -61,7 +61,7 @@ export function ThemeSelector() {
               </MenuItem>
             ))}
             <hr className="my-2 border-[var(--border)]" />
-            <div className="text-gray-600 text-sm px-4 my-2 font-bold">Scaled</div>
+            <div className="text-gray-400 text-sm px-4 my-2 font-bold">Scaled</div>
             {SCALED_THEMES.map(item => (
               <MenuItem key={item.name}>
                 {() => (

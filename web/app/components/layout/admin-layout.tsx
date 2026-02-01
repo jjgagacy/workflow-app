@@ -117,7 +117,7 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
           </div>
         </div>
       )}
-      <div className={`flex-1 flex flex-col overflow-x-auto transition-all ${sidebarWidth}`}>
+      <div className={`bg-muted/50 flex-1 flex flex-col overflow-x-auto transition-all ${sidebarWidth}`}>
         <Navbar
           routes={mergeRoutes}
           onMenuClick={isMobile ? toggleMobileSidebar : undefined}

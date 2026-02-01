@@ -153,7 +153,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
 
 
   return (
-    <div className={`bg-background py-2 px-2 navigation-menu__root space-y-1 relative z-10 text-component`}>
+    <div className={`py-2 px-2 navigation-menu__root space-y-1 relative z-10 text-component`}>
       {menuItems.map((item) => (
         <div key={item.key}>
           {item.children && collapsed ? (

@@ -18,7 +18,7 @@ export const themes: ThemeConfig[] = [
     textColor: 'text-gray-700 dark:text-gray-200',
     hoverColor: 'hover:bg-gray-100 dark:hover:bg-neutral-700',
     activeColor: 'text-gray-600 dark:text-gray-300',
-    selectedColor: 'bg-gray-100 dark:bg-neutral-800',
+    selectedColor: 'bg-gray-100 dark:bg-neutral-700',
   },
   {
     value: 'blue',

@@ -35,7 +35,7 @@ export function LanguageSelector({ reloadPage = false }: { reloadPage?: boolean 
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <MenuItems className="origin-top-right absolute px-2 py-1 right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none z-100">
+          <MenuItems className="bg-muted-light origin-top-right absolute px-2 py-1 right-0 mt-2 w-48 rounded-md shadow-lg border border-[var(--border)] focus:outline-none z-100">
             {languages.map(lang => (
               <MenuItem key={lang.value}>
                 <div className={`flex items-center justify-between px-4 py-2 rounded-lg text-sm text-gray-700 w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}  dark:text-white`}>

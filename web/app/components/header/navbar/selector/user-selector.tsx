@@ -1,11 +1,11 @@
 import { useCustomTheme } from '@/app/components/provider/customThemeProvider';
 import { useAppContext } from '@/context/app-context';
 import { useAuth } from '@/hooks/use-auth';
-import { getThemeBgClass, getThemeHoverClass, ThemeType } from '@/types/theme';
+import { getThemeHoverClass, ThemeType } from '@/types/theme';
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
-import { ChevronDownIcon, CogIcon, LogOutIcon, UserCogIcon, UserIcon } from 'lucide-react';
+import { ChevronDownIcon, CogIcon, LogOutIcon, UserIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Fragment, useEffect, useState } from "react";
+import { Fragment } from "react";
 import { useTranslation } from 'react-i18next';
 
 export function UserSelector() {
@@ -53,7 +53,7 @@ export function UserSelector() {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <MenuItems className={`bg-background origin-top-right absolute right-0 mt-2 px-2 w-48 rounded-md shadow-2xl border border-[var(--border)] ring-opacity-5 py-2 focus:outline-none z-100`}>
+          <MenuItems className={`bg-muted-light origin-top-right absolute right-0 mt-2 px-2 w-48 rounded-md shadow-2xl border border-[var(--border)] ring-opacity-5 py-2 focus:outline-none z-100`}>
             <MenuItem>
               {() => (
                 <button

@@ -96,7 +96,7 @@ export class AccountResolver {
     @CurrentUser() user: any,
     @CurrentTenent() tenant: any
   ): Promise<Account> {
-    const tenantEntity = await this.tenantService.getTenant(tenant.id);
+    const tenantEntity = await this.tenantService.getTenant(tenant?.id);
     const owner = tenantEntity ? await this.tenantService.getOwner(tenantEntity) : null;
     const accountEntity = await this.accountService.getById(user?.id);
     if (!accountEntity) {

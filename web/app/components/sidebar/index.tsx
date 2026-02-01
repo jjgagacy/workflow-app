@@ -15,12 +15,12 @@ interface SidebarProps {
 }
 
 export function Sidebar({ collapsed, onToggleCollapse, children }: SidebarProps) {
-  const { activeTheme, activeColorTheme, darkmode } = useCustomTheme();
+  const { activeColorTheme, darkmode } = useCustomTheme();
   return (
     <aside className="fixed left-0 top-0 h-screen">
       <div className="flex relative bg-gray-100 flex-col">
         <div
-          className={`bg-background h-screen shadow-md transition-all duration-300 ease-in-out ${collapsed ? "w-20" : "w-64"
+          className={`bg-muted h-screen shadow-md transition-all duration-300 ease-in-out ${collapsed ? "w-20" : "w-64"
             }`}
         >
           {/* Header with logo and collapse button */}
