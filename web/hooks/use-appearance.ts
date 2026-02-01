@@ -108,7 +108,7 @@ function getThemeFromDataset(): string | null {
  */
 export function useAppearance() {
   const { t } = useTranslation();
-  const [resolvedTheme, setResolvedTheme] = useState<AppearanceType>(APPEARANCE_VALUES.SYSTEM);
+  const [resolvedTheme, setResolvedTheme] = useState<AppearanceType>('system');
   const [mounted, setMounted] = useState(false);
   const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>('light');
   const { activeColorTheme, setActiveTheme, setActiveColorTheme, activeTheme } = useCustomTheme();
@@ -134,8 +134,9 @@ export function useAppearance() {
    */
   const selectAppearance = useCallback((appearance: AppearanceType): void => {
     setResolvedTheme(appearance);
+    setActiveTheme(appearance);
     setTheme(appearance);
-  }, [setResolvedTheme]);
+  }, [setResolvedTheme, setTheme]);
 
   /**
    * 外观选项列表（使用 useMemo 优化性能）

@@ -28,6 +28,7 @@ type ActiveThemeContext = {
   setActiveTheme: (value: string) => void;
   activeColorTheme: ThemeType;
   setActiveColorTheme: (value: string) => void;
+  darkmode: boolean;
 };
 
 const ActiveThemeContext = createContext<ActiveThemeContext | undefined>(undefined);
@@ -43,6 +44,7 @@ export function CustomThemeProvider({
   const [activeColorTheme, setActiveColorTheme] = useState<string>(
     () => initialColorTheme || DEFAULT_COLOR_THEME
   );
+  const [darkmode, setDarkmode] = useState(activeTheme === 'dark');
 
   useEffect(() => {
     setColorThemeCookie(activeColorTheme);
@@ -62,14 +64,16 @@ export function CustomThemeProvider({
 
   useEffect(() => {
     setThemeCookie(activeTheme);
-  }, [activeTheme]);
+    setDarkmode(activeTheme === 'dark');
+  }, [activeTheme, setDarkmode]);
 
   return (
     <ActiveThemeContext.Provider value={{
       activeTheme: activeTheme as AppearanceType,
       setActiveTheme,
       activeColorTheme: activeColorTheme as ThemeType,
-      setActiveColorTheme
+      setActiveColorTheme,
+      darkmode
     }}>
       {children}
     </ActiveThemeContext.Provider>

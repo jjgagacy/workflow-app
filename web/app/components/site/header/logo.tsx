@@ -1,21 +1,23 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Monie } from '../../base/monie';
+import { useCustomTheme } from '../../provider/customThemeProvider';
 
 export default function Logo() {
+  const { darkmode } = useCustomTheme();
   return (
     <Link href="/" className="flex items-center space-x-2 group">
-      <div className="w-10 h-10 items-center justify-center">
+      <div className="w-8 h-8 items-center justify-center">
         <Image
-          src="/assets/logo.png"
+          src={`${darkmode ? "/assets/logo-dark.png" : "/assets/logo.png"}`}
           alt="Monie Logo"
-          width={40}
-          height={40}
+          width={35}
+          height={35}
           priority
-          className="h-10 w-auto"
+          className="h-8 w-auto"
         />
       </div>
-      <Monie />
+      <Monie width={56} height={24} darkmode={darkmode} />
     </Link>
   );
 }

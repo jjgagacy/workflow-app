@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 import { useCustomTheme } from "../provider/customThemeProvider";
 import { getThemeHoverClass, ThemeType } from "@/types/theme";
 import { Monie } from "../base/monie";
+import { useAppearance } from "@/hooks/use-appearance";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -14,7 +15,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ collapsed, onToggleCollapse, children }: SidebarProps) {
-  const { activeTheme: activeTheme } = useCustomTheme();
+  const { activeTheme, activeColorTheme, darkmode } = useCustomTheme();
   return (
     <aside className="fixed left-0 top-0 h-screen">
       <div className="flex relative bg-gray-100 flex-col">
@@ -27,19 +28,19 @@ export function Sidebar({ collapsed, onToggleCollapse, children }: SidebarProps)
             {!collapsed && (
               <div className="flex items-center">
                 <Image
-                  src="/assets/logo.png"
+                  src={`${darkmode ? "/assets/logo-dark.png" : "/assets/logo.png"}`}
                   alt="Monie Logo"
                   width={40}
                   height={40}
                   priority
                   className="h-6 w-6 mr-2"
                 />
-                <Monie width={68} height={24} />
+                <Monie width={56} height={24} darkmode={darkmode} />
               </div>
             )}
             <button
               onClick={() => onToggleCollapse(!collapsed)}
-              className={`p-2 rounded-full group ${getThemeHoverClass(activeTheme as ThemeType)}`}
+              className={`p-2 rounded-full group ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
               aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
               {/* 展开时显示 Menu 图标 */}
@@ -50,7 +51,7 @@ export function Sidebar({ collapsed, onToggleCollapse, children }: SidebarProps)
                 <>
                   {/* 默认显示的 Logo */}
                   <Image
-                    src="/assets/logo.png"
+                    src={`${darkmode ? "/assets/logo-dark.png" : "/assets/logo.png"}`}
                     alt="Monie Logo"
                     width={32}
                     height={32}
