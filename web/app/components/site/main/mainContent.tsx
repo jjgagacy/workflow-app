@@ -138,12 +138,12 @@ export default function MainContent() {
         {/* 内容 */}
         <div className="container relative z-10 ">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-3xl md:text-4xl font-bold mb-6">
+            <h1 className="text-4xl md:text-4xl font-bold mb-6">
               <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
                 {t('home.hero.title')}
               </span>
               <br />
-              <span className="text-gray-900 dark:text-white">
+              <span className="text-2xl text-gray-900 dark:text-white">
                 {t('home.hero.subtitle')}
               </span>
             </h1>
@@ -152,7 +152,7 @@ export default function MainContent() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/register"
+                href="/signup"
                 className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl hover:shadow-lg transition-all duration-300 text-lg font-semibold inline-flex items-center justify-center active:bg-green-800"
               >
                 {t('home.hero.cta_primary')}

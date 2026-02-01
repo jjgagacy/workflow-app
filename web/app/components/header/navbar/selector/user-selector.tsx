@@ -76,6 +76,7 @@ export function UserSelector() {
                 </button>
               )}
             </MenuItem>
+            <hr className="my-2 border-[var(--border)]" />
             <MenuItem>
               {() => (
                 <button

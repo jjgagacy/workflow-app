@@ -22,7 +22,7 @@
   --color-warning-foreground: oklch(0.205 0 0);
   --color-selection-hover: var(--color-neutral-100);
   --color-selection-active: var(--color-neutral-100);
-  --border: var(--color-gray-300);
+  --border: var(--color-gray-200);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
