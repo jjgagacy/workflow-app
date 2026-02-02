@@ -1,7 +1,7 @@
-import { MessageType } from "@/core/dtos/message.dto";
-import { ToolParameter } from "@/core/entities/plugin/declaration/tool";
-import { ToolInvokeMessage } from "@/interfaces/tool/invoke-message";
-import { Tool } from "@/interfaces/tool/tool";
+import { MessageType } from "@/core/dtos/message.dto.js";
+import { ToolParameter } from "@/core/entities/plugin/declaration/tool.js";
+import { ToolInvokeMessage } from "@/interfaces/tool/invoke-message.js";
+import { Tool } from "@/interfaces/tool/tool.js";
 
 export class TelegraphTool extends Tool {
   async invoke(toolParameters: Record<string, any>): Promise<ToolInvokeMessage> {

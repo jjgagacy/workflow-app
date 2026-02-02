@@ -1,0 +1,1 @@
+{"version":3,"file":"duck.js","sourceRoot":"","sources":["../../src/endpoints/duck.ts"],"names":[],"mappings":";;;AAEA,6DAA0D;AAC1D,qEAAqE;AAErE,MAAa,IAAK,SAAQ,mBAAQ;IAChC,KAAK,CAAC,MAAM,CAAC,CAAU,EAAE,MAA2B,EAAE,QAA6B;QACjF,OAAO,kCAAiB,CAAC,UAAU,CAAC,OAAO,MAAM,CAAC,KAAK,EAAE,CAAC,CAAC;IAC7D,CAAC;CACF;AAJD,oBAIC"}

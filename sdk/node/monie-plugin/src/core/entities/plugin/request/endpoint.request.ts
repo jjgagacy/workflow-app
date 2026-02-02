@@ -1,5 +1,5 @@
-import { PluginInvokeType } from "../../enums/plugin.type";
-import { EndpointActions, PluginAccessAction, PluginAccessRequest } from "./request";
+import { PluginInvokeType } from "../../enums/plugin.type.js";
+import { EndpointActions, PluginAccessAction, PluginAccessRequest } from "./request.js";
 
 export class EndpointInvokeRequest extends PluginAccessRequest {
   type: PluginInvokeType = PluginInvokeType.Endpoint;

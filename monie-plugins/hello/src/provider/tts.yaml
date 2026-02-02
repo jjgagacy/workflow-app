@@ -1,0 +1,17 @@
+settings:
+  - name: api_key
+    type: secret-input
+    required: true
+    label:
+      en_US: API key
+      zh_Hans: API key
+  - name: tts_model
+    type: model-selector
+    scope: tts
+    required: true
+    label:
+      en_US: TTS Model
+      zh_Hans: TTS模型
+endpoints:
+  - endpoints/duck.yaml
+  - endpoints/tts.yaml

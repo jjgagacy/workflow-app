@@ -1,4 +1,4 @@
-import { StreamRequestEvent } from "../entities/event.enum";
+import { StreamRequestEvent } from "../entities/event.enum.js";
 
 export class TestMessageFactory {
   static createRequestMessage<T extends Record<string, any> = Record<string, unknown>>(

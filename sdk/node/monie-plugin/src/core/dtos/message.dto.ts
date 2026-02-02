@@ -1,4 +1,4 @@
-import { LogMessage } from "./log-message.dto";
+import { LogMessage } from "./log-message.dto.js";
 
 export enum MessageType {
   TEXT = 'text',

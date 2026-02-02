@@ -1,8 +1,8 @@
-import { ModelType } from "@/core/entities/enums/model.enum";
-import { TTSVoice } from "@/core/entities/model/tts.entity";
-import { AIModel } from "@/core/entities/plugin/ai-model";
-import { PriceInfo, PriceType } from "@/core/entities/pricing";
-import { ClassWithMarker } from "../marker.class";
+import { ModelType } from "@/core/entities/enums/model.enum.js";
+import { TTSVoice } from "@/core/entities/model/tts.entity.js";
+import { AIModel } from "@/core/entities/plugin/ai-model.js";
+import { PriceInfo, PriceType } from "@/core/entities/pricing.js";
+import { ClassWithMarker } from "../marker.class.js";
 
 export const TTS_MODEL_SYMBOL = Symbol.for('plugin.tts.model');
 

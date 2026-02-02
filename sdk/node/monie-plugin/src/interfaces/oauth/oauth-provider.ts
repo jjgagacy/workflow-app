@@ -1,4 +1,4 @@
-import { ClassWithMarker } from "../marker.class";
+import { ClassWithMarker } from "../marker.class.js";
 
 export const OAUTH_PROVIDER = Symbol.for('plugin.oauth.provider');
 

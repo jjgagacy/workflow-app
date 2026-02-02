@@ -1,5 +1,5 @@
-import { Tool } from "@/interfaces/tool/tool";
-import { PluginInvokeType } from "../../enums/plugin.type";
+import { Tool } from "@/interfaces/tool/tool.js";
+import { PluginInvokeType } from "../../enums/plugin.type.js";
 
 export enum PromptMessageRole {
   USER = 'user',

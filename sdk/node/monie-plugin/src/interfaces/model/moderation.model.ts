@@ -1,6 +1,6 @@
-import { ModelType } from "@/core/entities/enums/model.enum";
-import { AIModel } from "@/core/entities/plugin/ai-model";
-import { ClassWithMarker } from "../marker.class";
+import { ModelType } from "@/core/entities/enums/model.enum.js";
+import { AIModel } from "@/core/entities/plugin/ai-model.js";
+import { ClassWithMarker } from "../marker.class.js";
 
 export const MODERATION_MODEL_SYMBOL = Symbol.for('plugin.moderation.model');
 

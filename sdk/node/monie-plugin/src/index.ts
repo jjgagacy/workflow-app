@@ -1,3 +1,2 @@
-export function sum<Type extends number | bigint>(a: Type, b: Type): Type {
-  return (a as any) + (b as any) as Type;
-}
+export { StreamMessage } from './core/dtos/stream.dto.js';
+export { Plugin } from './plugin.js';

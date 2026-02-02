@@ -1,7 +1,7 @@
-import { RequestReader } from "../../core/reader.class";
-import { ResponseWriter } from "../../core/writer.class";
-import { HandleResult, Route, RouteFilter, RouteHandler } from "./route.handler";
-import { Session } from "@/core/classes/runtime";
+import { RequestReader } from "../../core/reader.class.js";
+import { ResponseWriter } from "../../core/writer.class.js";
+import { HandleResult, Route, RouteFilter, RouteHandler } from "./route.handler.js";
+import { Session } from "@/core/classes/runtime.js";
 
 export interface IRouter {
   dispatch(session: Session, data: any): void;

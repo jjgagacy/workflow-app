@@ -26,7 +26,7 @@ var (
 )
 
 const (
-	CACHE_PREFIX = "plugin_daemon"
+	CACHE_PREFIX = "plugin_dae"
 )
 
 func getRedisOption(addr, username, password string, useSsl bool, db int) *redis.Options {
@@ -443,7 +443,7 @@ func Lock(key string, token string, expire time.Duration, lockTimeout time.Durat
 
 	for range ticker.C {
 		success, err := getCmdable(cmdables...).SetNX(ctx, serialKey(key), token, expire).Result()
-		fmt.Println("SETNX result:", success, err)
+		// fmt.Println("SETNX result:", success, err)
 		if err != nil {
 			return err
 		} else if success {

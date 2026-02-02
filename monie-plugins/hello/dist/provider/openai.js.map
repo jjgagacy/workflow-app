@@ -1,0 +1,1 @@
+{"version":3,"file":"openai.js","sourceRoot":"","sources":["../../src/provider/openai.ts"],"names":[],"mappings":";;;AAAA,sEAAkE;AAElE,MAAa,cAAe,SAAQ,8BAAa;IAE/C,2BAA2B,CAAC,WAAgC;QAC1D,MAAM,IAAI,KAAK,CAAC,yBAAyB,CAAC,CAAC;IAC7C,CAAC;CAEF;AAND,wCAMC"}

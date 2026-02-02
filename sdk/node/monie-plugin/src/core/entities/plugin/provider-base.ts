@@ -1,5 +1,5 @@
-import { FetchFrom, ModelFeature, ModelPropertyKey, ModelType } from "../enums/model.enum";
-import { I18nObject } from "../i18n";
+import { FetchFrom, ModelFeature, ModelPropertyKey, ModelType } from "../enums/model.enum.js";
+import { I18nObject } from "../i18n.js";
 
 export class ProviderBase {
   model: string;

@@ -1,4 +1,4 @@
-import { InvokeError, InvokeConnectionError, InvokeServerUnavailableError, InvokeRateLimitError, InvokeAuthorizationError, InvokeBadRequestError } from "@/core/errors/model.error";
+import { InvokeError, InvokeConnectionError, InvokeServerUnavailableError, InvokeRateLimitError, InvokeAuthorizationError, InvokeBadRequestError } from "@/core/errors/model.error.js";
 import OpenAI from "openai";
 
 export const invokeErrorMapping: Map<

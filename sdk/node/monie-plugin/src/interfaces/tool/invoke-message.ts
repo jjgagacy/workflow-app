@@ -1,6 +1,6 @@
-import { InvokeMessage, InvokeMessageMeta, TextInvokeMessage, JsonInvokeMessage, BlobInvokeMessage, VariableInvokeMessage, RetrieverResourceInvokeMessage } from "@/core/dtos/invoke-message.dto";
-import { LogMessage, LogStatus } from "@/core/dtos/log-message.dto";
-import { MessageType, InvokeMessagePayload, TextMessage, JsonMessage, BlobMessage, VariableMessage, RetrieverResource, RetrieverResourceMessage } from "@/core/dtos/message.dto";
+import { InvokeMessage, InvokeMessageMeta, TextInvokeMessage, JsonInvokeMessage, BlobInvokeMessage, VariableInvokeMessage, RetrieverResourceInvokeMessage } from "@/core/dtos/invoke-message.dto.js";
+import { LogMessage, LogStatus } from "@/core/dtos/log-message.dto.js";
+import { MessageType, InvokeMessagePayload, TextMessage, JsonMessage, BlobMessage, VariableMessage, RetrieverResource, RetrieverResourceMessage } from "@/core/dtos/message.dto.js";
 
 
 export class ToolInvokeMessage implements InvokeMessage {

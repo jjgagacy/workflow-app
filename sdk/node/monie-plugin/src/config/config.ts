@@ -1,7 +1,7 @@
-import { EnumUtils } from "@/utils/enum.util";
-import { InstallMethod } from "./config.enum";
-import { IPluginConfig } from "./base";
-import { EnvLoader, RawEnvConfig } from "./env-loader";
+import { EnumUtils } from "@/utils/enum.util.js";
+import { InstallMethod } from "./config.enum.js";
+import { IPluginConfig } from "./base.js";
+import { EnvLoader, RawEnvConfig } from "./env-loader.js";
 
 export class PluginConfig implements IPluginConfig {
   heartbeatInterval: number;

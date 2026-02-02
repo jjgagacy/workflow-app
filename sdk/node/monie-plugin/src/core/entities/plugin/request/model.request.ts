@@ -1,7 +1,7 @@
-import { ModelType } from "../../enums/model.enum";
-import { PluginInvokeType } from "../../enums/plugin.type";
-import { PromptMessage, PromptMessageHelper, PromptMessageTool } from "../message/message";
-import { ModelActions, PluginAccessRequest } from "./request";
+import { ModelType } from "../../enums/model.enum.js";
+import { PluginInvokeType } from "../../enums/plugin.type.js";
+import { PromptMessage, PromptMessageHelper, PromptMessageTool } from "../message/message.js";
+import { ModelActions, PluginAccessRequest } from "./request.js";
 
 
 export class PluginAccessModelRequest extends PluginAccessRequest {

@@ -1,7 +1,7 @@
 import EventEmitter from "events";
-import { StreamWriter } from "./streams/stream";
-import { Event, StreamOutputMessage } from "./entities/event/writer-entities";
-import { SessionMessage, SessionMessageType } from "./entities/event/message";
+import { StreamWriter } from "./streams/stream.js";
+import { Event, StreamOutputMessage } from "./entities/event/writer-entities.js";
+import { SessionMessage, SessionMessageType } from "./entities/event/message.js";
 
 export abstract class ResponseWriter extends EventEmitter implements StreamWriter {
   abstract write(data: string): Promise<void>;

@@ -1,5 +1,5 @@
 import { ThreadWorker } from "poolifier";
-import { TaskData, TaskResult } from "./worker.type";
+import { TaskData, TaskResult } from "./worker.type.js";
 
 class MessageWorker extends ThreadWorker<TaskData, TaskResult> {
   constructor() {

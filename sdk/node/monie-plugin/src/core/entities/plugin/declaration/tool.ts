@@ -1,8 +1,8 @@
-import { CommonParameterType } from "../../enums/form.enum";
-import { I18nObject } from "../../i18n";
-import { ToolConfigurationExtra } from "./extra";
-import { ParameterOption } from "../parameter";
-import { Mapping } from "../provider";
+import { CommonParameterType } from "../../enums/form.enum.js";
+import { I18nObject } from "../../i18n.js";
+import { ToolConfigurationExtra } from "./extra.js";
+import { ParameterOption } from "../parameter.js";
+import { Mapping } from "../provider.js";
 
 export type ToolParameterOption = ParameterOption;
 

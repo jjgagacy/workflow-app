@@ -1,5 +1,5 @@
-import { AIModel } from "@/core/entities/plugin/ai-model";
-import { ModerationModel } from "@/interfaces/model/moderation.model";
+import { AIModel } from "@/core/entities/plugin/ai-model.js";
+import { ModerationModel } from "@/interfaces/model/moderation.model.js";
 
 export class OpenAIModerationModel extends ModerationModel {
   getModelSchema(model: string, credentials?: Record<string, any>): Promise<AIModel | undefined> {

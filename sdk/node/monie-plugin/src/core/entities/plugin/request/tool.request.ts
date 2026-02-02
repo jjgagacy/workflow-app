@@ -1,5 +1,5 @@
-import { PluginInvokeType } from "../../enums/plugin.type";
-import { PluginAccessRequest, PluginAccessAction, ToolActions, CredentialType } from "./request";
+import { PluginInvokeType } from "../../enums/plugin.type.js";
+import { PluginAccessRequest, PluginAccessAction, ToolActions, CredentialType } from "./request.js";
 
 
 export class ToolInvokeRequest extends PluginAccessRequest {

@@ -1,12 +1,12 @@
-import { CommonParameterType, FormType } from "../enums/form.enum";
-import { ConfigurateMethod, ModelType } from "../enums/model.enum";
-import { I18nObject } from "../i18n";
-import { AIModel } from "./ai-model";
-import { PluginFiles } from "./declaration/manifest";
-import { OauthSchema } from "./oauth";
-import { ParameterOption } from "./parameter";
-import { ToolProviderIdentity } from "./declaration/tool";
-import { ToolConfigurationExtra } from "./declaration/extra";
+import { CommonParameterType, FormType } from "../enums/form.enum.js";
+import { ConfigurateMethod, ModelType } from "../enums/model.enum.js";
+import { I18nObject } from "../i18n.js";
+import { AIModel } from "./ai-model.js";
+import { PluginFiles } from "./declaration/manifest.js";
+import { OauthSchema } from "./oauth.js";
+import { ParameterOption } from "./parameter.js";
+import { ToolProviderIdentity } from "./declaration/tool.js";
+import { ToolConfigurationExtra } from "./declaration/extra.js";
 
 export type Mapping<T = any> = Record<string, T>;
 

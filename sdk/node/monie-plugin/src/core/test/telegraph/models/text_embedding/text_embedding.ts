@@ -1,7 +1,7 @@
-import { EmbeddingInputType, TextEmbeddingResult } from "@/core/entities/model/text-embedding.entity";
-import { AIModel } from "@/core/entities/plugin/ai-model";
-import { PriceType, PriceInfo } from "@/core/entities/pricing";
-import { TextEmbeddingModel } from "@/interfaces/model/text-embedding.model";
+import { EmbeddingInputType, TextEmbeddingResult } from "@/core/entities/model/text-embedding.entity.js";
+import { AIModel } from "@/core/entities/plugin/ai-model.js";
+import { PriceType, PriceInfo } from "@/core/entities/pricing.js";
+import { TextEmbeddingModel } from "@/interfaces/model/text-embedding.model.js";
 
 export class OpenAITextEmbeddingModel extends TextEmbeddingModel {
   invoke(model: string, credentials: Record<string, any>, texts: string[], user: string | undefined, inputType: EmbeddingInputType): Promise<TextEmbeddingResult> | TextEmbeddingResult {

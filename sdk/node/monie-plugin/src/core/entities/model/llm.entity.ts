@@ -1,4 +1,4 @@
-import { AssistantPromptMessage, PromptMessage } from "../plugin/message/message";
+import { AssistantPromptMessage, PromptMessage } from "../plugin/message/message.js";
 
 export enum LLMMode {
   COMPLETION = 'completion',

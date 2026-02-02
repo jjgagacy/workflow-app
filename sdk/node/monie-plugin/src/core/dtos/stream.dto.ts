@@ -1,4 +1,4 @@
-import { StreamRequestEvent } from "../entities/event.enum";
+import { StreamRequestEvent } from "../entities/event.enum.js";
 
 export abstract class StreamRequestPayload {
   constructor(

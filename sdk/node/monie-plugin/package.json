@@ -2,8 +2,8 @@
   "name": "monie-plugin",
   "version": "1.0.0",
   "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "type": "module",
+  "types": "./dist/types/index.d.ts",
   "scripts": {
     "test": "tsc && tsc-alias && npm run copy-env-file && npm run copy-asset && cross-env NODE_OPTIONS=\"--experimental-vm-modules\" npx jest",
     "test:watch": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" npx jest --watch",
@@ -17,6 +17,12 @@
   "files": [
     "dist"
   ],
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.9",

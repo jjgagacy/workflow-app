@@ -1,7 +1,5 @@
-import { isEndpointClass } from "@/interfaces/endpoint/endpoint";
-import { isToolProviderClass } from "@/interfaces/tool/tool-provider";
 import path from "path";
-import { fileURLToPath, pathToFileURL } from "url";
+import { pathToFileURL } from "url";
 
 export interface ClassInfo<T extends new (...args: any[]) => any = new (...args: any[]) => any> {
   name: string;

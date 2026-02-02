@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "rootDir": ".",
+    "rootDir": "src",
     "outDir": "./dist",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
@@ -8,13 +8,14 @@
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
+    "declarationDir": "./dist/types",
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
     "strict": true,
     "jsx": "react-jsx",
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
+    // "moduleDetection": "force",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "paths": {
@@ -24,10 +25,8 @@
     }
   },
   "include": [
-    "./src/**/*",
-    "./tests/**/*",
-    "./**/*.test.ts",
-    "./**/*.spec.ts"
+    "src",
+    "tests"
   ],
   "exclude": [
     "node_modules",

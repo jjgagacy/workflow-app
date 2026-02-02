@@ -1,5 +1,5 @@
-import { RequestReader } from "../reader.class";
-import { ResponseWriter } from "../writer.class";
+import { RequestReader } from "../reader.class.js";
+import { ResponseWriter } from "../writer.class.js";
 
 export interface StreamReader {
   read(data: any): Promise<any>;

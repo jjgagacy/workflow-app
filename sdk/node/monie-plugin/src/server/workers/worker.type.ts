@@ -1,4 +1,4 @@
-import { StreamMessage } from "@/core/dtos/stream.dto";
+import { StreamMessage } from "@/core/dtos/stream.dto.js";
 
 export interface TaskData {
   messageId: string;

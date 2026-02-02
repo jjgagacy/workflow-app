@@ -1,9 +1,9 @@
-import { IOServer } from "./server/io.server";
-import { EnvLoader } from "./config/env-loader";
-import { PluginConfig } from "./config/config";
-import { StreamFactory } from "./core/factory.class";
-import { StreamMessage } from "./core/dtos/stream.dto";
-import { StreamRequestEvent } from "./core/entities/event.enum";
+import { EnvLoader } from "./config/env-loader.js";
+import { PluginConfig } from "./config/config.js";
+import { StreamFactory } from "./core/factory.class.js";
+import { StreamMessage } from "./core/dtos/stream.dto.js";
+import { StreamRequestEvent } from "./core/entities/event.enum.js";
+import { IOServer } from "./server/io.server.js";
 
 export class Plugin extends IOServer {
   constructor(configPath?: string) {

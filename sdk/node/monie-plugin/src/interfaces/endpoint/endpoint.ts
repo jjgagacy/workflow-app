@@ -1,7 +1,7 @@
-import { Request } from "@/core/entities/endpoint/endpoint.entity";
-import { Response } from "@/core/entities/endpoint/response.entity";
-import { SessionMessage } from "@/core/entities/event/message";
-import { ClassWithMarker } from "../marker.class";
+import { Request } from "@/core/entities/endpoint/endpoint.entity.js";
+import { Response } from "@/core/entities/endpoint/response.entity.js";
+import { SessionMessage } from "@/core/entities/event/message.js";
+import { ClassWithMarker } from "../marker.class.js";
 
 export const ENDPOINT_SYMBOL = Symbol.for('plugin.endpoint');
 

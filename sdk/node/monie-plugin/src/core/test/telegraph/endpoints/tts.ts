@@ -1,8 +1,8 @@
-import { BlobMessagePayload, MessageType } from "@/core/dtos/message.dto";
-import { Request } from "@/core/entities/endpoint/endpoint.entity";
-import { Response } from "@/core/entities/endpoint/response.entity";
-import { Endpoint } from "@/interfaces/endpoint/endpoint";
-import { ToolInvokeMessage } from "@/interfaces/tool/invoke-message";
+import { BlobMessagePayload, MessageType } from "@/core/dtos/message.dto.js";
+import { Request } from "@/core/entities/endpoint/endpoint.entity.js";
+import { Response } from "@/core/entities/endpoint/response.entity.js";
+import { Endpoint } from "@/interfaces/endpoint/endpoint.js";
+import { ToolInvokeMessage } from "@/interfaces/tool/invoke-message.js";
 import * as crypto from 'crypto';
 
 async function generateTTSAudio(text: string, options: {

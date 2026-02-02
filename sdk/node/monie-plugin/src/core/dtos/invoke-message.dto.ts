@@ -1,5 +1,5 @@
-import { LogMessage } from "./log-message.dto";
-import { BlobChunkMessage, BlobMessage, JsonMessage, MessageType, RetrieverResourceMessage, TextMessage, VariableMessage } from "./message.dto";
+import { LogMessage } from "./log-message.dto.js";
+import { BlobChunkMessage, BlobMessage, JsonMessage, MessageType, RetrieverResourceMessage, TextMessage, VariableMessage } from "./message.dto.js";
 
 export type InvokeMessageTypeMap = {
   [MessageType.TEXT]: TextMessage;

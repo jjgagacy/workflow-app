@@ -1,6 +1,6 @@
-import { ModelFeature, ModelType } from "../enums/model.enum";
-import { PriceConfig } from "../pricing";
-import { ProviderBase } from "./provider-base";
+import { ModelFeature, ModelType } from "../enums/model.enum.js";
+import { PriceConfig } from "../pricing.js";
+import { ProviderBase } from "./provider-base.js";
 
 export const AIMODEL_SYMBOL = Symbol.for('plugin.ai-model');
 

@@ -1,5 +1,5 @@
-import { PluginInvokeType } from "../../enums/plugin.type";
-import { PluginAccessRequest, PluginAccessAction, AgentActions } from "./request";
+import { PluginInvokeType } from "../../enums/plugin.type.js";
+import { PluginAccessRequest, PluginAccessAction, AgentActions } from "./request.js";
 
 
 export class AgentInvokeRequest extends PluginAccessRequest {

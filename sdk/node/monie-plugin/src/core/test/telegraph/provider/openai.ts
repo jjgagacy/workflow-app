@@ -1,4 +1,4 @@
-import { ModelProvider } from "@/interfaces/model/model-provider";
+import { ModelProvider } from "@/interfaces/model/model-provider.js";
 
 export class OpenAIProvider extends ModelProvider {
 

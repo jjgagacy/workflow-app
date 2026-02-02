@@ -1,4 +1,4 @@
-import type { InstallMethod } from "./config.enum";
+import type { InstallMethod } from "./config.enum.js";
 
 export interface IPluginConfig {
   installMethod: InstallMethod;

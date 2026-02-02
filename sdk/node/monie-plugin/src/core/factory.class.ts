@@ -1,7 +1,7 @@
-import { InstallMethod } from "@/config/config.enum";
-import { StreamPair } from "./streams/stream";
-import { StdioReader } from "@/server/stdio/stdio-reader.class";
-import { StdioWriter } from "@/server/stdio/stdio-writer.class";
+import { InstallMethod } from "@/config/config.enum.js";
+import { StreamPair } from "./streams/stream.js";
+import { StdioReader } from "@/server/stdio/stdio-reader.class.js";
+import { StdioWriter } from "@/server/stdio/stdio-writer.class.js";
 
 export class StreamFactory {
   static create(config: { installMethod: InstallMethod }): StreamPair {

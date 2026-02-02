@@ -1,5 +1,5 @@
-import { StreamMessage } from "@/core/dtos/stream.dto";
-import { RequestReader } from "../../core/reader.class";
+import { StreamMessage } from "@/core/dtos/stream.dto.js";
+import { RequestReader } from "../../core/reader.class.js";
 import readline from "readline";
 
 export class StdioReader extends RequestReader {

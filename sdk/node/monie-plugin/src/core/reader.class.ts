@@ -1,5 +1,5 @@
-import { StreamMessage } from "./dtos/stream.dto";
-import { StreamReader } from "./streams/stream";
+import { StreamMessage } from "./dtos/stream.dto.js";
+import { StreamReader } from "./streams/stream.js";
 import { EventEmitter } from 'events';
 
 export type MessageCallback = (message: StreamMessage) => Promise<void> | void;

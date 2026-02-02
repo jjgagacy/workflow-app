@@ -2,6 +2,9 @@ package server
 
 import (
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/jjgagacy/workflow-app/plugin/core"
 	"github.com/jjgagacy/workflow-app/plugin/core/db"
@@ -28,8 +31,15 @@ func (app *App) Run(config *core.Config) {
 	// init persistent
 	persistence.InitPersistence(oss, config)
 	// start http server
-	app.server(config)
+	shutdown := app.server(config)
 	log.Printf("server listening on 127.0.0.1:%d", config.ServerPort)
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	// block
-	select {}
+	// select {}
+	<-quit
+	log.Println("Shutting down server...")
+	shutdown()
+	log.Println("Server gracefully stopped")
 }

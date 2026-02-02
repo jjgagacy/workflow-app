@@ -1,4 +1,4 @@
-import { ClassWithMarker } from "../marker.class";
+import { ClassWithMarker } from "../marker.class.js";
 
 export const TOOL_PROVIDER_SYMBOL = Symbol.for('plugin.tool.provider');
 

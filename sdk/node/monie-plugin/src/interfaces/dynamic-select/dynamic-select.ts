@@ -1,4 +1,4 @@
-import { ClassWithMarker } from "../marker.class";
+import { ClassWithMarker } from "../marker.class.js";
 
 export const DYNAMIC_SELECT_SYMBOL = Symbol.for('plugin.dynamicselect.model');
 export abstract class DynamicSelect {

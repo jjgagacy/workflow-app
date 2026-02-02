@@ -1,6 +1,6 @@
-import { InvokeMessage } from "@/core/dtos/invoke-message.dto";
-import { LogMessage } from "@/core/dtos/log-message.dto";
-import { BlobMessage, InvokeMessagePayload, JsonMessage, MessageType, TextMessage, VariableMessage } from "@/core/dtos/message.dto";
+import { InvokeMessage } from "@/core/dtos/invoke-message.dto.js";
+import { LogMessage } from "@/core/dtos/log-message.dto.js";
+import { BlobMessage, InvokeMessagePayload, JsonMessage, MessageType, TextMessage, VariableMessage } from "@/core/dtos/message.dto.js";
 
 export abstract class ToolLike<T extends InvokeMessage> {
   responseType!: new (...args: any[]) => T;

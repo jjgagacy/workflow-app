@@ -1,7 +1,7 @@
-import { ModelType } from "@/core/entities/enums/model.enum";
-import { AIModel } from "@/core/entities/plugin/ai-model";
-import { Provider } from "@/core/entities/plugin/provider";
-import { ClassWithMarker } from "../marker.class";
+import { ModelType } from "@/core/entities/enums/model.enum.js";
+import { AIModel } from "@/core/entities/plugin/ai-model.js";
+import { Provider } from "@/core/entities/plugin/provider.js";
+import { ClassWithMarker } from "../marker.class.js";
 
 export const MODEL_PROVIDER_SYMBOL = Symbol.for('plugin.modelprovider');
 

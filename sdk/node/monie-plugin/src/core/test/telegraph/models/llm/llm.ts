@@ -1,11 +1,11 @@
-import { LLMResult, LLMChunkResult, LLMMode, LLMUsage } from "@/core/entities/model/llm.entity";
-import { AIModel } from "@/core/entities/plugin/ai-model";
-import { AssistantPromptMessage, PromptMessage, PromptMessageTool } from "@/core/entities/plugin/message/message";
-import { PriceType, PriceInfo } from "@/core/entities/pricing";
-import { LargeLanguageModel } from "@/interfaces/model/llm.model";
+import { LLMResult, LLMChunkResult, LLMMode, LLMUsage } from "@/core/entities/model/llm.entity.js";
+import { AIModel } from "@/core/entities/plugin/ai-model.js";
+import { AssistantPromptMessage, PromptMessage, PromptMessageTool } from "@/core/entities/plugin/message/message.js";
+import { PriceType, PriceInfo } from "@/core/entities/pricing.js";
+import { LargeLanguageModel } from "@/interfaces/model/llm.model.js";
 import OpenAI from "openai";
 import { encodingForModel } from "js-tiktoken";
-import { toCredentialsOptions } from "../common";
+import { toCredentialsOptions } from "../common.js";
 import { Completion } from "openai/resources";
 
 function getModelMode(model: string): LLMMode {
