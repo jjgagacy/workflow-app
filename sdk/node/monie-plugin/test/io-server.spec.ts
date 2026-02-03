@@ -1,10 +1,10 @@
-import { PluginConfig } from "@/config/config";
-import { EnvLoader } from "@/config/env-loader";
-import { StreamMessage } from "@/core/dtos/stream.dto";
-import { StreamRequestEvent } from "@/core/entities/event.enum";
-import { RequestReader } from "@/core/reader.class";
-import { ResponseWriter } from "@/core/writer.class";
-import { IOServer } from "@/server/io.server";
+import { PluginConfig } from "../src/config/config.js";
+import { EnvLoader } from "../src/config/env-loader.js";
+import { StreamMessage } from "../src/core/dtos/stream.dto.js";
+import { StreamRequestEvent } from "../src/core/entities/event.enum.js";
+import { RequestReader } from "../src/core/reader.class.js";
+import { ResponseWriter } from "../src/core/writer.class.js";
+import { IOServer } from "../src/server/io.server.js";
 
 class TestRequestReader extends RequestReader {
   private queue: StreamMessage[] = [];

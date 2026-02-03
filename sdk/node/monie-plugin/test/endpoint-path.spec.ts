@@ -1,4 +1,4 @@
-import { parseRawHttpRequest, pathToRegexp } from "@/core/entities/endpoint/endpoint.entity";
+import { parseRawHttpRequest, pathToRegexp } from "../src/core/entities/endpoint/endpoint.entity.js";
 
 describe('pathToRegexp', () => {
   it('should convert simple path with one parameter', () => {

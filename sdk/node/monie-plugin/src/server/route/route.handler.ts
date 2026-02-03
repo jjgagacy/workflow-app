@@ -1,9 +1,8 @@
 import { Session } from "@/core/classes/runtime.js";
 
-
 export enum TaskType {
-  CPU = 'cpu',
-  IO = 'io',
+  CPU = 'CPU',
+  IO = 'IO',
 }
 
 export interface HandleResult {
@@ -12,6 +11,7 @@ export interface HandleResult {
 }
 
 export type RouteFilter = (data: any) => boolean;
+
 export type RouteHandlerResult =
   | Promise<HandleResult>
   | AsyncGenerator<any>

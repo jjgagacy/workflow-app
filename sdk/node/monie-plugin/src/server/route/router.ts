@@ -1,6 +1,6 @@
 import { RequestReader } from "../../core/reader.class.js";
 import { ResponseWriter } from "../../core/writer.class.js";
-import { HandleResult, Route, RouteFilter, RouteHandler } from "./route.handler.js";
+import { Route, RouteFilter, RouteHandler } from "./route.handler.js";
 import { Session } from "@/core/classes/runtime.js";
 
 export interface IRouter {

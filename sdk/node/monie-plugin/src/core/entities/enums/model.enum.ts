@@ -1,4 +1,3 @@
-
 export enum ModelType {
   LLM = 'llm',
   TEXT_EMBEDDING = 'text-embedding',

@@ -1,5 +1,5 @@
 export enum PromptMessageRole {
-  SYSTEM = 'sytem',
+  SYSTEM = 'system',
   USER = 'user',
   ASSISTANT = 'assistant',
   TOOL = 'tool',

@@ -1,4 +1,3 @@
-
 export enum FormType {
   TEXT_INPUT = 'text-input',
   SECRET_INPUT = 'secret-input',

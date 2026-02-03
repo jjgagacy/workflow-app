@@ -35,4 +35,3 @@ export class SessionMessage {
     this.data = data;
   }
 }
-

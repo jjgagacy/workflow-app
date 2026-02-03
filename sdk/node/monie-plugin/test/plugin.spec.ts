@@ -1,6 +1,6 @@
-import { StreamRequestEvent } from "@/core/entities/event.enum";
-import { TestMessageFactory } from "@/core/test/message-factory";
-import { Plugin } from "@/plugin";
+import { StreamRequestEvent } from "../src/core/entities/event.enum.js";
+import { TestMessageFactory } from "../src/core/test/message-factory.js";
+import { Plugin } from "../src/plugin.js";
 import { EventEmitter } from 'events';
 import path from "path";
 import { PassThrough } from "stream";

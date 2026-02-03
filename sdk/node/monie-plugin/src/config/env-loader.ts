@@ -1,4 +1,4 @@
-import dotenv, { config } from 'dotenv';
+import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
 import path from 'path';
 

@@ -25,7 +25,6 @@ export class PluginConfig implements IPluginConfig {
 
   constructor(private envLoader: EnvLoader) {
     const rawEnv = this.envLoader.getRawEnv();
-    console.log(rawEnv);
     this.heartbeatInterval = this.parseNumber(rawEnv.HEARTBEAT_INTERVAL, 10)!;
     this.installMethod = this.parseInstallMethod(rawEnv.INSTALL_METHOD);
     this.maxRequestTimeout = this.parseNumber(rawEnv.MAX_REQUEST_TIMEOUT, 300)!;
@@ -81,7 +80,6 @@ export class PluginConfig implements IPluginConfig {
     if (isNaN(num)) {
       throw new Error(`Value must be a number: ${value}`);
     }
-
     return num;
   }
 }

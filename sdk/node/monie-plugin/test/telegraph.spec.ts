@@ -1,7 +1,5 @@
-import { StreamRequestEvent } from "@/core/entities/event.enum";
-import { ToolInvokeRequest } from "@/core/entities/plugin/request/tool.request";
-import { TestMessageFactory } from "@/core/test/message-factory";
-import { Plugin } from "@/plugin";
+import { ToolInvokeRequest } from "../src/core/entities/plugin/request/tool.request.js";
+import { Plugin } from "../src/plugin.js";
 import { EventEmitter } from 'events';
 import path from "path";
 import { PassThrough } from "stream";

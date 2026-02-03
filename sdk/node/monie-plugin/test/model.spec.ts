@@ -1,9 +1,9 @@
-import { ModelType } from "@/core/entities/enums/model.enum";
-import { PluginInvokeType } from "@/core/entities/enums/plugin.type";
-import { PromptMessage, PromptMessageRole } from "@/core/entities/plugin/message/message";
-import { EndpointActions, ModelActions } from "@/core/entities/plugin/request/request";
-import { TestMessageFactory } from "@/core/test/message-factory";
-import { Plugin } from "@/plugin";
+import { ModelType } from "../src/core/entities/enums/model.enum.js";
+import { PluginInvokeType } from "../src/core/entities/enums/plugin.type.js";
+import { PromptMessage, PromptMessageRole } from "../src/core/entities/plugin/message/message.js";
+import { EndpointActions, ModelActions } from "../src/core/entities/plugin/request/request.js";
+import { TestMessageFactory } from "../src/core/test/message-factory.js";
+import { Plugin } from "../src/plugin.js";
 import { EventEmitter } from 'events';
 import path from "path";
 import { PassThrough } from "stream";

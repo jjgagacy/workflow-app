@@ -1,4 +1,4 @@
-import { InterfaceDefinition, ModuleClassScanner } from "@/core/classes/module-loader";
+import { InterfaceDefinition, ModuleClassScanner } from "../src/core/classes/module-loader.js";
 
 abstract class AnimalBase {
   abstract speak(): string;

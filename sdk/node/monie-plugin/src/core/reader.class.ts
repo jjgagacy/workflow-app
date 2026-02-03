@@ -8,6 +8,7 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
   type: string;
   private isRunning: boolean = false;
   private processingPromise: Promise<void> | null = null;
+  // TODO: non blocking is not implemented
   protected useNonBlocking: boolean = true;
   private messageCallbacks: Set<MessageCallback> = new Set();
 
@@ -33,12 +34,12 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
     return this.processingPromise;
   }
 
-  // runEventLoop is synchronize and will blocking heartbeat...
+  // WARNING: runEventLoop is synchronize and will blocking heartbeat...
   async runEventLoop(): Promise<void> {
     while (this.isRunning) {
       try {
         /**
-         * ⚠️ BLOCKING EVENT LOOP WARNING 
+         * BLOCKING EVENT LOOP WARNING 
          * 
          * This `for wait...of` loop on `readStreamAsync` creates a blocking loop.
          * The issue:
@@ -133,7 +134,10 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
         // reset empty loop counter
         consecutiveEmpty = 0;
         // handle messages
-        this.handleMessageAsync(message);
+        this.handleMessageAsync(message).catch(error => {
+          console.error('Message processing error:', error);
+          this.emit('message.process.error', { message, error });
+        });
         // add poll interval
         if (this.pollInterval > 0) {
           await this.sleep(this.pollInterval);
@@ -173,7 +177,7 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
     return new Promise<void>((resolve) => {
       queueMicrotask(async () => {
         try {
-          this.triggerMessageProcessing(data);
+          await this.triggerMessageProcessing(data);
         } catch (error) {
           console.error('Error in async message handling:', error);
           this.emit('message.process.error', { message: data, error });

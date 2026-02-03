@@ -46,6 +46,6 @@ export class Plugin extends IOServer {
   }
 
   protected async handleRequestMessage(msg: StreamMessage): Promise<any> {
-    return "response...";
+    return "response :)";
   }
 }

@@ -1,7 +1,7 @@
-import { PluginInvokeType } from "@/core/entities/enums/plugin.type";
-import { EndpointActions } from "@/core/entities/plugin/request/request";
-import { TestMessageFactory } from "@/core/test/message-factory";
-import { Plugin } from "@/plugin";
+import { PluginInvokeType } from "../src/core/entities/enums/plugin.type.js";
+import { EndpointActions } from "../src/core/entities/plugin/request/request.js";
+import { TestMessageFactory } from "../src/core/test/message-factory.js";
+import { Plugin } from "../src/plugin.js";
 import { EventEmitter } from 'events';
 import path from "path";
 import { PassThrough } from "stream";
