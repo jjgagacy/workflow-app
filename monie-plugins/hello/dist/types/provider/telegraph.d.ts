@@ -1,4 +1,4 @@
-import { ToolProvider } from "@/interfaces/tool/tool-provider";
+import { ToolProvider } from "monie-plugin";
 export declare class TelegraphProvider extends ToolProvider {
     validateCredentials(credentials: Record<string, any>): Promise<void>;
 }

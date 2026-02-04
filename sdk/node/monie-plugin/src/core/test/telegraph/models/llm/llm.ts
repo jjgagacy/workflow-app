@@ -3,10 +3,15 @@ import { AIModel } from "@/core/entities/plugin/ai-model.js";
 import { AssistantPromptMessage, PromptMessage, PromptMessageTool } from "@/core/entities/plugin/message/message.js";
 import { PriceType, PriceInfo } from "@/core/entities/pricing.js";
 import { LargeLanguageModel } from "@/interfaces/model/llm.model.js";
-import OpenAI from "openai";
 import { encodingForModel } from "js-tiktoken";
 import { toCredentialsOptions } from "../common.js";
-import { Completion } from "openai/resources";
+
+export class OpenAI {
+  completions: any;
+  responses: any;
+  APIConnectionError: new (...args: any[]) => any = Error;
+  constructor(...params: any[]) { }
+}
 
 function getModelMode(model: string): LLMMode {
   if (model.startsWith('gpt-')) return LLMMode.CHAT;

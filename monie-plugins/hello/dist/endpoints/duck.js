@@ -1,11 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Duck = void 0;
-const endpoint_1 = require("@/interfaces/endpoint/endpoint");
-const invoke_message_1 = require("@/interfaces/tool/invoke-message");
-class Duck extends endpoint_1.Endpoint {
+const monie_plugin_1 = require("monie-plugin");
+class Duck extends monie_plugin_1.Endpoint {
     async invoke(r, values, settings) {
-        return invoke_message_1.ToolInvokeMessage.createText(`id: ${values.appId}`);
+        const duckSounds = ["quack", "quack-quack", "quaaaack"];
+        const randomSound = duckSounds[Math.floor(Math.random() * duckSounds.length)];
+        return monie_plugin_1.ToolInvokeMessage.createJson({
+            statusCode: 200,
+            body: {
+                message: `Duck says: ${randomSound}`,
+                timestamp: new Date().toISOString()
+            }
+        });
     }
 }
 exports.Duck = Duck;

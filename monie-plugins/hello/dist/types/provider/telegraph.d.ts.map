@@ -1,1 +1,1 @@
-{"version":3,"file":"telegraph.d.ts","sourceRoot":"","sources":["../../../src/provider/telegraph.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,YAAY,EAAE,MAAM,iCAAiC,CAAC;AAE/D,qBAAa,iBAAkB,SAAQ,YAAY;IAC3C,mBAAmB,CAAC,WAAW,EAAE,MAAM,CAAC,MAAM,EAAE,GAAG,CAAC,GAAG,OAAO,CAAC,IAAI,CAAC;CAa3E"}
+{"version":3,"file":"telegraph.d.ts","sourceRoot":"","sources":["../../../src/provider/telegraph.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,YAAY,EAAE,MAAM,cAAc,CAAC;AAE5C,qBAAa,iBAAkB,SAAQ,YAAY;IAC3C,mBAAmB,CAAC,WAAW,EAAE,MAAM,CAAC,MAAM,EAAE,GAAG,CAAC,GAAG,OAAO,CAAC,IAAI,CAAC;CAa3E"}

@@ -5,27 +5,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.invokeErrorMapping = void 0;
 exports.mapToInvokeError = mapToInvokeError;
-const model_error_1 = require("@/core/errors/model.error");
+const monie_plugin_1 = require("monie-plugin");
 const openai_1 = __importDefault(require("openai"));
 exports.invokeErrorMapping = new Map([
     [
-        model_error_1.InvokeConnectionError,
+        monie_plugin_1.InvokeConnectionError,
         [openai_1.default.APIConnectionError, openai_1.default.APIConnectionTimeoutError],
     ],
     [
-        model_error_1.InvokeServerUnavailableError,
+        monie_plugin_1.InvokeServerUnavailableError,
         [openai_1.default.InternalServerError]
     ],
     [
-        model_error_1.InvokeRateLimitError,
+        monie_plugin_1.InvokeRateLimitError,
         [openai_1.default.RateLimitError],
     ],
     [
-        model_error_1.InvokeAuthorizationError,
+        monie_plugin_1.InvokeAuthorizationError,
         [openai_1.default.AuthenticationError, openai_1.default.PermissionDeniedError],
     ],
     [
-        model_error_1.InvokeBadRequestError,
+        monie_plugin_1.InvokeBadRequestError,
         [openai_1.default.BadRequestError, openai_1.default.NotFoundError, openai_1.default.UnprocessableEntityError, openai_1.default.APIError]
     ]
 ]);
@@ -35,6 +35,6 @@ function mapToInvokeError(error) {
             return new InvokeErr(error.message);
         }
     }
-    return new model_error_1.InvokeError(error instanceof Error ? error.message : String(error));
+    return new monie_plugin_1.InvokeError(error instanceof Error ? error.message : String(error));
 }
 //# sourceMappingURL=error.js.map

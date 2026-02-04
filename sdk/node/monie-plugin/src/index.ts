@@ -20,14 +20,10 @@ export {
 export type {
   TextMessage,
   BlobMessage,
-  MessageType,
   BlobChunkMessage,
   VariableMessage,
   RetrieverResource,
   RetrieverResourceMessage,
-} from './core/dtos/message.dto.js';
-
-export type {
   TextMessagePayload,
   BlobMessagePayload,
   VariableMessagePayload,
@@ -37,6 +33,10 @@ export type {
   LinkMessagePayload,
   LogMessagePayload,
   InvokeMessagePayload
+} from './core/dtos/message.dto.js';
+
+export {
+  MessageType,
 } from './core/dtos/message.dto.js';
 
 export {
@@ -111,6 +111,14 @@ export {
 } from './core/entities/model/rerank.entity.js';
 
 export type {
+  Response
+} from './core/entities/endpoint/response.entity.js';
+
+export type {
+  Request
+} from './core/entities/endpoint/endpoint.entity.js';
+
+export type {
   AudioFile,
   Speech2TextOptions,
   Speech2TextResult,
@@ -125,6 +133,10 @@ export type {
 export {
   TTSResult
 } from './core/entities/model/tts.entity.js';
+
+export {
+  AIModel,
+} from './core/entities/plugin/ai-model.js';
 
 export {
   PluginDeclaration,

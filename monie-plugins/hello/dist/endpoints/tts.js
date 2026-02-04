@@ -34,10 +34,8 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PinkTTS = void 0;
-const message_dto_1 = require("@/core/dtos/message.dto");
-const endpoint_1 = require("@/interfaces/endpoint/endpoint");
-const invoke_message_1 = require("@/interfaces/tool/invoke-message");
 const crypto = __importStar(require("crypto"));
+const monie_plugin_1 = require("monie-plugin");
 async function generateTTSAudio(text, options = {}) {
     const { voice = 'default', speed = 1.0, pitch = 1.0, format = 'mp3' } = options;
     const audioContent = `TTS audio: ${text}\nVoice: ${voice}\nFormat: ${format}`;
@@ -62,7 +60,7 @@ function generateFilename(text, format) {
         .toLowerCase();
     return `tts_${safeText}_${hash}.${format}`;
 }
-class PinkTTS extends endpoint_1.Endpoint {
+class PinkTTS extends monie_plugin_1.Endpoint {
     async invoke(request, values, settings) {
         try {
             const { text, voice = settings.voice || 'default', speed = settings.speed || 1.0, pitch = settings.pitch || 1.0, format = settings.format || 'mp3', streaming = settings.streaming || false } = this.extractParameters(request, values, settings);
@@ -85,7 +83,7 @@ class PinkTTS extends endpoint_1.Endpoint {
         }
     }
     createErrorResponse(error) {
-        return invoke_message_1.ToolInvokeMessage.createText(`error: ${error.message}`);
+        return monie_plugin_1.ToolInvokeMessage.createText(`error: ${error.message}`);
     }
     createStreamingResponse(audioBuffer, text, format) {
         const mimeType = getMimeType(format);
@@ -96,7 +94,7 @@ class PinkTTS extends endpoint_1.Endpoint {
             filename,
             streaming: true,
         };
-        return invoke_message_1.ToolInvokeMessage.createBlob(audioBuffer, { id: blobId, meta });
+        return monie_plugin_1.ToolInvokeMessage.createBlob(audioBuffer, { id: blobId, meta });
     }
     extractParameters(request, values, settings) {
         const text = values.text ||
@@ -155,7 +153,7 @@ class PinkTTS extends endpoint_1.Endpoint {
         const mimeType = getMimeType(format);
         const filename = generateFilename(text, format);
         const payload = {
-            type: message_dto_1.MessageType.BLOB,
+            type: monie_plugin_1.MessageType.BLOB,
             message: { blob: audioBuffer },
             meta: {
                 mimeType,
@@ -166,7 +164,7 @@ class PinkTTS extends endpoint_1.Endpoint {
                 generatedAt: new Date().toISOString(),
             }
         };
-        return new invoke_message_1.ToolInvokeMessage(payload);
+        return new monie_plugin_1.ToolInvokeMessage(payload);
     }
 }
 exports.PinkTTS = PinkTTS;

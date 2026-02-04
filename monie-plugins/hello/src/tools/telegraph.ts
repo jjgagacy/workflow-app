@@ -1,3 +1,5 @@
+import { MessageType, Tool, ToolInvokeMessage, ToolParameter } from "monie-plugin";
+
 export class TelegraphTool extends Tool {
   async invoke(toolParameters: Record<string, any>): Promise<ToolInvokeMessage> {
     const { content, title } = toolParameters;

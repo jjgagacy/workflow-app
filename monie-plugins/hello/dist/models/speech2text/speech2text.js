@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OpenAISpeech2TextModel = void 0;
-const speech2text_model_1 = require("@/interfaces/model/speech2text.model");
-class OpenAISpeech2TextModel extends speech2text_model_1.Speech2TextModel {
+const monie_plugin_1 = require("monie-plugin");
+class OpenAISpeech2TextModel extends monie_plugin_1.Speech2TextModel {
     invoke(model, credentials, file, user, options) {
         throw new Error("Method not implemented.");
     }

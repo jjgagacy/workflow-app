@@ -1,3 +1,5 @@
+import { AIModel, EmbeddingInputType, PriceInfo, PriceType, TextEmbeddingModel, TextEmbeddingResult } from "monie-plugin";
+
 export class OpenAITextEmbeddingModel extends TextEmbeddingModel {
   invoke(model: string, credentials: Record<string, any>, texts: string[], user: string | undefined, inputType: EmbeddingInputType): Promise<TextEmbeddingResult> | TextEmbeddingResult {
     throw new Error("Method not implemented.");

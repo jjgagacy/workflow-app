@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TelegraphProvider = void 0;
-const tool_provider_1 = require("@/interfaces/tool/tool-provider");
-class TelegraphProvider extends tool_provider_1.ToolProvider {
+const monie_plugin_1 = require("monie-plugin");
+class TelegraphProvider extends monie_plugin_1.ToolProvider {
     async validateCredentials(credentials) {
         if (!credentials.accessToken) {
             throw new Error("Telegraph access token is required");

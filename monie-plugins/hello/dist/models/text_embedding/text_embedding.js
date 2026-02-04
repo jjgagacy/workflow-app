@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OpenAITextEmbeddingModel = void 0;
-const text_embedding_model_1 = require("@/interfaces/model/text-embedding.model");
-class OpenAITextEmbeddingModel extends text_embedding_model_1.TextEmbeddingModel {
+const monie_plugin_1 = require("monie-plugin");
+class OpenAITextEmbeddingModel extends monie_plugin_1.TextEmbeddingModel {
     invoke(model, credentials, texts, user, inputType) {
         throw new Error("Method not implemented.");
     }

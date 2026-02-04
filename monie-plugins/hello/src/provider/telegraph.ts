@@ -1,3 +1,5 @@
+import { ToolProvider } from "monie-plugin";
+
 export class TelegraphProvider extends ToolProvider {
   async validateCredentials(credentials: Record<string, any>): Promise<void> {
     if (!credentials.accessToken) {

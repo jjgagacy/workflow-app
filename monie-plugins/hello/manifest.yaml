@@ -1,10 +1,10 @@
 version: 0.0.1
 type: plugin
-author: jjgagacy
-name: telegraph
+author: Monie
+name: hello
 label:
-  en_US: telegraph
-  zh_Hans: telegraph
+  en_US: hello
+  zh_Hans: hello
 icon:
 resource:
   memory: 268435456
@@ -28,11 +28,11 @@ resource:
       size: 1048576
 plugins:
   tools:
-    - provider/telegraph.yaml
+    - src/provider/telegraph.yaml
   models:
-    - provider/openai.yaml
+    - src/provider/openai.yaml
   endpoints:
-    - provider/tts.yaml
+    - src/provider/tts.yaml
   agent_strategies:
 meta:
   version: 0.0.1
@@ -42,7 +42,7 @@ meta:
   runner:
     language: node
     version: "22.19"
-    entrypoint: main
+    entrypoint: index
 created_at: 2025-10-04T07:33:59.884736+08:00
 privacy: PRIVACY.md
 verified: false

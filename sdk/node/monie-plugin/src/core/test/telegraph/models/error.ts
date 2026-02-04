@@ -1,5 +1,117 @@
 import { InvokeError, InvokeConnectionError, InvokeServerUnavailableError, InvokeRateLimitError, InvokeAuthorizationError, InvokeBadRequestError } from "@/core/errors/model.error.js";
-import OpenAI from "openai";
+
+// 定义基础错误类
+class BaseError extends Error {
+  constructor(message?: string) {
+    super(message);
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
+// OpenAI 错误类 - 都支持 new (...args: any[])
+class APIConnectionError extends BaseError {
+  constructor(message?: string, options?: any) {
+    super(message);
+    this.name = 'APIConnectionError';
+  }
+}
+
+class APIConnectionTimeoutError extends BaseError {
+  constructor(message?: string, options?: any) {
+    super(message);
+    this.name = 'APIConnectionTimeoutError';
+  }
+}
+
+class InternalServerError extends BaseError {
+  constructor(message?: string, options?: any) {
+    super(message);
+    this.name = 'InternalServerError';
+  }
+}
+
+class RateLimitError extends BaseError {
+  constructor(message?: string, options?: any) {
+    super(message);
+    this.name = 'RateLimitError';
+  }
+}
+
+class AuthenticationError extends BaseError {
+  constructor(message?: string, options?: any) {
+    super(message);
+    this.name = 'AuthenticationError';
+  }
+}
+
+class PermissionDeniedError extends BaseError {
+  constructor(message?: string, options?: any) {
+    super(message);
+    this.name = 'PermissionDeniedError';
+  }
+}
+
+class BadRequestError extends BaseError {
+  constructor(message?: string, options?: any) {
+    super(message);
+    this.name = 'BadRequestError';
+  }
+}
+
+class NotFoundError extends BaseError {
+  constructor(message?: string, options?: any) {
+    super(message);
+    this.name = 'NotFoundError';
+  }
+}
+
+class UnprocessableEntityError extends BaseError {
+  constructor(message?: string, options?: any) {
+    super(message);
+    this.name = 'UnprocessableEntityError';
+  }
+}
+
+class APIError extends BaseError {
+  constructor(message?: string, options?: any) {
+    super(message);
+    this.name = 'APIError';
+  }
+}
+// 模拟 OpenAI 命名空间
+const OpenAI = {
+  APIConnectionError,
+  APIConnectionTimeoutError,
+  InternalServerError,
+  RateLimitError,
+  AuthenticationError,
+  PermissionDeniedError,
+  BadRequestError,
+  NotFoundError,
+  UnprocessableEntityError,
+  APIError
+} as const;
+
+// 类型定义
+type OpenAIErrorType =
+  | typeof APIConnectionError
+  | typeof APIConnectionTimeoutError
+  | typeof InternalServerError
+  | typeof RateLimitError
+  | typeof AuthenticationError
+  | typeof PermissionDeniedError
+  | typeof BadRequestError
+  | typeof NotFoundError
+  | typeof UnprocessableEntityError
+  | typeof APIError;
+
+type InvokeErrorType =
+  | typeof InvokeConnectionError
+  | typeof InvokeServerUnavailableError
+  | typeof InvokeRateLimitError
+  | typeof InvokeAuthorizationError
+  | typeof InvokeBadRequestError;
+
 
 export const invokeErrorMapping: Map<
   new (...args: any[]) => InvokeError,
@@ -7,23 +119,23 @@ export const invokeErrorMapping: Map<
 > = new Map([
   [
     InvokeConnectionError,
-    [OpenAI.APIConnectionError, OpenAI.APIConnectionTimeoutError],
+    [APIConnectionError, APIConnectionTimeoutError],
   ],
   [
     InvokeServerUnavailableError,
-    [OpenAI.InternalServerError]
+    [InternalServerError]
   ],
   [
     InvokeRateLimitError,
-    [OpenAI.RateLimitError],
+    [RateLimitError],
   ],
   [
     InvokeAuthorizationError,
-    [OpenAI.AuthenticationError, OpenAI.PermissionDeniedError],
+    [AuthenticationError, PermissionDeniedError],
   ],
   [
     InvokeBadRequestError,
-    [OpenAI.BadRequestError, OpenAI.NotFoundError, OpenAI.UnprocessableEntityError, OpenAI.APIError]
+    [BadRequestError, NotFoundError, UnprocessableEntityError, APIError]
   ]
 ]);
 

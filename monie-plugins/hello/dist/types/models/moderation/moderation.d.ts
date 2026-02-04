@@ -1,5 +1,4 @@
-import { AIModel } from "@/core/entities/plugin/ai-model";
-import { ModerationModel } from "@/interfaces/model/moderation.model";
+import { AIModel, ModerationModel } from "monie-plugin";
 export declare class OpenAIModerationModel extends ModerationModel {
     getModelSchema(model: string, credentials?: Record<string, any>): Promise<AIModel | undefined>;
     validateCredentials(model: string, credentials: Record<string, any>): Promise<void>;

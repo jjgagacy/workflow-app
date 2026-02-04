@@ -1,4 +1,4 @@
-import { InvokeError, InvokeConnectionError, InvokeServerUnavailableError, InvokeRateLimitError, InvokeAuthorizationError, InvokeBadRequestError } from "@/core/errors/model.error";
+import { InvokeAuthorizationError, InvokeBadRequestError, InvokeConnectionError, InvokeError, InvokeRateLimitError, InvokeServerUnavailableError } from "monie-plugin";
 import OpenAI from "openai";
 
 export const invokeErrorMapping: Map<

@@ -1,3 +1,5 @@
+import { AIModel, ModerationModel } from "monie-plugin";
+
 export class OpenAIModerationModel extends ModerationModel {
   getModelSchema(model: string, credentials?: Record<string, any>): Promise<AIModel | undefined> {
     throw new Error("Method not implemented.");

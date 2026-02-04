@@ -1,8 +1,4 @@
-import { LLMResult, LLMChunkResult } from "@/core/entities/model/llm.entity";
-import { AIModel } from "@/core/entities/plugin/ai-model";
-import { PromptMessage, PromptMessageTool } from "@/core/entities/plugin/message/message";
-import { PriceType, PriceInfo } from "@/core/entities/pricing";
-import { LargeLanguageModel } from "@/interfaces/model/llm.model";
+import { AIModel, LargeLanguageModel, LLMChunkResult, LLMResult, PriceInfo, PriceType, PromptMessage, PromptMessageTool } from "monie-plugin";
 export declare class OpenAILargeLanguageModel extends LargeLanguageModel {
     invoke(model: string, credentials: Record<string, any>, promptMessages: PromptMessage[], modelParameters: Record<string, any>, tools?: PromptMessageTool[] | undefined, stop?: string[] | undefined, stream?: boolean, user?: string | undefined): Promise<LLMResult | AsyncGenerator<LLMChunkResult>>;
     private generate;
