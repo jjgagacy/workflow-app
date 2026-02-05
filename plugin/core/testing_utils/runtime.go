@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"runtime/debug"
 	"strings"
 	"time"
 
@@ -97,7 +98,7 @@ func GetRuntime(pluginZip []byte, dir string) (*local_runtime.LocalPluginRuntime
 	}, func() {
 		defer func() {
 			if r := recover(); r != nil {
-				utils.Error("plugin runtime panic: %v", r)
+				utils.Error("plugin runtime panic: %v, stack: %s", r, debug.Stack())
 			}
 		}()
 

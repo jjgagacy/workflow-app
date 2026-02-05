@@ -64,6 +64,7 @@ func (p *PluginManager) launchLocal(
 		return nil, nil, nil, err
 	}
 
+	fmt.Println("------", plugin.decoder) // TODO: nil
 	identity, err := plugin.decoder.UniqueIdentity()
 	if err != nil {
 		return nil, nil, nil, err

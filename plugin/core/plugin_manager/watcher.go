@@ -1,6 +1,7 @@
 package plugin_manager
 
 import (
+	"runtime/debug"
 	"sync"
 	"time"
 
@@ -54,7 +55,7 @@ func (p *PluginManager) handleNewLocalPlugins(config *core.Config) {
 			sem <- struct{}{}
 			defer func() {
 				if err := recover(); err != nil {
-					utils.Error("plugin launch runtime error: %v", err)
+					utils.Error("plugin launch runtime error: %v, stack: %s", err, debug.Stack())
 				}
 				<-sem
 				wg.Done()
@@ -89,7 +90,6 @@ func (p *PluginManager) removeUninstalledLocalPlugins() {
 		if !ok {
 			return true
 		}
-
 		pluginUniqueIdentifier, err := runtime.Identity()
 		if err != nil {
 			utils.Error("get plugin identity failed: %s", err.Error())

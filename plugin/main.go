@@ -6,12 +6,15 @@ import (
 
 	"github.com/jjgagacy/workflow-app/plugin/core"
 	"github.com/jjgagacy/workflow-app/plugin/core/server"
+	"github.com/jjgagacy/workflow-app/plugin/utils"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 )
 
 func main() {
 	fmt.Println("server starting")
+
+	utils.SetLogVisibility(true)
 
 	var config core.Config
 

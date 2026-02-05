@@ -10,7 +10,7 @@ import (
 
 func main() {
 	pluginsDir := "~/Documents/codes/workflow-app/monie-plugins"
-	outputBaseDir := "./plugin"
+	outputBaseDir := "./storage/plugin"
 
 	if strings.HasPrefix(pluginsDir, "~") {
 		home, _ := os.UserHomeDir()
@@ -31,7 +31,7 @@ func main() {
 		pluginName := entry.Name()
 		pluginPath := filepath.Join(pluginsDir, pluginName)
 		distPath := filepath.Join(pluginPath, "dist")
-		outputPath := filepath.Join(outputBaseDir, pluginName+".moniepkg")
+		outputPath := filepath.Join(outputBaseDir, pluginName)
 
 		fmt.Printf("Processing plugin: %s\n", pluginName)
 		fmt.Printf("  Plugin path: %s\n", pluginPath)
