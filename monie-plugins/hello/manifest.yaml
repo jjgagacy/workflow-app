@@ -5,7 +5,8 @@ name: hello
 label:
   en_US: hello
   zh_Hans: hello
-icon:
+icon: icon.png
+created: 2023-10-01T00:00:00Z
 resource:
   memory: 268435456
   permission:
@@ -28,11 +29,11 @@ resource:
       size: 1048576
 plugins:
   tools:
-    - src/provider/telegraph.yaml
+    - provider/telegraph.yaml
   models:
-    - src/provider/openai.yaml
+    - provider/openai.yaml
   endpoints:
-    - src/provider/tts.yaml
+    - endpoints/endpoint_provider.yaml
   agent_strategies:
 meta:
   version: 0.0.1

@@ -6,9 +6,10 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "npm run copy-asset && npm run copy-manifest && tsc && tsc-alias",
+    "build": "npm run copy-asset && npm run copy-manifest && npm run copy-icon && tsc && tsc-alias",
     "dev": "tsc --watch",
-    "copy-asset": "npx copyfiles -u 0 \"src/**/*.{yaml,yml,json,svg}\" dist/",
+    "copy-icon": "npx copyfiles _assets/* dist/",
+    "copy-asset": "npx copyfiles -u 1 \"src/**/*.{yaml,yml,json,svg}\" dist/",
     "copy-manifest": "npx copyfiles manifest.yaml dist/"
   },
   "files": [

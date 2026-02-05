@@ -1,0 +1,10 @@
+settings:
+  - name: api_key
+    type: string
+    required: true
+    label:
+      en_US: "Api Key"
+endponits: []
+endpoint_files:
+  - endpoints/tts.yaml
+  - endpoints/duck.yaml
