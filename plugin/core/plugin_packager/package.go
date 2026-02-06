@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_packager/decoder"
 )
@@ -86,10 +87,26 @@ func (p *Packager) Pack(maxSize int64) ([]byte, error) {
 		}
 	}
 
+	signature, err := p.generateSignature()
+	if err != nil {
+		return nil, err
+	}
+	comment := fmt.Sprintf(`{"signature": "%s", "time": %d}`, signature, time.Now().Unix())
+	zipWriter.SetComment(comment)
+
 	err = zipWriter.Close()
 	if err != nil {
 		return nil, err
 	}
 
 	return zipBuffer.Bytes(), nil
+}
+
+func (p *Packager) generateSignature() (string, error) {
+	checksum, err := decoder.CalculateChecksum(p.decoder)
+	if err != nil {
+		return "", err
+	}
+
+	return checksum, nil
 }

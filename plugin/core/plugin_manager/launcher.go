@@ -53,6 +53,7 @@ func (p *PluginManager) getLocalPluginRuntime(pluginUniqueIdentifier plugin_enti
 				WorkingPath: pluginWorkingPath,
 			},
 		},
+		decoder: decoder,
 	}, nil
 }
 
@@ -64,7 +65,6 @@ func (p *PluginManager) launchLocal(
 		return nil, nil, nil, err
 	}
 
-	fmt.Println("------", plugin.decoder) // TODO: nil
 	identity, err := plugin.decoder.UniqueIdentity()
 	if err != nil {
 		return nil, nil, nil, err
@@ -125,6 +125,9 @@ func (p *PluginManager) launchLocal(
 		UvPath:                 p.config.UvPath,
 		PythonEnvInitTimeout:   p.config.PythonEnvInitTimeout,
 		PythonCompileExtraArgs: p.config.PythonCompileExtraArgs,
+		NodeExecutePath:        p.config.NodeExecutePath,
+		NodeEnvInitTimeout:     p.config.NodeEnvInitTimeout,
+		NodeExtraArg:           p.config.NodeExtraArg,
 	})
 	localPluginRuntime.PluginRuntime = plugin.runtime
 	localPluginRuntime.BasicChecksum = basic_runtime.BasicChecksum{

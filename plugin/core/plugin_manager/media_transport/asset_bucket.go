@@ -77,7 +77,7 @@ func (m *MediaBucket) RemapAssets(declaration *plugin_entities.PluginDeclaration
 
 		file, ok := assets[filename]
 		if !ok {
-			return "", fmt.Errorf("file not found: %s", file)
+			return "", fmt.Errorf("file not found: %s", filename)
 		}
 
 		id, err := m.Upload(filename, file)

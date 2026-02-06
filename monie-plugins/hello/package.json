@@ -8,7 +8,7 @@
   "scripts": {
     "build": "npm run copy-asset && npm run copy-manifest && npm run copy-icon && tsc && tsc-alias",
     "dev": "tsc --watch",
-    "copy-icon": "npx copyfiles _assets/* dist/",
+    "copy-icon": "npx copyfiles src/_assets/* dist/",
     "copy-asset": "npx copyfiles -u 1 \"src/**/*.{yaml,yml,json,svg}\" dist/",
     "copy-manifest": "npx copyfiles manifest.yaml dist/"
   },
@@ -39,3 +39,4 @@
     "monie-plugin": "file:../../sdk/node/monie-plugin"
   }
 }
+

@@ -140,6 +140,10 @@ type Config struct {
 	PipPreferBinary        *bool  `envconfig:"PIP_PREFER_BINARY"`
 	PipVerbose             *bool  `envconfig:"PIP_VERBOSE"`
 	PipExtraArgs           string `envconfig:"PIP_EXTRA_ARGS"`
+
+	NodeExecutePath    string `envconfig:"NODE_EXECUTE_PATH"`
+	NodeEnvInitTimeout int    `envconfig:"NODE_ENV_INIT_TIMEOUT"`
+	NodeExtraArg       string `envconfig:"NODE_EXTRA_ARG"`
 }
 
 func (c *Config) Validate() error {

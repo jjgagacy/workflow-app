@@ -135,5 +135,8 @@ func NewLocalPluginRuntime(config LocalPluginRuntimeConfig) *LocalPluginRuntime 
 		NoProxy:                      config.NoProxy,
 		stdoutBufferSize:             config.StdoutBufferSize,
 		stdoutMaxBufferSize:          config.StdoutMaxBufferSize,
+		nodeExecutePath:              config.NodeExecutePath,
+		nodeEnvInitTimeout:           config.NodeEnvInitTimeout,
+		nodeExtraArg:                 config.NodeExtraArg,
 	}
 }
