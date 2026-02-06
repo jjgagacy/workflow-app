@@ -1,4 +1,4 @@
-import { ClientOptions } from "openai";
+type ClientOptions = any
 
 export function toCredentialsOptions(
   credentials: Record<string, any>

@@ -1,41 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PinkTTS = void 0;
-const crypto = __importStar(require("crypto"));
-const monie_plugin_1 = require("monie-plugin");
+import * as crypto from 'crypto';
+import { Endpoint, MessageType, ToolInvokeMessage } from 'monie-plugin';
 async function generateTTSAudio(text, options = {}) {
     const { voice = 'default', speed = 1.0, pitch = 1.0, format = 'mp3' } = options;
     const audioContent = `TTS audio: ${text}\nVoice: ${voice}\nFormat: ${format}`;
@@ -60,7 +24,7 @@ function generateFilename(text, format) {
         .toLowerCase();
     return `tts_${safeText}_${hash}.${format}`;
 }
-class PinkTTS extends monie_plugin_1.Endpoint {
+export class PinkTTS extends Endpoint {
     async invoke(request, values, settings) {
         try {
             const { text, voice = settings.voice || 'default', speed = settings.speed || 1.0, pitch = settings.pitch || 1.0, format = settings.format || 'mp3', streaming = settings.streaming || false } = this.extractParameters(request, values, settings);
@@ -83,7 +47,7 @@ class PinkTTS extends monie_plugin_1.Endpoint {
         }
     }
     createErrorResponse(error) {
-        return monie_plugin_1.ToolInvokeMessage.createText(`error: ${error.message}`);
+        return ToolInvokeMessage.createText(`error: ${error.message}`);
     }
     createStreamingResponse(audioBuffer, text, format) {
         const mimeType = getMimeType(format);
@@ -94,7 +58,7 @@ class PinkTTS extends monie_plugin_1.Endpoint {
             filename,
             streaming: true,
         };
-        return monie_plugin_1.ToolInvokeMessage.createBlob(audioBuffer, { id: blobId, meta });
+        return ToolInvokeMessage.createBlob(audioBuffer, { id: blobId, meta });
     }
     extractParameters(request, values, settings) {
         const text = values.text ||
@@ -153,7 +117,7 @@ class PinkTTS extends monie_plugin_1.Endpoint {
         const mimeType = getMimeType(format);
         const filename = generateFilename(text, format);
         const payload = {
-            type: monie_plugin_1.MessageType.BLOB,
+            type: MessageType.BLOB,
             message: { blob: audioBuffer },
             meta: {
                 mimeType,
@@ -164,8 +128,7 @@ class PinkTTS extends monie_plugin_1.Endpoint {
                 generatedAt: new Date().toISOString(),
             }
         };
-        return new monie_plugin_1.ToolInvokeMessage(payload);
+        return new ToolInvokeMessage(payload);
     }
 }
-exports.PinkTTS = PinkTTS;
 //# sourceMappingURL=tts.js.map

@@ -1,30 +1,24 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.OpenAILargeLanguageModel = void 0;
-const monie_plugin_1 = require("monie-plugin");
-const common_1 = require("../common");
-const openai_1 = __importDefault(require("openai"));
-const js_tiktoken_1 = require("js-tiktoken");
+import { AssistantPromptMessage, LargeLanguageModel, LLMMode, LLMResult, LLMUsage } from "monie-plugin";
+import { toCredentialsOptions } from "../common.js";
+import OpenAI from "openai";
+import { encodingForModel } from "js-tiktoken";
 function getModelMode(model) {
     if (model.startsWith('gpt-'))
-        return monie_plugin_1.LLMMode.CHAT;
-    return monie_plugin_1.LLMMode.COMPLETION;
+        return LLMMode.CHAT;
+    return LLMMode.COMPLETION;
 }
-class OpenAILargeLanguageModel extends monie_plugin_1.LargeLanguageModel {
+export class OpenAILargeLanguageModel extends LargeLanguageModel {
     async invoke(model, credentials, promptMessages, modelParameters, tools, stop, stream, user) {
         const baseModel = model.startsWith(':') ? model.split(':')[1] : model;
         const mode = getModelMode(baseModel || '');
         // console.log('invoke params:', { model, credentials, promptMessages, modelParameters, tools, stop, stream, user });
-        console.log(mode === monie_plugin_1.LLMMode.CHAT);
-        return mode === monie_plugin_1.LLMMode.CHAT
+        console.log(mode === LLMMode.CHAT);
+        return mode === LLMMode.CHAT
             ? this.chatGenerate(model, credentials, promptMessages, modelParameters, tools, stop, stream, user)
             : this.generate(model, credentials, promptMessages, modelParameters, stop, stream, user);
     }
     async generate(model, credentials, promptMessages, modelParameters, stop, stream = true, user) {
-        const client = new openai_1.default((0, common_1.toCredentialsOptions)(credentials));
+        const client = new OpenAI(toCredentialsOptions(credentials));
         const prompt = String(promptMessages[0]?.content);
         const res = await client.completions.create({
             model,
@@ -36,10 +30,10 @@ class OpenAILargeLanguageModel extends monie_plugin_1.LargeLanguageModel {
         });
         if (!stream) {
             const text = res.choices[0]?.text ?? "";
-            return new monie_plugin_1.LLMResult({
+            return new LLMResult({
                 model: res.model,
-                message: new monie_plugin_1.AssistantPromptMessage({ content: text }),
-                usage: new monie_plugin_1.LLMUsage({
+                message: new AssistantPromptMessage({ content: text }),
+                usage: new LLMUsage({
                     promptTokens: res.usage?.prompt_tokens ?? 0,
                     completionTokens: res.usage?.completion_tokens ?? 0,
                     totalTokens: res.usage?.total_tokens ?? 0,
@@ -53,9 +47,9 @@ class OpenAILargeLanguageModel extends monie_plugin_1.LargeLanguageModel {
         throw new Error('Method not implementation');
     }
     async chatGenerate(model, credentials, promptMessages, modelParameters, tools, stop, stream = true, user) {
-        const client = new openai_1.default((0, common_1.toCredentialsOptions)(credentials));
+        const client = new OpenAI(toCredentialsOptions(credentials));
         const prompt = promptMessages.map(m => m.content);
-        console.log('OpenAI chatGenerate parameters: ', { model, prompt, stream, stop, user, modelParameters, options: (0, common_1.toCredentialsOptions)(credentials) });
+        console.log('OpenAI chatGenerate parameters: ', { model, prompt, stream, stop, user, modelParameters, options: toCredentialsOptions(credentials) });
         const res = await client.responses.create({
             model,
             input: prompt.join(','),
@@ -67,10 +61,10 @@ class OpenAILargeLanguageModel extends monie_plugin_1.LargeLanguageModel {
         console.log('OpenAI chatGenerate create response: ', res);
         if (!stream) {
             const text = res.id;
-            return new monie_plugin_1.LLMResult({
+            return new LLMResult({
                 model: res.model,
-                message: new monie_plugin_1.AssistantPromptMessage({ content: text }),
-                usage: new monie_plugin_1.LLMUsage({
+                message: new AssistantPromptMessage({ content: text }),
+                usage: new LLMUsage({
                     promptTokens: res.usage?.input_tokens ?? 0,
                     completionTokens: res.usage?.output_tokens ?? 0,
                     totalTokens: res.usage?.total_tokens ?? 0,
@@ -80,7 +74,7 @@ class OpenAILargeLanguageModel extends monie_plugin_1.LargeLanguageModel {
         return this.handleCompletionStream(model, res, prompt[0] || '');
     }
     getNumTokens(model, credentials, promptMessages, tools) {
-        const enc = (0, js_tiktoken_1.encodingForModel)(model);
+        const enc = encodingForModel(model);
         let tokenCount = 0;
         promptMessages.forEach(msg => {
             tokenCount += enc.encode(msg.content).length;
@@ -110,5 +104,4 @@ class OpenAILargeLanguageModel extends monie_plugin_1.LargeLanguageModel {
         throw new Error("Method not implemented.");
     }
 }
-exports.OpenAILargeLanguageModel = OpenAILargeLanguageModel;
 //# sourceMappingURL=llm.js.map

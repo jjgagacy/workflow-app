@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.TelegraphProvider = void 0;
-const monie_plugin_1 = require("monie-plugin");
-class TelegraphProvider extends monie_plugin_1.ToolProvider {
+import { ToolProvider } from "monie-plugin";
+export class TelegraphProvider extends ToolProvider {
     async validateCredentials(credentials) {
         if (!credentials.accessToken) {
             throw new Error("Telegraph access token is required");
@@ -15,5 +12,4 @@ class TelegraphProvider extends monie_plugin_1.ToolProvider {
         }
     }
 }
-exports.TelegraphProvider = TelegraphProvider;
 //# sourceMappingURL=telegraph.js.map

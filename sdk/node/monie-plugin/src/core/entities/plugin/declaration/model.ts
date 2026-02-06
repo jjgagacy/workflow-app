@@ -1,6 +1,5 @@
 import { Provider } from "../provider.js"
 import { NodeConfig } from "./extra.js";
-import { ProviderBase } from "../provider-base.js";
 import { ModelType } from "../../enums/model.enum.js";
 import { AIModel } from "../ai-model.js";
 

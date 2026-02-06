@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.OpenAITextEmbeddingModel = void 0;
-const monie_plugin_1 = require("monie-plugin");
-class OpenAITextEmbeddingModel extends monie_plugin_1.TextEmbeddingModel {
+import { TextEmbeddingModel } from "monie-plugin";
+export class OpenAITextEmbeddingModel extends TextEmbeddingModel {
     invoke(model, credentials, texts, user, inputType) {
         throw new Error("Method not implemented.");
     }
@@ -19,5 +16,4 @@ class OpenAITextEmbeddingModel extends monie_plugin_1.TextEmbeddingModel {
         throw new Error("Method not implemented.");
     }
 }
-exports.OpenAITextEmbeddingModel = OpenAITextEmbeddingModel;
 //# sourceMappingURL=text_embedding.js.map

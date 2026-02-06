@@ -1,4 +1,4 @@
-import { loadYamlFile } from "@/utils/yaml.util.js";
+import { loadYamlFile } from "../../../../utils/yaml.util.js";
 import { ProviderConfig } from "../provider.js";
 import { ToolConfigurationExtra } from "./extra.js";
 

@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.OpenAIModerationModel = void 0;
-const monie_plugin_1 = require("monie-plugin");
-class OpenAIModerationModel extends monie_plugin_1.ModerationModel {
+import { ModerationModel } from "monie-plugin";
+export class OpenAIModerationModel extends ModerationModel {
     getModelSchema(model, credentials) {
         throw new Error("Method not implemented.");
     }
@@ -10,5 +7,4 @@ class OpenAIModerationModel extends monie_plugin_1.ModerationModel {
         throw new Error("Method not implemented.");
     }
 }
-exports.OpenAIModerationModel = OpenAIModerationModel;
 //# sourceMappingURL=moderation.js.map

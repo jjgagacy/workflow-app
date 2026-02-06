@@ -106,8 +106,8 @@ export class PluginRegistry {
       await this.loadPluginAssets();
       await this.loadManifestLog();
       this.logRegistry();
-    } catch (error) {
-      throw new Error(`Failed to initialize plugin: ${error}`);
+    } catch (error: any) {
+      throw new Error(`Failed to initialize plugin: ${error} stack: ${error.statck}`);
     }
   }
 
@@ -130,7 +130,7 @@ export class PluginRegistry {
       console.log(`Installed model: ${model.provider}`);
     }
     for (const endpoint of this.endpointProviderConfigurations) {
-      console.log(`Installed endpoint: ${endpoint.endpoints.join(', ')}`);
+      console.log(`Installed endpoint: ${endpoint.endpoints?.join(', ')}`);
     }
     for (const agent of this.agentStrategyProviderConfigurations) {
       console.log(`Installed agent strategy: ${agent.identity.name}`);

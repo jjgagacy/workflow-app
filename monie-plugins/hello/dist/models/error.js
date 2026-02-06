@@ -1,40 +1,33 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.invokeErrorMapping = void 0;
-exports.mapToInvokeError = mapToInvokeError;
-const monie_plugin_1 = require("monie-plugin");
-const openai_1 = __importDefault(require("openai"));
-exports.invokeErrorMapping = new Map([
+import { InvokeAuthorizationError, InvokeBadRequestError, InvokeConnectionError, InvokeError, InvokeRateLimitError, InvokeServerUnavailableError } from "monie-plugin";
+import OpenAI from "openai";
+export const invokeErrorMapping = new Map([
     [
-        monie_plugin_1.InvokeConnectionError,
-        [openai_1.default.APIConnectionError, openai_1.default.APIConnectionTimeoutError],
+        InvokeConnectionError,
+        [OpenAI.APIConnectionError, OpenAI.APIConnectionTimeoutError],
     ],
     [
-        monie_plugin_1.InvokeServerUnavailableError,
-        [openai_1.default.InternalServerError]
+        InvokeServerUnavailableError,
+        [OpenAI.InternalServerError]
     ],
     [
-        monie_plugin_1.InvokeRateLimitError,
-        [openai_1.default.RateLimitError],
+        InvokeRateLimitError,
+        [OpenAI.RateLimitError],
     ],
     [
-        monie_plugin_1.InvokeAuthorizationError,
-        [openai_1.default.AuthenticationError, openai_1.default.PermissionDeniedError],
+        InvokeAuthorizationError,
+        [OpenAI.AuthenticationError, OpenAI.PermissionDeniedError],
     ],
     [
-        monie_plugin_1.InvokeBadRequestError,
-        [openai_1.default.BadRequestError, openai_1.default.NotFoundError, openai_1.default.UnprocessableEntityError, openai_1.default.APIError]
+        InvokeBadRequestError,
+        [OpenAI.BadRequestError, OpenAI.NotFoundError, OpenAI.UnprocessableEntityError, OpenAI.APIError]
     ]
 ]);
-function mapToInvokeError(error) {
-    for (const [InvokeErr, openaiErr] of exports.invokeErrorMapping) {
+export function mapToInvokeError(error) {
+    for (const [InvokeErr, openaiErr] of invokeErrorMapping) {
         if (openaiErr.some(e => error instanceof e)) {
             return new InvokeErr(error.message);
         }
     }
-    return new monie_plugin_1.InvokeError(error instanceof Error ? error.message : String(error));
+    return new InvokeError(error instanceof Error ? error.message : String(error));
 }
 //# sourceMappingURL=error.js.map

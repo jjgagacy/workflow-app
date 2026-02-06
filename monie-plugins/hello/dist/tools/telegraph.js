@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.TelegraphTool = void 0;
-const monie_plugin_1 = require("monie-plugin");
-class TelegraphTool extends monie_plugin_1.Tool {
+import { MessageType, Tool, ToolInvokeMessage } from "monie-plugin";
+export class TelegraphTool extends Tool {
     async invoke(toolParameters) {
         const { content, title } = toolParameters;
         if (!content) {
@@ -10,8 +7,8 @@ class TelegraphTool extends monie_plugin_1.Tool {
         }
         // Create Telegraph article and return the public URL
         const articleUrl = `https://telegra.ph/${Date.now()}`;
-        return new monie_plugin_1.ToolInvokeMessage({
-            type: monie_plugin_1.MessageType.TEXT,
+        return new ToolInvokeMessage({
+            type: MessageType.TEXT,
             message: articleUrl,
             timestamp: new Date(),
         });
@@ -20,5 +17,4 @@ class TelegraphTool extends monie_plugin_1.Tool {
         return [];
     }
 }
-exports.TelegraphTool = TelegraphTool;
 //# sourceMappingURL=telegraph.js.map

@@ -2,6 +2,7 @@
   "name": "hello",
   "version": "1.0.0",
   "description": "hello plugin",
+  "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -39,4 +40,3 @@
     "monie-plugin": "file:../../sdk/node/monie-plugin"
   }
 }
-

@@ -26,6 +26,11 @@ import * as crypto from 'crypto';
 import { ToolInvokeMessage } from "@/interfaces/tool/invoke-message.js";
 import { BlobChunkMessage, MessageType } from "@/core/dtos/message.dto.js";
 import { BlobInvokeMessage } from "@/core/dtos/invoke-message.dto.js";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export class IOServer implements Server {
   private isRunning: boolean = false;

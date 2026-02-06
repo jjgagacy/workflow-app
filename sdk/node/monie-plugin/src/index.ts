@@ -153,10 +153,6 @@ export {
   PluginFiles
 } from './core/entities/plugin/declaration/manifest.js';
 
-export {
-  ModelProvider
-} from './core/entities/plugin/declaration/model.js';
-
 export type {
   ToolParameterOption,
   ToolLabelType
@@ -260,6 +256,10 @@ export {
 export {
   TextEmbeddingModel
 } from './interfaces/model/text-embedding.model.js';
+
+export {
+  ModelProvider
+} from './interfaces/model/model-provider.js';
 
 export {
   TTSModel

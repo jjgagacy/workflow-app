@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.toCredentialsOptions = toCredentialsOptions;
-function toCredentialsOptions(credentials) {
+export function toCredentialsOptions(credentials) {
     const options = {
         apiKey: credentials['openai_api_key'],
         maxRetries: 1,

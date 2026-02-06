@@ -40,6 +40,10 @@ func (r *LocalPluginRuntime) getCmd() (*exec.Cmd, error) {
 		if r.NoProxy != "" {
 			cmd.Env = append(cmd.Env, fmt.Sprintf("NO_PROXY=%s", r.NoProxy))
 		}
+		// TODO: EntryPoint
+		// node:internal/modules/cjs/loader:1386
+		// Error: Cannot find module 'monie-plugin'
+		fmt.Println("====", r.nodeExecutePath, r.Config.Meta.Runner.EntryPoint)
 		return cmd, nil
 	case constants.Python:
 		cmd := exec.Command(r.pythonInterpreterPath, "-m", r.Config.Meta.Runner.EntryPoint)

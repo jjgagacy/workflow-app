@@ -1,7 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const monie_plugin_1 = require("monie-plugin");
-class TelegraphMain extends monie_plugin_1.Plugin {
+import { Plugin } from "monie-plugin";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+class TelegraphMain extends Plugin {
     constructor() {
         super(__dirname);
     }
