@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"runtime/debug"
 	"strings"
 
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager/basic_runtime"
@@ -156,7 +157,7 @@ func (p *PluginManager) launchLocal(
 	}, func() {
 		defer func() {
 			if r := recover(); r != nil {
-				utils.Error("plugin runtime panic: %v", r)
+				utils.Error("plugin runtime panic: %v stack: %v", r, debug.Stack())
 			}
 			p.m.Delete(identity.String())
 		}()

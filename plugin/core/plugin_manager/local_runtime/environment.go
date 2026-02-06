@@ -17,6 +17,8 @@ import (
 )
 
 func (r *LocalPluginRuntime) InitNode() error {
+	// TODO:
+
 	return nil
 }
 
