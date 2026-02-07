@@ -1,6 +1,6 @@
-import { ModelType } from "@/core/entities/enums/model.enum.js";
-import { RerankResult } from "@/core/entities/model/rerank.entity.js";
-import { AIModel } from "@/core/entities/plugin/ai-model.js";
+import { ModelType } from "../../core/entities/enums/model.enum.js";
+import { RerankResult } from "../../core/entities/model/rerank.entity.js";
+import { AIModel } from "../../core/entities/plugin/ai-model.js";
 import { ClassWithMarker } from "../marker.class.js";
 
 export const RERANK_MODEL_SYMBOL = Symbol.for('plugin.rerank.model');

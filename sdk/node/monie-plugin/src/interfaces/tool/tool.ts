@@ -1,7 +1,7 @@
 import { ToolLike } from "./tool-like.js";
 import { ToolInvokeMessage } from "./invoke-message.js";
-import { Session } from "@/core/classes/runtime.js";
-import { ToolParameter } from "@/core/entities/plugin/declaration/tool.js";
+import { Session } from "../../core/classes/runtime.js";
+import { ToolParameter } from "../../core/entities/plugin/declaration/tool.js";
 import { ClassWithMarker } from "../marker.class.js";
 
 export class ToolRuntime {

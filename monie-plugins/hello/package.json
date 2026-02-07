@@ -7,11 +7,17 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "npm run copy-asset && npm run copy-manifest && npm run copy-icon && tsc && tsc-alias",
+    "build": "npm run clean && tsc && tsc-alias && npm run copy-package-json && npm run copy-asset && npm run copy-manifest && npm run copy-icon && npm run post-build",
+    "clean": "rimraf dist",
     "dev": "tsc --watch",
+    "post-build": "npm run validate-build",
+    "validate-build": "node scripts/validate-build.js",
+    "copy-package-json": "node scripts/copy-package-json.js",
     "copy-icon": "npx copyfiles src/_assets/* dist/",
     "copy-asset": "npx copyfiles -u 1 \"src/**/*.{yaml,yml,json,svg}\" dist/",
-    "copy-manifest": "npx copyfiles manifest.yaml dist/"
+    "copy-manifest": "npx copyfiles manifest.yaml dist/",
+    "copy-env": "npx copyfiles -u 1 \".env*\" dist/ 2>/dev/null || true",
+    "watch": "npm run copy-asset && npm run copy-manifest && npm run copy-icon && concurrently \"npm run copy-asset -- --watch\" \"npm run copy-manifest -- --watch\" \"npm run copy-icon -- --watch\" \"tsc-watch --onSuccess \\\"tsc-alias\\\"\""
   },
   "files": [
     "dist"
@@ -22,6 +28,7 @@
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^25.2.0",
+    "concurrently": "^9.2.1",
     "copyfiles": "^2.4.1",
     "cross-env": "^10.1.0",
     "eslint": "^9.18.0",
@@ -30,7 +37,9 @@
     "js-tiktoken": "^1.0.21",
     "openai": "^6.17.0",
     "prettier": "^3.4.2",
+    "rimraf": "^6.1.2",
     "tsc-alias": "^1.8.16",
+    "tsc-watch": "^7.2.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.20.0"
   },

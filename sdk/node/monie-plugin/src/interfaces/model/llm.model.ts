@@ -1,9 +1,9 @@
-import { ModelType } from "@/core/entities/enums/model.enum.js";
-import { LLMChunkResult, LLMMode, LLMResult, LLMUsage } from "@/core/entities/model/llm.entity.js";
-import { AIModel } from "@/core/entities/plugin/ai-model.js";
-import { PromptMessage, PromptMessageTool } from "@/core/entities/plugin/message/message.js";
-import { ParameterRule } from "@/core/entities/plugin/parameter.js";
-import { PriceInfo, PriceType } from "@/core/entities/pricing.js";
+import { ModelType } from "../../core/entities/enums/model.enum.js";
+import { LLMChunkResult, LLMMode, LLMResult, LLMUsage } from "../../core/entities/model/llm.entity.js";
+import { AIModel } from "../../core/entities/plugin/ai-model.js";
+import { PromptMessage, PromptMessageTool } from "../../core/entities/plugin/message/message.js";
+import { ParameterRule } from "../../core/entities/plugin/parameter.js";
+import { PriceInfo, PriceType } from "../../core/entities/pricing.js";
 import { ClassWithMarker } from "../marker.class.js";
 
 export const LARGE_LANGUAGE_MODEL_SYMBOL = Symbol.for('plugin.largelanguage.model');

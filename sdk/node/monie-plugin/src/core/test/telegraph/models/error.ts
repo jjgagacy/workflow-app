@@ -1,4 +1,4 @@
-import { InvokeError, InvokeConnectionError, InvokeServerUnavailableError, InvokeRateLimitError, InvokeAuthorizationError, InvokeBadRequestError } from "@/core/errors/model.error.js";
+import { InvokeError, InvokeConnectionError, InvokeServerUnavailableError, InvokeRateLimitError, InvokeAuthorizationError, InvokeBadRequestError } from "../../../../core/errors/model.error.js";
 
 // 定义基础错误类
 class BaseError extends Error {

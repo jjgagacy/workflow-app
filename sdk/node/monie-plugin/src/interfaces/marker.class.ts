@@ -1,4 +1,4 @@
-import { AnyConstructor } from "@/core/classes/module-loader.js";
+import { AnyConstructor } from "../core/classes/module-loader.js";
 
 export type ClassWithMarker<T, S extends symbol> =
   { new(...args: any[]): T } &

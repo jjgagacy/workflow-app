@@ -2,7 +2,7 @@ import { I18nObject } from "../i18n.js";
 import { Mapping } from "./provider.js";
 import { ToolIdentity, ToolParameterOption, ToolProviderIdentity } from "./declaration/tool.js";
 import { ToolConfigurationExtra } from "./declaration/extra.js";
-import { TextInvokeMessage } from "@/core/dtos/invoke-message.dto.js";
+import { TextInvokeMessage } from "../../../core/dtos/invoke-message.dto.js";
 
 export class AgentStrategyProviderIdentity extends ToolProviderIdentity { }
 

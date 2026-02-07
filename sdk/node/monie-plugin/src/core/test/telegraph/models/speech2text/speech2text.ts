@@ -1,6 +1,6 @@
-import { AudioFile, Speech2TextOptions } from "@/core/entities/model/speech2text.entity.js";
-import { AIModel } from "@/core/entities/plugin/ai-model.js";
-import { Speech2TextModel } from "@/interfaces/model/speech2text.model.js";
+import { AudioFile, Speech2TextOptions } from "../../../../../core/entities/model/speech2text.entity.js";
+import { AIModel } from "../../../../../core/entities/plugin/ai-model.js";
+import { Speech2TextModel } from "../../../../../interfaces/model/speech2text.model.js";
 
 export class OpenAISpeech2TextModel extends Speech2TextModel {
   invoke(model: string, credentials: Record<string, any>, file: AudioFile, user?: string | null, options?: Speech2TextOptions): Promise<string> | string {

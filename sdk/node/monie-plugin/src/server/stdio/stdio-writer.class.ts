@@ -1,4 +1,4 @@
-import { ResponseWriter } from "@/core/writer.class.js";
+import { ResponseWriter } from "../../core/writer.class.js";
 
 export class StdioWriter extends ResponseWriter {
   write(data: any): Promise<void> {

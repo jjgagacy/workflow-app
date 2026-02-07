@@ -1,6 +1,6 @@
-import { AIModel } from "@/core/entities/plugin/ai-model.js";
-import { PriceType, PriceInfo } from "@/core/entities/pricing.js";
-import { TTSModel } from "@/interfaces/model/tts.model.js";
+import { AIModel } from "../../../../../core/entities/plugin/ai-model.js";
+import { PriceType, PriceInfo } from "../../../../../core/entities/pricing.js";
+import { TTSModel } from "../../../../../interfaces/model/tts.model.js";
 
 export class OpenAIText2SpeechModel extends TTSModel {
   invoke(model: string, tenantId: string, credentials: Record<string, any>, contextText: string, voice: string, user?: string | null): Promise<Buffer | Uint8Array> | Buffer | Uint8Array | AsyncGenerator<Buffer | Uint8Array> | Generator<Buffer | Uint8Array> {

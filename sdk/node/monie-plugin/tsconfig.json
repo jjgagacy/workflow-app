@@ -17,12 +17,7 @@
     "noUncheckedSideEffectImports": true,
     // "moduleDetection": "force",
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    }
+    "esModuleInterop": true
   },
   "include": [
     "src",

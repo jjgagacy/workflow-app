@@ -12,7 +12,8 @@
     "dev": "tsc --watch",
     "test:telegraph": "tsc && tsc-alias && npm run copy-env-file && npm run copy-asset && NODE_ENV=development node dist/src/core/test/telegraph/main.js",
     "copy-env-file": "cp src/core/test/telegraph/.env.dev dist/src/core/test/telegraph 2>/dev/null",
-    "copy-asset": "npx copyfiles -u 0 \"src/**/*.{yaml,yml,json,svg}\" dist/"
+    "copy-asset": "npx copyfiles -u 0 \"src/**/*.{yaml,yml,json,svg}\" dist/",
+    "watch": "npm run copy-asset && npm run copy-env-file && concurrently \"npm run copy-asset -- --watch\" \"npm run copy-env-file -- --watch\" \"tsc-watch --onSuccess \\\"tsc-alias\\\"\""
   },
   "files": [
     "dist"
@@ -27,6 +28,7 @@
     "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.10.2",
+    "concurrently": "^9.2.1",
     "copyfiles": "^2.4.1",
     "cross-env": "^10.1.0",
     "eslint": "^9.18.0",
@@ -37,6 +39,7 @@
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.16",
+    "tsc-watch": "^7.2.0",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.20.0"

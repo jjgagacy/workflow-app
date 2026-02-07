@@ -1,4 +1,4 @@
-import { StreamMessage } from "@/core/dtos/stream.dto.js";
+import { StreamMessage } from "../../core/dtos/stream.dto.js";
 import { RequestReader } from "../../core/reader.class.js";
 import readline from "readline";
 

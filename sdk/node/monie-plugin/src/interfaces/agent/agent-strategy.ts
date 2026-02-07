@@ -1,6 +1,6 @@
-import { AgentInvokeMessage } from "@/core/entities/plugin/agent.js";
+import { AgentInvokeMessage } from "../../core/entities/plugin/agent.js";
 import { ToolLike } from "../tool/tool-like.js";
-import { Session } from "@/core/classes/runtime.js";
+import { Session } from "../../core/classes/runtime.js";
 import { ClassWithMarker } from "../marker.class.js";
 
 export class AgentRuntime {

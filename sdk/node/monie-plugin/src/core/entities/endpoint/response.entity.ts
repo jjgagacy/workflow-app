@@ -1,4 +1,4 @@
-import { ToolInvokeMessage } from "@/interfaces/tool/invoke-message.js";
+import { ToolInvokeMessage } from "../../../interfaces/tool/invoke-message.js";
 
 export type ResponseMessage = ToolInvokeMessage
 

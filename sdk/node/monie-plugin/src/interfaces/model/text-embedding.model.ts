@@ -1,7 +1,7 @@
-import { ModelType } from "@/core/entities/enums/model.enum.js";
-import { EmbeddingInputType, TextEmbeddingResult } from "@/core/entities/model/text-embedding.entity.js";
-import { AIModel } from "@/core/entities/plugin/ai-model.js";
-import { PriceInfo, PriceType } from "@/core/entities/pricing.js";
+import { ModelType } from "../../core/entities/enums/model.enum.js";
+import { EmbeddingInputType, TextEmbeddingResult } from "../../core/entities/model/text-embedding.entity.js";
+import { AIModel } from "../../core/entities/plugin/ai-model.js";
+import { PriceInfo, PriceType } from "../../core/entities/pricing.js";
 import { ClassWithMarker } from "../marker.class.js";
 
 export const TEXT_EMBEDDING_MODEL_SYMBOL = Symbol.for('plugin.textembedding.model');

@@ -1,4 +1,4 @@
-import { ToolProvider } from "@/interfaces/tool/tool-provider.js";
+import { ToolProvider } from "../../../../interfaces/tool/tool-provider.js";
 
 export class TelegraphProvider extends ToolProvider {
   async validateCredentials(credentials: Record<string, any>): Promise<void> {

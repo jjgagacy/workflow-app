@@ -1,6 +1,6 @@
-import { ModelType } from "@/core/entities/enums/model.enum.js";
-import { AudioFile, Speech2TextOptions } from "@/core/entities/model/speech2text.entity.js";
-import { AIModel } from "@/core/entities/plugin/ai-model.js";
+import { ModelType } from "../../core/entities/enums/model.enum.js";
+import { AudioFile, Speech2TextOptions } from "../../core/entities/model/speech2text.entity.js";
+import { AIModel } from "../../core/entities/plugin/ai-model.js";
 import { ClassWithMarker } from "../marker.class.js";
 
 export const SPEECH2TEXT_MODEL_SYMBOL = Symbol.for('plugin.speech2text.model');

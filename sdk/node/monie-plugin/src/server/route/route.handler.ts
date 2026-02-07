@@ -1,4 +1,4 @@
-import { Session } from "@/core/classes/runtime.js";
+import { Session } from "../../core/classes/runtime.js";
 
 export enum TaskType {
   CPU = 'CPU',
