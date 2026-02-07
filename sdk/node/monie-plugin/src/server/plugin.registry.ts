@@ -130,7 +130,8 @@ export class PluginRegistry {
       console.log(`Installed model: ${model.provider}`);
     }
     for (const endpoint of this.endpointProviderConfigurations) {
-      console.log(`Installed endpoint: ${endpoint.endpoints?.join(', ')}`);
+      console.log(`Installed endpoint: ${endpoint.endpointFiles?.join(', ')}`);
+      console.log(` endpoints: ${this.endpoints.map((ep) => ep.path)}`);
     }
     for (const agent of this.agentStrategyProviderConfigurations) {
       console.log(`Installed agent strategy: ${agent.identity.name}`);
@@ -340,8 +341,8 @@ export class PluginRegistry {
 
   private async resolveEndpoints(): Promise<void> {
     for (const endpointProvider of this.endpointProviderConfigurations) {
-      if (endpointProvider.endpoints) {
-        for (const endpointFilePath of endpointProvider.endpoints) {
+      if (endpointProvider.endpointFiles) {
+        for (const endpointFilePath of endpointProvider.endpointFiles) {
           const endpoint = await loadYamlFile<EndpointConfiguration>(resolveFrom(this.manifestFilePath, endpointFilePath));
           const module = endpoint.extra.node?.module;
           if (!module) {

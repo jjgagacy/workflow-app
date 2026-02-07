@@ -26,10 +26,12 @@ export class EndpointConfiguration {
 export class EndpointProviderConfiguration {
   settings: ProviderConfig[] = [];
   endpoints: string[] = [];
+  endpointFiles: string[] = [];
 
   constructor(data: Partial<EndpointProviderConfiguration>) {
     this.settings = data.settings || [];
     this.endpoints = data.endpoints || [];
+    this.endpointFiles = data.endpointFiles || [];
   }
 
   static async validateEndpoints(value: any): Promise<EndpointConfiguration[]> {

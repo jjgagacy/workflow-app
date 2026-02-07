@@ -4,6 +4,7 @@ settings:
     required: true
     label:
       en_US: "Api Key"
-endpoints:
+endpoints: []
+endpoint_files:
   - endpoints/tts.yaml
   - endpoints/duck.yaml
