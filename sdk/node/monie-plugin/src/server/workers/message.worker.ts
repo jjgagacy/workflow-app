@@ -13,7 +13,7 @@ class MessageWorker extends ThreadWorker<TaskData, TaskResult> {
 
       try {
         // 模拟耗时逻辑
-        console.log('processing payload:', task.payload);
+        // console.log('processing payload:', task.payload);
         await new Promise((r) => setTimeout(r, 50));
 
         const result: TaskResult = {

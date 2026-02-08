@@ -1,3 +1,4 @@
+import { Logger } from "../config/logger.js";
 import { StreamMessage } from "./dtos/stream.dto.js";
 import { StreamReader } from "./streams/stream.js";
 import { EventEmitter } from 'events';
@@ -83,8 +84,8 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
             await this.sleep(this.pollInterval);
           }
         }
-      } catch (error) {
-        console.error("Error in event loop", error);
+      } catch (error: any) {
+        Logger.error(`Error in event loop: ${error.message}`);
         // Wait longer after en error
         this.emit('event.loop.error', error);
         await this.sleep(1000);
@@ -97,8 +98,8 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
     while (this.isRunning) {
       try {
         await this.processMessagesNonBlocking();
-      } catch (error) {
-        console.error("Error in non-blocking event loop", error);
+      } catch (error: any) {
+        Logger.error(`Error in non-blocking event loop: ${error.message}`);
         this.emit('event.loop.error', error);
         await this.sleep(1000);
       }
@@ -135,7 +136,7 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
         consecutiveEmpty = 0;
         // handle messages
         this.handleMessageAsync(message).catch(error => {
-          console.error('Message processing error:', error);
+          // console.error('Message processing error:', error);
           this.emit('message.process.error', { message, error });
         });
         // add poll interval
@@ -145,14 +146,14 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
       } catch (error) {
         if (error instanceof Error && error.message.includes('timeout')) {
           consecutiveEmpty++;
-          console.log('Read timeout, continueing...');
+          // console.log('Read timeout, continueing...');
           continue;
         }
         throw error;
       }
     }
     if (consecutiveEmpty >= maxEmptyIterations) {
-      console.warn('Too many empty iterations, restarting event loop');
+      Logger.warn('Too many empty iterations, restarting event loop');
     }
   }
 
@@ -162,8 +163,8 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
       setImmediate(async () => {
         try {
           this.read(data);
-        } catch (error) {
-          console.error('Error processing message:', error);
+        } catch (error: any) {
+          Logger.error(`Error processing message: ${error.message}`);
           this.emit('message.process.error', { message: data, error });
         } finally {
           resolve();
@@ -178,8 +179,8 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
       queueMicrotask(async () => {
         try {
           await this.triggerMessageProcessing(data);
-        } catch (error) {
-          console.error('Error in async message handling:', error);
+        } catch (error: any) {
+          Logger.error(`Error in async message handling: ${error.message}`);
           this.emit('message.process.error', { message: data, error });
         } finally {
           resolve();
@@ -197,8 +198,8 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
         callbacks.map(async (callback) => {
           try {
             await callback(message);
-          } catch (error) {
-            console.error('Message callback error:', error);
+          } catch (error: any) {
+            Logger.error(`Message callback error: ${error.message}`);
             this.emit('reader.callback.error', { message, callback, error });
           }
         }),

@@ -46,7 +46,10 @@ export class EnvLoader {
 
     const result = dotenv.config({
       path: getEnvPath(),
-      debug: process.env.NODE_ENV === 'dev',
+      encoding: 'utf8',
+      debug: false, // process.env.NODE_ENV === 'dev',
+      override: true,
+      quiet: true,
     })
 
     if (result.parsed) {

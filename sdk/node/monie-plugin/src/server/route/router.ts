@@ -2,6 +2,7 @@ import { RequestReader } from "../../core/reader.class.js";
 import { ResponseWriter } from "../../core/writer.class.js";
 import { Route, RouteFilter, RouteHandler } from "./route.handler.js";
 import { Session } from "../../core/classes/runtime.js";
+import { Logger } from "../../config/logger.js";
 
 export interface IRouter {
   dispatch(session: Session, data: any): void;
@@ -31,7 +32,7 @@ export class Router implements IRouter {
             message: e.message,
           });
         }
-        throw new Error(`Failed to call handler: ${e}`);
+        Logger.error(`Failed to call handler: ${e.message}`)
       }
     };
 

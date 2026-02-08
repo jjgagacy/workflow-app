@@ -95,7 +95,7 @@ export class PluginRegistry {
     this.manifestFilePath = path.resolve(process.cwd(), this.config.baseDir, 'manifest.yaml');
     this.initPromise = this.initialize();
     this.initPromise.catch(err => {
-      console.error(`Failed to initialize: ${err}`);
+      throw new Error(`Failed to initialize: ${err}`)
     });
   }
 
@@ -104,8 +104,8 @@ export class PluginRegistry {
       await this.loadPluginConfiguration();
       await this.resolvePluginHandlers();
       await this.loadPluginAssets();
-      await this.loadManifestLog();
-      this.logRegistry();
+      // await this.loadManifestLog();
+      // this.logRegistry();
     } catch (error: any) {
       throw new Error(`Failed to initialize plugin: ${error} stack: ${error.statck}`);
     }

@@ -20,7 +20,7 @@ import { EndpointInvokeRequest } from "../core/entities/plugin/request/endpoint.
 import { DynamicParameterFetchParameterOptionsRequest } from "../core/entities/plugin/request/dynamic-parameter.js";
 import { OAuthGetAuthorizationUrlRequest, OAuthRefreshCredentialsRequest } from "../core/entities/plugin/request/oauth.request.js";
 import { Session } from "../core/classes/runtime.js";
-import { HandleResult, RouteHandlerResult, TaskType } from "./route/route.handler.js";
+import { HandleResult, TaskType } from "./route/route.handler.js";
 import { SessionMessageType } from "../core/entities/event/message.js";
 import * as crypto from 'crypto';
 import { ToolInvokeMessage } from "../interfaces/tool/invoke-message.js";
@@ -28,6 +28,7 @@ import { BlobChunkMessage, MessageType } from "../core/dtos/message.dto.js";
 import { BlobInvokeMessage } from "../core/dtos/invoke-message.dto.js";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { Logger } from "../config/logger.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -58,7 +59,7 @@ export class IOServer implements Server {
         path.resolve(__dirname, 'workers/message.worker.js'),
         {
           errorHandler: (e) => {
-            console.log('worker error: ', e);
+            // console.log('worker error: ', e);
           },
           onlineHandler: () => { },
         });
@@ -96,9 +97,8 @@ export class IOServer implements Server {
       }
       // Create a never-resolve Promise to keep the service running.
       await this.keepAlive();
-    } catch (error) {
-      console.error('Service error:', error);
-      console.error('Restarting...');
+    } catch (error: any) {
+      Logger.error(`Service error: ${error.message}`);
       await this.sleep(3000);
       await this.restart();
     }
@@ -126,7 +126,7 @@ export class IOServer implements Server {
   private async parentAliveCheck(): Promise<void> {
     while (this.isRunning) {
       if (process.ppid === 1) { // 父进程退出
-        console.log('Parent process died, shutting down...');
+        // console.log('Parent process died, shutting down...');
         this.isRunning = false;
         this.cleanup();
       }
@@ -139,8 +139,8 @@ export class IOServer implements Server {
       try {
         await this.send_heartbeat();
         await this.sleep(this.config.heartbeatInterval * 1000);
-      } catch (error) {
-        console.error('Heartbeat error:', error);
+      } catch (error: any) {
+        Logger.error(`Heartbeat error: ${error.message}`);
         await this.sleep(2000);
       }
     }
@@ -203,7 +203,7 @@ export class IOServer implements Server {
 
   private async processMessageWithWorker(message: StreamMessage): Promise<void> {
     if (!this.messageHandler) {
-      console.warn("No message Handler registered.");
+      // console.warn("No message Handler registered.");
       return;
     }
 
@@ -222,11 +222,10 @@ export class IOServer implements Server {
           }
           break;
         default:
-          console.warn("Unknown message event: ", message.event)
+          Logger.warn(`Unknown message event: ${message.event}`);
       }
-    } catch (error) {
-      console.error('Error processing message:', error);
-      // Send an error response
+    } catch (error: any) {
+      Logger.error(`Error processing message: ${error.message}`);
     }
   }
 
@@ -256,11 +255,11 @@ export class IOServer implements Server {
     }
 
     let handleResult: HandleResult | AsyncGenerator<any, any, any> | undefined;
+    // Logger.info(JSON.stringify(session))
     try {
       handleResult = await this.router.dispatch(session, message.data);
     } catch (err: any) {
-      console.error(`Dispatch message error: ${err.message}`);
-      throw err;
+      Logger.error(`Dispatch message error: ${err.message}`);
     }
 
     let result: unknown;
@@ -343,17 +342,15 @@ export class IOServer implements Server {
           }
           break;
         default:
-          console.warn("Unknown message event: ", message.event)
+          Logger.warn(`Unknown message event: ${message.event}`);
       }
-    } catch (error) {
-      console.error('Error cpu task processing message:', error);
-      // 发送错误响应
+    } catch (error: any) {
+      Logger.error(`Error cpu task processing message: ${error.message}`);
     }
   }
 
   private async handleIOTask(session: Session, message: StreamMessage): Promise<void> {
     if (!this.messageHandler) {
-      console.warn("No message Handler registered.");
       return;
     }
 
@@ -362,8 +359,8 @@ export class IOServer implements Server {
       if (this.writer) {
         this.processAndSendMessage(result, session);
       }
-    } catch (error) {
-      console.error('Error io task processing message:', error);
+    } catch (error: any) {
+      Logger.error(`Error io task processing message: ${error.message}`);
       // 发送错误响应
       if (this.writer) {
         const streamError = this.writer.streamObject({

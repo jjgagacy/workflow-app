@@ -1,3 +1,5 @@
+import { Logger } from "../../../../config/logger.js";
+
 export enum PromptMessageRole {
   SYSTEM = 'system',
   USER = 'user',
@@ -105,7 +107,8 @@ export class PromptMessageTool {
 export class PromptMessageHelper {
   static convertPromptMessages(messages: any[]): PromptMessage[] {
     if (!Array.isArray(messages)) {
-      throw new Error('prompt_messages must be an array');
+      Logger.error('prompt_messages must be an array');
+      return [];
     }
 
     return messages.map((message, index) => {
@@ -113,7 +116,8 @@ export class PromptMessageHelper {
         return message;
       }
       if (!message.role) {
-        throw new Error(`Message at index ${index} must have a role property`);
+        Logger.error(`Message at index ${index} must have a role property`);
+        return [];
       }
       switch (message.role) {
         case PromptMessageRole.USER:

@@ -17,4 +17,3 @@ export interface Writer {
   write(data: string): Promise<void>;
   close(): Promise<void>;
 }
-

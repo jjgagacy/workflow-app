@@ -22,6 +22,7 @@ import { parseRawHttpRequest } from "../core/entities/endpoint/endpoint.entity.j
 import { OAuthProvider } from "../interfaces/oauth/oauth-provider.js";
 import { HandleResult, TaskType } from "./route/route.handler.js";
 import { Endpoint } from "../interfaces/endpoint/endpoint.js";
+import { Logger } from "../config/logger.js";
 
 export class PluginExecutor {
   constructor(
@@ -44,7 +45,8 @@ export class PluginExecutor {
   ): AsyncGenerator<any> | Promise<HandleResult> {
     const providerInstance = this.registry.getToolProviderInstance(request.provider);
     if (!providerInstance) {
-      throw new Error(`Tool provider not found: ${request.provider}`);
+      Logger.error(`Tool provider not found: ${request.provider}`);
+      return
     }
 
     const toolRegistration = this.registry.getToolClassRegistration(request.provider, request.tool);
@@ -55,7 +57,8 @@ export class PluginExecutor {
     }
 
     if (!toolType) {
-      throw new Error(`Tool not found: ${request.tool} for provider: ${request.provider}`);
+      Logger.error(`Tool not found: ${request.tool} for provider: ${request.provider}`);
+      return;
     }
 
     const runtime = new ToolRuntime(request.credentials, request.credentialType, request.userId, session.sessionId);
@@ -89,7 +92,8 @@ export class PluginExecutor {
   ): Promise<any> {
     const providerInstance = this.registry.getToolProviderInstance(request.provider);
     if (!providerInstance) {
-      throw new Error(`Tool provider not found: ${request.provider}`);
+      Logger.error(`Tool provider not found: ${request.provider}`);
+      return;
     }
     await providerInstance.validateCredentials(request.credentials);
     return { result: true };
@@ -105,7 +109,8 @@ export class PluginExecutor {
     }
     const agentClass = agentRegistration?.providerClassType;
     if (!agentClass) {
-      throw new Error(`Agent '${request.agentStrategy}' not found for provider '${request.agentStrategyProvider}'`);
+      Logger.error(`Agent '${request.agentStrategy}' not found for provider '${request.agentStrategyProvider}'`);
+      return;
     }
 
     const runtime = new AgentRuntime(request.userId);
@@ -139,7 +144,8 @@ export class PluginExecutor {
   ): Promise<HandleResult> {
     const providerInstance = this.registry.getToolProviderInstance(request.provider);
     if (!providerInstance) {
-      throw new Error(`Tool provider not found: ${request.provider}`);
+      Logger.error(`Tool provider not found: ${request.provider}`);
+      return this.wrapIOResult({});
     }
 
     const toolRegistration = this.registry.getToolClassRegistration(request.provider, request.tool);
@@ -148,7 +154,8 @@ export class PluginExecutor {
     }
     const toolType = toolRegistration?.toolClassType;
     if (!toolType) {
-      throw new Error(`Tool not found: ${request.tool} for provider: ${request.provider}`);
+      Logger.error(`Tool not found: ${request.tool} for provider: ${request.provider}`);
+      return this.wrapIOResult({});
     }
 
     const runtime = new ToolRuntime(request.credentials, undefined, request.userId, session.sessionId);
@@ -163,7 +170,8 @@ export class PluginExecutor {
   ): Promise<any> {
     const modelProviderInstance = this.registry.getModelProviderInstance(request.provider);
     if (!modelProviderInstance) {
-      throw new Error(`ModelProvider instance not found: ${request.provider}`);
+      Logger.error(`ModelProvider instance not found: ${request.provider}`);
+      return;
     }
     await modelProviderInstance.validateProviderCredentials(request.credentials);
     return { result: true, credentials: request.credentials };
@@ -175,11 +183,13 @@ export class PluginExecutor {
   ): Promise<any> {
     const modelProviderInstance = this.registry.getModelProviderInstance(request.provider);
     if (!modelProviderInstance) {
-      throw new Error(`ModelProvider instance not found: ${request.provider}`);
+      Logger.error(`ModelProvider instance not found: ${request.provider}`);
+      return;
     }
     const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
     if (!modelInstance) {
-      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      Logger.error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      return;
     }
     await modelInstance.validateCredentials(request.model, request.credentials);
     return { result: true, credentials: request.credentials };
@@ -191,7 +201,8 @@ export class PluginExecutor {
   ): Promise<any> {
     const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
     if (!modelInstance || !this.isLargeLanguageModel(modelInstance)) {
-      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      Logger.error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      return;
     }
     return modelInstance.invoke(
       request.model,
@@ -211,7 +222,8 @@ export class PluginExecutor {
   ): Promise<any> {
     const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
     if (!modelInstance || !this.isLargeLanguageModel(modelInstance)) {
-      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      Logger.error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      return;
     }
     const numTokens = await modelInstance.getNumTokens(
       request.model,
@@ -228,7 +240,8 @@ export class PluginExecutor {
   ): Promise<any> {
     const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
     if (!modelInstance || !this.isTextEmbeddingModel(modelInstance)) {
-      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      Logger.error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      return;
     }
     return modelInstance.invoke(
       request.model,
@@ -245,7 +258,8 @@ export class PluginExecutor {
   ): Promise<any> {
     const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
     if (!modelInstance || !this.isTextEmbeddingModel(modelInstance)) {
-      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      Logger.error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      return;
     }
     const numTokens = await modelInstance.getNumTokens(
       request.model,
@@ -261,7 +275,8 @@ export class PluginExecutor {
   ): Promise<any> {
     const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
     if (!modelInstance || !this.isRerankModel(modelInstance)) {
-      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      Logger.error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      return;
     }
 
     return modelInstance.invoke(
@@ -281,7 +296,8 @@ export class PluginExecutor {
   ): AsyncGenerator<{ result: string }> {
     const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
     if (!modelInstance || !this.isTTSModel(modelInstance)) {
-      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      Logger.error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      return;
     }
     const result = modelInstance.invoke(
       request.model,
@@ -327,7 +343,8 @@ export class PluginExecutor {
   ): Promise<{ voices: any[] }> {
     const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
     if (!modelInstance || !this.isTTSModel(modelInstance)) {
-      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      Logger.error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      return { voices: [] };
     }
     const voices = modelInstance.getTTSModelVoices(
       request.model,
@@ -343,7 +360,8 @@ export class PluginExecutor {
   ): Promise<any> {
     const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
     if (!modelInstance || !this.isSpeech2TextModel(modelInstance)) {
-      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      Logger.error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      return;
     }
     const result = await modelInstance.invoke(
       request.model,
@@ -360,7 +378,8 @@ export class PluginExecutor {
   ): Promise<any> {
     const modelInstance = this.registry.getModelInstance(request.provider, request.modelType);
     if (!modelInstance || !modelInstance.getModelSchema) {
-      throw new Error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      Logger.error(`Model '${request.modelType}' not found for provider: '${request.provider}'`);
+      return;
     }
     const modelSchema = await modelInstance.getModelSchema(
       request.model,
@@ -403,8 +422,8 @@ export class PluginExecutor {
       } else {
         yield result;
       }
-    } catch (err) {
-      throw err;
+    } catch (err: any) {
+      Logger.error(`invoke endpoint error: ${err.message}`);
     }
   }
 
@@ -414,7 +433,8 @@ export class PluginExecutor {
   ): Promise<any> {
     const providerClassType = this.registry.getOAuthProviderClassType(request.provider);
     if (!providerClassType) {
-      throw new Error(`OAuth provider not found: ${request.provider}`);
+      Logger.error(`OAuth provider not found: ${request.provider}`);
+      return;
     }
     const providerInstance = new (providerClassType as any)() as OAuthProvider;
     const authorizationUrl = providerInstance.oauthGetAuthorizationurl(
@@ -434,7 +454,8 @@ export class PluginExecutor {
   }> {
     const providerClassType = this.registry.getOAuthProviderClassType(request.provider);
     if (!providerClassType) {
-      throw new Error(`OAuth provider not found: ${request.provider}`);
+      Logger.error(`OAuth provider not found: ${request.provider}`);
+      return { metadata: {}, credentials: {} };
     }
     const providerInstance = new (providerClassType as any)() as OAuthProvider;
     const requestParsed = parseRawHttpRequest(request.rawHttpRequest);
@@ -456,7 +477,8 @@ export class PluginExecutor {
   ): Promise<any> {
     const providerClassType = this.registry.getOAuthProviderClassType(request.provider);
     if (!providerClassType) {
-      throw new Error(`OAuth provider not found: ${request.provider}`);
+      Logger.error(`OAuth provider not found: ${request.provider}`);
+      return;
     }
     const providerInstance = new (providerClassType as any)() as OAuthProvider;
     const refreshed = await providerInstance.oauthRefreshCredentials(
@@ -477,19 +499,22 @@ export class PluginExecutor {
   ): Promise<any> {
     const providerInstance = this.registry.getToolProviderInstance(request.provider);
     if (!providerInstance) {
-      throw new Error(`Tool provider not found: ${request.provider}`);
+      Logger.error(`Tool provider not found: ${request.provider}`);
+      return;
     }
 
     const toolRegistration = this.registry.getToolClassRegistration(request.provider, request.providerAction);
     const toolType = toolRegistration?.toolClassType;
     if (!toolType) {
-      throw new Error(`Tool not found: ${request.providerAction} for provider: ${request.provider}`);
+      Logger.error(`Tool not found: ${request.providerAction} for provider: ${request.provider}`);
+      return;
     }
 
     const runtime = new ToolRuntime(request.credentials, undefined, request.userId, session.sessionId);
     const toolInstance = new (toolType as any)(runtime, session) as Tool;
     if (!(toolInstance instanceof DynamicSelect)) {
-      throw new Error(`Tool '${request.providerAction}' is not a DynamicSelect tool`);
+      Logger.error(`Tool '${request.providerAction}' is not a DynamicSelect tool`);
+      return;
     }
     const toolInstanceDynamicSelect = toolInstance as DynamicSelect;
     const options = await toolInstanceDynamicSelect.fetchParameterOptions(request.parameter);

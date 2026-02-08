@@ -9,7 +9,6 @@ export class StreamFactory {
       case InstallMethod.LOCAL:
         // return new LocalStream();
         return { reader: new StdioReader(), writer: new StdioWriter() };
-        break;
       case InstallMethod.REMOTE:
         // return new RemoteStream();
         break;

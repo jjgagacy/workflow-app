@@ -32,7 +32,6 @@ export class OpenAILargeLanguageModel extends LargeLanguageModel {
     const baseModel = model.startsWith(':') ? model.split(':')[1] : model;
     const mode = getModelMode(baseModel || '');
     // console.log('invoke params:', { model, credentials, promptMessages, modelParameters, tools, stop, stream, user });
-    console.log(mode === LLMMode.CHAT);
     return mode === LLMMode.CHAT
       ? this.chatGenerate(
         model,
@@ -114,8 +113,6 @@ export class OpenAILargeLanguageModel extends LargeLanguageModel {
     const client = new OpenAI(toCredentialsOptions(credentials));
     const prompt = promptMessages.map(m => m.content);
 
-    console.log('OpenAI chatGenerate parameters: ', { model, prompt, stream, stop, user, modelParameters, options: toCredentialsOptions(credentials) });
-
     const res = await client.responses.create({
       model,
       input: prompt.join(','),
@@ -124,8 +121,6 @@ export class OpenAILargeLanguageModel extends LargeLanguageModel {
       user,
       ...modelParameters,
     });
-
-    console.log('OpenAI chatGenerate create response: ', res);
 
     if (!stream) {
       const text = res.id;

@@ -43,7 +43,7 @@ meta:
   runner:
     language: node
     version: "22.19"
-    entrypoint: index
+    entry_point: index
 created_at: 2025-10-04T07:33:59.884736+08:00
 privacy: PRIVACY.md
 verified: false

@@ -1,10 +1,12 @@
 package local_runtime
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 	"os/exec"
+	"path"
 	"sync"
 
 	"github.com/jjgagacy/workflow-app/plugin/core/constants"
@@ -25,6 +27,12 @@ func (r *LocalPluginRuntime) Type() plugin_entities.PluginRuntimeType {
 	return plugin_entities.PLUGIN_RUNTIME_TYPE_LOCAL
 }
 
+type PackageJSON struct {
+	Name         string            `json:"name"`
+	Version      string            `json:"version"`
+	Dependencies map[string]string `json:"dependencies"`
+}
+
 func (r *LocalPluginRuntime) getCmd() (*exec.Cmd, error) {
 	switch r.Config.Meta.Runner.Language {
 	case constants.Node:
@@ -40,10 +48,7 @@ func (r *LocalPluginRuntime) getCmd() (*exec.Cmd, error) {
 		if r.NoProxy != "" {
 			cmd.Env = append(cmd.Env, fmt.Sprintf("NO_PROXY=%s", r.NoProxy))
 		}
-		// TODO: EntryPoint
-		// node:internal/modules/cjs/loader:1386
-		// Error: Cannot find module 'monie-plugin'
-		fmt.Println("====", r.nodeExecutePath, r.Config.Meta.Runner.EntryPoint)
+		// fmt.Println("====", r.nodeExecutePath, r.Config.Meta.Runner.EntryPoint)
 		return cmd, nil
 	case constants.Python:
 		cmd := exec.Command(r.pythonInterpreterPath, "-m", r.Config.Meta.Runner.EntryPoint)
@@ -64,6 +69,43 @@ func (r *LocalPluginRuntime) getCmd() (*exec.Cmd, error) {
 	return nil, fmt.Errorf("unsupported language: %s", r.Config.Meta.Runner.Language)
 }
 
+func (r *LocalPluginRuntime) moniePluginCheck() {
+	if r.Config.Meta.Runner.Language != constants.Node {
+		return
+	}
+	content, err := os.ReadFile(path.Join(r.State.WorkingPath, "package.json"))
+	if err != nil {
+		return
+	}
+	var pkg PackageJSON
+	if err := json.Unmarshal(content, &pkg); err != nil {
+		return
+	}
+	if pkg.Dependencies == nil {
+		return
+	}
+
+	hasMoniePlugin := false
+	for dep := range pkg.Dependencies {
+		if dep == "monie-plugin" {
+			hasMoniePlugin = true
+			break
+		}
+	}
+	if !hasMoniePlugin {
+		return
+	}
+
+	cmd := exec.Command("npm", "update", "monie-plugin")
+	cmd.Dir = r.State.WorkingPath
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		utils.Warn("update monie-plugin error: %v\n", err.Error())
+		return
+	}
+}
+
 func (r *LocalPluginRuntime) StartPlugin() error {
 	defer utils.Info("plugin %s stopped", r.Config.Identity())
 
@@ -73,10 +115,10 @@ func (r *LocalPluginRuntime) StartPlugin() error {
 		r.SetLaunching()
 		r.isNotFirstStart = true
 	}
-
+	// check monie plugin
+	r.moniePluginCheck()
 	// reset waitChan
 	r.waitChan = make(chan bool)
-
 	cmd, err := r.getCmd()
 	if err != nil {
 		return err

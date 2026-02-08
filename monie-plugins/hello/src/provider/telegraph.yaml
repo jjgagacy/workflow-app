@@ -7,7 +7,7 @@ identity:
   description:
     en_US: "test plugin"
     zh_Hans: "test plugin"
-  icon: "icon.svg"
+  icon: "monie.svg"
 oauth_schema:
   client_schema:
     - name: "client_id"

@@ -1,3 +1,4 @@
+import { Logger } from "../../config/logger.js";
 import { StreamMessage } from "../../core/dtos/stream.dto.js";
 import { RequestReader } from "../../core/reader.class.js";
 import readline from "readline";
@@ -78,7 +79,8 @@ export class StdioReader extends RequestReader {
       if (!line.trim()) return;
 
       if (this.messageQueue.length > this.max_queue) {
-        throw new Error("message queue overflow");
+        Logger.error('message queue overflow');
+        return;
       }
 
       try {
