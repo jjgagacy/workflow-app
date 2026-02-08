@@ -25,8 +25,8 @@ func (b *InstalledBucket) Save(
 	return b.oss.Save(filepath.Join(b.installedPath, string(pluginUniqueIdentifier)), file)
 }
 
-func (b *InstalledBucket) Exists(pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier) (bool, error) {
-	return b.oss.Exists(filepath.Join(b.installedPath, string(pluginUniqueIdentifier)))
+func (b *InstalledBucket) Exists(pluginFSEntity string) (bool, error) {
+	return b.oss.Exists(filepath.Join(b.installedPath, pluginFSEntity))
 }
 
 func (b *InstalledBucket) Delete(pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier) error {

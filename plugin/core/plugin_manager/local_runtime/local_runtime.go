@@ -2,6 +2,7 @@ package local_runtime
 
 import (
 	"fmt"
+	"os/exec"
 	"sync"
 	"time"
 
@@ -45,6 +46,8 @@ type LocalPluginRuntime struct {
 
 	isNotFirstStart bool
 	stdioHolder     *stdioHolder
+
+	cmd *exec.Cmd
 }
 
 func (r *LocalPluginRuntime) RuntimeState() plugin_entities.PluginRuntimeState {

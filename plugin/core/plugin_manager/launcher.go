@@ -6,7 +6,6 @@ import (
 	"os"
 	"path"
 	"runtime/debug"
-	"strings"
 
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager/basic_runtime"
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager/local_runtime"
@@ -39,8 +38,7 @@ func (p *PluginManager) getLocalPluginRuntime(pluginUniqueIdentifier plugin_enti
 		return nil, errors.Join(err, fmt.Errorf("checksum error"))
 	}
 
-	identity := manifest.Identity()
-	identity = strings.ReplaceAll(identity, ":", "-")
+	identity := manifest.FsID()
 	pluginWorkingPath := path.Join(p.config.PluginWorkingPath, fmt.Sprintf("%s@%s", identity, checksum))
 
 	return &pluginRuntimeWithDecoder{

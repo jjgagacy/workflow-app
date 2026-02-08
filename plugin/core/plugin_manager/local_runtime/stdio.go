@@ -112,10 +112,6 @@ func (s *stdioHolder) Error() error {
 
 // Stop stops the stdio, closing the channel to notify the `Wait()` function to exit
 func (s *stdioHolder) Stop() {
-	s.writer.Close()
-	s.reader.Close()
-	s.errReader.Close()
-
 	s.waitingControllerChanLock.Lock()
 	if !s.waitingControllerChanClosed {
 		close(s.waitingControllerChan)
@@ -130,7 +126,6 @@ func (s *stdioHolder) Stop() {
 func (s *stdioHolder) StartStdout(notifyHeartbeat func()) {
 	s.started = true
 	s.lastActiveAt = time.Now()
-	defer s.Stop()
 
 	scanner := bufio.NewScanner(s.reader)
 	scanner.Buffer(make([]byte, s.stdoutBufferSize), s.stdoutMaxBufferSize)
@@ -197,18 +192,23 @@ func (s *stdioHolder) WriteError(msg string) {
 // StartStderr starts to read the stderr of the plugin
 // it will write the error message to the stdio holder
 func (s *stdioHolder) StartStderr() {
+	buf := make([]byte, 1024)
 	for {
-		buf := make([]byte, 1024)
-		n, err := s.errReader.Read(buf)
-		if err != nil && err != io.EOF {
-			break
-		} else if err != nil {
-			s.WriteError(fmt.Sprintf("%s\n", buf[:n]))
-			break
-		}
+		select {
+		case <-s.waitingControllerChan:
+			return
+		default:
+			n, err := s.errReader.Read(buf)
+			if err != nil && err != io.EOF {
+				break
+			} else if err != nil {
+				s.WriteError(fmt.Sprintf("%s\n", buf[:n]))
+				break
+			}
 
-		if n > 0 {
-			s.WriteError(fmt.Sprintf("%s\n", buf[:n]))
+			if n > 0 {
+				s.WriteError(fmt.Sprintf("%s\n", buf[:n]))
+			}
 		}
 	}
 }

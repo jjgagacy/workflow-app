@@ -90,13 +90,14 @@ func (p *PluginManager) removeUninstalledLocalPlugins() {
 		if !ok {
 			return true
 		}
-		pluginUniqueIdentifier, err := runtime.Identity()
+		_, err := runtime.Identity()
 		if err != nil {
 			utils.Error("get plugin identity failed: %s", err.Error())
 			return true
 		}
+		entity := runtime.Config.FsID()
 		// check if plugin is deleted, stop it if so
-		exists, err := p.installedBucket.Exists(pluginUniqueIdentifier)
+		exists, err := p.installedBucket.Exists(entity)
 		if err != nil {
 			utils.Error("check plugin existent failed: %s", err.Error())
 			return true

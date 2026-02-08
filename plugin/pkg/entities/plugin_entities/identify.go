@@ -2,7 +2,6 @@ package plugin_entities
 
 import (
 	"errors"
-	"fmt"
 	"regexp"
 	"strings"
 
@@ -26,7 +25,6 @@ var (
 
 func NewPluginUniqueIdentifier(identifier string) (PluginUniqueIdentifier, error) {
 	if !pluginUniqueIdentifierRegexp.MatchString(identifier) {
-		fmt.Println("---", identifier)
 		return "", ErrInvalidPluginUniqueIdentifier
 	}
 	return PluginUniqueIdentifier(identifier), nil

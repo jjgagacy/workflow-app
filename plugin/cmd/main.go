@@ -89,7 +89,6 @@ If no parameter are provided, an interactive mode will be started.`,
 				outputPath = base + ".moniepkg"
 			}
 
-			fmt.Println("++", inputPath, outputPath)
 			plugin.PackagePlugin(inputPath, outputPath)
 		},
 	}

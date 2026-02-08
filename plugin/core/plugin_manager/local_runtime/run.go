@@ -132,33 +132,37 @@ func (r *LocalPluginRuntime) StartPlugin() error {
 	if err != nil {
 		return fmt.Errorf("get stdin pipe failed: %s", err.Error())
 	}
-	defer stdin.Close()
+	// defer stdin.Close()
 
 	// get stdout
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		return fmt.Errorf("get stdout pipe failed: %s", err.Error())
 	}
-	defer stdout.Close()
+	// defer stdout.Close()
 
 	// get stderr
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
 		return fmt.Errorf("get stderr pipe failed: %s", err.Error())
 	}
-	defer stderr.Close()
+	// defer stderr.Close()
 
 	// start command
 	if err := cmd.Start(); err != nil {
+		if cmd.Process != nil {
+			_ = cmd.Process.Kill()
+		}
 		return fmt.Errorf("start plugin failed: %s", err.Error())
 	}
+
+	r.cmd = cmd
 
 	// stdio
 	r.stdioHolder = newStdioHolder(r.Config.Identity(), stdin, stdout, stderr, &StdioHolderConfig{
 		StdoutBufferSize:    r.stdoutBufferSize,
 		StdoutMaxBufferSize: r.stdoutMaxBufferSize,
 	})
-	defer r.stdioHolder.Stop()
 
 	defer func() {
 		// wait for plugin to exit
@@ -185,9 +189,6 @@ func (r *LocalPluginRuntime) StartPlugin() error {
 		r.gc()
 	}()
 
-	// ensure the plugin process is killed after the plugin exit
-	defer cmd.Process.Kill()
-
 	utils.Info("plugin %s started", r.Config.Identity())
 
 	wg := sync.WaitGroup{}
@@ -209,7 +210,7 @@ func (r *LocalPluginRuntime) StartPlugin() error {
 		"type":     "local",
 		"function": "StartStderr",
 	}, func() {
-		wg.Done()
+		defer wg.Done()
 		r.stdioHolder.StartStderr()
 	})
 
@@ -263,6 +264,10 @@ func (r *LocalPluginRuntime) WaitStopped() <-chan bool {
 // Stop stops the plugin
 func (r *LocalPluginRuntime) Stop() {
 	r.PluginRuntime.Stop()
+
+	if r.cmd != nil && r.cmd.Process != nil {
+		_ = r.cmd.Process.Kill()
+	}
 
 	if r.stdioHolder != nil {
 		r.stdioHolder.Stop()

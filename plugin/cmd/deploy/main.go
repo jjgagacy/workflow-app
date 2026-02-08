@@ -6,7 +6,33 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
+	"github.com/jjgagacy/workflow-app/plugin/utils"
 )
+
+type PluginManifest struct {
+	Name    string `yaml:"name"`
+	Author  string `yaml:"author"`
+	Version string `yaml:"version"`
+}
+
+func loadManifest(manifestPath string) (*PluginManifest, error) {
+	data, err := os.ReadFile(manifestPath)
+	if err != nil {
+		return nil, err
+	}
+
+	m, err := utils.UnmarshalYaml[PluginManifest](string(data))
+	if err != nil {
+		return nil, err
+	}
+
+	if m.Name == "" || m.Version == "" {
+		return nil, fmt.Errorf("invalid manifest: name/version required")
+	}
+	return &m, nil
+}
 
 func main() {
 	pluginsDir := "~/Documents/codes/workflow-app/monie-plugins"
@@ -31,7 +57,20 @@ func main() {
 		pluginName := entry.Name()
 		pluginPath := filepath.Join(pluginsDir, pluginName)
 		distPath := filepath.Join(pluginPath, "dist")
-		outputPath := filepath.Join(outputBaseDir, pluginName)
+		manifestPath := filepath.Join(pluginPath, "manifest.yaml")
+
+		manifest, err := loadManifest(manifestPath)
+		if err != nil {
+			fmt.Printf("Skipping: %s: load manifest failed: %v\n", pluginPath, err)
+			continue
+		}
+
+		fsID := plugin_entities.MarshalPluginFSID(
+			manifest.Author,
+			manifest.Name,
+			manifest.Version,
+		)
+		outputPath := filepath.Join(outputBaseDir, fsID)
 
 		fmt.Printf("Processing plugin: %s\n", pluginName)
 		fmt.Printf("  Plugin path: %s\n", pluginPath)
