@@ -81,6 +81,13 @@ func (p PluginUniqueIdentifier) Validate() error {
 	return validators.EntitiesValidator.Var(p, "plugin_unique_identifier")
 }
 
+func (p PluginUniqueIdentifier) FsID() string {
+	fsID := p.String()
+	fsID = strings.Replace(fsID, "/", "--", 1)
+	fsID = strings.Replace(fsID, ":", "-", 1)
+	return fsID
+}
+
 func isValidPluginUniqueIdentifier(fl validator.FieldLevel) bool {
 	return pluginUniqueIdentifierRegexp.MatchString(fl.Field().String())
 }

@@ -15,7 +15,7 @@ export class StdioReader extends RequestReader {
     super('stdio');
     this.rl = readline.createInterface({
       input: process.stdin,
-      output: process.stdout,
+      // output: process.stdout,
       // Disable terminal control sequence and line buffering
       terminal: false,
       // Infinity: treat CR and LF as separate line endings (preserve original formatting)
@@ -109,8 +109,6 @@ export class StdioReader extends RequestReader {
         this.resolveQueue({ value: undefined, done: true });
         this.resolveQueue = null;
       }
-
-      this.restartStream();
     });
 
     this.rl.on('error', (error: Error) => {
@@ -142,23 +140,4 @@ export class StdioReader extends RequestReader {
   //   super.stop();
   //   this.close();
   // }
-
-  private restartStream(): void {
-    if (!this.isClosed) return;
-
-    this.isClosed = false;
-    this.errorQueue = [];
-    this.resolveQueue = null;
-
-    this.rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-      // Disable terminal control sequence and line buffering
-      terminal: false,
-      // Infinity: treat CR and LF as separate line endings (preserve original formatting)
-      crlfDelay: Infinity,
-    });
-
-    this.setupEventListeners();
-  }
 }

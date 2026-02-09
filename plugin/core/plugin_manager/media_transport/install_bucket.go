@@ -22,7 +22,7 @@ func (b *InstalledBucket) Save(
 	pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier,
 	file []byte,
 ) error {
-	return b.oss.Save(filepath.Join(b.installedPath, string(pluginUniqueIdentifier)), file)
+	return b.oss.Save(filepath.Join(b.installedPath, pluginUniqueIdentifier.FsID()), file)
 }
 
 func (b *InstalledBucket) Exists(pluginFSEntity string) (bool, error) {
@@ -30,11 +30,11 @@ func (b *InstalledBucket) Exists(pluginFSEntity string) (bool, error) {
 }
 
 func (b *InstalledBucket) Delete(pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier) error {
-	return b.oss.Delete(filepath.Join(b.installedPath, string(pluginUniqueIdentifier)))
+	return b.oss.Delete(filepath.Join(b.installedPath, pluginUniqueIdentifier.FsID()))
 }
 
 func (b *InstalledBucket) Get(pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier) ([]byte, error) {
-	return b.oss.Load(filepath.Join(b.installedPath, string(pluginUniqueIdentifier)))
+	return b.oss.Load(filepath.Join(b.installedPath, pluginUniqueIdentifier.FsID()))
 }
 
 func (b *InstalledBucket) List() ([]plugin_entities.PluginUniqueIdentifier, error) {
@@ -52,9 +52,13 @@ func (b *InstalledBucket) List() ([]plugin_entities.PluginUniqueIdentifier, erro
 			continue
 		}
 		// remove prefix
-		identifier, err := plugin_entities.NewPluginUniqueIdentifier(
-			strings.TrimPrefix(path.Path, b.installedPath),
-		)
+		author, name, version, err := plugin_entities.UnmarshalPluginFSID(strings.TrimPrefix(path.Path, b.installedPath))
+		if err != nil {
+			utils.Error("failed to unmarshal plugin: %s: %v", strings.TrimPrefix(path.Path, b.installedPath), err)
+			continue
+		}
+		entity := plugin_entities.MarshalPluginID(author, name, version)
+		identifier, err := plugin_entities.NewPluginUniqueIdentifier(entity)
 		if err != nil {
 			utils.Error("failed to create PluginUniqueIdentifier from the path %s: %v", path.Path, err)
 			continue

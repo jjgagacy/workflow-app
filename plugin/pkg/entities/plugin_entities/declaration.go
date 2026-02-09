@@ -2,6 +2,7 @@ package plugin_entities
 
 import (
 	"fmt"
+	"regexp"
 	"time"
 
 	"github.com/jjgagacy/workflow-app/plugin/core/constants"
@@ -168,4 +169,21 @@ func UnmarshalPluginDeclarationFromYaml(b []byte) (*PluginDeclaration, error) {
 
 	obj.FillInDefaultValues()
 	return &obj, nil
+}
+
+func UnmarshalPluginFSID(fsid string) (author, name, version string, err error) {
+	pattern := `^(?:([a-zA-Z0-9_-]+)--)?([a-zA-Z0-9_-]+)-([a-zA-Z0-9._-]+)$`
+
+	re := regexp.MustCompile(pattern)
+	matches := re.FindStringSubmatch(fsid)
+
+	if matches == nil {
+		return "", "", "", fmt.Errorf("invalid fsid format: %s", fsid)
+	}
+
+	author = matches[1]
+	name = matches[2]
+	version = matches[3]
+
+	return author, name, version, nil
 }
