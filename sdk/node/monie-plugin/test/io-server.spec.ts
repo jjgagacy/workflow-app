@@ -1,3 +1,4 @@
+import { describe, it, expect } from '@jest/globals';
 import { PluginConfig } from "../src/config/config.js";
 import { EnvLoader } from "../src/config/env-loader.js";
 import { StreamMessage } from "../src/core/dtos/stream.dto.js";

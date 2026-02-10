@@ -1,3 +1,4 @@
+import { describe, it, expect } from '@jest/globals';
 import { ModelType } from "../src/core/entities/enums/model.enum.js";
 import { PluginInvokeType } from "../src/core/entities/enums/plugin.type.js";
 import { PromptMessage, PromptMessageRole } from "../src/core/entities/plugin/message/message.js";

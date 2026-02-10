@@ -11,7 +11,7 @@ import (
 	"github.com/jjgagacy/workflow-app/plugin/core/server/controllers"
 )
 
-func (app *App) server(config *core.Config) func() {
+func (app *App) BuildEngine(config *core.Config) *gin.Engine {
 	engine := gin.New()
 
 	if *config.HealthApiLogEnabled {
@@ -41,11 +41,21 @@ func (app *App) server(config *core.Config) func() {
 
 		app.adminGroup(adminGroup, config)
 	}
+	app.Engine = engine
+	return engine
+}
+
+func (app *App) startHttpServer(config *core.Config) func() {
+	if app.Engine == nil {
+		panic("engine is nil, call BuildEngine first")
+	}
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", config.ServerPort),
-		Handler: engine,
+		Handler: app.Engine,
 	}
+
+	app.server = srv
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {

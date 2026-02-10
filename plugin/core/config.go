@@ -2,8 +2,11 @@ package core
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/joho/godotenv"
+	"github.com/kelseyhightower/envconfig"
 )
 
 type PlatformType string
@@ -176,4 +179,27 @@ func (c *Config) Validate() error {
 		return fmt.Errorf("plugin package cache path is empty")
 	}
 	return nil
+}
+
+func Load() (*Config, error) {
+	var config Config
+
+	err := godotenv.Load()
+	if err != nil {
+		// log.Fatal("Error loading .env file")
+		log.Println("no .env file, skipping")
+	}
+
+	err = envconfig.Process("", &config)
+	if err != nil {
+		log.Fatalf("Error processing environment: %s", err.Error())
+	}
+
+	config.SetDefault()
+
+	if err = config.Validate(); err != nil {
+		log.Fatalf("Invalid configuration: %s", err.Error())
+	}
+
+	return &config, nil
 }

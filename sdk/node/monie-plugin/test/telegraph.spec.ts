@@ -1,3 +1,4 @@
+import { describe, it, expect } from '@jest/globals';
 import { ToolInvokeRequest } from "../src/core/entities/plugin/request/tool.request.js";
 import { Plugin } from "../src/plugin.js";
 import { EventEmitter } from 'events';

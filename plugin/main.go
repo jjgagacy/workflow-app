@@ -7,33 +7,18 @@ import (
 	"github.com/jjgagacy/workflow-app/plugin/core"
 	"github.com/jjgagacy/workflow-app/plugin/core/server"
 	"github.com/jjgagacy/workflow-app/plugin/utils"
-	"github.com/joho/godotenv"
-	"github.com/kelseyhightower/envconfig"
 )
 
 func main() {
 	fmt.Println("server starting")
-
+	// hidden log online
 	utils.SetLogVisibility(true)
 
-	var config core.Config
-
-	err := godotenv.Load()
+	config, err := core.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	err = envconfig.Process("", &config)
-	if err != nil {
-		log.Fatalf("Error processing environment: %s", err.Error())
-	}
-
-	config.SetDefault()
-
-	if err = config.Validate(); err != nil {
-		log.Fatalf("Invalid configuration: %s", err.Error())
+		log.Fatal(err)
 	}
 
 	app := &server.App{}
-	app.Run(&config)
+	app.Run(config)
 }

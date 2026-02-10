@@ -1,3 +1,4 @@
+import { describe, it, expect } from '@jest/globals';
 import { InterfaceDefinition, ModuleClassScanner } from "../src/core/classes/module-loader.js";
 
 abstract class AnimalBase {

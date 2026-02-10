@@ -1,3 +1,4 @@
+import { describe, it, expect } from '@jest/globals';
 import { parseRawHttpRequest, pathToRegexp } from "../src/core/entities/endpoint/endpoint.entity.js";
 
 describe('pathToRegexp', () => {

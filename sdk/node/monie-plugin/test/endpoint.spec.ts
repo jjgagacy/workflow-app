@@ -1,3 +1,4 @@
+import { describe, it, expect } from '@jest/globals';
 import { PluginInvokeType } from "../src/core/entities/enums/plugin.type.js";
 import { EndpointActions } from "../src/core/entities/plugin/request/request.js";
 import { TestMessageFactory } from "../src/core/test/message-factory.js";
