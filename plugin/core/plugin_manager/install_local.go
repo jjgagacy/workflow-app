@@ -11,13 +11,19 @@ import (
 func (p *PluginManager) InstallLocal(
 	pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier,
 ) (*utils.Stream[PluginInstallResponse], error) {
-	packageFile, err := p.packageBucket.Get(string(pluginUniqueIdentifier))
+	exists, err := p.installedBucket.Exists(pluginUniqueIdentifier.FsID())
 	if err != nil {
 		return nil, err
 	}
-	err = p.installedBucket.Save(pluginUniqueIdentifier, packageFile)
-	if err != nil {
-		return nil, err
+	if !exists {
+		packageFile, err := p.packageBucket.Get(string(pluginUniqueIdentifier))
+		if err != nil {
+			return nil, err
+		}
+		err = p.installedBucket.Save(pluginUniqueIdentifier, packageFile)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	runtime, launchedChan, errChan, err := p.launchLocal(pluginUniqueIdentifier)

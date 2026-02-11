@@ -6,8 +6,11 @@ import (
 	"time"
 
 	"github.com/jjgagacy/workflow-app/plugin/core"
+	"github.com/jjgagacy/workflow-app/plugin/core/db"
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager/local_runtime"
+	"github.com/jjgagacy/workflow-app/plugin/model"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
+	"github.com/jjgagacy/workflow-app/plugin/types"
 	"github.com/jjgagacy/workflow-app/plugin/utils"
 )
 
@@ -61,7 +64,7 @@ func (p *PluginManager) handleNewLocalPlugins(config *core.Config) {
 				wg.Done()
 			}()
 
-			_, launchedChan, errChan, err := p.launchLocal(currentPlugin)
+			runtime, launchedChan, errChan, err := p.launchLocal(currentPlugin)
 			if err != nil {
 				utils.Error("launch local plugin failed: %s", err.Error())
 				return
@@ -70,6 +73,19 @@ func (p *PluginManager) handleNewLocalPlugins(config *core.Config) {
 			if errChan != nil {
 				for err := range errChan {
 					utils.Error("plugin launch error: %s", err.Error())
+				}
+			}
+
+			if _, err := db.GetOne[model.PluginDeclaration](
+				db.Equal("plugin_unique_identifier", currentPlugin.String()),
+			); err == types.ErrRecordNotFound {
+				err = db.Create(&model.PluginDeclaration{
+					PluginUniqueIdentifier: currentPlugin.String(),
+					PluginID:               currentPlugin.PluginID(),
+					Declaration:            *runtime.Configuration(),
+				})
+				if err != nil {
+					utils.Error("create plugin declaration error: %s", err.Error())
 				}
 			}
 

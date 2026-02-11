@@ -3,7 +3,6 @@ package plugin_manager
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
@@ -111,18 +110,19 @@ func (p *PluginManager) Launch(config *core.Config) {
 			utils.Panic("failed to init redis: %s", err.Error())
 		}
 	}
-	invocation, err := invocation.NewInvocationDaemon(
-		invocation.InvocationDaemonPayload{
-			BaseUrl:      config.InnerApiUrl,
-			ApiKey:       config.InnerApiKey,
-			WriteTimeout: config.InvocationWriteTimeout,
-			ReadTimeout:  config.InvocationReadTimeout,
-		},
-	)
-	if err != nil {
-		log.Panicf("Failed to create invocation client: %s", err)
-	}
-	p.backwardsInvocation = invocation
+	// invocation, err := invocation.NewInvocationDaemon(
+	// 	invocation.InvocationDaemonPayload{
+	// 		BaseUrl:      config.InnerApiUrl,
+	// 		ApiKey:       config.InnerApiKey,
+	// 		WriteTimeout: config.InvocationWriteTimeout,
+	// 		ReadTimeout:  config.InvocationReadTimeout,
+	// 	},
+	// )
+	// if err != nil {
+	// 	log.Panicf("Failed to create invocation client: %s", err)
+	// }
+	p.backwardsInvocation = invocation.NewMockedInvocation()
+
 	// start local watcher
 	if config.Platform == core.PLATFORM_LOCAL {
 		p.startLocalWatcher(config)

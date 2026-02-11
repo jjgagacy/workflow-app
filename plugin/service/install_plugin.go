@@ -146,7 +146,7 @@ func InstallPluginRuntimeToTenant(
 			continue
 		}
 
-		if err != types.ErrPluginNotFound {
+		if err != types.ErrRecordNotFound {
 			return nil, err
 		}
 

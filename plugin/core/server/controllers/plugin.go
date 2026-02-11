@@ -112,7 +112,7 @@ func UpgradePlugin(config *core.Config) gin.HandlerFunc {
 func InstallPluginFromIdentifiers(config *core.Config) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		BindRequest(ctx, func(request struct {
-			TenantID               string                                   `url:"tenant_id" validate:"required"`
+			TenantID               string                                   `uri:"tenant_id" validate:"required"`
 			PluginUniqueIdentifier []plugin_entities.PluginUniqueIdentifier `json:"plugin_unique_identifies" validate:"required,max=64,dive,plugin_unique_identifier"`
 			Source                 string                                   `json:"source" validate:"required"`
 			Metas                  []map[string]any                         `json:"meta" validate:"omitempty"`

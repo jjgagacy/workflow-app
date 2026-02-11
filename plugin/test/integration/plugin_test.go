@@ -1,26 +1,72 @@
 package integration
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"strings"
 	"testing"
 
-	"github.com/gin-gonic/gin"
+	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
 )
 
-func TestHelloPluginEndpoint(t *testing.T) {
-	gin.SetMode(gin.TestMode)
+var (
+	tenantId               string = "272635fa-c96f-4ad4-b7c6-9406332ae89c"
+	pluginId               string = "hello"
+	pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier
+	serverKey              string = "mn3LYe9NwIjK1janLI9nckPCgOT-+3ovajaNAjpCjbbCjc3ZtUkanPE"
+)
 
-	// time.Sleep(30 * time.Second)
+func init() {
+	var err error
+	pluginUniqueIdentifier, err = plugin_entities.NewPluginUniqueIdentifier("monie/hello:1.0.0")
+	if err != nil {
+		panic("invalid test identifier")
+	}
+}
 
-	// todo: plugin init and request
+func TestInstallPlugin(t *testing.T) {
+	url := strings.Join([]string{baseUrl + "/plugin/", tenantId, "/management/install/identifiers"}, "")
+	requestBody := map[string]any{
+		"plugin_unique_identifies": []string{string(pluginUniqueIdentifier)},
+		"source":                   "local",
+		"meta": []map[string]any{{
+			"config":  "value1",
+			"enabled": true,
+		}},
+	}
+	jsonData, err := json.Marshal(requestBody)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	// req, _ := http.NewRequest("GET", "/health/check", nil)
-	// w := httptest.NewRecorder()
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(jsonData))
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	// app.Engine.ServeHTTP(w, req)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-Api-Key", serverKey)
 
-	// if w.Code != http.StatusOK {
-	// 	t.Fatal(w.Code)
-	// }
+	client := &http.Client{}
+	resp, err := client.Do(req)
 
-	// t.Logf("status=%d, body=%s", w.Code, w.Body.String())
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer resp.Body.Close()
+
+	// assert.Equal(t, http.StatusOK, resp.StatusCode)
+	var response map[string]any
+	err = json.NewDecoder(resp.Body).Decode(&response)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fmt.Printf("Response: %+v\n", response)
+}
+
+func TestPluginEndpoint(t *testing.T) {
+
 }

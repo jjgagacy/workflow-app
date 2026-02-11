@@ -116,7 +116,8 @@ func (r *LocalPluginRuntime) StartPlugin() error {
 		r.isNotFirstStart = true
 	}
 	// check monie plugin
-	r.moniePluginCheck()
+	// r.moniePluginCheck()
+
 	// reset waitChan
 	r.waitChan = make(chan bool)
 	cmd, err := r.getCmd()
