@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	sessions map[string]*Session
+	sessions map[string]*Session = map[string]*Session{}
 	mu       sync.RWMutex
 )
 

@@ -1,3 +1,4 @@
+import { debug } from "console";
 import { Logger } from "../config/logger.js";
 import { StreamMessage } from "./dtos/stream.dto.js";
 import { StreamReader } from "./streams/stream.js";
@@ -199,7 +200,7 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
           try {
             await callback(message);
           } catch (error: any) {
-            Logger.error(`Message callback error: ${error.message}`);
+            Logger.error(`Message callback error: ${error.message} stack: ${error.stack}`);
             this.emit('reader.callback.error', { message, callback, error });
           }
         }),

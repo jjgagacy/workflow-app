@@ -179,7 +179,6 @@ func InvokeTool(config *core.Config) gin.HandlerFunc {
 
 func ValidateToolCredentials(config *core.Config) gin.HandlerFunc {
 	type request = plugin_entities.InvokePluginRequest[requests.RequestValidateToolCredentials]
-
 	return func(ctx *gin.Context) {
 		BindPluginDispatchRequest(
 			ctx,

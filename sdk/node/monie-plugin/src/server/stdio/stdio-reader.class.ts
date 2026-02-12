@@ -2,6 +2,7 @@ import { Logger } from "../../config/logger.js";
 import { StreamMessage } from "../../core/dtos/stream.dto.js";
 import { RequestReader } from "../../core/reader.class.js";
 import readline from "readline";
+import { deepCamelCase } from "../../utils/string.util.js";
 
 export class StdioReader extends RequestReader {
   private rl: readline.Interface;
@@ -84,7 +85,8 @@ export class StdioReader extends RequestReader {
       }
 
       try {
-        const message = JSON.parse(line) as StreamMessage;
+        const message = deepCamelCase(JSON.parse(line)) as StreamMessage;
+        // Logger.info(`Message: ${JSON.stringify(message)}`)
 
         if (this.resolveQueue) {
           this.resolveQueue({ value: message, done: false });

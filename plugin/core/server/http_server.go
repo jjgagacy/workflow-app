@@ -97,7 +97,7 @@ func (app *App) adminGroup(group *gin.RouterGroup, config *core.Config) {
 func (app *App) pluginDispatchGroup(group *gin.RouterGroup, config *core.Config) {
 	group.Use(controllers.CollectActiveDispatchRequests())
 	group.Use(app.FetchPluginInstallation())
-	group.Use(app.RedirectPluginInvoke())
+	// group.Use(app.RedirectPluginInvoke())
 
 	app.setupDispatchGroup(group, config)
 }

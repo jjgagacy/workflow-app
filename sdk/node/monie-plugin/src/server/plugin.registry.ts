@@ -107,7 +107,7 @@ export class PluginRegistry {
       // await this.loadManifestLog();
       // this.logRegistry();
     } catch (error: any) {
-      throw new Error(`Failed to initialize plugin: ${error} stack: ${error.statck}`);
+      throw new Error(`Failed to initialize plugin: ${error} : ${error.statck}`);
     }
   }
 

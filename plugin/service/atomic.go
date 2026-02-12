@@ -25,6 +25,7 @@ func AtomicInstallPlugin(
 		db.Equal("plugin_id", pluginUniqueIdentifier.PluginID()),
 		db.Equal("tenant_id", tenantId),
 	)
+	// exists
 	if err == nil {
 		return nil, nil, types.ErrPluginAlreadyExists
 	}

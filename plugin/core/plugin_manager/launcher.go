@@ -144,7 +144,8 @@ func (p *PluginManager) launchLocal(
 
 	success = true
 
-	p.m.Store(identity.String(), localPluginRuntime)
+	//p.m.Store(identity.String(), localPluginRuntime)
+	p.m.Store(string(pluginUniqueIdentifier), localPluginRuntime)
 
 	launchedChan := make(chan bool)
 	errChan := make(chan error)
