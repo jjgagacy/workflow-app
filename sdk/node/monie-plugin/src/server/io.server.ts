@@ -337,8 +337,7 @@ export class IOServer implements Server {
         case StreamRequestEvent.REQUEST:
           const result = await this.pool?.execute(taskData);
           if (this.writer) {
-            const response = { sessionId: message.sessionId, result };
-            this.writer.write(JSON.stringify(response));
+            this.writer.sessionMessage(message.sessionId, result);
           }
           break;
         default:

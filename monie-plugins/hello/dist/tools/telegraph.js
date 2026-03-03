@@ -9,8 +9,7 @@ export class TelegraphTool extends Tool {
         const articleUrl = `https://telegra.ph/${Date.now()}`;
         return new ToolInvokeMessage({
             type: MessageType.TEXT,
-            message: articleUrl,
-            timestamp: new Date(),
+            message: { articleUrl },
         });
     }
     async getRuntimeParameters() {

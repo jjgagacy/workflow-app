@@ -11,8 +11,7 @@ export class TelegraphTool extends Tool {
 
     return new ToolInvokeMessage({
       type: MessageType.TEXT,
-      message: articleUrl,
-      timestamp: new Date(),
+      message: { articleUrl },
     });
   }
 

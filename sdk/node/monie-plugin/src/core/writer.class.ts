@@ -2,6 +2,7 @@ import EventEmitter from "events";
 import { StreamWriter } from "./streams/stream.js";
 import { Event, StreamOutputMessage } from "./entities/event/writer-entities.js";
 import { SessionMessage, SessionMessageType } from "./entities/event/message.js";
+import { deepCamelToSnake } from "../utils/string.util.js";
 
 export abstract class ResponseWriter extends EventEmitter implements StreamWriter {
   abstract write(data: string): Promise<void>;
@@ -13,7 +14,7 @@ export abstract class ResponseWriter extends EventEmitter implements StreamWrite
     data: Record<string, any> | null = null,
   ): void {
     const message = new StreamOutputMessage(event, sessionId, data);
-    this.write(JSON.stringify(message));
+    this.write(JSON.stringify(deepCamelToSnake({ event: message.event, sessionId: message.sessionId, data: message.data })));
     this.write("\n\n");
   }
 
