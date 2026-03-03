@@ -37,7 +37,10 @@ func TestLocalPluginRuntimeStartPlugin(t *testing.T) {
 		}
 
 		// 测试通信
-		listener := runtime.Listen("node-session")
+		listener, err := runtime.Listen("node-session")
+		if err != nil {
+			t.Fatal(err)
+		}
 		infoCmd := createSessionMessage("node-session", plugin_entities.SESSION_MESSAGE_TYPE_INVOKE, map[string]any{
 			"command": "info",
 		})

@@ -11,6 +11,7 @@ import (
 
 	"github.com/jjgagacy/workflow-app/plugin/core"
 	"github.com/jjgagacy/workflow-app/plugin/core/server"
+	"github.com/jjgagacy/workflow-app/plugin/utils"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 )
@@ -63,6 +64,8 @@ func StartForTest(config *core.Config) (baseUrl string, shutdown func()) {
 // go test ./test/integration -v
 func TestMain(m *testing.M) {
 	fmt.Println("=== 测试开始 ===")
+	utils.SetLogVisibility(true)
+
 	config := loadTestConfig()
 
 	baseUrl, shutdown = StartForTest(config)

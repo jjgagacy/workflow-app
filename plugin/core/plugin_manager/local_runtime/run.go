@@ -275,7 +275,10 @@ func (r *LocalPluginRuntime) Stop() {
 	}
 }
 
-func (r *LocalPluginRuntime) Listen(sessionId string) *entities.Broadcast[plugin_entities.SessionMessage] {
+func (r *LocalPluginRuntime) Listen(sessionId string) (*entities.Broadcast[plugin_entities.SessionMessage], error) {
+	if r.stdioHolder == nil {
+		return nil, errors.New("plugin not started")
+	}
 	listener := entities.NewBroadcast[plugin_entities.SessionMessage]()
 	listener.OnClose(func() {
 		r.stdioHolder.removeEventListener(sessionId)
@@ -288,7 +291,7 @@ func (r *LocalPluginRuntime) Listen(sessionId string) *entities.Broadcast[plugin
 		}
 		listener.Send(data)
 	})
-	return listener
+	return listener, nil
 }
 
 func (r *LocalPluginRuntime) Write(sessionId string, action access_types.PluginAccessAction, data []byte) {

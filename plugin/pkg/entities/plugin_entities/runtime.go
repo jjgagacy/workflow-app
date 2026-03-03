@@ -61,7 +61,7 @@ type PluginRuntimeInterface interface {
 	PluginBasicInfo
 
 	// Listen listens for messages from the plugin
-	Listen(sessionId string) *entities.Broadcast[SessionMessage]
+	Listen(sessionId string) (*entities.Broadcast[SessionMessage], error)
 	// Write writes a message to the plugin
 	Write(sessionId string, action access_types.PluginAccessAction, data []byte)
 	// Log adds a log to the plugin runtime

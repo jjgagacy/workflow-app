@@ -25,7 +25,10 @@ func GenericInvokePlugin[T any, R any](
 	}
 
 	response := utils.NewStream[R](responseBufferSize)
-	listener := runtime.Listen(session.ID)
+	listener, err := runtime.Listen(session.ID)
+	if err != nil {
+		return nil, err
+	}
 	listener.Listen(func(chunk plugin_entities.SessionMessage) {
 		switch chunk.Type {
 		case plugin_entities.SESSION_MESSAGE_TYPE_STREAM:
