@@ -8,22 +8,22 @@ import { TenantEntity } from "./tenant.entity";
 @Index(['tenant', 'name'], { unique: true })
 export class RoleEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({
     nullable: false,
   })
-  key: string;
+  key!: string;
 
   @Column({
     nullable: false,
   })
-  name: string;
+  name!: string;
 
   @Column({
     nullable: false,
   })
-  parent: string;
+  parent!: string;
 
   // 0开启 1关闭
   @Column({
@@ -31,15 +31,15 @@ export class RoleEntity extends BaseEntity {
     type: 'int',
     default: 0,
   })
-  status: number;
+  status!: number;
 
   @Column(() => Operate, { prefix: false })
-  operate: Operate;
+  operate!: Operate;
 
   @OneToMany(() => MenuRoleEntity, menuRole => menuRole.role)
-  menus: MenuRoleEntity[];
+  menus!: MenuRoleEntity[];
 
   @ManyToOne(() => TenantEntity, (tenant) => tenant.id)
   @JoinColumn({ name: 'tenant_id', referencedColumnName: 'id' })
-  tenant: TenantEntity;
+  tenant!: TenantEntity;
 }

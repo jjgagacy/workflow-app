@@ -6,7 +6,7 @@ export class UpdateAccountDto extends BaseAccountDto {
   updatedAt?: Date;
   password?: string;
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  updatedBy: string;
+  updatedBy!: string;
   @IsOptional()
   @IsEmail()
   email?: string;

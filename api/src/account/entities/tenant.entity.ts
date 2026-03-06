@@ -10,68 +10,61 @@ import { TenantAccountEntity } from "./tenant-account.entity";
 @Entity({ name: 'tenant' })
 export class TenantEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({
     type: 'varchar',
     nullable: false,
     unique: true,
   })
-  name: string;
+  name!: string;
 
   @Column({
     type: 'text',
     nullable: true,
   })
-  encryptPublicKey: string | null;
+  encryptPublicKey?: string | null;
 
   @Column({
     type: 'varchar',
     nullable: false,
     default: 'basic',
   })
-  plan: string;
+  plan!: string;
 
   @Column({
     type: 'varchar',
     nullable: false,
     default: 'active',
   })
-  status: string;
+  status!: string;
 
   @Column({
     type: 'text',
     nullable: true,
   })
-  customConfig: string | null;
+  customConfig?: string | null;
 
   @OneToMany(() => ProviderEntity, (provider) => provider.tenant)
-  providers: [ProviderEntity];
+  providers!: [ProviderEntity];
 
   @OneToMany(() => TenantDefaultModelEntity, (defaultModel) => defaultModel.tenant)
-  defaultModels: [TenantDefaultModelEntity];
+  defaultModels!: [TenantDefaultModelEntity];
 
   @OneToMany(() => TenantPreferredProviderEntity, (preferredProvider) => preferredProvider.tenant)
-  preferredProviders: [TenantPreferredProviderEntity];
+  preferredProviders!: [TenantPreferredProviderEntity];
 
   @OneToMany(() => ProviderModelEntity, (providerModel) => providerModel.tenant)
-  providerModels: [ProviderModelEntity];
+  providerModels!: [ProviderModelEntity];
 
   @OneToMany(() => ProviderModelSettingEntity, (providerModelSetting) => providerModelSetting.tenant)
-  providerModelSettings: [ProviderModelSettingEntity];
+  providerModelSettings!: [ProviderModelSettingEntity];
 
   @OneToMany(() => TenantAccountEntity, tenantAccount => tenantAccount.tenant)
-  accounts: TenantAccountEntity[];
+  accounts!: TenantAccountEntity[];
 
   @Column(() => Operate, { prefix: false })
-  operate: Operate;
+  operate!: Operate;
 }
 
-export enum TenantStatus {
-  SETUP = 'setup',
-  ACTIVE = 'active',
-  TRIAL = 'trial',
-  SUSPENDED = 'suspended',
-  EXPIRED = 'expired',
-  DELETED = 'deleted',
-}
+

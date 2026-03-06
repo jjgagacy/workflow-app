@@ -1,16 +1,12 @@
 export enum QuotaType {
   PAID = 'paid',
-
   FREE = 'free',
-
   TRIAL = 'trial',
 }
 
 export enum QuotaUnit {
   TIMES = 'times',
-
   TOKENS = 'tokens',
-
   CREDITS = 'credits',
 }
 

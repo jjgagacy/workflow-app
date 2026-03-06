@@ -21,7 +21,8 @@ import { AccountIntegrateEntity } from '@/account/entities/account-integrate.ent
 import { validateDto } from '@/common/utils/validation';
 import { TenantAccountService, TenantService } from './tenant.service';
 import { SystemService } from '@/monie/system.service';
-import { TenantEntity, TenantStatus } from '@/account/entities/tenant.entity';
+import { TenantEntity } from '@/account/entities/tenant.entity';
+import { TenantStatus } from "./types/tenant.type";
 import {
   AccountRole,
   AccountStatus,
@@ -102,7 +103,7 @@ export class AuthAccountService {
     private readonly monieConfig: MonieConfig,
     private readonly logger: GlobalLogger,
     private readonly featureService: FeatureService,
-  ) {}
+  ) { }
 
   // 可以不用code，直接生成链接重置，因为邮件模版没有用code
   async sendResetPasswordEmail({
@@ -496,7 +497,7 @@ export class AuthAccountService {
         false,
         workManager,
       );
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(
         `createTenantForNewAccount ${account.email} error: ${error.message}`,
         error.stack,

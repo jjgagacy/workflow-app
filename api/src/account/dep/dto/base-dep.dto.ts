@@ -2,14 +2,15 @@ import { IsNotEmpty } from 'class-validator';
 
 export abstract class BaseDepDto {
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  key: string;
-  parent: string;
+  key!: string;
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  parent!: string;
   managerId?: number;
 
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  name: string;
+  name!: string;
   remarks?: string;
 
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  tenantId: string;
+  tenantId!: string;
 }

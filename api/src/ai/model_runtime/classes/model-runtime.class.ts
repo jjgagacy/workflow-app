@@ -22,12 +22,26 @@ export class I18nObject {
   }
 }
 
+export interface PriceConfigProps {
+  input: number;
+  output?: number;
+  unit: number;
+  currency: string;
+}
+
 export class PriceConfig {
   input: number;
   @IsOptional()
   output?: number;
   unit: number;
   currency: string;
+
+  constructor(props: PriceConfigProps) {
+    this.input = props.input;
+    this.output = props.output;
+    this.unit = props.unit;
+    this.currency = props.currency;
+  }
 }
 
 export class PriceInfo {

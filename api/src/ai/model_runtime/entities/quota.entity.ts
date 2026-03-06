@@ -31,6 +31,7 @@ export class QuotaConfiguration {
     this.quotaLimit = props.quotaLimit;
     this.quotaUsed = props.quotaUsed;
     this.restrictModel = props.restrictModel;
+    this.isValid = props.isValid;
   }
 }
 

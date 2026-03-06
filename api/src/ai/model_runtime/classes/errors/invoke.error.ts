@@ -4,27 +4,27 @@ import { InvokeAuthorizationError, InvokeBadRequestError, InvokeConnectionError,
  * 所有LLM异常的基类
  */
 export class InvokeError extends Error {
-    description?: string;
+  description?: string;
 
-    constructor(description?: string) {
-        super(description || 'InvokeError');
-        this.name = 'InvokeError';
-        this.description = description;
+  constructor(description?: string) {
+    super(description || 'InvokeError');
+    this.name = 'InvokeError';
+    this.description = description;
 
-        // 保持正确的原型链
-        Object.setPrototypeOf(this, InvokeError.prototype);
-    }
+    // 保持正确的原型链
+    Object.setPrototypeOf(this, InvokeError.prototype);
+  }
 
-    toString(): string {
-        return this.description || this.name;
-    }
+  toString(): string {
+    return this.description || this.name;
+  }
 }
 
 // 所有异常类型
 export type InvokeException =
-    | InvokeError
-    | InvokeAuthorizationError
-    | InvokeBadRequestError
-    | InvokeConnectionError
-    | InvokeRateLimitError
-    | InvokeServiceUnavailableError;
+  | InvokeError
+  | InvokeAuthorizationError
+  | InvokeBadRequestError
+  | InvokeConnectionError
+  | InvokeRateLimitError
+  | InvokeServiceUnavailableError;

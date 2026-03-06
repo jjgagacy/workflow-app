@@ -6,76 +6,76 @@ import { AccountEntity } from "./account.entity";
 @Index(['tenant', 'key'], { unique: true })
 export class UploadFilesEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
-  id: string;
+  id!: string;
 
   @ManyToOne(() => TenantEntity, (tenant) => tenant.id)
   @JoinColumn({ name: 'tenant_id', referencedColumnName: 'id' })
-  tenant: TenantEntity;
+  tenant!: TenantEntity;
 
   @Column({
     nullable: false,
   })
-  storageType: string;
+  storageType!: string;
 
   @Column({
     nullable: false,
   })
-  key: string;
+  key!: string;
 
   @Column({
     nullable: false,
   })
-  name: string;
+  name!: string;
 
   @Column({
     nullable: false,
   })
-  size: number;
+  size!: number;
 
   @Column({
     nullable: false,
   })
-  extension: string;
+  extension!: string;
 
   @Column({
     nullable: true,
   })
-  mimeType: string;
+  mimeType?: string;
 
   @Column({
     nullable: true,
   })
-  hash: string;
+  hash?: string;
 
   @Column({
     nullable: true,
   })
-  sourceUrl: string;
+  sourceUrl?: string;
 
   @ManyToOne(() => AccountEntity, (account) => account.id, { nullable: true })
   @JoinColumn({ name: 'created_account', referencedColumnName: 'id' })
-  createdAccount: AccountEntity;
+  createdAccount!: AccountEntity;
 
   @Column({
     type: 'uuid',
     nullable: true,
   })
-  createdUser: string;
+  createdUser?: string;
 
   @Column({ nullable: false })
-  createdRole: string;
+  createdRole!: string;
 
   @CreateDateColumn({
     name: 'created_at',
     nullable: false,
     default: () => 'CURRENT_TIMESTAMP',
   })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({
     name: 'updated_at',
     nullable: false,
     default: () => 'CURRENT_TIMESTAMP',
   })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

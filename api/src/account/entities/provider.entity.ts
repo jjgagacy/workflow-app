@@ -7,7 +7,7 @@ import { TenantEntity } from "./tenant.entity";
 @Index(['tenant', 'providerName', 'providerType', 'quotaType'], { unique: true })
 export class ProviderEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({
     name: 'provider_name',
@@ -15,7 +15,7 @@ export class ProviderEntity extends BaseEntity {
     nullable: false,
     length: 255,
   })
-  providerName: string;
+  providerName!: string;
 
   @Column({
     name: 'provider_type',
@@ -24,7 +24,7 @@ export class ProviderEntity extends BaseEntity {
     default: 'custom',
     length: 40,
   })
-  providerType: string;
+  providerType!: string;
 
   @Column({
     name: 'encrypted_config',
@@ -39,7 +39,7 @@ export class ProviderEntity extends BaseEntity {
     nullable: false,
     default: false,
   })
-  isValid: boolean;
+  isValid!: boolean;
 
   @Column({
     name: 'last_used',
@@ -55,7 +55,7 @@ export class ProviderEntity extends BaseEntity {
     default: '',
     nullable: false,
   })
-  quotaType: string;
+  quotaType!: string;
 
   @Column({
     name: 'quota_limit',
@@ -72,9 +72,9 @@ export class ProviderEntity extends BaseEntity {
   quotaUsed?: number;
 
   @Column(() => Operate, { prefix: false })
-  operate: Operate;
+  operate!: Operate;
 
   @ManyToOne(() => TenantEntity, (tenant) => tenant.id)
   @JoinColumn({ name: 'tenant_id', referencedColumnName: 'id' })
-  tenant: TenantEntity;
+  tenant!: TenantEntity;
 }

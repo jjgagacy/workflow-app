@@ -1,4 +1,4 @@
 export enum LLMMode {
-    COMPLETION = 'completion',
-    CHAT = 'chat'
+  COMPLETION = 'completion',
+  CHAT = 'chat'
 }

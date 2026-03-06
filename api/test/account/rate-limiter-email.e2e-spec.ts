@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, beforeAll, afterAll, jest } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { App } from 'supertest/types';

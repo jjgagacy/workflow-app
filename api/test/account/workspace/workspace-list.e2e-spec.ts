@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, beforeAll, afterAll } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 const request = require('supertest');
@@ -11,47 +12,47 @@ import { ConfigService } from '@nestjs/config';
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 describe('WorkspaceList (e2e)', () => {
-    let app: INestApplication<App>;
-    let accessToken: string;
-    const tenant_id = '106bd7b2-29d5-4b7e-bc2c-0dc14b1a966a';
+  let app: INestApplication<App>;
+  let accessToken: string;
+  const tenant_id = '106bd7b2-29d5-4b7e-bc2c-0dc14b1a966a';
 
-    beforeAll(async () => {
-        const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [AppModule],
-        }).compile();
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
 
-        app = moduleFixture.createNestApplication();
-        app.useGlobalFilters(new GraphQLExceptionFilter(app.get(GlobalLogger)));
-        await app.init();
-    });
+    app = moduleFixture.createNestApplication();
+    app.useGlobalFilters(new GraphQLExceptionFilter());
+    await app.init();
+  });
 
-    const login = async (): Promise<string> => {
-        const query = `
+  const login = async (): Promise<string> => {
+    const query = `
             mutation {
                 login(input: {username: "admin", password:"abc12345"}) {
                     access_token
             }
         }
         `;
-        const response = await request(app.getHttpServer())
-            .post('/graphql')
-            .send({ query });
+    const response = await request(app.getHttpServer())
+      .post('/graphql')
+      .send({ query });
 
-        if (response.body.errors) {
-            console.error('GraphQL Errors:', response.body.errors);
-            throw new Error('Login failed');
-        }
-
-        return response.body.data.login.access_token;
+    if (response.body.errors) {
+      console.error('GraphQL Errors:', response.body.errors);
+      throw new Error('Login failed');
     }
 
-    beforeEach(async () => {
-        // 在每个测试前获取新的 token
-        accessToken = await login();
-    });
+    return response.body.data.login.access_token;
+  }
 
-    it('should get account workspace list', async () => {
-        const query = `
+  beforeEach(async () => {
+    // 在每个测试前获取新的 token
+    accessToken = await login();
+  });
+
+  it('should get account workspace list', async () => {
+    const query = `
                 query {
                     workspaces {
                         id,
@@ -64,17 +65,17 @@ describe('WorkspaceList (e2e)', () => {
                 }
             `;
 
-        const response = await request(app.getHttpServer())
-            .post('/graphql')
-            .set('Authorization', `Bearer ${accessToken}`)
-            .send({ query });
+    const response = await request(app.getHttpServer())
+      .post('/graphql')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ query });
 
-        expect(response.status).toBe(200);
-        expect(response.body.data.workspaces.length).toBeGreaterThan(0);
-    });
+    expect(response.status).toBe(200);
+    expect(response.body.data.workspaces.length).toBeGreaterThan(0);
+  });
 
-    it('should get account workspace detail', async () => {
-        const query = `
+  it('should get account workspace detail', async () => {
+    const query = `
                 query {
                     workspaceDetail {
                         id,
@@ -86,21 +87,21 @@ describe('WorkspaceList (e2e)', () => {
                 }
             `;
 
-        const response = await request(app.getHttpServer())
-            .post('/graphql')
-            .query({
-                tenant_id,
-            })
-            .set('Authorization', `Bearer ${accessToken}`)
-            .send({ query });
+    const response = await request(app.getHttpServer())
+      .post('/graphql')
+      .query({
+        tenant_id,
+      })
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ query });
 
-        expect(response.status).toBe(200);
-        // console.log(response.body);
-        expect(response.body.data.workspaceDetail.id).toBe(tenant_id);
-    });
+    expect(response.status).toBe(200);
+    // console.log(response.body);
+    expect(response.body.data.workspaceDetail.id).toBe(tenant_id);
+  });
 
-    it('should get account workspace detail (headers)', async () => {
-        const query = `
+  it('should get account workspace detail (headers)', async () => {
+    const query = `
                 query {
                     workspaceDetail {
                         id,
@@ -112,20 +113,20 @@ describe('WorkspaceList (e2e)', () => {
                 }
             `;
 
-        const response = await request(app.getHttpServer())
-            .post('/graphql')
-            .set('Authorization', `Bearer ${accessToken}`)
-            .set('X-Tenant-Id', tenant_id)
-            .send({
-                query,
-            });
+    const response = await request(app.getHttpServer())
+      .post('/graphql')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .set('X-Tenant-Id', tenant_id)
+      .send({
+        query,
+      });
 
-        expect(response.status).toBe(200);
-        expect(response.body.data.workspaceDetail.id).toBe(tenant_id);
-    });
+    expect(response.status).toBe(200);
+    expect(response.body.data.workspaceDetail.id).toBe(tenant_id);
+  });
 
-    afterAll(async () => {
-        // 关闭 NestJS 应用
-        await app.close();
-    });
+  afterAll(async () => {
+    // 关闭 NestJS 应用
+    await app.close();
+  });
 });

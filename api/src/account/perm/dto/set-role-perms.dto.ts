@@ -2,20 +2,18 @@ import { IsEmpty, IsNotEmpty } from 'class-validator';
 
 export class MenuItem {
   @IsNotEmpty()
-  key: string;
+  key!: string;
   @IsEmpty()
-  scope: string[];
+  scope!: string[];
   @IsEmpty()
-  perms: string[];
+  perms!: string[];
 }
 
 export class SetRolePermsDto {
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  key: string;
-
+  key!: string;
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  menus: MenuItem[];
-
+  menus!: MenuItem[];
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  tenantId: string;
+  tenantId!: string;
 }

@@ -12,8 +12,9 @@ export class FormOption {
   label: I18nObject;
   value: string;
 
-  constructor(data: Partial<FormOption>) {
-    Object.assign(this, data);
+  constructor(data: { label: I18nObject; value: string }) {
+    this.label = data.label;
+    this.value = data.value;
 
     if (!this.label && this.value) {
       this.label = new I18nObject({ en_US: this.value });
@@ -21,18 +22,46 @@ export class FormOption {
   }
 }
 
-export class CredentialFormSchema {
+export interface CredentialFormSchemaProps {
   label: I18nObject;
   variable: string;
   type: FormType;
 
-  required: boolean = true;
+  required?: boolean;
   default?: string;
 
   options?: FormOption[];
   placeholder?: I18nObject;
 
-  maxLength?: number = 0;
+  maxLength?: number;
+}
+
+export class CredentialFormSchema {
+  label: I18nObject;
+  variable: string;
+  type: FormType;
+
+  required: boolean;
+  default?: string;
+
+  options?: FormOption[];
+  placeholder?: I18nObject;
+
+  maxLength: number;
+
+  constructor(props: CredentialFormSchemaProps) {
+    this.label = props.label;
+    this.variable = props.variable;
+    this.type = props.type;
+
+    this.required = props.required ?? true;
+    this.default = props.default;
+
+    this.options = props.options;
+    this.placeholder = props.placeholder;
+
+    this.maxLength = props.maxLength ?? 0;
+  }
 }
 
 export function extractSecretVariables(credentialFormSchemas: CredentialFormSchema[]): string[] {

@@ -5,14 +5,29 @@ import { AIModel } from "./ai-model.class";
 import { ConfigurateMethod } from "../enums/provider.enum";
 import { CredentialFormSchema } from "../entities/form.entity";
 
+export interface ProviderConfigProps {
+  provider: string;
+  credentials: Record<string, any>;
+}
+
 export class ProviderConfig {
   provider: string;
   credentials: Record<string, any>;
+
+  constructor(props: ProviderConfigProps) {
+    this.provider = props.provider;
+    this.credentials = props.credentials;
+  }
 }
 
 export class ProviderHelp {
   title: I18nObject;
   url: I18nObject;
+
+  constructor(title: I18nObject, url: I18nObject) {
+    this.title = title;
+    this.url = url;
+  }
 }
 
 export class ProviderCredentialSchema {
@@ -22,11 +37,42 @@ export class ProviderCredentialSchema {
 export class FieldModelSchema {
   label: I18nObject;
   placeholder?: I18nObject;
+
+  constructor(label: I18nObject, placeholder?: I18nObject) {
+    this.label = label;
+    this.placeholder = placeholder;
+  }
 }
 
 export class ModelCredentialSchema {
   model: FieldModelSchema;
   credentialFormSchemas: CredentialFormSchema[];
+
+  constructor(model: FieldModelSchema, credentialFormSchemas: CredentialFormSchema[]) {
+    this.model = model;
+    this.credentialFormSchemas = credentialFormSchemas;
+  }
+}
+
+export interface ProviderProps {
+  provider: string;
+  label: I18nObject;
+
+  description?: I18nObject;
+  iconSmall?: I18nObject;
+  iconLarge?: I18nObject;
+  iconLargeDark?: I18nObject;
+  background?: string;
+  help?: ProviderHelp;
+
+  supportedModelTypes: ModelType[];
+  configurateMethod: ConfigurateMethod[];
+
+  providerCredentialSchema?: ProviderCredentialSchema;
+  modeScredentialSchema?: ModelCredentialSchema;
+
+  models: AIModel[];
+  position?: Record<string, string[]>;
 }
 
 export class Provider {
@@ -70,18 +116,39 @@ export class Provider {
   toSimpleProvider(): SimpleProvider {
     return new SimpleProvider(this);
   }
+
+  constructor(props: ProviderProps) {
+    this.provider = props.provider;
+    this.label = props.label;
+
+    this.description = props.description;
+    this.iconSmall = props.iconSmall;
+    this.iconLarge = props.iconLarge;
+    this.iconLargeDark = props.iconLargeDark;
+    this.background = props.background;
+    this.help = props.help;
+
+    this.supportedModelTypes = props.supportedModelTypes;
+    this.configurateMethod = props.configurateMethod;
+
+    this.providerCredentialSchema = props.providerCredentialSchema;
+    this.modeScredentialSchema = props.modeScredentialSchema;
+
+    this.models = Provider.validateModels(props.models);
+    this.position = props.position;
+  }
 }
 
 export class SimpleProvider {
-  provider: string;
-  label: I18nObject;
+  provider!: string;
+  label!: I18nObject;
   @IsOptional()
   iconSmall?: I18nObject;
   @IsOptional()
   iconLarge?: I18nObject;
 
-  models: AIModel[];
-  supportedModelTypes: ModelType[];
+  models!: AIModel[];
+  supportedModelTypes!: ModelType[];
 
   constructor(providerObj?: Provider) {
     if (providerObj) {

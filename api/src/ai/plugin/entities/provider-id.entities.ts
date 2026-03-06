@@ -4,9 +4,7 @@ const cache = new Map<string, string>();
 
 export class ProviderID {
   organization: string;
-
   pluginName: string;
-
   providerName: string;
 
   toString(): string {

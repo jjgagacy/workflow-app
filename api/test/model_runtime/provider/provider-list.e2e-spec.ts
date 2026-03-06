@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, beforeAll, afterAll } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { App } from 'supertest/types';
@@ -6,34 +7,34 @@ import { ProviderListService } from '@/ai/model_runtime/services/provider-list.s
 import { QueryProviderDto } from '@/ai/model_runtime/dtos/provider.dto';
 
 describe('ProviderList (e2e)', () => {
-    // jest.setTimeout(30000);
-    let app: INestApplication<App>;
-    let providerListService: ProviderListService;
-    let connected = false;
+  // jest.setTimeout(30000);
+  let app: INestApplication<App>;
+  let providerListService: ProviderListService;
+  let connected = false;
 
-    beforeAll(async () => {
-        const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [AppModule],
-        }).compile();
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
 
-        app = moduleFixture.createNestApplication();
-        await app.init();
-        providerListService = app.get<ProviderListService>(ProviderListService);
-        // trigger connect redis because lazy connect
-        connected = true;
-    });
+    app = moduleFixture.createNestApplication();
+    await app.init();
+    providerListService = app.get<ProviderListService>(ProviderListService);
+    // trigger connect redis because lazy connect
+    connected = true;
+  });
 
-    it('should initialize ok', async () => {
-        expect(providerListService).toBeDefined();
-    });
+  it('should initialize ok', async () => {
+    expect(providerListService).toBeDefined();
+  });
 
-    it('should get provider list', async () => {
-        const dto: QueryProviderDto = { providerName: 'openai', isValid: true, page: 2, limit: 10 } as QueryProviderDto;
-        const data = await providerListService.query(dto);
-        console.log(data);
-    });
+  it('should get provider list', async () => {
+    const dto: QueryProviderDto = { providerName: 'openai', isValid: true, page: 2, limit: 10 } as QueryProviderDto;
+    const data = await providerListService.query(dto);
+    console.log(data);
+  });
 
-    afterAll(async () => {
-        await app.close();
-    });
+  afterAll(async () => {
+    await app.close();
+  });
 });

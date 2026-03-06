@@ -24,7 +24,8 @@ export class ModelProviderService {
     const lang = language || DEFAULT_LANG;
     for (const providerConf of providerConfiguration.values()) {
       if (modelType) {
-        const modelTypeEnum = EnumConverter.toEnum(ModelType, modelType); if (!providerConf.provider.supportedModelTypes.includes(modelTypeEnum)) continue;
+        const modelTypeEnum = EnumConverter.toEnum(ModelType, modelType);
+        if (!providerConf.provider.supportedModelTypes.includes(modelTypeEnum)) continue;
       }
       providerList.push({
         tenantId,

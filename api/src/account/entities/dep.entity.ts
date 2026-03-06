@@ -6,25 +6,25 @@ import { TenantEntity } from "./tenant.entity";
 @Index(['tenant', 'name'], { unique: true })
 export class DepEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ nullable: false })
-  key: string;
+  key!: string;
 
   @Column({ nullable: false })
-  name: string;
+  name!: string;
 
   @Column({ nullable: false })
-  parent: string;
+  parent!: string;
 
   @Column({ nullable: false })
-  remarks: string;
+  remarks!: string;
 
   // 负责人
   @Column({ nullable: false })
-  managerId: number;
+  managerId!: number;
 
   @ManyToOne(() => TenantEntity, (tenant) => tenant.id)
   @JoinColumn({ name: 'tenant_id', referencedColumnName: 'id' })
-  tenant: TenantEntity;
+  tenant!: TenantEntity;
 }

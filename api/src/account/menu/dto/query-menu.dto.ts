@@ -8,7 +8,7 @@ export class QueryMenuDto extends QueryDto {
   parent?: string;
   order?: { [P in 'name' | 'status' | 'id' | 'sort']?: 'ASC' | 'DESC' };
   relations?: { module?: boolean; roles?: boolean; }
-  tenantId: string;
+  tenantId!: string;
 
   setQueryArgs(args?: GetMenuArgs) {
     if (!args) return;

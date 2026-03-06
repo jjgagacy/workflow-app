@@ -3,7 +3,7 @@ import { BaseAccountDto } from './base-account.dto';
 
 export class CreateAccountDto extends BaseAccountDto {
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  username: string;
+  username!: string;
   @IsOptional()
   password?: string;
 
@@ -12,6 +12,6 @@ export class CreateAccountDto extends BaseAccountDto {
   email?: string;
 
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  createdBy: string;
+  createdBy!: string;
   createdAt?: Date;
 }

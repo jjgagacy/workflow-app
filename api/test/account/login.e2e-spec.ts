@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, beforeAll, afterAll } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { App } from 'supertest/types';
@@ -7,7 +8,8 @@ import { TokenManagerService } from '@/service/libs/token-manager.service';
 import { DataSource } from 'typeorm';
 import { AccountService } from '@/account/account.service';
 import { TenantAccountEntity } from '@/account/entities/tenant-account.entity';
-import { TenantEntity, TenantStatus } from '@/account/entities/tenant.entity';
+import { TenantEntity } from '@/account/entities/tenant.entity';
+import { TenantStatus } from "@/service/types/tenant.type";
 import { AccountEntity } from '@/account/entities/account.entity';
 import { EnhanceCacheService } from '@/common/services/cache/enhance-cache.service';
 

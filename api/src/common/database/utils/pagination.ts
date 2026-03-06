@@ -23,7 +23,7 @@ export async function paginateRepository<T extends ObjectLiteral>(
       const data = await repository.find(options);
       return { data, total: data.length };
     }
-  } catch (error) {
+  } catch (error: any) {
     throw new Error(`Find data failed: ${error.message}`);
   }
 }

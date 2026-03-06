@@ -6,10 +6,16 @@ export type EmbeddingVector = number[][];
  * 文本嵌入结果
  */
 export class TextEmbeddingResult {
-    // 模型名称
-    model: string;
-    // 嵌入向量
-    embedding: EmbeddingVector;
-    // 本次调用用量统计
-    usage: TextEmbeddingUsage;
+  // 模型名称
+  model: string;
+  // 嵌入向量
+  embedding: EmbeddingVector;
+  // 本次调用用量统计
+  usage: TextEmbeddingUsage;
+
+  constructor(model: string, embedding: EmbeddingVector, usage: TextEmbeddingUsage) {
+    this.model = model;
+    this.embedding = embedding;
+    this.usage = usage;
+  }
 }

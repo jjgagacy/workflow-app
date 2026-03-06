@@ -80,7 +80,7 @@ export class AccountResolver {
       status: account.status,
       realName: account.realName,
       theme: account.theme,
-      language: account.prefer_language,
+      language: account.preferLanguage,
       appearance: account.appearance,
       timezone: account.timezone,
       created_at: formatDate(new Date(account.operate.createdAt)),

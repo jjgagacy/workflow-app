@@ -108,7 +108,7 @@ export class LocalFileStorage implements BaseStorage {
     try {
       const stats = statSync(fullPath);
       return stats.size;
-    } catch (error) {
+    } catch (error: any) {
       throw new Error(`Failed to get file size: ${error.message}`);
     }
   }

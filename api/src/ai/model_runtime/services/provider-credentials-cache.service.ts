@@ -34,7 +34,7 @@ export class ProviderCredentialsCacheService {
     try {
       const cachedProviderCredentials = await this.cacheService.get<Credentials>(cacheKey);
       return cachedProviderCredentials ?? null;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to get cached credentials for key ${cacheKey}:`, error);
       return null;
     }
@@ -51,7 +51,7 @@ export class ProviderCredentialsCacheService {
     try {
       await this.cacheService.set(cacheKey, credentials, ttl * 1000);
       this.logger.log(`Cached credentials for key ${cacheKey} with TTL ${ttl}s`);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to cache credentials for key ${cacheKey}:`, error);
       throw new Error(`Failed to cache provider credentials: ${error.message}`);
     }
@@ -63,7 +63,7 @@ export class ProviderCredentialsCacheService {
     try {
       await this.cacheService.del(cacheKey);
       this.logger.log(`Deleted cached credentials for key ${cacheKey}`);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to delete cached credentials for key ${cacheKey}:`, error);
       throw new Error(`Failed to delete cached credentials: ${error.message}`);
     }
@@ -75,7 +75,7 @@ export class ProviderCredentialsCacheService {
     try {
       const exists = await this.cacheService.exists(cacheKey);
       return exists === 1;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to check existence for key ${cacheKey}:`, error);
       return false;
     }
@@ -89,7 +89,7 @@ export class ProviderCredentialsCacheService {
       const expire = await this.cacheService.expire(cacheKey, newTTL);
       this.logger.debug(`Refreshed TTL for key ${cacheKey} to ${newTTL}s`);
       return expire === 1;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to refresh TTL for key ${cacheKey}:`, error);
       throw new Error(`Failed to refresh TTL: ${error.message}`);
     }

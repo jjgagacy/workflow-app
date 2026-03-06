@@ -2,9 +2,9 @@ import { IsNotEmpty } from 'class-validator';
 
 export abstract class BaseModuleDto {
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  key: string;
+  key!: string;
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  name: string;
+  name!: string;
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  tenantId: string;
+  tenantId!: string;
 }

@@ -1,21 +1,21 @@
-# Monie插件
+Monie插件
 
-## 创建插件步骤
+# 创建插件步骤
 
-创建项目文件夹并进入
+## 创建项目文件夹并进入
 
 ```bash
 mkdir my-ts-project
 cd my-ts-project
 ```
 
-初始化 npm 项目
+## 初始化 npm 项目
 
 ```bash
 npm init -y
 ```
 
-安装 TypeScript（作为开发依赖）
+## 安装 TypeScript（作为开发依赖）
 
 ```bash
 npm install typescript --save-dev
@@ -23,7 +23,7 @@ npm install typescript --save-dev
 npm i -D typescript
 ```
 
-初始化 TypeScript 配置
+## 初始化 TypeScript 配置
 
 ```bash
 npx tsc --init
@@ -42,7 +42,7 @@ npm i -D ts-node
 npm i -D nodemon
 ```
 
-配置 package.json scripts
+## 配置 package.json scripts
 
 ```json
 {
@@ -55,7 +55,7 @@ npm i -D nodemon
 }
 ```
 
-运行项目
+## 运行项目
 
 ```bash
 # 编译 TypeScript
@@ -80,7 +80,7 @@ npm run watch
 }
 ```
 
-更新依赖
+## 更新依赖
 
 ```bash
 npm install

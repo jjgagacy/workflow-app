@@ -2,6 +2,6 @@ import { IsNotEmpty } from 'class-validator';
 
 export class BasePermDto {
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  key: string;
+  key!: string;
   level?: number;
 }

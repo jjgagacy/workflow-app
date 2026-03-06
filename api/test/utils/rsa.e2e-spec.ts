@@ -1,15 +1,16 @@
+import { describe, it, expect, beforeEach, beforeAll, afterAll } from '@jest/globals';
 import NodeRSA = require('node-rsa');
 
 describe('RSA Utils E2E Test', () => {
-    let key: NodeRSA;
-    let importedPublicKey: NodeRSA;
-    let importedPrivateKey: NodeRSA;
+  let key: NodeRSA;
+  let importedPublicKey: NodeRSA;
+  let importedPrivateKey: NodeRSA;
 
-    beforeAll(() => {
-        key = new NodeRSA({ b: 2048 });
-        key.setOptions({ encryptionScheme: 'pkcs1_oaep' });
+  beforeAll(() => {
+    key = new NodeRSA({ b: 2048 });
+    key.setOptions({ encryptionScheme: 'pkcs1_oaep' });
 
-        const publicKey = Buffer.from(`
+    const publicKey = Buffer.from(`
             -----BEGIN PUBLIC KEY-----
             MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiQWexmLDemamD8SO/8fN
             Ipu71epVaXiWAmTSQTfcmcfq05K62wTQO5BoinlGUPjZFJBq+dOLf86kc0ZjieJ5
@@ -20,7 +21,7 @@ describe('RSA Utils E2E Test', () => {
             2QIDAQAB
             -----END PUBLIC KEY-----
             `, 'utf-8');
-        const privateKey = Buffer.from(`
+    const privateKey = Buffer.from(`
             -----BEGIN RSA PRIVATE KEY-----
             MIIEpAIBAAKCAQEAiQWexmLDemamD8SO/8fNIpu71epVaXiWAmTSQTfcmcfq05K6
             2wTQO5BoinlGUPjZFJBq+dOLf86kc0ZjieJ5A6ZGJEgVNOP3qx1Qn5c/+Wvq/Lwv
@@ -50,90 +51,90 @@ describe('RSA Utils E2E Test', () => {
             -----END RSA PRIVATE KEY-----
         `, 'utf-8');
 
-        importedPublicKey = new NodeRSA({ b: 2048 });
-        importedPublicKey.setOptions({ encryptionScheme: 'pkcs1_oaep' })
-        importedPublicKey.importKey(publicKey, 'public');
+    importedPublicKey = new NodeRSA({ b: 2048 });
+    importedPublicKey.setOptions({ encryptionScheme: 'pkcs1_oaep' })
+    importedPublicKey.importKey(publicKey, 'public');
 
-        importedPrivateKey = new NodeRSA({ b: 2048 });
-        importedPrivateKey.setOptions({ encryptionScheme: 'pkcs1_oaep' })
-        importedPrivateKey.importKey(privateKey, 'private');
-    });
+    importedPrivateKey = new NodeRSA({ b: 2048 });
+    importedPrivateKey.setOptions({ encryptionScheme: 'pkcs1_oaep' })
+    importedPrivateKey.importKey(privateKey, 'private');
+  });
 
-    it('should generate RSA key pair', () => {
-        const publicKey = key.exportKey('public');
-        const privateKey = key.exportKey('private');
+  it('should generate RSA key pair', () => {
+    const publicKey = key.exportKey('public');
+    const privateKey = key.exportKey('private');
 
-        // console.log(publicKey);
-        // console.log(privateKey);
-        expect(publicKey).toBeDefined();
-        expect(privateKey).toBeDefined();
-    });
+    // console.log(publicKey);
+    // console.log(privateKey);
+    expect(publicKey).toBeDefined();
+    expect(privateKey).toBeDefined();
+  });
 
-    it('should encrypt and decrypt data correctly', () => {
-        const originalData = 'Hello, RSA Encryption!';
+  it('should encrypt and decrypt data correctly', () => {
+    const originalData = 'Hello, RSA Encryption!';
 
-        const encrypted = key.encrypt(originalData, 'base64');
-        const decrypted = key.decrypt(encrypted, 'utf8');
+    const encrypted = key.encrypt(originalData, 'base64');
+    const decrypted = key.decrypt(encrypted, 'utf8');
 
-        expect(decrypted).toBe(originalData);
-    });
+    expect(decrypted).toBe(originalData);
+  });
 
-    it('should sign and verify data correctly', () => {
-        const data = 'This is some data to sign';
-        const dataBuffer = Buffer.from(data, 'utf8');
+  it('should sign and verify data correctly', () => {
+    const data = 'This is some data to sign';
+    const dataBuffer = Buffer.from(data, 'utf8');
 
-        const signature = key.sign(dataBuffer, 'base64', 'utf8');
-        const isVerified = key.verify(dataBuffer, signature, 'utf8', 'base64');
+    const signature = key.sign(dataBuffer, 'base64', 'utf8');
+    const isVerified = key.verify(dataBuffer, signature, 'utf8', 'base64');
 
-        expect(isVerified).toBe(true);
-    });
+    expect(isVerified).toBe(true);
+  });
 
-    it('should export and import keys correctly', () => {
-        const data = 'Test data for key import/export';
-        const encrypted = importedPublicKey.encrypt(data, 'base64');
-        const decrypted = importedPrivateKey.decrypt(encrypted, 'utf8');
-        expect(decrypted).toBe(data);
-    });
+  it('should export and import keys correctly', () => {
+    const data = 'Test data for key import/export';
+    const encrypted = importedPublicKey.encrypt(data, 'base64');
+    const decrypted = importedPrivateKey.decrypt(encrypted, 'utf8');
+    expect(decrypted).toBe(data);
+  });
 
-    it('should encrypt and decrypt JSON data', () => {
-        const userData = {
-            id: 12345,
-            name: '张三',
-            email: 'zhangsan@example.com',
-            timestamp: new Date().toISOString()
-        };
+  it('should encrypt and decrypt JSON data', () => {
+    const userData = {
+      id: 12345,
+      name: '张三',
+      email: 'zhangsan@example.com',
+      timestamp: new Date().toISOString()
+    };
 
-        const jsonString = JSON.stringify(userData);
-        const enctypted = importedPublicKey.encrypt(jsonString, 'base64');
-        const decrypted = importedPrivateKey.decrypt(enctypted, 'utf8');
-        const parsedData = JSON.parse(decrypted);
+    const jsonString = JSON.stringify(userData);
+    const enctypted = importedPublicKey.encrypt(jsonString, 'base64');
+    const decrypted = importedPrivateKey.decrypt(enctypted, 'utf8');
+    const parsedData = JSON.parse(decrypted);
 
-        expect(parsedData.id).toBe(userData.id);
-        expect(parsedData.name).toBe(userData.name);
-    });
+    expect(parsedData.id).toBe(userData.id);
+    expect(parsedData.name).toBe(userData.name);
+  });
 
-    it('should handle different encoding formats', () => {
-        const testData = 'Test data with special chars: 中文!@#$%';
+  it('should handle different encoding formats', () => {
+    const testData = 'Test data with special chars: 中文!@#$%';
 
-        // 测试不同编码格式
-        const encryptedBase64 = importedPublicKey.encrypt(testData, 'base64');
-        // const encryptedHex = importedPublicKey.encrypt(testData, 'hex');
+    // 测试不同编码格式
+    const encryptedBase64 = importedPublicKey.encrypt(testData, 'base64');
+    // const encryptedHex = importedPublicKey.encrypt(testData, 'hex');
 
-        // console.log('Encrypted (base64):', encryptedBase64);
-        // console.log('Encrypted (hex):', encryptedHex);
-        // console.log('Hex length:', encryptedHex.length);
+    // console.log('Encrypted (base64):', encryptedBase64);
+    // console.log('Encrypted (hex):', encryptedHex);
+    // console.log('Hex length:', encryptedHex.length);
 
-        const decryptedFromBase64 = importedPrivateKey.decrypt(encryptedBase64, 'utf8');
-        // const decryptedFromHex = importedPrivateKey.decrypt(encryptedHex, 'hex'); // todo 报错
+    const decryptedFromBase64 = importedPrivateKey.decrypt(encryptedBase64, 'utf8');
+    // const decryptedFromHex = importedPrivateKey.decrypt(encryptedHex, 'hex'); // todo 报错
 
-        // console.log('Decrypted (base64):', decryptedFromBase64);
-        expect(decryptedFromBase64).toBe(testData);
-        // expect(decryptedFromHex).toBe(testData);
-    });
+    // console.log('Decrypted (base64):', decryptedFromBase64);
+    expect(decryptedFromBase64).toBe(testData);
+    // expect(decryptedFromHex).toBe(testData);
+  });
 
-    afterAll(() => {
-        // 不需要设为 null，让垃圾回收自动处理
-        // 或者重新创建一个空实例
-        key = new NodeRSA({ b: 512 }); // 使用较小的密钥
-    });
+  afterAll(() => {
+    // 不需要设为 null，让垃圾回收自动处理
+    // 或者重新创建一个空实例
+    key = new NodeRSA({ b: 512 }); // 使用较小的密钥
+  });
 });

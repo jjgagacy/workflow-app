@@ -7,75 +7,75 @@ import { TenantAccountEntity } from "./tenant-account.entity";
 @Entity({ name: 'account' })
 export class AccountEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({
     nullable: false,
     unique: false,
   })
   @Index()
-  username: string;
+  username!: string;
 
   @Column({
     nullable: false,
     default: '',
   })
-  password: string;
+  password!: string;
 
   @Column({
     nullable: false,
     default: '',
   })
-  salt: string;
+  salt!: string;
 
   @Column({
     nullable: false,
     default: '',
   })
-  realName: string;
+  realName!: string;
 
   @Column({
     nullable: false,
     default: '',
   })
   @Index()
-  email: string;
+  email!: string;
 
   @Column({
     nullable: false,
     default: '',
   })
-  mobile: string;
+  mobile!: string;
 
   @Column({
     nullable: false,
     default: '',
   })
-  avatar: string;
+  avatar!: string;
 
   @Column({
     nullable: false,
     default: '',
   })
-  prefer_language: string;
+  theme!: string;
 
   @Column({
     nullable: false,
     default: '',
   })
-  theme: string;
+  preferLanguage!: string;
 
   @Column({
     nullable: false,
     default: '',
   })
-  timezone: string;
+  timezone!: string;
 
   @Column({
     nullable: false,
     default: '',
   })
-  appearance: string;
+  appearance!: string;
 
   // 0开启 1关闭
   @Column({
@@ -83,16 +83,16 @@ export class AccountEntity extends BaseEntity {
     type: 'int',
     default: 0,
   })
-  status: number;
+  status!: number;
 
   @Column({
     nullable: false,
     default: '',
   })
-  lastIp: string;
+  lastIp!: string;
 
   @Column(() => Operate, { prefix: false })
-  operate: Operate;
+  operate!: Operate;
 
   @ManyToMany(() => RoleEntity, {
     cascade: true
@@ -108,14 +108,14 @@ export class AccountEntity extends BaseEntity {
       referencedColumnName: 'id',
     },
   })
-  roles: RoleEntity[];
+  roles!: RoleEntity[];
 
   @ManyToOne(() => DepEntity, {
     cascade: ['insert'],
     onDelete: 'SET NULL',
   })
-  dep: DepEntity;
+  dep!: DepEntity;
 
   @OneToMany(() => TenantAccountEntity, tenantAccount => tenantAccount.account)
-  tenants: TenantAccountEntity[];
+  tenants!: TenantAccountEntity[];
 }

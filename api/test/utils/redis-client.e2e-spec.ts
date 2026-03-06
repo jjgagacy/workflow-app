@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, beforeAll, afterAll } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { App } from 'supertest/types';
@@ -32,7 +33,7 @@ describe('RedisClient (e2e)', () => {
     if (!connected) {
       await new Promise(resolve => setTimeout(resolve, 2000));
     }
-    const result = await cacheService.isConnected();
+    const result = cacheService.isConnected;
     expect(result).toBe(true);
   });
 

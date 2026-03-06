@@ -1,5 +1,5 @@
 import { IsOptional } from "class-validator";
-import { ProviderModel } from "./provider-model.class";
+import { ProviderModel, ProviderModelProps } from "./provider-model.class";
 import { PriceConfig } from "./model-runtime.class";
 import { ModelFeature } from "../enums/model-runtime.enum";
 
@@ -7,8 +7,9 @@ export class AIModel extends ProviderModel {
   @IsOptional()
   pricing?: PriceConfig;
 
-  constructor() {
-    super();
+  constructor(props: ProviderModelProps & { pricing?: PriceConfig }) {
+    super(props);
+    this.pricing = props.pricing;
     this.validateModel();
   }
 

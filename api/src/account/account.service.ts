@@ -169,7 +169,7 @@ export class AccountService {
       avatar: dto.avatar,
       mobile: dto.mobile,
       status: dto.status,
-      prefer_language: dto.language,
+      preferLanguage: dto.language,
       theme: dto.theme,
       appearance: dto.appearance,
       timezone: dto.timezone,

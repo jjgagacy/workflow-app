@@ -5,11 +5,12 @@ import { IsNotEmpty } from 'class-validator';
  */
 export abstract class BaseMenuDto {
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  key: string;
-  parent: string;
+  key!: string;
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  parent!: string;
 
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  name: string;
+  name!: string;
 
   icon?: string;
   sort?: number;
@@ -18,5 +19,5 @@ export abstract class BaseMenuDto {
   moduleId?: number;
 
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  tenantId: string;
+  tenantId!: string;
 }

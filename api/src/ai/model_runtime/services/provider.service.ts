@@ -270,7 +270,8 @@ export class ProviderService {
 
       // have record
       if (providerRecord.quotaLimit == null || providerRecord.quotaUsed == null) {
-        throw QuotaUsedOrLimitNullError.create(this.i18n);
+        // throw QuotaUsedOrLimitNullError.create(this.i18n);
+        return new SystemConfiguration(false);
       }
 
       const isValid = providerRecord.quotaLimit === -1 || providerRecord.quotaUsed < providerRecord.quotaLimit;

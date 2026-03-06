@@ -7,32 +7,32 @@ import { TenantEntity } from "./tenant.entity";
 @Index(['tenant', 'key'], { unique: true })
 export class MenuEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({
     nullable: false,
   })
-  key: string;
+  key!: string;
 
   @Column({
     nullable: false,
   })
-  name: string;
+  name!: string;
 
   @Column({
     nullable: false,
   })
-  parent: string;
+  parent!: string;
 
   @Column({
     nullable: false,
   })
-  icon: string;
+  icon!: string;
 
   @Column({
     nullable: false,
   })
-  sort: number;
+  sort!: number;
 
   // 0开启 1关闭
   @Column({
@@ -40,7 +40,7 @@ export class MenuEntity extends BaseEntity {
     type: 'int',
     default: 0,
   })
-  status: number;
+  status!: number;
 
   @ManyToOne(() => ModuleEntity, module => module.menus, {
     cascade: true,
@@ -49,9 +49,9 @@ export class MenuEntity extends BaseEntity {
   module?: ModuleEntity;
 
   @OneToMany(() => MenuRoleEntity, menuRole => menuRole.menu)
-  roles: MenuRoleEntity[];
+  roles!: MenuRoleEntity[];
 
   @ManyToOne(() => TenantEntity, (tenant) => tenant.id)
   @JoinColumn({ name: 'tenant_id', referencedColumnName: 'id' })
-  tenant: TenantEntity;
+  tenant!: TenantEntity;
 }

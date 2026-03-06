@@ -10,7 +10,7 @@ export function useMenus() {
       key: 'dashboard',
       title: t('system.dashboard'),
       icon: <LayoutDashboard className="w-5 h-5" />,
-      path: "/workspace/dashboard"
+      path: "/workspace"
     },
     {
       key: 'system',

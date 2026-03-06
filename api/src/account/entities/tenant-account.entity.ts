@@ -6,47 +6,47 @@ import { AccountEntity } from "./account.entity";
 @Index(['tenant', 'account'], { unique: true })
 export class TenantAccountEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ManyToOne(() => TenantEntity, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'tenant_id', referencedColumnName: 'id' })
   @Index()
-  tenant: TenantEntity;
+  tenant!: TenantEntity;
 
   @ManyToOne(() => AccountEntity, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'account_id', referencedColumnName: 'id' })
   @Index()
-  account: AccountEntity;
+  account!: AccountEntity;
 
   @Column({
     type: 'varchar',
     nullable: false,
     default: 'owner',
   })
-  role: string;
+  role!: string;
 
   @Column({
     type: 'boolean',
     nullable: false,
     default: false,
   })
-  current: boolean;
+  current!: boolean;
 
   @CreateDateColumn({
     name: 'created_at',
     nullable: false,
     default: () => 'CURRENT_TIMESTAMP',
   })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({
     name: 'updated_at',
     nullable: false,
     default: () => 'CURRENT_TIMESTAMP',
   })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

@@ -2,7 +2,7 @@ import { QuotaType } from "../enums/quota.enum";
 import { RestrictModel } from "./configuration.entity";
 
 export abstract class HostingQuota {
-  quotaType: QuotaType;
+  quotaType: QuotaType = QuotaType.TRIAL;
   restrictModels: RestrictModel[] = [];
 }
 
