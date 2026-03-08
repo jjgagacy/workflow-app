@@ -6,8 +6,8 @@ export class ModuleInput {
   id?: number;
 
   @Field()
-  key: string;
+  key!: string;
 
   @Field()
-  name: string;
+  name!: string;
 }

@@ -7,15 +7,15 @@ export class ForgetPasswordInput {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   @Matches(EMAIL_REGEX, { message: 'auth.INVALID_EMAIL' })
-  email: string;
+  email!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  token: string;
+  token!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  code: string;
+  code!: string;
 
   @Field({ nullable: true })
   language?: string;
@@ -25,11 +25,11 @@ export class ForgetPasswordInput {
 export class ForgetPasswordCheckInput {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  email: string;
+  email!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  code: string;
+  code!: string;
 
   @Field({ nullable: true })
   language?: string;
@@ -38,27 +38,27 @@ export class ForgetPasswordCheckInput {
 @ObjectType('ForgetPasswordCheckResponse')
 export class ForgetPasswordCheckResponse {
   @Field()
-  token: string;
+  token!: string;
 
   @Field()
-  isValid: boolean;
+  isValid!: boolean;
 
   @Field()
-  email: string;
+  email!: string;
 }
 
 @InputType('ForgetPasswordResetInput')
 export class ForgetPasswordResetInput {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  token: string;
+  token!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  newPassword: string;
+  newPassword!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  confirmPassword: string;
+  confirmPassword!: string;
 }
 

@@ -4,11 +4,11 @@ import { Field, ObjectType } from '@nestjs/graphql';
 export class RolePerms {
   // menu key
   @Field()
-  key: string;
+  key!: string;
 
   @Field((type) => [String])
-  scope: string[];
+  scope!: string[];
 
   @Field((type) => [String])
-  perms: string[];
+  perms!: string[];
 }

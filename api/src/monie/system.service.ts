@@ -46,5 +46,6 @@ export class SystemService {
     this.enterpriseEnabled = this.monieConfig.enterpriseEnabled();
     this.canReplaceLogo = this.monieConfig.canReplaceLogo();
     this.enableChangeEmail = this.monieConfig.enableChangeEmail();
+    this.enableRequestLogging = this.monieConfig.enableRequestLogging();
   }
 }

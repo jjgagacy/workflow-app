@@ -3,9 +3,9 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType('Route')
 export class Route {
   @Field()
-  key: string;
+  key!: string;
   @Field()
-  label: string;
+  label!: string;
   @Field({ nullable: true })
   path?: string;
   @Field({ nullable: true })
@@ -17,7 +17,7 @@ export class Route {
   @Field({ nullable: true })
   parent?: string;
   @Field()
-  sort: number;
+  sort!: number;
 }
 
 // https://typegraphql.com/docs/types-and-fields.html

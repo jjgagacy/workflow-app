@@ -57,7 +57,7 @@ export class MailService implements OnModuleInit {
           throw new Error(`Unsupported mail type: ${this.mailType}`);
       }
       this.logger.log(`Mail client initialized successfully with type: ${this.mailType}`);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to initialized mail client: ${error.message}`, error.stack);
       throw error;
     }
@@ -98,7 +98,7 @@ export class MailService implements OnModuleInit {
     if (this.client instanceof SMTPClient) {
       try {
         await (this.client as SMTPClient).verify();
-      } catch (error) {
+      } catch (error: any) {
         this.logger.error(`SMTP connection verification failed: ${error.message}`, error.stack);
         throw error;
       }

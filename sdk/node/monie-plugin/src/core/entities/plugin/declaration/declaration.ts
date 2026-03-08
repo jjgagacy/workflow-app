@@ -8,11 +8,11 @@ export class PluginDeclaration {
   version: string = "";
   type: PluginType = PluginType.Plugin;
   author: string | null = null;
+  label: I18nObject = {};
   name: string = "";
   repo: string | null = null;
   description: I18nObject = {};
   icon: string = "";
-  label: I18nObject = {};
   createdAt: Date = new Date();
   resource: PluginResourceRequirements = new PluginResourceRequirements();
   plugins: PluginManifest = new PluginManifest();

@@ -3,14 +3,14 @@ import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 @InputType('RoleInput')
 export class RoleInput {
   @Field()
-  key: string;
+  key!: string;
 
   @Field()
-  parent: string;
+  parent!: string;
 
   @Field({ nullable: true })
-  name: string;
+  name!: string;
 
   @Field((type) => Int, { nullable: true })
-  status: number;
+  status!: number;
 }

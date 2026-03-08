@@ -4,8 +4,8 @@ import { RoleSetPermMenu } from './role-set-perm-menu.type';
 @InputType('RoleSetPermInput')
 export class RoleSetPermInput {
   @Field()
-  key: string;
+  key!: string;
 
   @Field((type) => [RoleSetPermMenu])
-  menus: RoleSetPermMenu[];
+  menus!: RoleSetPermMenu[];
 }

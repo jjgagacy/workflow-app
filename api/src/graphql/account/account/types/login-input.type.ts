@@ -5,10 +5,10 @@ import { IsNotEmpty, Length, Matches } from 'class-validator';
 @InputType('LoginInput')
 export class LoginInput {
   @Field()
-  username: string;
+  username!: string;
 
   @Field()
-  password: string;
+  password!: string;
 }
 
 @InputType('EmailCodeLoginInput')
@@ -16,15 +16,15 @@ export class EmailCodeLoginInput {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   @Matches(EMAIL_REGEX, { message: 'auth.INVALID_EMAIL' })
-  email: string;
+  email!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  code: string;
+  code!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  token: string;
+  token!: string;
 }
 
 @InputType('ResetPasswordSendEmailInput')
@@ -32,10 +32,10 @@ export class ResetPasswordSendEmailInput {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   @Matches(EMAIL_REGEX, { message: 'auth.INVALID_EMAIL' })
-  email: string;
+  email!: string;
 
   @Field()
-  language: string;
+  language!: string;
 }
 
 @InputType('EmailCodeLoginSendEmail')
@@ -43,10 +43,10 @@ export class EmailCodeLoginSendEmail {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   @Matches(EMAIL_REGEX, { message: 'auth.INVALID_EMAIL' })
-  email: string;
+  email!: string;
 
   @Field()
-  language: string;
+  language!: string;
 }
 
 
@@ -54,20 +54,20 @@ export class EmailCodeLoginSendEmail {
 export class EmailCodeSignUpInput {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  username: string;
+  username!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   @Matches(EMAIL_REGEX, { message: 'auth.INVALID_EMAIL' })
-  email: string;
+  email!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  code: string;
+  code!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  token: string;
+  token!: string;
 }
 
 @InputType('PasswordLoginInput')
@@ -75,11 +75,11 @@ export class PasswordLoginInput {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   @Matches(EMAIL_REGEX, { message: 'auth.INVALID_EMAIL' })
-  email: string;
+  email!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  password: string;
+  password!: string;
 
   @Field({ nullable: true })
   token?: string; // TODO: 可选的安全令牌，如验证码
@@ -95,27 +95,27 @@ export class ChangeEmailSendInput {
 export class ValidateChangeEmailOldInput {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  token: string;
+  token!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  code: string;
+  code!: string;
 }
 
 @InputType('ConfirmEmailNewInput')
 export class ConfirmEmailNewInput {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  token: string;
+  token!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   @Matches(EMAIL_REGEX, { message: 'auth.INVALID_EMAIL' })
-  newEmail: string;
+  newEmail!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  code: string;
+  code!: string;
 
   @Field({ nullable: true })
   language?: string;
@@ -125,16 +125,16 @@ export class ConfirmEmailNewInput {
 export class UpdateAccountNewEmailInput {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  token: string;
+  token!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   @Matches(EMAIL_REGEX, { message: 'auth.INVALID_EMAIL' })
-  newEmail: string;
+  newEmail!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  code: string;
+  code!: string;
 
   @Field({ nullable: true })
   language?: string;
@@ -144,18 +144,18 @@ export class UpdateAccountNewEmailInput {
 export class InviteMemberActivationInput {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  token: string;
+  token!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   @Matches(EMAIL_REGEX, { message: 'auth.INVALID_EMAIL' })
-  inviteeEmail: string;
+  inviteeEmail!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  inviteeName: string;
+  inviteeName!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  workspaceId: string;
+  workspaceId!: string;
 }

@@ -3,39 +3,39 @@ import { Field, ObjectType } from "@nestjs/graphql";
 @ObjectType('WorkspaceList')
 export class WorkspaceList {
   @Field(() => String)
-  id: string;
+  id!: string;
 
   @Field()
-  name: string;
+  name!: string;
 
   @Field()
-  plan: string;
+  plan!: string;
 
   @Field()
-  status: string;
+  status!: string;
 
   @Field(() => Date)
-  created_at: Date;
+  created_at!: Date;
 
   @Field()
-  current: boolean;
+  current!: boolean;
 }
 
 @ObjectType('WorkspaceDetail')
 export class WorkspaceDetail {
   @Field(() => String)
-  id: string;
+  id!: string;
 
   @Field()
-  name: string;
+  name!: string;
 
   @Field()
-  plan: string;
+  plan!: string;
 
   @Field()
-  status: string;
+  status!: string;
 
   @Field(() => Date)
-  created_at: Date;
+  created_at!: Date;
 }
 

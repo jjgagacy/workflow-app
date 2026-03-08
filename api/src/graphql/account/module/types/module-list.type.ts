@@ -5,7 +5,7 @@ import { PageInfo } from '@/common/graphql/types/page-info.type';
 @ObjectType('ModuleList')
 export class ModuleList {
   @Field((type) => [Module])
-  data: Module[];
+  data!: Module[];
 
   @Field((type) => PageInfo, { nullable: true })
   pageInfo?: PageInfo;

@@ -8,7 +8,7 @@ import { Readable } from "node:stream";
 @Injectable()
 export class StorageService {
   private readonly defaultStorageType: StorageType;
-  private storageInstance: BaseStorage;
+  private storageInstance!: BaseStorage;
 
   constructor(
     private readonly configService: ConfigService,

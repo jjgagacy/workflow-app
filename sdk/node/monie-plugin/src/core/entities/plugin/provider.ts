@@ -153,7 +153,9 @@ export class Provider {
   modelCredentialSchema?: ModelCredentialSchema | undefined;
 
   models: AIModel[] = [];
-  position?: Record<string, string[]>;
+
+  modelFiles: string[] = [];
+  positionFiles?: Record<string, string[]>;
 
   constructor(data: Partial<Provider> = {}) {
     this.provider = data.provider || '';

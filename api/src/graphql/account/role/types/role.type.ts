@@ -4,25 +4,25 @@ import { RolePerms } from './role-perms.type';
 @ObjectType('Role')
 export class Role {
   @Field((type) => Int)
-  id: number;
+  id!: number;
 
   @Field()
-  key: string;
+  key!: string;
 
   @Field()
-  name: string;
+  name!: string;
 
   @Field()
-  parent: string;
+  parent!: string;
 
   @Field((type) => Int)
-  status: number;
+  status!: number;
 
   @Field()
-  created_at: string;
+  created_at!: string;
 
   @Field()
-  created_by: string;
+  created_by!: string;
 
   @Field((type) => [RolePerms], { nullable: true })
   rolePerms?: RolePerms[];

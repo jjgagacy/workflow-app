@@ -3,71 +3,71 @@ import { Field, Int, ObjectType } from "@nestjs/graphql";
 @ObjectType('RestrictModel')
 export class RestrictModel {
   @Field()
-  modelName: string;
+  modelName!: string;
   @Field()
-  modelType: string;
+  modelType!: string;
   @Field()
-  baseModelName: string;
+  baseModelName!: string;
 }
 
 @ObjectType('QuotaInfo')
 export class QuotaInfo {
   @Field()
-  quotaType: string;
+  quotaType!: string;
   @Field()
-  quotaUnit: string;
+  quotaUnit!: string;
   @Field(() => Int)
-  quotaLimit: number;
+  quotaLimit!: number;
   @Field(() => Int)
-  quotaUsed: number;
+  quotaUsed!: number;
   @Field(() => Boolean)
-  isValid: boolean;
+  isValid!: boolean;
   @Field(() => [RestrictModel])
-  restrictModels: RestrictModel[];
+  restrictModels!: RestrictModel[];
 }
 
 @ObjectType('CustomConfiguration')
 export class CustomConfiguration {
   @Field()
-  status: string;
+  status!: string;
 }
 
 @ObjectType('SystemConfiguration')
 export class SystemConfiguration {
   @Field(() => Boolean)
-  enabled: boolean;
+  enabled!: boolean;
   @Field()
-  currentQuotaType: string;
+  currentQuotaType!: string;
   @Field(() => [QuotaInfo])
-  quotaList: [QuotaInfo]
+  quotaList!: [QuotaInfo]
 }
 
 @ObjectType('ProviderInfo')
 export class ProviderInfo {
   @Field()
-  tenantId: string;
+  tenantId!: string;
   @Field()
-  providerName: string;
+  providerName!: string;
   @Field()
-  label: string;
+  label!: string;
   @Field()
-  description: string;
+  description!: string;
   @Field()
-  icon: string;
+  icon!: string;
   @Field(() => [String!]!)
-  supportedModelTypes: string[];
+  supportedModelTypes!: string[];
   @Field()
-  preferredProviderType: string;
+  preferredProviderType!: string;
   @Field(() => CustomConfiguration)
-  customConfiguration: CustomConfiguration;
+  customConfiguration!: CustomConfiguration;
   @Field(() => SystemConfiguration)
-  systemConfiguration: SystemConfiguration;
+  systemConfiguration!: SystemConfiguration;
 }
 
 @ObjectType('ProviderList')
 export class ProviderList {
   @Field(() => [ProviderInfo])
-  data: ProviderInfo[];
+  data!: ProviderInfo[];
 }
 
 

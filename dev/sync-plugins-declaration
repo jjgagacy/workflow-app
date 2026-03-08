@@ -1,0 +1,14 @@
+#!/bin/bash
+cd ../monie-plugins
+for plugin in */; do
+  if [ -d "${plugin}dist" ]; then
+    rsync -avm \
+      --include='*/' \
+      --include='*.yaml' \
+      --include='_assets/' \
+      --include='_assets/**' \
+      --exclude='*' \
+      --prune-empty-dirs \
+      "${plugin}dist/" "../api/plugins-declaration/${plugin}"
+  fi
+done

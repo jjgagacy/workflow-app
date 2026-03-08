@@ -165,10 +165,10 @@ type Menu {
 
 input MenuInput {
   id: Int
-  key: String
+  key: String!
   moduleId: Float
-  name: String
-  parent: String
+  name: String!
+  parent: String!
   sort: Int
   status: Int
 }

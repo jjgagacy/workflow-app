@@ -5,7 +5,7 @@ import { PageInfo } from '@/common/graphql/types/page-info.type';
 @ObjectType('AccountList')
 export class AccountList {
   @Field((returns) => [Account])
-  data: Account[];
+  data!: Account[];
 
   @Field((returns) => PageInfo, { nullable: true })
   pageInfo?: PageInfo;

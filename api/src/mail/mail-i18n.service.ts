@@ -137,7 +137,7 @@ export class MailI18nService {
     let templateConfig: EmailContent;
     try {
       templateConfig = this.getTemplateConfig(emailType, language);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`get template config error: ${error.message}`, error.stack);
       throw error;
     }

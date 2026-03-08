@@ -5,14 +5,14 @@ export class MenuInput {
   @Field((type) => Int, { nullable: true })
   id?: number;
 
-  @Field({ nullable: true })
-  key: string;
+  @Field({ nullable: false })
+  key!: string;
 
-  @Field({ nullable: true })
-  name: string;
+  @Field({ nullable: false })
+  name!: string;
 
-  @Field({ nullable: true })
-  parent: string;
+  @Field({ nullable: false })
+  parent!: string;
 
   @Field((type) => Int, { nullable: true })
   status?: number;
@@ -21,5 +21,5 @@ export class MenuInput {
   sort?: number;
 
   @Field({ nullable: true })
-  moduleId: number;
+  moduleId?: number;
 }

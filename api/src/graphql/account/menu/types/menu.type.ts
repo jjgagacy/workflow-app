@@ -6,17 +6,17 @@ import { Module } from '../../module/types/module.type';
 @ObjectType('Menu')
 export class Menu {
   @Field((types) => Int)
-  id: number;
+  id!: number;
   @Field()
-  key: string;
+  key!: string;
   @Field()
-  name: string;
+  name!: string;
   @Field()
-  parent: string;
+  parent!: string;
   @Field((types) => Int)
-  status: number;
+  status!: number;
   @Field((types) => Int)
-  sort: number;
+  sort!: number;
   @Field((types) => Module, { nullable: true })
   module?: Module;
   @Field((types) => [ModulePerm], { nullable: true })

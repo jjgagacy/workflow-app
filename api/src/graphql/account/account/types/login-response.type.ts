@@ -15,7 +15,7 @@ export class LoginResponse {
   isSuper?: boolean;
 
   @Field({ nullable: false })
-  expiresIn: number;
+  expiresIn!: number;
 }
 
 @ObjectType('UserInfoResponse')
@@ -29,23 +29,23 @@ export class UserInfoResponse {
 @ObjectType('TenantResponse')
 export class TenantResponse {
   @Field()
-  tenant_id: string;
+  tenant_id!: string;
   @Field()
-  name: string;
+  name!: string;
 
   @Field()
-  plan: string;
+  plan!: string;
 }
 
 @ObjectType('InviterResponse')
 export class InviterResponse {
   @Field()
-  workspaceName: string;
+  workspaceName!: string;
   @Field()
-  workspaceId: string;
+  workspaceId!: string;
   @Field()
-  inviteeEmail: string;
+  inviteeEmail!: string;
   @Field()
-  inviteeName: string;
+  inviteeName!: string;
 }
 

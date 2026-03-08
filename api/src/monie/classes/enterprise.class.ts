@@ -1,38 +1,38 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 export class EnterpriseBranding {
-    enabled?: boolean;
-    applicationTitle?: string;
-    loginPageLogo?: string;
-    workspaceLogo?: string;
-    favicon?: string;
+  enabled?: boolean;
+  applicationTitle?: string;
+  loginPageLogo?: string;
+  workspaceLogo?: string;
+  favicon?: string;
 }
 
 export class EnterpriseWorkspaceLimitation {
-    enabled: boolean;
-    limit: number;
-    used: number;
+  enabled: boolean = true;
+  limit: number = 0;
+  used: number = 0;
 }
 
 export class EnterpriseLicense {
-    status?: string;
-    expiredAt?: string;
-    worksapces?: EnterpriseWorkspaceLimitation;
+  status?: string;
+  expiredAt?: string;
+  worksapces?: EnterpriseWorkspaceLimitation;
 }
 
 export class Enterprise {
-    @ApiProperty({ default: false })
-    enableEmailCodeLogin?: boolean;
+  @ApiProperty({ default: false })
+  enableEmailCodeLogin?: boolean;
 
-    @ApiProperty({ default: false })
-    enableEmailPasswordLogin?: boolean;
+  @ApiProperty({ default: false })
+  enableEmailPasswordLogin?: boolean;
 
-    @ApiProperty({ default: false })
-    allowRegister?: boolean;
+  @ApiProperty({ default: false })
+  allowRegister?: boolean;
 
-    @ApiProperty({ default: false })
-    allowCreateWorkspace?: boolean;
+  @ApiProperty({ default: false })
+  allowCreateWorkspace?: boolean;
 
-    branding?: EnterpriseBranding;
-    License?: EnterpriseLicense;
+  branding?: EnterpriseBranding;
+  License?: EnterpriseLicense;
 }

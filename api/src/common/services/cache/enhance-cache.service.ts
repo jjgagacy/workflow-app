@@ -37,7 +37,7 @@ export class EnhanceCacheService implements OnModuleInit, OnModuleDestroy {
         this._isConnected = true;
         this.logger.log("Redis connection initialized");
       }
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Initial connection failed: ${error.message}`);
       await this.scheduleReconnect();
     }
@@ -96,7 +96,7 @@ export class EnhanceCacheService implements OnModuleInit, OnModuleDestroy {
 
     try {
       await this.redisClient.ping?.();
-    } catch (error) {
+    } catch (error: any) {
       this.logger.warn(`Heartbeat failed: ${error.message}`);
       this._isConnected = false;
       await this.reconnect();
@@ -107,7 +107,7 @@ export class EnhanceCacheService implements OnModuleInit, OnModuleDestroy {
     try {
       await this.disconnect();
       await this.initializeConnection();
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Reconnect failed: ${error.message}`);
       await this.scheduleReconnect();
     }
@@ -119,7 +119,7 @@ export class EnhanceCacheService implements OnModuleInit, OnModuleDestroy {
       try {
         await this.get('__test_connection__');
         return;
-      } catch (error) {
+      } catch (error: any) {
         if (attempt <= maxAttempt) {
           await new Promise(resolve => setTimeout(resolve, 500));
           continue;
@@ -140,7 +140,7 @@ export class EnhanceCacheService implements OnModuleInit, OnModuleDestroy {
       if (this.redisClient) {
         await this.redisClient.quit?.();
       }
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Error disconnect redis: ${error.message}`);
     } finally {
       this.redisClient = null;

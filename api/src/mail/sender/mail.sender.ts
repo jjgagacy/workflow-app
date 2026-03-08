@@ -64,7 +64,7 @@ export class MailSender {
         html,
       });
       this.logSendSuccessfully({ requestId, to, from: fromAddress, subject, htmlLength, duration: Date.now() - startTime, messageId: result.messageId, response: result.response });
-    } catch (error) {
+    } catch (error: any) {
       this.logSendError({ requestId, to, from: fromAddress, subject, htmlLength, duration: Date.now() - startTime, error: error.message, stack: error.stack });
     }
   }
@@ -75,7 +75,7 @@ export class MailSender {
       const source = readFileSync(templatePath, 'utf-8');
       const compiledTemplate = handlebars.compile(source);
       return compiledTemplate(context);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.log(`Failed to render template: ${templateName}: ${error.message}`, error.stack);
       throw new Error(`Template ${templateName} not found or invalid`);
     }

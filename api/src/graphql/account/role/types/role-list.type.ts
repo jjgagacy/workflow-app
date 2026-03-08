@@ -5,7 +5,7 @@ import { PageInfo } from '@/common/graphql/types/page-info.type';
 @ObjectType('RoleList')
 export class RoleList {
   @Field((type) => [Role])
-  data: Role[];
+  data!: Role[];
 
   @Field((type) => PageInfo, { nullable: true })
   pageInfo?: PageInfo;

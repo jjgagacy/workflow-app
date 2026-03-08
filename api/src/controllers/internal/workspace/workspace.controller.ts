@@ -2,9 +2,9 @@ import { RequireTenantContext } from "@/common/guards/require-tenant-context";
 import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
 
 class TestUserDto {
-    name: string;
-    age: number;
-    city: string;
+  name!: string;
+  age!: number;
+  city!: string;
 }
 
 /**
@@ -19,16 +19,16 @@ class TestUserDto {
 @RequireTenantContext()
 export class InternalWorkspaceController {
 
-    @Get('workspace')
-    index(@Req() req: Request): string {
-        const tenantId = (req as any).tenant?.id;
-        return `workspace ${tenantId}`;
-    }
+  @Get('workspace')
+  index(@Req() req: Request): string {
+    const tenantId = (req as any).tenant?.id;
+    return `workspace ${tenantId}`;
+  }
 
-    @Post('workspace')
-    postUser(@Req() req: Request, @Body() body: TestUserDto): string {
-        const tenantId = (req as any).tenant?.id;
-        return `workspace ${tenantId} post user ${JSON.stringify(body)}`;
-    }
+  @Post('workspace')
+  postUser(@Req() req: Request, @Body() body: TestUserDto): string {
+    const tenantId = (req as any).tenant?.id;
+    return `workspace ${tenantId} post user ${JSON.stringify(body)}`;
+  }
 
 }

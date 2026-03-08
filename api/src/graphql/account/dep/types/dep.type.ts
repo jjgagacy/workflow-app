@@ -4,15 +4,15 @@ import { Account } from '../../account/types/account.type';
 @ObjectType('Dep')
 export class Dep {
   @Field((types) => Int)
-  id: number;
+  id!: number;
   @Field()
-  key: string;
+  key!: string;
   @Field()
-  name: string;
+  name!: string;
   @Field()
-  parent: string;
+  parent!: string;
   @Field()
-  remarks: string;
+  remarks!: string;
   @Field((types) => Account, { nullable: true })
   manager?: { id: number; username: string; realName: string; };
 }

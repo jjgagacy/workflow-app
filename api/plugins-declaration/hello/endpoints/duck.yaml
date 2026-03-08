@@ -1,0 +1,7 @@
+path: "/duck/:appId"
+method: "GET"
+cpuBound: false
+extra:
+  node:
+    module: endpoints/duck.js
+    class: Duck

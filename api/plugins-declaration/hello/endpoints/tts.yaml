@@ -1,0 +1,7 @@
+path: "/pink/tts"
+method: "POST"
+cpuBound: false
+extra:
+  node:
+    module: endpoints/tts.js
+    class: PinkTTS

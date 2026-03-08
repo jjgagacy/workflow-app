@@ -5,21 +5,6 @@ import { AIModel } from "./ai-model.class";
 import { ConfigurateMethod } from "../enums/provider.enum";
 import { CredentialFormSchema } from "../entities/form.entity";
 
-export interface ProviderConfigProps {
-  provider: string;
-  credentials: Record<string, any>;
-}
-
-export class ProviderConfig {
-  provider: string;
-  credentials: Record<string, any>;
-
-  constructor(props: ProviderConfigProps) {
-    this.provider = props.provider;
-    this.credentials = props.credentials;
-  }
-}
-
 export class ProviderHelp {
   title: I18nObject;
   url: I18nObject;

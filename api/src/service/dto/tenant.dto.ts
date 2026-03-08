@@ -2,7 +2,7 @@ import { IsNotEmpty } from "class-validator";
 
 export class CreateTenantDto {
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  name: string;
+  name!: string;
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  createdBy: string;
+  createdBy!: string;
 }

@@ -11,70 +11,70 @@ import { Enterprise } from "@/monie/classes/enterprise.class";
 
 @Injectable()
 export class EnterpriseService {
-    private baseUrl: string;
-    private secretKey: string;
-    private apiService: EnterpriseApiService;
+  private baseUrl: string;
+  private secretKey: string;
+  private apiService: EnterpriseApiService;
 
-    constructor(
-        private readonly monieConfig: MonieConfig,
-        private readonly httpService: HttpService,
-        private readonly logger: GlobalLogger,
-        private readonly i18n: I18nService<I18nTranslations>
-    ) {
-        this.baseUrl = this.monieConfig.enterpriseApiUrl();
-        this.secretKey = this.monieConfig.enterpriseAPISecretKey();
-        this.apiService = new EnterpriseApiService(this.httpService, this.baseUrl, this.secretKey);
+  constructor(
+    private readonly monieConfig: MonieConfig,
+    private readonly httpService: HttpService,
+    private readonly logger: GlobalLogger,
+    private readonly i18n: I18nService<I18nTranslations>
+  ) {
+    this.baseUrl = this.monieConfig.enterpriseApiUrl();
+    this.secretKey = this.monieConfig.enterpriseAPISecretKey();
+    this.apiService = new EnterpriseApiService(this.httpService, this.baseUrl, this.secretKey);
+  }
+
+  private async handleRequest<T>(
+    url: string,
+    data?: any,
+    params?: any,
+  ): Promise<T | null> {
+    try {
+      const response = await this.apiService.getData<T>(url, data, params);
+      return response;
+    } catch (error) {
+      this.logger.error(`Request ${url} error`, getErrorDetails(error));
+      return null;
     }
+  }
 
-    private async handleRequest<T>(
-        url: string,
-        data?: any,
-        params?: any,
-    ): Promise<T | null> {
-        try {
-            const response = await this.apiService.getData<T>(url, data, params);
-            return response;
-        } catch (error) {
-            this.logger.error(`Request ${url} error`, getErrorDetails(error));
-            return null;
-        }
+  private async handlePostRequest<T>(
+    url: string,
+    data?: any,
+    params?: any,
+  ): Promise<T | null> {
+    try {
+      const response = await this.apiService.postData<T>(url, data, params);
+      return response;
+    } catch (error) {
+      this.logger.error(`Request ${url} error`, getErrorDetails(error));
+      return null;
     }
+  }
 
-    private async handlePostRequest<T>(
-        url: string,
-        data?: any,
-        params?: any,
-    ): Promise<T | null> {
-        try {
-            const response = await this.apiService.postData<T>(url, data, params);
-            return response;
-        } catch (error) {
-            this.logger.error(`Request ${url} error`, getErrorDetails(error));
-            return null;
-        }
+  private async handleDeleteRequest<T>(
+    url: string,
+    data?: any,
+    params?: any,
+  ): Promise<T | null> {
+    try {
+      const response = await this.apiService.deleteData<T>(url, data, params);
+      return response;
+    } catch (error) {
+      this.logger.error(`Request ${url} error`, getErrorDetails(error));
+      return null;
     }
+  }
 
-    private async handleDeleteRequest<T>(
-        url: string,
-        data?: any,
-        params?: any,
-    ): Promise<T | null> {
-        try {
-            const response = await this.apiService.deleteData<T>(url, data, params);
-            return response;
-        } catch (error) {
-            this.logger.error(`Request ${url} error`, getErrorDetails(error));
-            return null;
-        }
+  async getEnterpriseInfo(): Promise<Enterprise> {
+    const response = await this.handleRequest<Enterprise>('/info', undefined, undefined);
+
+    if (response == null) {
+      throw new InternalServerGraphQLException(this.i18n.t('billing.GET_PAYMENT_INFO_ERROR'));
     }
-
-    async getEnterpriseInfo(): Promise<Enterprise> {
-        const response = await this.handleRequest<Enterprise>('/info', undefined, undefined);
-
-        if (response == null) {
-            throw new InternalServerGraphQLException(this.i18n.t('billing.GET_PAYMENT_INFO_ERROR'));
-        }
-        return response;
-    }
+    return response;
+  }
 
 }

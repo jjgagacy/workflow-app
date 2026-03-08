@@ -41,7 +41,7 @@ export class UpdateAccountNameInput {
     message: 'auth.USERNAME_VALIDATE_LENGTH',
     context: { minLength: USERNAME_MIN_LENGTH, maxLength: USERNAME_MAX_LENGTH }
   })
-  username: string;
+  username!: string;
 }
 
 @InputType('UpdateAccountAvatarInput')
@@ -49,32 +49,32 @@ export class UpdateAccountAvatarInput {
   @Field({ nullable: false })
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   @IsUUID()
-  avatar: string;
+  avatar!: string;
 }
 
 @InputType('UpdateAccountLanguageInput')
 export class UpdateAccountLanguageInput {
   @Field({ nullable: false })
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  language: string;
+  language!: string;
 }
 
 @InputType('UpdateAccountThemeInput')
 export class UpdateAccountThemeInput {
   @Field({ nullable: false })
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  theme: string;
+  theme!: string;
 }
 
 @InputType('DeleteAccountInput')
 export class DeleteAccountInput {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  token: string;
+  token!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  code: string;
+  code!: string;
 }
 
 @InputType('DeleteAccountEmailSendInput')
@@ -87,10 +87,10 @@ export class DeleteAccountEmailSendInput {
 export class ValidateDeleteAccountCodeInput {
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  token: string;
+  token!: string;
 
   @Field()
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  code: string;
+  code!: string;
 }
 

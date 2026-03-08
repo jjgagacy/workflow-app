@@ -6,10 +6,10 @@ import { IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength } from "class-valid
 export class CommonUploadFileDto {
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   @IsUUID()
-  tenantId: string;
+  tenantId!: string;
 
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  storageType: StorageType;
+  storageType!: StorageType;
 
   @IsOptional()
   @IsString()
@@ -25,15 +25,15 @@ export class CommonUploadFileDto {
   sourceUrl?: string;
 
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  key: string;
+  key!: string;
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  name: string;
+  name!: string;
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  extension: string;
+  extension!: string;
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  size: number;
+  size!: number;
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  createdRole: CreatedRole;
+  createdRole!: CreatedRole;
 
   constructor(data?: Partial<CommonUploadFileDto>) {
     if (data) {

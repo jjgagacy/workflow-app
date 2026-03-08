@@ -7,10 +7,10 @@ export class Module {
   id?: number;
 
   @Field()
-  key: string;
+  key!: string;
 
   @Field()
-  name: string;
+  name!: string;
 
   @Field((type) => [Perm], { nullable: true })
   perms?: Perm[];
