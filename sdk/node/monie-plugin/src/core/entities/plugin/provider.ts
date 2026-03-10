@@ -5,7 +5,7 @@ import { AIModel } from "./ai-model.js";
 import { PluginFiles } from "./declaration/manifest.js";
 import { OauthSchema } from "./oauth.js";
 import { ParameterOption } from "./parameter.js";
-import { ToolProviderIdentity } from "./declaration/tool.js";
+import { ToolConfiguration, ToolProviderIdentity } from "./declaration/tool.js";
 import { ToolConfigurationExtra } from "./declaration/extra.js";
 
 export type Mapping<T = any> = Record<string, T>;
@@ -44,14 +44,16 @@ export class ToolProviderConfiguration {
   identity: ToolProviderIdentity;
   credentialsForProvider: ProviderConfig[] = [];
   oauthSchema?: OauthSchema | undefined;
-  plugins: PluginFiles;
   extra: ToolConfigurationExtra;
+  toolFiles: string[] = [];
+  tools: ToolConfiguration[] = [];
 
   constructor(data: Partial<ToolProviderConfiguration>) {
     this.identity = data.identity || new ToolProviderIdentity();
     this.credentialsForProvider = data.credentialsForProvider || [];
     this.oauthSchema = data.oauthSchema || undefined;
-    this.plugins = data.plugins || new PluginFiles();
+    this.toolFiles = data.toolFiles || [];
+    this.tools = data.tools || [];
     this.extra = data.extra || new ToolConfigurationExtra();
   }
 }

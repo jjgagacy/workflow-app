@@ -1,10 +1,10 @@
-import fs from 'fs/promises';
 import * as yaml from 'js-yaml';
 import { deepSnakeToCamel } from './string';
+import { readFile } from 'node:fs/promises';
 
 export async function loadYamlFile<T>(filePath: string, transformKey = true): Promise<T> {
   try {
-    const content = await fs.readFile(filePath, 'utf-8');
+    const content = await readFile(filePath, 'utf-8');
     const yamlData = yaml.load(content) as any;
     if (transformKey) {
       return deepSnakeToCamel(yamlData) as T;

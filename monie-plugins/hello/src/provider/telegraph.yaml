@@ -12,9 +12,8 @@ oauth_schema:
   client_schema:
     - name: "client_id"
     - name: "client_secret"
-plugins:
-  tools:
-    - tools/telegraph.yaml
+tool_files:
+  - tools/telegraph.yaml
 extra:
   node:
     module: provider/telegraph.js

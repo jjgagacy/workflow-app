@@ -49,6 +49,3 @@ export const AZURE_TRIAL_MODELS: RestrictModel[] = [
   new RestrictModel('text-embedding-3-small', ModelType.TEXT_EMBEDDING, 'text-embedding-3-small'),
   new RestrictModel('text-embedding-3-large', ModelType.TEXT_EMBEDDING, 'text-embedding-3-large'),
 ];
-
-
-

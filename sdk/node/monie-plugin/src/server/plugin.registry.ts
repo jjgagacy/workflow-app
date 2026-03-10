@@ -213,7 +213,7 @@ export class PluginRegistry {
       }
 
       const tools = new Map<string, ToolRegistration>();
-      for (const toolPath of providerConfiguration.plugins.tools) {
+      for (const toolPath of providerConfiguration.toolFiles) {
         try {
           const toolConfiguration = await loadYamlFile<ToolConfiguration>(resolveFrom(this.manifestFilePath, toolPath));
           const toolFilePath = toolConfiguration.extra.node?.module;

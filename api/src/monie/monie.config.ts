@@ -18,6 +18,7 @@ import { BillingConfig } from "./config/billing.config";
 import { LoginConfig } from "./config/login.config";
 import { FeatureConfig } from "./config/feature.config";
 import { HostedAnthropicConfig, HostedAzureOpenAIConfig, HostedMiniMaxConfig, HostedModerationConfig, HostedOpenAIConfig, HostedSparkConfig, HostedZhipuAIConfig, ModelCreditService } from "./config/hosted.config";
+import { MarketplaceConfig } from "./config/marketplace.config";
 
 @Injectable()
 export class MonieConfig {
@@ -53,7 +54,8 @@ export interface MonieConfig extends
   HostedSparkConfig,
   HostedZhipuAIConfig,
   HostedModerationConfig,
-  ModelPositionConfig { }
+  ModelPositionConfig,
+  MarketplaceConfig { }
 
 applyMixins(MonieConfig, [
   AccountConfig,
@@ -82,4 +84,5 @@ applyMixins(MonieConfig, [
   HostedZhipuAIConfig,
   HostedModerationConfig,
   ModelPositionConfig,
+  MarketplaceConfig
 ])

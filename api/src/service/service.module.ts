@@ -25,6 +25,8 @@ import { LoginRateLimiterService } from "./libs/rate-limiter/login-rate-limiter.
 import { FileService } from "./file.service";
 import { UploadFileService } from "./upload-file.service";
 import { FileHelper } from "./libs/helpers/file.helper";
+import { MarketplaceService } from "./marketplace.service";
+import { PluginDeclarationService } from "./plugin/plugin-declaration.service";
 
 @Global()
 @Module({
@@ -53,6 +55,8 @@ import { FileHelper } from "./libs/helpers/file.helper";
     UploadFileService,
     FileHelper,
     TenantAccountService,
+    MarketplaceService,
+    PluginDeclarationService,
   ],
   exports: [
     AuthAccountService,
@@ -69,7 +73,9 @@ import { FileHelper } from "./libs/helpers/file.helper";
     LocationService,
     DeviceService,
     FileService,
-    UploadFileService
+    UploadFileService,
+    MarketplaceService,
+    PluginDeclarationService,
   ],
 })
 export class ServiceModule { }

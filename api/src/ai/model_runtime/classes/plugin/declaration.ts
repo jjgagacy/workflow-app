@@ -24,10 +24,10 @@ export class PluginDeclaration {
   plugins: PluginManifest = new PluginManifest();
   meta: PluginMeta = new PluginMeta();
 
-  model: ModelProviderDeclaration[] = [];
-  tool: ToolProviderDeclaration[] = [];
-  agentStrategy: AgentStrategyDeclaration[] = [];
-  endpoint: EndpointDeclaration[] = [];
+  model: ModelProviderDeclaration | null = null;
+  tool: ToolProviderDeclaration | null = null;
+  agentStrategy: AgentStrategyDeclaration | null = null;
+  endpoint: EndpointDeclaration | null = null;
 
   constructor(data?: Partial<PluginDeclaration>) {
     this.label = new I18nObject({ en_US: this.name });

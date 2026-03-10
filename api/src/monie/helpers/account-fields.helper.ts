@@ -63,5 +63,3 @@ export function maskMobileSafely(
   const mask = maskChars.repeat(maskLength);
   return prefix + mask + suffix;
 }
-
-

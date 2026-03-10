@@ -1,4 +1,4 @@
 export enum EditionType {
-    CLOUD = 'CLOUD',
-    SELF_HOSTED = 'SELF_HOSTED'
+  CLOUD = 'CLOUD',
+  SELF_HOSTED = 'SELF_HOSTED'
 }
