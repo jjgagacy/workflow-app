@@ -78,7 +78,7 @@ export class UploadFileService {
       ...(dto.createdUser !== undefined && { createdUser: dto.createdUser }),
       ...(dto.key !== undefined && { key: dto.key }),
       ...(dto.mimeType !== undefined && { mimeType: dto.mimeType }),
-      ...(dto.name !== undefined && { name: Like(`%{dto.name}%`) }),
+      ...(dto.name !== undefined && { name: Like(`%${dto.name}%`) }),
     };
 
     const order: FindOptionsOrder<UploadFilesEntity> = { ...dto.order };

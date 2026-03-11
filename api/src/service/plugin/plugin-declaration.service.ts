@@ -5,10 +5,11 @@ import { PluginDeclaration } from "@/ai/model_runtime/classes/plugin/declaration
 import { EndpointConfiguration, EndpointDeclaration } from "@/ai/model_runtime/classes/plugin/endpoint";
 import { ToolConfiguration, ToolProviderDeclaration } from "@/ai/model_runtime/classes/tool-provider.class";
 import { loadYamlFile } from "@/common/utils/yaml";
+import { IMAGE_MIME_TYPES } from "@/config/file.constants";
 import { Injectable } from "@nestjs/common";
 import { existsSync } from "node:fs";
-import { readdir } from "node:fs/promises";
-import { join, resolve } from "node:path";
+import { readdir, readFile } from "node:fs/promises";
+import { dirname, join, resolve } from "node:path";
 
 @Injectable()
 export class PluginDeclarationService {
@@ -138,5 +139,14 @@ export class PluginDeclarationService {
     console.log(`- Model Provider: ${pluginDeclaration.model ? pluginDeclaration.model.provider : 'None'}`);
     console.log(`- Agent Strategy: ${pluginDeclaration.agentStrategy ? pluginDeclaration.agentStrategy.identity.name : 'None'}`);
     console.log(`- Endpoint: ${pluginDeclaration.endpoint ? pluginDeclaration.endpoint.endpoints.length : 'None'}`);
+  }
+
+  async readPluginFile(filePath: string): Promise<Buffer> {
+    return readFile(filePath);
+  }
+
+  getFileMimeType(filePath: string): string {
+    const ext = filePath.split('.').pop()?.toLowerCase();
+    return IMAGE_MIME_TYPES[ext || ''] || 'application/octet-stream';
   }
 }

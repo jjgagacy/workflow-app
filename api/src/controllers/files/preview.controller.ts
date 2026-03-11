@@ -3,6 +3,7 @@ import { IMAGE_MIME_TYPES } from "@/config/file.constants";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { FileNotFoundError } from "@/service/exceptions/file.error";
 import { FileService } from "@/service/file.service";
+import { convertToIconLanguage, MarketplaceService } from "@/service/marketplace.service";
 import { UploadFileService } from "@/service/upload-file.service";
 import { OpenDALStorage } from "@/storage/implements/opendal.storage";
 import { Controller, Get, Param, Query, Res } from "@nestjs/common";
@@ -17,6 +18,7 @@ export class PreviewController {
     private readonly uploadFileService: UploadFileService,
     private readonly openDALStorage: OpenDALStorage,
     private readonly fileService: FileService,
+    private readonly marketplaceService: MarketplaceService,
     private readonly i18n: I18nService<I18nTranslations>
   ) { }
 
@@ -41,5 +43,18 @@ export class PreviewController {
 
     const stream = Readable.from(data);
     return stream.pipe(res);
+  }
+
+  @Get('models-provider/icon/:provider')
+  async previewModelProviderIcon(
+    @Param('provider') provider: string,
+    @Query() query: any,
+    @Res() res: Response,
+  ) {
+    const result = await this.marketplaceService.getModelProviderIcon(provider, query?.theme || 'light', convertToIconLanguage(query?.lang || 'en-US'), query?.size === 'small');
+    const { data, mimeType } = result || { data: null, mimeType: 'image/png' };
+    res.setHeader('Content-Type', mimeType);
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    return res.send(data);
   }
 }

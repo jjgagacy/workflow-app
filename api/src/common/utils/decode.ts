@@ -30,7 +30,7 @@ export function decodeFilename(filename: string): string {
       } else {
         const buffer = Buffer.from(filename, encoding);
         const decoded = buffer.toString('utf8');
-        if (this.isValidChinese(decoded)) {
+        if (containsChinese(decoded)) {
           return decoded;
         }
       }

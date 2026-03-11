@@ -30,5 +30,4 @@ export class InternalWorkspaceController {
     const tenantId = (req as any).tenant?.id;
     return `workspace ${tenantId} post user ${JSON.stringify(body)}`;
   }
-
 }

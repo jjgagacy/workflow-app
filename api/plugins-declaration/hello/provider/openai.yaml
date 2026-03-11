@@ -10,6 +10,15 @@ help:
     zh_Hans: 从 OpenAI 获取 API Key
   url:
     en_US: https://platform.openai.com/account/api-keys
+icon_small:
+  en_US: "_assets/monie.svg"
+  zh_Hans: "_assets/monie.svg"
+icon_large:
+  en_US: "_assets/monie.svg"
+  zh_Hans: "_assets/monie.svg"
+icon_large_dark:
+  en_US: "_assets/monie.svg"
+  zh_Hans: "_assets/monie.svg"
 supported_model_types:
   - llm
   - text-embedding

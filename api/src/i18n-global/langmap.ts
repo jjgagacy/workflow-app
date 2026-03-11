@@ -43,6 +43,8 @@ export const i18nLangMap: Record<string, string> = {
   'en-Latn-US': 'en-US',  // 美国拉丁字母英语
 };
 
+export type I18nLanguage = keyof typeof i18nLangMap;
+
 export function getMappedLang(lang: string, defaultLang: string = 'en-US'): string {
   return i18nLangMap[lang] || defaultLang;
 }

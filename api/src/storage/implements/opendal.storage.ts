@@ -4,6 +4,7 @@ import { Readable } from 'stream';
 import { ListOptions } from '../types/storage.types';
 import { ConfigService } from '@nestjs/config';
 import * as opendal from 'opendal';
+import { camelToSnake } from '@/common/utils/string';
 
 @Injectable()
 export class OpenDALStorage implements BaseStorage {
@@ -46,8 +47,16 @@ export class OpenDALStorage implements BaseStorage {
   private normalizeKeys(obj: Record<string, any>): Record<string, any> {
     return Object.fromEntries(
       Object.entries(obj)
-        .filter(([, v]) => typeof v !== undefined)
-        .map(([k, v]) => [k.replace(/[A-Z]/g, (m) => `_${m.toLowerCase}`), v]),
+        .filter(([, v]) => v !== undefined)
+        .map(([k, v]) => {
+          const newKey = camelToSnake(k);
+
+          const newValue = v && typeof v === 'object'
+            ? this.normalizeKeys(v)
+            : v;
+
+          return [newKey, newValue];
+        }),
     );
   }
 

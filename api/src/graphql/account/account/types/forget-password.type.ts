@@ -61,4 +61,3 @@ export class ForgetPasswordResetInput {
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   confirmPassword!: string;
 }
-

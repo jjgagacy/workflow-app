@@ -2,13 +2,14 @@
 cd ../monie-plugins
 for plugin in */; do
   if [ -d "${plugin}dist" ]; then
-    rsync -avm \
+    rsync -avmu \
       --include='*/' \
       --include='*.yaml' \
       --include='_assets/' \
       --include='_assets/**' \
       --exclude='*' \
       --prune-empty-dirs \
+      --update \
       "${plugin}dist/" "../api/plugins-declaration/${plugin}"
   fi
 done
