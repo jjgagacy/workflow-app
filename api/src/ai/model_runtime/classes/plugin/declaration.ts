@@ -13,9 +13,9 @@ export class PluginDeclaration {
   version: string = "";
   type: PluginType = PluginType.Plugin;
   author: string | null = null;
-  label: I18nObject;
   name: string = "";
   repo: string | null = null;
+  label: I18nObject;
   description: I18nObject;
   icon: string = "";
   iconDark: string = "";
@@ -63,6 +63,4 @@ export class PluginDeclaration {
       }
     }
   }
-
-
 }

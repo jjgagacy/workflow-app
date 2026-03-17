@@ -32,16 +32,19 @@ export function deepCamelToSnake(input: any): any {
   return input;
 }
 
-
-export function deepSnakeToCamel(input: any): any {
+export function deepSnakeToCamel(input: any, excludeKeys: Set<string> = new Set()): any {
   if (Array.isArray(input)) {
-    return input.map(deepSnakeToCamel);
+    return input.map(item => deepSnakeToCamel(item, excludeKeys));
   }
 
   if (input !== null && typeof input === 'object' && input.constructor === Object) {
     return Object.entries(input).reduce((acc, [key, value]) => {
       const newKey = snakeToCamel(key);
-      acc[newKey] = deepSnakeToCamel(value);
+      if (excludeKeys.has(key)) {
+        acc[key] = value;
+      } else {
+        acc[newKey] = deepSnakeToCamel(value, excludeKeys);
+      }
       return acc;
     }, {} as Record<string, any>);
   }

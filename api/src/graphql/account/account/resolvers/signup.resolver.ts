@@ -119,5 +119,4 @@ export class SignUpResolver {
     await this.tokenManagerService.removeToken(input.token, TOKEN_TYPES.INVITE_MEMBER);
     return true;
   }
-
 }

@@ -21,9 +21,11 @@ import { TOKEN_TYPES, TokenManagerService } from "@/service/libs/token-manager.s
 import { CurrentTenent } from "@/common/decorators/current-tenant";
 import { TenantAccountService, TenantService } from "@/service/tenant.service";
 import { RequiredStringPipe } from "@/common/pipes/required-string.pipe";
+import { LoginRequiredGuard } from "@/common/guards/auth/login-required.guard";
+import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 
 @Resolver()
-@UseGuards(EditionSelfHostedGuard)
+@UseGuards(LoginRequiredGuard)
 export class UpdateAccountResolver {
   constructor(
     private readonly accountService: AccountService,
@@ -33,6 +35,7 @@ export class UpdateAccountResolver {
   ) { }
 
   @Mutation(() => AccountResponse)
+  @UseGuards(EditionSelfHostedGuard)
   async updateAccount(@Args('input') input: AccountInput, @CurrentUser() user: any): Promise<AccountResponse> {
     const dto: UpdateAccountDto = {
       id: input.id,
@@ -82,6 +85,8 @@ export class UpdateAccountResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(TenantContextGuard)
+  @UseGuards(EditionSelfHostedGuard)
   async toggleAccountStatus(
     @CurrentUser() user: any,
     @CurrentTenent() tenant: any,
@@ -108,6 +113,8 @@ export class UpdateAccountResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(EditionSelfHostedGuard)
+  @UseGuards(TenantContextGuard)
   async removeAccount(
     @CurrentUser() user: any,
     @CurrentTenent() tenant: any,
@@ -132,7 +139,7 @@ export class UpdateAccountResolver {
 }
 
 @Resolver()
-@UseGuards(EditionSelfHostedGuard)
+@UseGuards(LoginRequiredGuard)
 export class UpdateAccountFieldsResolver {
   constructor(
     private readonly accountService: AccountService,
@@ -256,11 +263,10 @@ export class UpdateAccountFieldsResolver {
     await this.accountService.update(dto);
     return true;
   }
-
 }
 
 @Resolver()
-@UseGuards(EditionSelfHostedGuard)
+@UseGuards(LoginRequiredGuard)
 export class ChangeEmailResolver {
   constructor(
     private readonly accountService: AccountService,

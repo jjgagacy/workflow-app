@@ -4,6 +4,9 @@ import { Field, ObjectType } from "@nestjs/graphql";
 
 @ObjectType('ModelProvider')
 export class ModelProvider {
+  @Field(() => String, { description: "Type of the provider" })
+  providerType!: string;
+
   @Field(() => String, { description: "Name of the provider" })
   provider!: string;
 
@@ -13,8 +16,8 @@ export class ModelProvider {
   @Field(() => I18nObjectType, { description: "Label of the provider in multiple languages" })
   label!: I18nObjectType;
 
-  @Field(() => I18nObjectType, { description: "Description of the provider in multiple languages" })
-  description!: I18nObjectType;
+  @Field(() => I18nObjectType, { nullable: true, description: "Description of the provider in multiple languages" })
+  description?: I18nObjectType;
 }
 
 @ObjectType('ModelProvidersList')

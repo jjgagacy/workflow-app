@@ -124,6 +124,14 @@ input ForgetPasswordResetInput {
   token: String!
 }
 
+type I18nObjectType {
+  """English (United States) translation"""
+  en_US: String
+
+  """Chinese (Simplified) translation"""
+  zh_Hans: String
+}
+
 input InviteMemberActivationInput {
   inviteeEmail: String!
   inviteeName: String!
@@ -175,6 +183,29 @@ input MenuInput {
 
 type MenuResponse {
   id: Int!
+}
+
+type ModelProvider {
+  """Description of the provider in multiple languages"""
+  description: I18nObjectType
+
+  """Url of the provider icon"""
+  icon: String!
+
+  """Label of the provider in multiple languages"""
+  label: I18nObjectType!
+
+  """Name of the provider"""
+  provider: String!
+
+  """Type of the provider"""
+  providerType: String!
+}
+
+type ModelProvidersList {
+  """List of model providers"""
+  data: [ModelProvider!]!
+  pageInfo: PageInfo
 }
 
 type Module {
@@ -291,6 +322,13 @@ type Query {
   hello: String!
   menuInfo(id: Int!): Menu!
   menus(key: String, module: Boolean, modulePerm: Boolean, name: String, parent: String, scope: Boolean, status: Int): [Menu!]!
+  modelProviders(
+    """Category to filter providers by"""
+    category: String
+
+    """List of provider names to exclude from the results"""
+    excludes: [String!]
+  ): ModelProvidersList!
   modules(key: String, limit: Int, name: String, page: Int): ModuleList!
   roles(hasMenus: Boolean, hasRolePerms: Boolean, id: Int, key: String, limit: Int, name: String, page: Int, parent: String, status: Int): RoleList!
   routes: [Route!]!

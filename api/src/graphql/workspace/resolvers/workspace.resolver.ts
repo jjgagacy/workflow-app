@@ -2,7 +2,7 @@ import { AccountService } from "@/account/account.service";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
 import { CurrentUser } from "@/common/decorators/current-user";
 import { AccountNotInFreezeGuard } from "@/common/guards/auth/account-not-infreeze.guard";
-import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
+import { LoginRequiredGuard } from "@/common/guards/auth/login-required.guard";
 import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { TenantResponse } from "@/graphql/account/account/types/login-response.type";
@@ -16,7 +16,7 @@ import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { I18nService } from "nestjs-i18n";
 
 @Resolver()
-@UseGuards(EditionSelfHostedGuard)
+@UseGuards(LoginRequiredGuard)
 export class WorkspaceResolver {
   constructor(
     private readonly authAccountService: AuthAccountService,

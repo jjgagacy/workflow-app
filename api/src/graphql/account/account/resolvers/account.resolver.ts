@@ -24,6 +24,7 @@ import { getMappedLang } from "@/i18n-global/langmap";
 import { convertLanguageCode } from "@/mail/mail-i18n.service";
 import { TOKEN_TYPES, TokenManagerService } from "@/service/libs/token-manager.service";
 import { maskMobileSafely, maskUsernameSafely } from "@/monie/helpers/account-fields.helper";
+import { LoginRequiredGuard } from "@/common/guards/auth/login-required.guard";
 
 @Resolver()
 export class AccountResolver {
@@ -36,6 +37,7 @@ export class AccountResolver {
 
   @Query(() => AccountList)
   @UseGuards(EditionSelfHostedGuard)
+  @UseGuards(LoginRequiredGuard)
   @UseGuards(TenantContextGuard)
   async accounts(
     @Args() args: GetAccountArgs,
@@ -92,6 +94,8 @@ export class AccountResolver {
   }
 
   @Query(() => Account)
+  @UseGuards(LoginRequiredGuard)
+  @UseGuards(TenantContextGuard)
   async accountInfo(
     @CurrentUser() user: any,
     @CurrentTenent() tenant: any
@@ -130,6 +134,8 @@ export class CreateAccountResolver {
   ) { }
 
   @Mutation(() => AccountResponse)
+  @UseGuards(LoginRequiredGuard)
+  @UseGuards(TenantContextGuard)
   async createAccount(
     @Args('input') input: AccountInput,
     @CurrentUser() user: any,
@@ -175,6 +181,7 @@ export class DeleteAccountResolver {
   ) { }
 
   @Mutation(() => Boolean)
+  @UseGuards(LoginRequiredGuard)
   async deleteAccount(
     @Args('input') input: DeleteAccountInput,
     @CurrentUser() user: any
@@ -191,6 +198,7 @@ export class DeleteAccountResolver {
   }
 
   @Mutation(() => String)
+  @UseGuards(LoginRequiredGuard)
   async deleteAccountEmailSend(
     @Args('input') input: DeleteAccountEmailSendInput,
     @GqlRequest() req: Request,
@@ -207,6 +215,7 @@ export class DeleteAccountResolver {
   }
 
   @Mutation(() => String)
+  @UseGuards(LoginRequiredGuard)
   async validateDeleteAccountEmailCode(
     @Args('input') input: ValidateDeleteAccountCodeInput,
     @CurrentUser() user: any
@@ -223,7 +232,6 @@ export class DeleteAccountResolver {
     const newToken = await this.tokenManagerService.generateToken(TOKEN_TYPES.ACCOUNT_DELETION, undefined, account.email, { code: input.code });
     return newToken;
   }
-
 }
 
 const shouldMaskAccountfields = (account: AccountEntity, user_id: any) => account.id !== user_id;

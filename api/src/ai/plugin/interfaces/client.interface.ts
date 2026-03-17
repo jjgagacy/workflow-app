@@ -1,3 +1,4 @@
+import { AppendOptions } from "form-data";
 import { ReadStream } from "fs";
 
 export interface PluginRequestOptions {
@@ -12,9 +13,6 @@ export interface PluginRequestOptions {
 
 export interface FileItem {
   value: Buffer | ReadStream | string;
-  options?: {
-    filename?: string;
-    contentType?: string;
-  }
+  options?: AppendOptions;
 }
 

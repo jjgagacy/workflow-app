@@ -1,18 +1,28 @@
 import { MonieConfig } from "@/monie/monie.config";
 import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
-import { PluginRequestOptions } from "../../ai/plugin/interfaces/client.interface";
+import { FileItem, PluginRequestOptions } from "../../ai/plugin/interfaces/client.interface";
 import { AxiosResponse } from "axios";
 import { catchError, map, mergeMap, Observable, retry, throwError } from "rxjs";
 import { Readable } from 'stream';
 import FormData from "form-data";
+import { GlobalLogger, LogContext } from "@/logger/logger.service";
+import { PluginDaemonBasicResponse } from "@/ai/plugin/entities/plugin-daemon";
+import { handlePluginError, PluginDaemonError, PluginInvokeError } from "@/ai/plugin/entities/plugin-error";
+import { v4 as uuidv4 } from 'uuid';
+import { formatBytes } from "@/common/utils/number";
 
 @Injectable()
 export class BasePluginClient {
   constructor(
     private readonly httpService: HttpService,
     private readonly monieConfig: MonieConfig,
+    private readonly logger: GlobalLogger
   ) { }
+
+  private generateRequestId(): string {
+    return `${uuidv4()}_${Date.now()}`;
+  }
 
   private request<T = any>(
     options: PluginRequestOptions
@@ -143,7 +153,7 @@ export class BasePluginClient {
         subscriber.complete();
       }
 
-      const onError = (error) => subscriber.error(error);
+      const onError = (error: any) => subscriber.error(error);
 
       stream.on('data', onData);
       stream.on('end', onEnd);
@@ -160,4 +170,142 @@ export class BasePluginClient {
     });
   }
 
+  requestWithPluginDaemonResponse<T = any>(
+    method: string,
+    path: string,
+    options?: {
+      headers?: Record<string, string>;
+      data?: Record<string, any> | FormData | null;
+      params?: Record<string, string>;
+      transformer?: (data: any) => any;
+      files?: Record<string, FileItem>;
+    }
+  ): Observable<T> {
+    const { headers = {}, data, params, transformer, files = {} } = options || {};
+
+    const requestHeaders = {
+      'Content-Type': 'application/json',
+      ...headers
+    };
+    const requestId = this.generateRequestId();
+    const startTime = Date.now();
+
+    const baseContext: LogContext = {
+      requestId,
+      method,
+      path,
+      timestamp: new Date().toISOString(),
+      headers: this.sanitizeHeaders(headers),
+      data: options?.data,
+      params: options?.params,
+      files: options?.files,
+    }
+    this.logger.log(`📦 [${requestId}] request plugin details`, baseContext);
+
+    return this.request<T>({
+      method,
+      path,
+      headers: requestHeaders,
+      data,
+      params,
+      files,
+    }).pipe(
+      map(response => {
+        const duration = Date.now() - startTime;
+        const responseData = response.data;
+
+        this.logger.log(`[${requestId}] get plugin response`, {
+          ...baseContext,
+          status: response.status,
+          statusText: response.statusText,
+          duration: `${duration}ms`,
+          responseSize: this.getSize(responseData),
+        });
+
+        const transformedData = transformer ? transformer(responseData) : responseData;
+        if (!isValidPluginDaemonResponse(transformedData)) {
+          this.logger.error(`[${requestId}] format error`, {
+            ...baseContext,
+            responseData,
+          });
+          throw new Error('Invalid plugin daemon response data format')
+        }
+        const pluginResponse = transformedData as PluginDaemonBasicResponse<T>;
+        if (pluginResponse.code != 0) {
+          this.logger.warn(`[${requestId}] response error`, {
+            ...baseContext,
+            code: pluginResponse.code,
+            message: pluginResponse.message,
+            duration: `${duration}ms`,
+          });
+          handlePluginError(pluginResponse);
+        }
+        if (pluginResponse.data === null || pluginResponse.data === undefined) {
+          this.logger.error(`[${requestId}] returns empty data`, {
+            ...baseContext,
+            code: pluginResponse.code,
+            duration: `${duration}ms`
+          });
+          throw new Error('Plugin daemon returned empty data');
+        }
+
+        this.logger.log(`[${requestId}] request success`, {
+          ...baseContext,
+          code: pluginResponse.code,
+          responseData: pluginResponse.data,
+          hasData: true,
+          duration: `${duration}ms`
+        });
+
+        if (duration > 5000) {
+          this.logger.warn(`[${requestId}] request time too long`, {
+            ...baseContext,
+            duration: `${duration}ms`,
+            threshold: '5s'
+          });
+        }
+
+        return pluginResponse.data;
+      }),
+      catchError(error => {
+        if (error instanceof PluginDaemonError) {
+          throw error;
+        }
+        // other errors
+        console.error('Request failed:', error);
+        throw error;
+      }),
+    );
+  }
+
+  private sanitizeHeaders(headers: Record<string, string>): Record<string, string> {
+    const sensitiveHeaders = ['authorization', 'cookie', 'x-api-key', 'token'];
+    const sanitized = { ...headers };
+
+    for (const header of sensitiveHeaders) {
+      if (sanitized[header]) {
+        sanitized[header] = '***REDACTED***';
+      }
+    }
+
+    return sanitized;
+  }
+
+  private getSize(data: any): string {
+    try {
+      const str = JSON.stringify(data);
+      const bytes = new Blob([str]).size;
+      return formatBytes(bytes);
+    } catch {
+      return 'unknown';
+    }
+  }
+}
+
+export function isValidPluginDaemonResponse(obj: any): boolean {
+  return obj &&
+    typeof obj === 'object' &&
+    typeof obj.code === 'number' &&
+    typeof obj.message === 'string' &&
+    'data' in obj;
 }

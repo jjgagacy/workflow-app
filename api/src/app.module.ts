@@ -100,6 +100,7 @@ import { UniversalAuthGuard } from './common/guards/universal-auth.guard';
 import { FilesController } from './controllers/api/files.controller';
 import { PreviewController } from './controllers/files/preview.controller';
 import { TenantAccountService } from './service/tenant.service';
+import { ModelProvidersResolver } from './graphql/marketplace/resolvers/model-providers.resolver';
 
 @Module({
   imports: [
@@ -340,6 +341,7 @@ import { TenantAccountService } from './service/tenant.service';
     SignUpResolver,
     ForgetPasswordResolver,
     ChangeEmailResolver,
+    ModelProvidersResolver,
   ],
 })
 export class AppModule implements NestModule {

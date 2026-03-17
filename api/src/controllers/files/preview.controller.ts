@@ -45,13 +45,15 @@ export class PreviewController {
     return stream.pipe(res);
   }
 
-  @Get('models-provider/icon/:provider')
+  @Get('model-provider/icon/:provider/:theme/:lang/:size')
   async previewModelProviderIcon(
     @Param('provider') provider: string,
-    @Query() query: any,
+    @Param('theme') theme: string,
+    @Param('lang') lang: string,
+    @Param('size') size: string,
     @Res() res: Response,
   ) {
-    const result = await this.marketplaceService.getModelProviderIcon(provider, query?.theme || 'light', convertToIconLanguage(query?.lang || 'en-US'), query?.size === 'small');
+    const result = await this.marketplaceService.getModelProviderIcon(provider, theme || 'light', convertToIconLanguage(lang || 'en_US'), size === 'small');
     const { data, mimeType } = result || { data: null, mimeType: 'image/png' };
     res.setHeader('Content-Type', mimeType);
     res.setHeader('Cache-Control', 'public, max-age=86400');

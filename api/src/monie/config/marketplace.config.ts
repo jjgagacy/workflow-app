@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { toBoolean } from "../helpers/to-boolean";
 
 @Injectable()
 export class MarketplaceConfig {
@@ -12,5 +13,9 @@ export class MarketplaceConfig {
 
   marketplacePluginsPath(): string {
     return this.configService.get<string>('MARKETPLACE_PLUGINS_PATH') || './plugins-declaration';
+  }
+
+  marketplaceEnabled(): boolean {
+    return toBoolean(this.configService.get<boolean>('MARKETPLACE_ENABLED', true));
   }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { CogIcon, User } from "lucide-react";
+import { BrainCog, CogIcon, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,11 +9,13 @@ import SettingContent from "./content/setting-content";
 import { useCustomTheme } from "../../provider/customThemeProvider";
 import { getThemeActiveClass, getThemeBgClass, ThemeType } from "@/types/theme";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
+import ModelProvider from "./content/model-provider";
 
 type MenuKey =
   | 'profile'
   | 'setting'
-  | 'billing';
+  | 'billing'
+  | 'model_provider';
 
 type MenuItem = {
   key: MenuKey;
@@ -28,7 +30,6 @@ export default function AccountSettingsLayout() {
   const router = useRouter();
   const { activeTheme: activeTheme } = useCustomTheme();
 
-
   const MENU_ITEMS: MenuItem[] = [
     {
       key: 'profile',
@@ -41,6 +42,12 @@ export default function AccountSettingsLayout() {
       label: t('system.settings'),
       icon: <CogIcon className="w-5 h-5" />,
       description: ''
+    },
+    {
+      key: 'model_provider',
+      label: t('system.model_provider'),
+      icon: <BrainCog className="w-5 h-5" />,
+      description: '',
     }
   ] as const;
 
@@ -65,6 +72,8 @@ export default function AccountSettingsLayout() {
         return <ProfileContent />
       case 'setting':
         return <SettingContent />
+      case 'model_provider':
+        return <ModelProvider />
     }
   }
 

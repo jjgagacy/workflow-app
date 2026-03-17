@@ -19,7 +19,6 @@ export class EditionSelfHostedGuard implements CanActivate {
     if (edition != EditionType.SELF_HOSTED) {
       throw new ForbiddenException();
     }
-
     return true;
   }
 }
