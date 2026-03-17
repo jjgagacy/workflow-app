@@ -7,8 +7,11 @@ export class ModelProvider {
   @Field(() => String, { description: "Type of the provider" })
   providerType!: string;
 
-  @Field(() => String, { description: "Name of the provider" })
-  provider!: string;
+  @Field(() => String, { description: "Name of the author" })
+  author!: string;
+
+  @Field(() => String, { description: "Name of the model" })
+  name!: string;
 
   @Field(() => String, { description: "Url of the provider icon" })
   icon!: string;

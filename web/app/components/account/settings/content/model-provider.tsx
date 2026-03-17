@@ -13,7 +13,7 @@ export default function ModelProvider() {
   const excludes: string[] = [];
 
   const allPlugins = useMemo(() => {
-    const allPlugins: any = [...modelProviders?.filter(plugin => !excludes.includes(plugin.provider)) || []];
+    const allPlugins: any = [...modelProviders?.filter(plugin => !excludes.includes(plugin.author)) || []];
     return allPlugins;
   }, [modelProviders, excludes]);
 

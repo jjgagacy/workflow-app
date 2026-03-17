@@ -1,7 +1,9 @@
+export type ProviderType = 'model' | 'tool' | 'endpoint';
 
 export type Plugin = {
-  providerType: 'model' | 'tool' | 'endpiont',
-  provider: string;
+  providerType: ProviderType;
+  author: string;
+  name: string;
   icon: string;
   label: Record<string, string>;
   description?: Record<string, string>;

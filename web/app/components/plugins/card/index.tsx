@@ -1,6 +1,6 @@
 import React from "react";
 import { Plugin } from "../types";
-import { getClientLocale } from "@/i18n";
+import { getClientLocale, getLocalizedText } from "@/i18n";
 import { getLanguage } from "@/i18n/config";
 import { cn } from "@/utils/classnames";
 import Button from "../../base/button";
@@ -11,9 +11,10 @@ export type CardProps = {
   footer?: React.ReactNode;
   isLoading?: boolean;
   locale?: string;
+  onClick?: () => void;
 }
 
-const Card = ({ className, plugin, footer, isLoading, locale: localeFromProps }: CardProps) => {
+const Card = ({ className, plugin, footer, isLoading, locale: localeFromProps, onClick }: CardProps) => {
   const defaultLocale = getClientLocale();
   const locale = getLanguage(localeFromProps || defaultLocale);
 
@@ -22,14 +23,14 @@ const Card = ({ className, plugin, footer, isLoading, locale: localeFromProps }:
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center space-x-3">
           <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white font-medium`}>
-            <img src={plugin.icon} alt={plugin.provider} className="w-10" />
+            <img src={plugin.icon} alt={plugin.author} className="w-10" />
           </div>
           <div>
-            <h3 className="font-medium text-gray-900 dark:text-white">{plugin.provider}</h3>
+            <h3 className="font-medium text-gray-900 dark:text-white">{getLocalizedText(plugin.label, locale)}</h3>
             <p className="text-xs text-gray-400"></p>
           </div>
         </div>
-        <Button variant='primary' size={'small'}>
+        <Button variant='primary' size={'small'} onClick={onClick}>
           安装
         </Button>
       </div>
@@ -43,7 +44,7 @@ const Card = ({ className, plugin, footer, isLoading, locale: localeFromProps }:
 
       {plugin.description && (
         <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
-          {plugin.description[locale]}
+          {getLocalizedText(plugin.description, locale)}
         </p>
       )}
     </div>

@@ -101,6 +101,7 @@ import { FilesController } from './controllers/api/files.controller';
 import { PreviewController } from './controllers/files/preview.controller';
 import { TenantAccountService } from './service/tenant.service';
 import { ModelProvidersResolver } from './graphql/marketplace/resolvers/model-providers.resolver';
+import { PluginResolver } from './graphql/workspace/resolvers/plugin.resolver';
 
 @Module({
   imports: [
@@ -342,6 +343,7 @@ import { ModelProvidersResolver } from './graphql/marketplace/resolvers/model-pr
     ForgetPasswordResolver,
     ChangeEmailResolver,
     ModelProvidersResolver,
+    PluginResolver,
   ],
 })
 export class AppModule implements NestModule {

@@ -186,6 +186,9 @@ type MenuResponse {
 }
 
 type ModelProvider {
+  """Name of the author"""
+  author: String!
+
   """Description of the provider in multiple languages"""
   description: I18nObjectType
 
@@ -195,8 +198,8 @@ type ModelProvider {
   """Label of the provider in multiple languages"""
   label: I18nObjectType!
 
-  """Name of the provider"""
-  provider: String!
+  """Name of the model"""
+  name: String!
 
   """Type of the provider"""
   providerType: String!
@@ -262,6 +265,7 @@ type Mutation {
   forgetPasswordReset(input: ForgetPasswordResetInput!): Boolean!
   forgetPasswordSendEmail(input: ForgetPasswordInput!): String!
   forgetPasswordTokenCheck(input: ForgetPasswordInput!): ForgetPasswordCheckResponse!
+  installFromMarketplace(identifiers: [String!]!): PluginInstallResponse!
   inviteMemberActivation(input: InviteMemberActivationInput!): Boolean!
   inviteTokenCheck(token: String!): InviterResponse!
   login(input: LoginInput!): LoginResponse!
@@ -311,6 +315,10 @@ input PermInput {
   module: String!
   name: String
   restrictLevel: Int
+}
+
+type PluginInstallResponse {
+  allInstalled: Boolean!
 }
 
 type Query {

@@ -5,7 +5,9 @@ export const GET_MODEL_PROVIDERS = gql`
   query($excludes: [String!], $category: String) {
     modelProviders(excludes: $excludes, category: $category) {
       data {
-        provider,
+        providerType,
+        author,
+        name,
         icon,
         label {
           ${I18N_FIELDS}

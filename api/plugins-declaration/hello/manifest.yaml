@@ -3,8 +3,11 @@ type: plugin
 author: monie
 name: hello
 label:
-  en_US: hello
-  zh_Hans: hello
+  en_US: Hello
+  zh_Hans: Hello 
+description:
+  en_US: A simple plugin to say hello.
+  zh_Hans: 一个简单的插件，用于打招呼。
 icon: monie.svg
 created: 2023-10-01T00:00:00Z
 resource:

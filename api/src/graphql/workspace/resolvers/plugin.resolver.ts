@@ -17,9 +17,8 @@ export class PluginResolver {
   @UseGuards(AccountInitializedGuard)
   @UseGuards(TenantContextGuard)
   async installFromMarketplace(
-    @Args('identifiers') identifiers: string[],
-    @CurrentTenent() tenant: any,
-    @CurrentUser() user: any
+    @Args('identifiers', { type: () => [String] }) identifiers: string[],
+    @CurrentTenent() tenant: any
   ): Promise<PluginInstallResponse> {
     // Validate identifiers
     for (const identifier of identifiers) {

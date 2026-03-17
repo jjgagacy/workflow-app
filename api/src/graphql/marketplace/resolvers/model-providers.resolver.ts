@@ -31,7 +31,8 @@ export class ModelProvidersResolver {
     const providerIconUrl = declaration.model ? this.marketplaceService.getModelProviderIconUrl(declaration.model.provider) : null;
     return {
       providerType: this.marketplaceService.getModelProviderType(declaration),
-      provider: declaration.name,
+      author: declaration.author || '',
+      name: declaration.name,
       icon: providerIconUrl || '',
       label: declaration.label,
       description: declaration.description,

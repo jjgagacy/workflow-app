@@ -1,15 +1,15 @@
-provider: openai
+provider: monie
 label:
-  en_US: OpenAI
+  en_US: Monie AI
 description:
-  en_US: Models provided by OpenAI, such as GPT-3.5-Turbo and GPT-4.
-  zh_Hans: OpenAI 提供的模型，例如 GPT-3.5-Turbo 和 GPT-4。
+  en_US: Models provided by Monie AI, such as GPT-4.
+  zh_Hans: Monie AI 提供的模型，例如 GPT-4。
 help:
   title:
-    en_US: Get your API Key from OpenAI
-    zh_Hans: 从 OpenAI 获取 API Key
+    en_US: Get your API Key from Monie AI
+    zh_Hans: 从 Monie AI 获取 API Key
   url:
-    en_US: https://platform.openai.com/account/api-keys
+    en_US: https://platform.monieai.com/account/api-keys
 icon_small:
   en_US: "_assets/monie.svg"
   zh_Hans: "_assets/monie.svg"

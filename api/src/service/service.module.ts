@@ -27,10 +27,12 @@ import { UploadFileService } from "./upload-file.service";
 import { FileHelper } from "./libs/helpers/file.helper";
 import { MarketplaceService } from "./marketplace.service";
 import { PluginDeclarationService } from "./plugin/plugin-declaration.service";
+import { PluginService } from "./plugin/plugin.service";
+import { PluginModule } from "@/ai/plugin/plugin.module";
 
 @Global()
 @Module({
-  imports: [EncryptionModule, StorageModule, MailModule, ModelRuntimeModule],
+  imports: [EncryptionModule, StorageModule, MailModule, ModelRuntimeModule, PluginModule],
   providers: [
     AuthAccountService,
     GeneralCacheService,
@@ -57,6 +59,8 @@ import { PluginDeclarationService } from "./plugin/plugin-declaration.service";
     TenantAccountService,
     MarketplaceService,
     PluginDeclarationService,
+    PluginService,
+
   ],
   exports: [
     AuthAccountService,
@@ -76,6 +80,7 @@ import { PluginDeclarationService } from "./plugin/plugin-declaration.service";
     UploadFileService,
     MarketplaceService,
     PluginDeclarationService,
+    PluginService,
   ],
 })
 export class ServiceModule { }
