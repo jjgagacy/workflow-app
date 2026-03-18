@@ -4,6 +4,7 @@ import { getClientLocale, getLocalizedText } from "@/i18n";
 import { getLanguage } from "@/i18n/config";
 import { cn } from "@/utils/classnames";
 import Button from "../../base/button";
+import { useTranslation } from "react-i18next";
 
 export type CardProps = {
   className?: string;
@@ -16,6 +17,7 @@ export type CardProps = {
 }
 
 const Card = ({ className, plugin, footer, isLoading, locale: localeFromProps, onClick, hideInstall }: CardProps) => {
+  const { t } = useTranslation();
   const defaultLocale = getClientLocale();
   const locale = getLanguage(localeFromProps || defaultLocale);
 
@@ -32,7 +34,7 @@ const Card = ({ className, plugin, footer, isLoading, locale: localeFromProps, o
           </div>
         </div>
         {!hideInstall && (<Button variant='primary' size={'small'} onClick={onClick}>
-          安装
+          {t('app.actions.install')}
         </Button>)}
       </div>
 

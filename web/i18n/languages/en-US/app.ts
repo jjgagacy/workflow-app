@@ -20,6 +20,7 @@ const translation = {
     change: 'Change',
     verify: 'Verify',
     back: 'Back',
+    install: 'Install',
   },
   theme: {
     system: 'Follow System',

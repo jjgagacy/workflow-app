@@ -2,9 +2,9 @@ import { PluginInstallerService } from "@/ai/plugin/services/plugin-installer.se
 import { MonieConfig } from "@/monie/monie.config";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { MarketplaceService } from "../marketplace.service";
-import { isValidPluginUniqueIdentifier, marshalPluginID } from "@/ai/plugin/entities/identify";
-import { PluginDeclaration } from "@/ai/model_runtime/classes/plugin/declaration";
+import { isValidPluginUniqueIdentifier } from "@/ai/plugin/entities/identify";
 import { PluginInstallationSource } from "@/ai/plugin/entities/plugin";
+import { PluginInstallation } from "@/ai/plugin/entities/plugin-installation";
 
 @Injectable()
 export class PluginService {
@@ -26,7 +26,7 @@ export class PluginService {
       if (!isValidPluginUniqueIdentifier(identifer)) {
         throw new BadRequestException("identifier invalid");
       }
-      const pluginUniqueIdentifier = await this.resolvePluginUniqueIdentifier(identifer);
+      const pluginUniqueIdentifier = await this.marketplaceService.findPluginUniqueIdentifier(identifer);
       if (pluginUniqueIdentifier) {
         pluginUniqueIdentifiers.push(pluginUniqueIdentifier);
         metas.push({ pluginUniqueIdentifier })
@@ -39,27 +39,7 @@ export class PluginService {
     return { allInstalled };
   }
 
-  private async resolvePluginUniqueIdentifier(identifierOrModelProvider: string): Promise<string | null> {
-    const pluginDeclarations = await this.marketplaceService.getPluginDeclarationsUseCache();
-    let modelProviderDeclaration: PluginDeclaration | null = null;
-    for (const pluginDeclaration of pluginDeclarations) {
-      const pluginUniqueIdentifier = marshalPluginID(pluginDeclaration.author || '', pluginDeclaration.name, pluginDeclaration.version);
-
-      if (pluginUniqueIdentifier === identifierOrModelProvider) {
-        return pluginUniqueIdentifier;
-      }
-
-      if (pluginDeclaration.model) {
-        if (pluginDeclaration.model.provider === identifierOrModelProvider) {
-          modelProviderDeclaration = pluginDeclaration;
-        }
-      }
-    }
-
-    if (modelProviderDeclaration) {
-      return marshalPluginID(modelProviderDeclaration.author || '', modelProviderDeclaration.name, modelProviderDeclaration.version);
-    }
-
-    return null
+  async listPluginsFromIds(tenantId: string, pluginIds: string[]): Promise<PluginInstallation[]> {
+    return this.installer.fetchPluginInstallationByPluginIds(tenantId, pluginIds);
   }
 }

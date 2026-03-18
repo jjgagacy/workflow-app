@@ -8,3 +8,14 @@ export type Plugin = {
   label: Record<string, string>;
   description?: Record<string, string>;
 }
+
+export type PluginInstallation = {
+  id: string;
+  name: string;
+  pluginId: string;
+  tenantId: string;
+  version: string;
+  meta: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+}

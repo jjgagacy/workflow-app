@@ -73,7 +73,7 @@ export class PluginInstallerService {
     });
   }
 
-  async fetchPluginInstallationByPluginId(tenantId: string, pluginIds: string[]): Promise<PluginInstallation[]> {
+  async fetchPluginInstallationByPluginIds(tenantId: string, pluginIds: string[]): Promise<PluginInstallation[]> {
     return new Promise((resolve, reject) => {
       this.baseClient.requestWithPluginDaemonResponse(
         'POST',

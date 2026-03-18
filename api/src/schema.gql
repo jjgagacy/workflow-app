@@ -146,6 +146,11 @@ type InviterResponse {
   workspaceName: String!
 }
 
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
 input LoginInput {
   password: String!
   username: String!
@@ -321,6 +326,17 @@ type PluginInstallResponse {
   allInstalled: Boolean!
 }
 
+type PluginInstallationResponse {
+  createdAt: Date!
+  id: String!
+  meta: JSON!
+  name: String!
+  pluginId: String!
+  tenantId: String!
+  updatedAt: Date!
+  version: String!
+}
+
 type Query {
   accountInfo: Account!
   accounts(email: String, id: Int, limit: Int, mobile: String, page: Int, realName: String, roleId: Int, username: String): AccountList!
@@ -328,6 +344,7 @@ type Query {
   depInfo(key: String!): Dep!
   deps(key: String, name: String, parent: String): [Dep!]!
   hello: String!
+  listPluginFromIds(pluginIds: [String!]!): [PluginInstallationResponse!]!
   menuInfo(id: Int!): Menu!
   menus(key: String, module: Boolean, modulePerm: Boolean, name: String, parent: String, scope: Boolean, status: Int): [Menu!]!
   modelProviders(

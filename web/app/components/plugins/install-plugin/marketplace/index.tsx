@@ -6,6 +6,8 @@ import { Plugin } from "../../types";
 import { useCallback, useState } from "react";
 import { InstallStep } from "../types";
 import Install from "./steps/install";
+import api from "@/api";
+import { useCheckInstalled } from "../hooks/use-check-installed";
 
 type InstallFromMarketplaceProps = {
   identifier: string;
@@ -23,6 +25,8 @@ const InstallFromMarketplace = ({
   const { t } = useTranslation();
   const [step, setStep] = useState<InstallStep>(InstallStep.readyToInstall);
   const [isInstalling, setIsInstalling] = useState(false);
+  const { installInfo, isLoading, mutate } = useCheckInstalled({ identifiers: [identifier] });
+  console.log(installInfo ? installInfo[identifier] : null);
 
   const getTitile = useCallback(() => {
     return t(`system.install_model.title`)
@@ -48,6 +52,7 @@ const InstallFromMarketplace = ({
   }, []);
 
   const handleCancel = useCallback(() => {
+    onClose();
   }, []);
 
   return (

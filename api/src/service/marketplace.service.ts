@@ -11,6 +11,8 @@ import { ModelProviderDeclaration } from "@/ai/model_runtime/classes/model-provi
 import { i18nLangMap } from "@/i18n-global/langmap";
 import { ModelProviderQueryProps } from "./types/model-provider.type";
 import { PluginProviderType } from "@/ai/model_runtime/classes/plugin/plugin";
+import { ProviderID } from "@/ai/plugin/entities/provider-id.entities";
+import { marshalPluginID } from "@/ai/plugin/entities/identify";
 
 export type IconLanguage = 'en_US' | 'zh_Hans';
 const cacheKeyPluginDeclarations = 'marketplace_plugin_declarations';
@@ -139,6 +141,21 @@ export class MarketplaceService {
       return PluginProviderType.Endpoint;
     }
     return 'unknown';
+  }
+
+  async findPluginUniqueIdentifier(identifierOrPluginId: string): Promise<string | null> {
+    const pluginDeclarations = await this.getPluginDeclarationsUseCache();
+    for (const pluginDeclaration of pluginDeclarations) {
+      const providerId = new ProviderID(pluginDeclaration.author + '/' + pluginDeclaration.name);
+      const pluginUniqueIdentifier = marshalPluginID(pluginDeclaration.author || '', pluginDeclaration.name, pluginDeclaration.version);
+
+      if (pluginUniqueIdentifier === identifierOrPluginId) {
+        return pluginUniqueIdentifier;
+      } else if (providerId.pluginId === identifierOrPluginId) {
+        return pluginUniqueIdentifier;
+      }
+    }
+    return null
   }
 }
 

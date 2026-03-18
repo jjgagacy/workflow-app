@@ -12,7 +12,7 @@ export class UpdateDepResolver {
   constructor(private readonly depService: DepService) { }
 
   @Mutation(() => DepResponse)
-  async updateDep(@Args('input') input: DepInputArgs, @CurrentTenent() tenant): Promise<DepResponse> {
+  async updateDep(@Args('input') input: DepInputArgs, @CurrentTenent() tenant: any): Promise<DepResponse> {
     const createDto = {
       key: input.key!, // 使用非空断言，实际应有验证
       name: input.name!,
