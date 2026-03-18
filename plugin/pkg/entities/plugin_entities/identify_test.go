@@ -64,8 +64,8 @@ func TestPluginUniqueIdentifierMethods(t *testing.T) {
 		t.Errorf("String() = %v, want %v", pluginUID.String(), identifier)
 	}
 
-	if pluginUID.PluginID() != "plugin-id" {
-		t.Errorf("PluginID() = %v, want %v", pluginUID.PluginID(), "plugin-id")
+	if pluginUID.PluginID() != "author/plugin-id" {
+		t.Errorf("PluginID() = %v, want %v", pluginUID.PluginID(), "author/plugin-id")
 	}
 
 	if pluginUID.Checksum() != "abcdef1234567890abcdef1234567890abcdef12" {
@@ -90,12 +90,12 @@ func TestGetPluginId(t *testing.T) {
 		{
 			name:       "with author, id, version and checksum",
 			identifier: "author/plugin-id:1.0.0@abcdef1234567890abcdef1234567890abcdef12",
-			want:       "plugin-id",
+			want:       "author/plugin-id",
 		},
 		{
 			name:       "with author and id only",
 			identifier: "author/plugin-id:1.0.0",
-			want:       "plugin-id",
+			want:       "author/plugin-id",
 		},
 		{
 			name:       "with id only",
@@ -105,7 +105,7 @@ func TestGetPluginId(t *testing.T) {
 		{
 			name:       "with author and id only, no version",
 			identifier: "author/plugin-id",
-			want:       "plugin-id",
+			want:       "author/plugin-id",
 		},
 	}
 

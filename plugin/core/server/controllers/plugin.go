@@ -207,7 +207,7 @@ func DeletePluginInstallationItemFromTask(ctx *gin.Context) {
 
 func FetchPluginManifest(ctx *gin.Context) {
 	BindRequest(ctx, func(request struct {
-		TenantId               string                                 `json:"tenant_id" validate:"required"`
+		TenantId               string                                 `uri:"tenant_id" validate:"required"`
 		PluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier `form:"plugin_unique_identifier" validate:"required,plugin_unique_identifier"`
 	}) {
 		ctx.JSON(http.StatusOK, service.FetchPluginManifest(request.PluginUniqueIdentifier))
@@ -216,7 +216,7 @@ func FetchPluginManifest(ctx *gin.Context) {
 
 func UninstallPlugin(ctx *gin.Context) {
 	BindRequest(ctx, func(request struct {
-		TenantId             string `json:"tenant_id" validate:"required"`
+		TenantId             string `uri:"tenant_id" validate:"required"`
 		PluginInstallationID string `json:"plugin_installation_id" validate:"required"`
 	}) {
 		ctx.JSON(http.StatusOK, service.UninstallPlugin(request.TenantId, request.PluginInstallationID))
@@ -243,7 +243,7 @@ func ListPlugins(ctx *gin.Context) {
 
 func BatchFetchPluginInstallationByIDs(ctx *gin.Context) {
 	BindRequest(ctx, func(request struct {
-		TenantID  string   `json:"tenant_id" validate:"required"`
+		TenantID  string   `uri:"tenant_id" validate:"required"`
 		PluginIDs []string `json:"plugin_ids" validate:"required,max=256"`
 	}) {
 		ctx.JSON(http.StatusOK, service.BatchFetchPluginInstallationByIDs(request.TenantID, request.PluginIDs))

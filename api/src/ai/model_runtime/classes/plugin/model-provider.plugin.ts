@@ -35,5 +35,4 @@ export class ModelProviderPlugin {
   async getAllProviders(tenantId: string): Promise<Provider[]> {
     return [];
   }
-
 }

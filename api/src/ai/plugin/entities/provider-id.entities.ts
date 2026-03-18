@@ -34,7 +34,7 @@ export class ProviderID {
   }
 
   get pluginId(): string {
-    return `${this.pluginName}/${this.providerName}`;
+    return `${this.organization}/${this.pluginName}`;
   }
 
   isMonie(): boolean {
@@ -70,4 +70,3 @@ export function mergeMonieProviderName(providerName: string): string[] {
   }
   return providerNames;
 }
-

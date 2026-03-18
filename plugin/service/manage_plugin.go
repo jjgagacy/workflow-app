@@ -249,7 +249,7 @@ type RequestCheckToolExistence struct {
 func CheckToolExistence(tenantId string, providers []RequestCheckToolExistence) *entities.Response {
 	data := make([]bool, 0, len(providers))
 
-	pluginIds := make([]interface{}, len(providers))
+	pluginIds := make([]any, len(providers))
 	for i, provider := range providers {
 		pluginIds[i] = provider.PluginID
 	}
@@ -385,13 +385,13 @@ func BatchFetchPluginInstallationByIDs(tenantId string, pluginIds []string) *ent
 	}
 
 	// convert []string to []interface{}
-	pluginIdsInterface := make([]interface{}, len(pluginIds))
+	ids := make([]any, len(pluginIds))
 	for i, id := range pluginIds {
-		pluginIdsInterface[i] = id
+		ids[i] = id
 	}
 	pluginInstallations, err := db.GetAll[model.PluginInstallation](
 		db.Equal("tenant_id", tenantId),
-		db.InArray("plugin_id", pluginIdsInterface),
+		db.InArray("plugin_id", ids),
 		db.Page(1, 256),
 	)
 

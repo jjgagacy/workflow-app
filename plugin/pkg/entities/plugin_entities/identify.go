@@ -37,11 +37,7 @@ func (p PluginUniqueIdentifier) String() string {
 func (p PluginUniqueIdentifier) PluginID() string {
 	parts := strings.Split(p.String(), ":")
 	if len(parts) == 2 {
-		substring := strings.Split(parts[0], "/")
-		if len(substring) == 2 {
-			return substring[1]
-		}
-		return substring[0]
+		return parts[0]
 	}
 	return p.String()
 }

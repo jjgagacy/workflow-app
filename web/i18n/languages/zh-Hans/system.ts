@@ -200,6 +200,9 @@ const translation = {
   timezone_settings: '时区设置',
   save_settings: '保存设置',
   model_provider: '模型提供商',
-  install_model_provider: '安装模型提供商'
+  install_model_provider: '安装模型提供商',
+  install_model: {
+    title: '安装模型',
+  }
 };
 export default translation;

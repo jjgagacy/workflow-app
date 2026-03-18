@@ -1,16 +1,14 @@
 import * as yaml from 'js-yaml';
 import { deepSnakeToCamel } from './string';
 import { readFile } from 'node:fs/promises';
-import { i18nLangMap } from '@/i18n-global/langmap';
-
-const EXCLUDED_KEYS = new Set(Object.keys(i18nLangMap).map(key => key.replaceAll('-', '_')));
+import { EXCLUDED_LANG_KEYS } from '@/i18n-global/langmap';
 
 export async function loadYamlFile<T>(filePath: string, transformKey = true): Promise<T> {
   try {
     const content = await readFile(filePath, 'utf-8');
     const yamlData = yaml.load(content) as any;
     if (transformKey) {
-      return deepSnakeToCamel(yamlData, EXCLUDED_KEYS) as T;
+      return deepSnakeToCamel(yamlData, EXCLUDED_LANG_KEYS) as T;
     }
     return yamlData as T;
   } catch (err: unknown) {

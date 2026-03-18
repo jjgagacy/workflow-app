@@ -12,9 +12,10 @@ export type CardProps = {
   isLoading?: boolean;
   locale?: string;
   onClick?: () => void;
+  hideInstall?: boolean;
 }
 
-const Card = ({ className, plugin, footer, isLoading, locale: localeFromProps, onClick }: CardProps) => {
+const Card = ({ className, plugin, footer, isLoading, locale: localeFromProps, onClick, hideInstall }: CardProps) => {
   const defaultLocale = getClientLocale();
   const locale = getLanguage(localeFromProps || defaultLocale);
 
@@ -30,9 +31,9 @@ const Card = ({ className, plugin, footer, isLoading, locale: localeFromProps, o
             <p className="text-xs text-gray-400"></p>
           </div>
         </div>
-        <Button variant='primary' size={'small'} onClick={onClick}>
+        {!hideInstall && (<Button variant='primary' size={'small'} onClick={onClick}>
           安装
-        </Button>
+        </Button>)}
       </div>
 
       <div className="flex items-center space-x-1 mb-3">

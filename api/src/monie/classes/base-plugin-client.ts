@@ -11,6 +11,8 @@ import { PluginDaemonBasicResponse } from "@/ai/plugin/entities/plugin-daemon";
 import { handlePluginError, PluginDaemonError, PluginInvokeError } from "@/ai/plugin/entities/plugin-error";
 import { v4 as uuidv4 } from 'uuid';
 import { formatBytes } from "@/common/utils/number";
+import { deepSnakeToCamel } from "@/common/utils/string";
+import { EXCLUDED_LANG_KEYS } from "@/i18n-global/langmap";
 
 @Injectable()
 export class BasePluginClient {
@@ -79,7 +81,7 @@ export class BasePluginClient {
         resetOnSuccess: true,
       }),
       catchError(error => {
-        return throwError(() => new Error(`Request plugin api error: ${error.message}`));
+        return throwError(() => new Error(`Request plugin api error: ${error.message}, data: ${JSON.stringify(error.response?.data)}`));
       })
     );
   }
@@ -176,7 +178,7 @@ export class BasePluginClient {
     options?: {
       headers?: Record<string, string>;
       data?: Record<string, any> | FormData | null;
-      params?: Record<string, string>;
+      params?: Record<string, any>;
       transformer?: (data: any) => any;
       files?: Record<string, FileItem>;
     }
@@ -200,7 +202,7 @@ export class BasePluginClient {
       params: options?.params,
       files: options?.files,
     }
-    this.logger.log(`📦 [${requestId}] request plugin details`, baseContext);
+    this.logger.log(`[${requestId}] request plugin details`, baseContext);
 
     return this.request<T>({
       method,
@@ -265,7 +267,7 @@ export class BasePluginClient {
           });
         }
 
-        return pluginResponse.data;
+        return deepSnakeToCamel(pluginResponse.data, EXCLUDED_LANG_KEYS); // 兼容后端返回的 snake_case 数据格式
       }),
       catchError(error => {
         if (error instanceof PluginDaemonError) {

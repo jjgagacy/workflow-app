@@ -199,6 +199,9 @@ const translation = {
   timezone_settings: 'Timezone',
   save_settings: 'Save Settings',
   model_provider: 'Model Provider',
-  install_model_provider: 'Install Model Provider'
+  install_model_provider: 'Install Model Provider',
+  install_model: {
+    title: 'Install Model',
+  }
 };
 export default translation;

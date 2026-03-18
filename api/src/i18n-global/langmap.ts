@@ -48,3 +48,5 @@ export type I18nLanguage = keyof typeof i18nLangMap;
 export function getMappedLang(lang: string, defaultLang: string = 'en-US'): string {
   return i18nLangMap[lang] || defaultLang;
 }
+
+export const EXCLUDED_LANG_KEYS = new Set(Object.keys(i18nLangMap).map(key => key.replaceAll('-', '_')));
