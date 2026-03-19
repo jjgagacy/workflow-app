@@ -3,12 +3,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { App } from 'supertest/types';
 import { AppModule } from '@/app.module';
-import { ModelProviderPlugin } from '@/ai/model_runtime/classes/plugin/model-provider.plugin';
+import { PluginModelProvider } from '@/ai/model_runtime/classes/plugin/model-provider';
 
 describe('ModelProviderPlugin (e2e)', () => {
   // jest.setTimeout(30000);
   let app: INestApplication<App>;
-  let modelProviderPlugin: ModelProviderPlugin;
+  let modelProviderPlugin: PluginModelProvider;
   let connected = false;
 
   beforeAll(async () => {
@@ -18,7 +18,7 @@ describe('ModelProviderPlugin (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
-    modelProviderPlugin = app.get<ModelProviderPlugin>(ModelProviderPlugin);
+    modelProviderPlugin = app.get<PluginModelProvider>(PluginModelProvider);
     // trigger connect redis because lazy connect
     connected = true;
   });

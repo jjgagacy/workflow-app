@@ -1,19 +1,16 @@
-import { PluginModelClientService } from "@/ai/plugin/services/model-client.service";
+import { PluginModelClientService } from "@/ai/plugin/services/plugin-model-client.service";
 import { Injectable, NotImplementedException } from "@nestjs/common";
 import { ModelType } from "../../enums/model-runtime.enum";
 import { DefaultModel } from "../default-model.class";
-import { ProviderConfiguration } from "../provider.configuration";
 import { ProviderModelBundle } from "../../entities/model.entity";
 import { Provider } from "../provider.class";
 import { ProviderModel } from "../provider-model.class";
-import { TenantPreferredProviderEntity } from "@/account/entities/tenant-preferred-provider.entity";
-import { ProviderModelSettingEntity } from "@/account/entities/provider-model-setting.entity";
-import { ProviderEntity } from "@/account/entities/provider.entity";
+import { ModelProvider } from "@/ai/plugin/dtos/model-provider.dto";
 
 @Injectable()
-export class ModelProviderPlugin {
+export class PluginModelProvider {
   constructor(
-    private readonly pluginClientService: PluginModelClientService
+    private readonly pluginModelClient: PluginModelClientService
   ) { }
 
   async getDefaultModel(tenantId: string, modelType: ModelType): Promise<DefaultModel | null> {
@@ -33,6 +30,16 @@ export class ModelProviderPlugin {
   }
 
   async getAllProviders(tenantId: string): Promise<Provider[]> {
-    return [];
+    const modelProviders = await this.pluginModelClient.fetchModelProviders(tenantId);
+    return modelProviders.map(modelProvider => {
+      modelProvider.declaration.provider = modelProvider.pluginId + '/' + modelProvider.declaration.provider;
+      if (!modelProvider.declaration.configMethods) {
+        modelProvider.declaration.configMethods = [];
+      }
+      if (!modelProvider.declaration.models) {
+        modelProvider.declaration.models = [];
+      }
+      return modelProvider.declaration;
+    });
   }
 }

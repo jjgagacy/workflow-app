@@ -12,7 +12,10 @@ export class PluginDeclaration {
   name: string = "";
   repo: string | null = null;
   description: I18nObject = {};
-  icon: string = "";
+  iconSmall: string = "";
+  iconSmallDark: string = "";
+  iconLarge: string = "";
+  iconLargeDark: string = "";
   createdAt: Date = new Date();
   resource: PluginResourceRequirements = new PluginResourceRequirements();
   plugins: PluginManifest = new PluginManifest();
@@ -25,7 +28,11 @@ export class PluginDeclaration {
       this.author = data.author ?? null;
       this.name = data.name || '';
       this.repo = data.repo || null;
-      this.icon = data.icon || '';
+      this.iconSmall = data.iconSmall || '';
+      this.iconSmallDark = data.iconSmallDark || '';
+      this.iconLarge = data.iconLarge || '';
+      this.iconLargeDark = data.iconLargeDark || '';
+      this.description = data.description || {};
       this.label = data.label || {};
       this.createdAt = data.createdAt ? new Date(data.createdAt) : new Date();
 

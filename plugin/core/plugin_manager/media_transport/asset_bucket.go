@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	lru "github.com/hashicorp/golang-lru/v2"
 	"github.com/jjgagacy/workflow-app/plugin/oss"
@@ -71,6 +72,7 @@ func (m *MediaBucket) RemapAssets(declaration *plugin_entities.PluginDeclaration
 	remappedIds := make(map[string]string)
 	assetsIds := []string{}
 	remap := func(filename string) (string, error) {
+		filename = strings.TrimPrefix(filename, "_assets/")
 		if id, ok := remappedIds[filename]; ok {
 			return id, nil
 		}
@@ -159,14 +161,14 @@ func (m *MediaBucket) RemapAssets(declaration *plugin_entities.PluginDeclaration
 		}
 	}
 
-	if declaration.Icon != "" {
-		declaration.Icon, err = remap(declaration.Icon)
+	if declaration.IconSmall != "" {
+		declaration.IconSmall, err = remap(declaration.IconSmall)
 		if err != nil {
 			return nil, errors.Join(err, fmt.Errorf("failed to remap plugin icon"))
 		}
 	}
-	if declaration.IconDark != "" {
-		declaration.IconDark, err = remap(declaration.IconDark)
+	if declaration.IconSmallDark != "" {
+		declaration.IconSmallDark, err = remap(declaration.IconSmallDark)
 		if err != nil {
 			return nil, errors.Join(err, fmt.Errorf("failed to remap plugin dark icon"))
 		}

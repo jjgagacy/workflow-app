@@ -105,7 +105,7 @@ export class CredentialFormSchema {
 }
 
 export class ProviderCredentialSchema {
-  credentialFormSchemas: CredentialFormSchema[] = [];
+  credentialFormSchema: CredentialFormSchema[] = [];
 }
 
 export class FieldModelSchema {
@@ -120,11 +120,11 @@ export class FieldModelSchema {
 
 export class ModelCredentialSchema {
   model: FieldModelSchema;
-  credentialFormSchemas: CredentialFormSchema[] = [];
+  credentialFormSchema: CredentialFormSchema[] = [];
 
   constructor(data: Partial<ModelCredentialSchema> = {}) {
     this.model = data.model || new FieldModelSchema();
-    this.credentialFormSchemas = data.credentialFormSchemas || [];
+    this.credentialFormSchema = data.credentialFormSchema || [];
   }
 }
 

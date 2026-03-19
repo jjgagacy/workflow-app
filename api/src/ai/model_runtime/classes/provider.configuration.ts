@@ -130,7 +130,7 @@ export class ProviderConfiguration {
 
     return this.obfuscatCredentials(
       credentials,
-      this.provider.providerCredentialSchema?.credentialFromSchemas ?? []
+      this.provider.providerCredentialSchema?.credentialFormSchema ?? []
     );
   }
 
@@ -148,7 +148,7 @@ export class ProviderConfiguration {
         if (!obfuscated) return credentials;
 
         // Obfuscated credentials
-        return this.obfuscatCredentials(credentials, this.provider.modeScredentialSchema?.credentialFormSchemas || []);
+        return this.obfuscatCredentials(credentials, this.provider.modelCredentialSchema?.credentialFormSchema || []);
       }
     }
 

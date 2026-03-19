@@ -4,7 +4,6 @@ import { useCallback } from "react";
 import Card from "../../card";
 import { Plugin } from "../../types"
 import { useMixedTranslation } from "../hooks";
-import { Dialog } from "@/app/ui/dialog";
 import { useBoolean } from "ahooks";
 import InstallFromMarketplace from "../../install-plugin/marketplace";
 

@@ -79,21 +79,23 @@ type PluginExtensions struct {
 }
 
 type PluginDeclarationBaseFields struct {
-	Version     manifest_entites.Version      `json:"version" validate:"required,is_version" yaml:"version"`
-	Type        manifest_entites.ManifestType `json:"type" validate:"required,eq=plugin" yaml:"type"`
-	Author      string                        `json:"author" validate:"omitempty,max=64" yaml:"author,omitempty"`
-	Name        string                        `json:"name" validate:"required,max=128" yaml:"name"`
-	Label       I18nObject                    `json:"label" validate:"required" yaml:"label"`
-	Description I18nObject                    `json:"description" validate:"required" yaml:"description"`
-	Icon        string                        `json:"icon" validate:"required,max=128" yaml:"icon"`
-	IconDark    string                        `json:"icon_dark" validate:"omitempty,max=128" yaml:"icon_dark,omitempty"`
-	Resource    PluginResourceRequirement     `json:"resource" validate:"required" yaml:"resource"`
-	Plugins     PluginExtensions              `json:"plugins" validate:"required" yaml:"plugins"`
-	Meta        PluginMeta                    `json:"meta" validate:"required" yaml:"meta"`
-	Tags        []manifest_entites.PluginTag  `json:"tags" validate:"omitempty,dive,is_plugin_tag,max=128" yaml:"tags,omitempty"`
-	CreatedAt   time.Time                     `json:"created" validate:"required" yaml:"created"`
-	Privacy     *string                       `json:"privary,omitempty" validate:"omitempty" yaml:"privary,omitempty"`
-	Repo        *string                       `json:"repo,omitempty" validate:"omitempty,url" yaml:"repo,omitempty"`
+	Version       manifest_entites.Version      `json:"version" validate:"required,is_version" yaml:"version"`
+	Type          manifest_entites.ManifestType `json:"type" validate:"required,eq=plugin" yaml:"type"`
+	Author        string                        `json:"author" validate:"omitempty,max=64" yaml:"author,omitempty"`
+	Name          string                        `json:"name" validate:"required,max=128" yaml:"name"`
+	Label         I18nObject                    `json:"label" validate:"required" yaml:"label"`
+	Description   I18nObject                    `json:"description" validate:"required" yaml:"description"`
+	IconSmall     string                        `json:"icon_small" validate:"required,max=128" yaml:"icon_small"`
+	IconSmallDark string                        `json:"icon_small_dark" validate:"omitempty,max=128" yaml:"icon_small_dark,omitempty"`
+	IconLarge     string                        `json:"icon_large" validate:"required,max=128" yaml:"icon_large"`
+	IconLargeDark string                        `json:"icon_large_dark" validate:"omitempty,max=128" yaml:"icon_large_dark,omitempty"`
+	Resource      PluginResourceRequirement     `json:"resource" validate:"required" yaml:"resource"`
+	Plugins       PluginExtensions              `json:"plugins" validate:"required" yaml:"plugins"`
+	Meta          PluginMeta                    `json:"meta" validate:"required" yaml:"meta"`
+	Tags          []manifest_entites.PluginTag  `json:"tags" validate:"omitempty,dive,is_plugin_tag,max=128" yaml:"tags,omitempty"`
+	CreatedAt     time.Time                     `json:"created" validate:"required" yaml:"created"`
+	Privacy       *string                       `json:"privacy,omitempty" validate:"omitempty" yaml:"privacy,omitempty"`
+	Repo          *string                       `json:"repo,omitempty" validate:"omitempty,url" yaml:"repo,omitempty"`
 }
 
 type PluginDeclaration struct {

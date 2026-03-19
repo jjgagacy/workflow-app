@@ -132,7 +132,7 @@ export class ProviderManager {
       providerConfiguration.tenantId,
       providerConfiguration.provider.provider
     );
-    const credentialsSecretVariables = extractSecretVariables(providerConfiguration.provider.providerCredentialSchema?.credentialFromSchemas || []);
+    const credentialsSecretVariables = extractSecretVariables(providerConfiguration.provider.providerCredentialSchema?.credentialFormSchema || []);
     let originalCredentials: Credentials = {};
     if (providerRecord && providerRecord.encryptedConfig) {
       originalCredentials = JSON.parse(providerRecord.encryptedConfig);

@@ -1,19 +1,30 @@
-import { Provider, SimpleProvider } from "@/ai/model_runtime/classes/provider.class";
 import { Injectable, NotImplementedException } from "@nestjs/common";
-import { PluginModelClientService } from "./services/model-client.service";
-import { ModelProvider } from "./dtos/model-provider.dto";
-import { Credentials } from "../model_runtime/types/credentials.type";
-import { ModelType } from "../model_runtime/enums/model-runtime.enum";
-import { AIModel } from "../model_runtime/classes/ai-model.class";
+import { BasePluginClient } from "../../../monie/classes/base-plugin-client";
+import { Provider, SimpleProvider } from "@/ai/model_runtime/classes/provider.class";
+import { ModelProvider } from "../dtos/model-provider.dto";
+import { Credentials } from "../../model_runtime/types/credentials.type";
+import { ModelType } from "../../model_runtime/enums/model-runtime.enum";
+import { AIModel } from "../../model_runtime/classes/ai-model.class";
 
 @Injectable()
-export class ModelProviderPluginService {
+export class PluginModelClientService {
   constructor(
-    private readonly pluginClient: PluginModelClientService
+    private readonly baseClient: BasePluginClient
   ) { }
 
-  async getModelProviders(tenantId: string, providerName?: string): Promise<ModelProvider[]> {
-    return [];
+  async fetchModelProviders(tenantId: string): Promise<ModelProvider[]> {
+    return new Promise((resolve, reject) => {
+      this.baseClient.requestWithPluginDaemonResponse(
+        'GET',
+        `plugin/${tenantId}/management/models`,
+        {
+          params: { page: "1", page_size: "256" }
+        }
+      ).subscribe({
+        next: (response) => resolve(response),
+        error: (error) => reject(error)
+      });
+    });
   }
 
   async getProviders(tenantId: string): Promise<Provider[]> {
@@ -60,6 +71,4 @@ export class ModelProviderPluginService {
   ): Promise<SimpleProvider[]> {
     throw new NotImplementedException();
   }
-
 }
-

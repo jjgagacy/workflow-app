@@ -13,6 +13,9 @@ help:
 icon_small:
   en_US: "_assets/monie.svg"
   zh_Hans: "_assets/monie.svg"
+icon_small_dark:
+  en_US: "_assets/monie.svg"
+  zh_Hans: "_assets/monie.svg"
 icon_large:
   en_US: "_assets/monie.svg"
   zh_Hans: "_assets/monie.svg"
@@ -39,7 +42,7 @@ extra:
       - "models/moderation/moderation.js"
       - "models/tts/tts.js"
 provider_credential_schema:
-  credential_form_schemas:
+  credential_form_schema:
     - variable: openai_api_key
       label:
         en_US: API Key
@@ -74,7 +77,7 @@ model_credential_schema:
       placeholder:
         en_US: Enter your model name
         zh_Hans: 输入模型名称
-    credential_form_schemas:
+    credential_form_schema:
       - variable: openai_api_key
         label:
           en_US: API Key

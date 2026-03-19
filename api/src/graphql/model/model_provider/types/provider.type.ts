@@ -1,11 +1,15 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
+import { I18nObjectType } from "./i18n-object.type";
+import { FormType } from "@/ai/model_runtime/entities/form.entity";
 
 @ObjectType('RestrictModel')
 export class RestrictModel {
   @Field()
   modelName!: string;
+
   @Field()
   modelType!: string;
+
   @Field()
   baseModelName!: string;
 }
@@ -14,14 +18,19 @@ export class RestrictModel {
 export class QuotaInfo {
   @Field()
   quotaType!: string;
+
   @Field()
   quotaUnit!: string;
+
   @Field(() => Int)
   quotaLimit!: number;
+
   @Field(() => Int)
   quotaUsed!: number;
+
   @Field(() => Boolean)
   isValid!: boolean;
+
   @Field(() => [RestrictModel])
   restrictModels!: RestrictModel[];
 }
@@ -36,38 +45,139 @@ export class CustomConfiguration {
 export class SystemConfiguration {
   @Field(() => Boolean)
   enabled!: boolean;
+
   @Field()
   currentQuotaType!: string;
+
   @Field(() => [QuotaInfo])
   quotaList!: [QuotaInfo]
 }
 
-@ObjectType('ProviderInfo')
-export class ProviderInfo {
+
+registerEnumType(FormType, {
+  name: 'FormType', // GraphQL 中的类型名称
+  description: '表单字段类型', // 可选：类型描述
+  valuesMap: {
+    TEXT_INPUT: {
+      description: '文本输入框', // 可选：为每个值添加描述
+    },
+    SECRET_INPUT: {
+      description: '密码/密钥输入框',
+    },
+    SELECT: {
+      description: '下拉选择框',
+    },
+    RADIO: {
+      description: '单选框',
+    },
+    SWITCH: {
+      description: '开关',
+    },
+  },
+});
+
+@ObjectType('CredentialFormSchema')
+export class CredentialFormSchema {
+  @Field(() => I18nObjectType)
+  label!: I18nObjectType;
+
+  @Field()
+  variable!: string;
+
+  @Field(() => FormType)
+  type!: FormType;
+
+  @Field(() => Boolean, { nullable: true })
+  required?: boolean;
+
+  @Field(() => String, { nullable: true })
+  default?: string;
+
+  @Field(() => [FormOption], { nullable: true })
+  options?: FormOption[];
+
+  @Field(() => I18nObjectType, { nullable: true })
+  placeholder?: I18nObjectType;
+
+  @Field(() => Int, { nullable: true })
+  maxLength?: number;
+}
+
+@ObjectType('ProviderCredentialSchema')
+export class ProviderCredentialSchema {
+  @Field(() => [CredentialFormSchema], { nullable: true })
+  credentialFormSchema?: CredentialFormSchema[];
+}
+
+@ObjectType('FieldModelSchema')
+export class FieldModelSchema {
+  @Field(() => I18nObjectType)
+  label!: I18nObjectType;
+
+  @Field(() => I18nObjectType, { nullable: true })
+  placeholder?: I18nObjectType;
+}
+
+@ObjectType('ModelCredentialSchema')
+export class ModelCredentialSchema {
+  @Field(() => FieldModelSchema)
+  model!: FieldModelSchema;
+
+  @Field(() => [CredentialFormSchema])
+  credentialFormSchema!: CredentialFormSchema[];
+}
+
+@ObjectType('FormOption')
+export class FormOption {
+  @Field(() => I18nObjectType)
+  label!: I18nObjectType;
+
+  @Field()
+  value!: string;
+}
+
+
+@ObjectType('ModelProviderInfo')
+export class ModelProviderInfo {
   @Field()
   tenantId!: string;
+
   @Field()
   providerName!: string;
-  @Field()
-  label!: string;
-  @Field()
-  description!: string;
-  @Field()
-  icon!: string;
+
+  @Field(() => I18nObjectType)
+  label!: I18nObjectType;
+
+  @Field(() => I18nObjectType, { nullable: true })
+  description?: I18nObjectType;
+
+  @Field(() => I18nObjectType, { nullable: true })
+  icon?: I18nObjectType;
+
+  @Field(() => I18nObjectType, { nullable: true })
+  iconDark?: I18nObjectType;
+
   @Field(() => [String!]!)
   supportedModelTypes!: string[];
+
   @Field()
   preferredProviderType!: string;
+
   @Field(() => CustomConfiguration)
   customConfiguration!: CustomConfiguration;
+
   @Field(() => SystemConfiguration)
   systemConfiguration!: SystemConfiguration;
+
+  @Field(() => ProviderCredentialSchema, { nullable: true })
+  providerCredentialSchema?: ProviderCredentialSchema;
+
+  @Field(() => ModelCredentialSchema, { nullable: true })
+  modelCredentialSchema?: ModelCredentialSchema;
 }
 
-@ObjectType('ProviderList')
-export class ProviderList {
-  @Field(() => [ProviderInfo])
-  data!: ProviderInfo[];
+@ObjectType('ModelProviderList')
+export class ModelProviderList {
+  @Field(() => [ModelProviderInfo])
+  data!: ModelProviderInfo[];
 }
-
-

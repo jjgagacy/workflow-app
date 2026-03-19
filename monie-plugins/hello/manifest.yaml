@@ -8,7 +8,10 @@ label:
 description:
   en_US: A simple plugin to say hello.
   zh_Hans: 一个简单的插件，用于打招呼。
-icon: monie.svg
+icon_small: monie.svg
+icon_small_dark: monie.svg
+icon_large: monie.svg
+icon_large_dark: monie.svg
 created: 2023-10-01T00:00:00Z
 resource:
   memory: 268435456

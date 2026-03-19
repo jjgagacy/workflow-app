@@ -11,7 +11,7 @@ import { ProviderModelBundle } from "../entities/model.entity";
 import { Provider } from "../classes/provider.class";
 import { DefaultModel } from "../classes/default-model.class";
 import { TenantDefaultModelEntity } from "@/account/entities/tenant-default-model.entity";
-import { ModelProviderPlugin } from "../classes/plugin/model-provider.plugin";
+import { PluginModelProvider } from "../classes/plugin/model-provider";
 import { CustomProviderConfiguration, CustomProviderModel, QuotaConfiguration, SystemConfiguration } from "../entities/quota.entity";
 import { ConfigurateMethod, ProviderType } from "../enums/provider.enum";
 import { ModelSettings } from "../interfaces/model.interface";
@@ -47,7 +47,7 @@ export class ProviderService {
     @InjectRepository(ProviderModelEntity)
     private readonly providerModelRepository: Repository<ProviderModelEntity>,
     private readonly monieConfig: MonieConfig,
-    private readonly modelProviderPlugin: ModelProviderPlugin,
+    private readonly modelProviderPlugin: PluginModelProvider,
     private readonly hostConfiguration: HostConfiguration,
     private readonly providerListService: ProviderListService,
     private readonly dataSource: DataSource,
@@ -187,7 +187,7 @@ export class ProviderService {
     providerEntities: ProviderEntity[],
     providerModels: ProviderModelEntity[]
   ): Promise<CustomProviderConfiguration> {
-    const secretVars = extractSecretVariables(provider.providerCredentialSchema?.credentialFromSchemas || [])
+    const secretVars = extractSecretVariables(provider.providerCredentialSchema?.credentialFormSchema || [])
     // Extract the custom provider record
     let customProviderRecord: ProviderEntity | undefined;
     for (const providerRecord of providerEntities) {
@@ -203,7 +203,7 @@ export class ProviderService {
       providerCredentials = await this.getProviderCredential(tenantId, customProviderRecord, secretVars);
     }
     // Extract model-level credential secret variables
-    const modelCredentialSecretVariables = extractSecretVariables(provider.modeScredentialSchema?.credentialFormSchemas || []);
+    const modelCredentialSecretVariables = extractSecretVariables(provider.modelCredentialSchema?.credentialFormSchema || []);
     const customProviderModels: CustomProviderModel[] = [];
 
     for (const modelRecord of providerModels) {
@@ -267,7 +267,6 @@ export class ProviderService {
         }
         continue
       }
-
       // have record
       if (providerRecord.quotaLimit == null || providerRecord.quotaUsed == null) {
         // throw QuotaUsedOrLimitNullError.create(this.i18n);
@@ -292,8 +291,14 @@ export class ProviderService {
       return new SystemConfiguration(false);
     }
 
-    // select current quotaType
-    const currentQuotaType = this.choiceCurrentUsingQuotaType(quotaConfigurations);
+    let currentQuotaType: QuotaType;
+    try {
+      // select current quotaType
+      currentQuotaType = this.choiceCurrentUsingQuotaType(quotaConfigurations);
+    } catch (error) {
+      // handle error if needed
+      return new SystemConfiguration(false);
+    }
     // Default to using credentials from hosting configuration (system built-in key)
     let currentCredentials = hostingConfig.credentials;
 
@@ -303,7 +308,7 @@ export class ProviderService {
       const freeRecord = systemRecordMapByQuota.get(QuotaType.FREE);
 
       if (freeRecord) {
-        const secretVars = extractSecretVariables(provider.providerCredentialSchema?.credentialFromSchemas || [])
+        const secretVars = extractSecretVariables(provider.providerCredentialSchema?.credentialFormSchema || [])
         currentCredentials = await this.getProviderCredential(tenantId, freeRecord, secretVars);
       } else {
         currentCredentials = {};
@@ -323,13 +328,13 @@ export class ProviderService {
     providerModelSettings: ProviderModelSettingEntity[]
   ): Promise<ModelSettings[]> {
     let credentialsSecretVariables: string[] = [];
-    if (provider.configurateMethod.includes(ConfigurateMethod.PREDEFINED_MODEL)) {
+    if (provider.configMethods.includes(ConfigurateMethod.PREDEFINED_MODEL)) {
       credentialsSecretVariables = extractSecretVariables(
-        provider.providerCredentialSchema?.credentialFromSchemas || []
+        provider.providerCredentialSchema?.credentialFormSchema || []
       );
     } else {
       credentialsSecretVariables = extractSecretVariables(
-        provider.modeScredentialSchema?.credentialFormSchemas || []
+        provider.modelCredentialSchema?.credentialFormSchema || []
       );
     }
     const modelSettings: ModelSettings[] = [];

@@ -1,11 +1,9 @@
-import { AccountEntity } from "@/account/entities/account.entity";
 import { QuotaConfiguration } from "@/ai/model_runtime/entities/quota.entity";
 import { ModelType } from "@/ai/model_runtime/enums/model-runtime.enum";
 import { CustomConfigurationStatus } from "@/ai/model_runtime/enums/quota.enum";
 import { ProviderService } from "@/ai/model_runtime/services/provider.service";
 import { EnumConverter } from "@/common/utils/enums";
-import { DEFAULT_LANG } from "@/config/constants";
-import { CustomConfiguration, ProviderInfo, ProviderList, QuotaInfo, RestrictModel, SystemConfiguration } from "@/graphql/model/model_provider/types/provider.type";
+import { CustomConfiguration, ModelProviderInfo, ModelProviderList, QuotaInfo, RestrictModel, SystemConfiguration } from "@/graphql/model/model_provider/types/provider.type";
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
@@ -17,36 +15,38 @@ export class ModelProviderService {
   async getProviderList(
     tenantId: string,
     modelType?: string,
-    language?: string,
-  ): Promise<ProviderList> {
+  ): Promise<ModelProviderList> {
     const providerConfiguration = await this.providerService.getConfigurations(tenantId);
-    const providerList: ProviderInfo[] = [];
-    const lang = language || DEFAULT_LANG;
-    for (const providerConf of providerConfiguration.values()) {
+    const providerList: ModelProviderInfo[] = [];
+    for (const pc of providerConfiguration.values()) {
       if (modelType) {
         const modelTypeEnum = EnumConverter.toEnum(ModelType, modelType);
-        if (!providerConf.provider.supportedModelTypes.includes(modelTypeEnum)) continue;
+        if (!pc.provider.supportedModelTypes.includes(modelTypeEnum)) continue;
       }
       providerList.push({
         tenantId,
-        providerName: providerConf.provider.provider,
-        label: providerConf.provider.label[lang] || '',
-        icon: providerConf.provider.iconSmall?.[lang] || '',
-        supportedModelTypes: providerConf.provider.supportedModelTypes.map((v) => v as string),
-        preferredProviderType: providerConf.preferredProviderType,
+        providerName: pc.provider.provider,
+        label: pc.provider.label || {},
+        description: pc.provider.description,
+        icon: pc.provider.iconLarge,
+        iconDark: pc.provider.iconLargeDark,
+        supportedModelTypes: pc.provider.supportedModelTypes.map((v) => v as string),
+        preferredProviderType: pc.preferredProviderType,
         customConfiguration: {
-          status: providerConf.customConfigurationAvailable()
+          status: pc.customConfigurationAvailable()
             ? CustomConfigurationStatus.ACTIVE
             : CustomConfigurationStatus.UNSUPPORTED
         } as CustomConfiguration,
         systemConfiguration: {
-          enabled: providerConf.systemConfiguration.enabled,
-          currentQuotaType: providerConf.systemConfiguration.currentQuotaType,
+          enabled: pc.systemConfiguration.enabled,
+          currentQuotaType: pc.systemConfiguration.currentQuotaType,
           quotaList: this.transQuotaConfigurationsToQuotaInfoList(
-            providerConf.systemConfiguration.quotaConfiguration
+            pc.systemConfiguration.quotaConfiguration
           ),
-        } as SystemConfiguration
-      } as ProviderInfo);
+        } as SystemConfiguration,
+        providerCredentialSchema: pc.provider.providerCredentialSchema,
+        modelCredentialSchema: pc.provider.modelCredentialSchema,
+      } as ModelProviderInfo);
     }
 
     return { data: providerList };
@@ -69,7 +69,5 @@ export class ModelProviderService {
       } as QuotaInfo;
     });
   }
-
-
 }
 

@@ -1,12 +1,11 @@
 import { GET_MODEL_PROVIDERS } from "../queries";
 import { useGraphQLQuery } from "@/hooks/use-graphql";
-import { ModelProvider } from "../types/model-provider";
+import { ModelProviderInfo } from "../types/model-provider";
 
-export const useGetModelProviders = (params: {
-  excludes?: string[];
-  category?: string;
+export const useGetModelProviderList = (params: {
+  modelType?: string;
 } = {}) => {
-  const { data, error, isLoading, mutate } = useGraphQLQuery<{ modelProviders: { data: ModelProvider[] } }, typeof params>(
+  const { data, error, isLoading, mutate } = useGraphQLQuery<{ modelProviderList: { data: ModelProviderInfo[] } }, typeof params>(
     GET_MODEL_PROVIDERS,
     params,
     {
@@ -16,7 +15,7 @@ export const useGetModelProviders = (params: {
   );
 
   return {
-    modelProviders: data?.modelProviders?.data,
+    modelProviders: data?.modelProviderList?.data,
     isLoading,
     error,
     mutate

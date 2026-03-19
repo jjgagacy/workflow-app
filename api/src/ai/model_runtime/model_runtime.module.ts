@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ModelTypeService } from './model-type.service';
 import { ProviderListService } from './services/provider-list.service';
-import { ModelProviderPlugin } from './classes/plugin/model-provider.plugin';
+import { PluginModelProvider } from './classes/plugin/model-provider';
 import { PluginModule } from '../plugin/plugin.module';
-import { PluginModelClientService } from '../plugin/services/model-client.service';
+import { PluginModelClientService } from '../plugin/services/plugin-model-client.service';
 import { ProviderCredentialsCacheService } from './services/provider-credentials-cache.service';
 import { StorageModule } from '@/storage/storage.module';
 import { StorageService } from '@/storage/storage.service';
@@ -17,7 +17,7 @@ import { EncryptionModule } from '@/encryption/encryption.module';
   providers: [
     ModelTypeService,
     ProviderListService,
-    ModelProviderPlugin,
+    PluginModelProvider,
     PluginModelClientService,
     ProviderCredentialsCacheService,
     EncryptionService,
@@ -28,7 +28,7 @@ import { EncryptionModule } from '@/encryption/encryption.module';
   exports: [
     ModelTypeService,
     ProviderListService,
-    ModelProviderPlugin,
+    PluginModelProvider,
     ProviderCredentialsCacheService
   ]
 })

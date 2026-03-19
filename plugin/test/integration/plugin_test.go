@@ -16,7 +16,7 @@ import (
 
 var (
 	tenantId               string = "272635fa-c96f-4ad4-b7c6-9406332ae89c"
-	pluginId               string = "hello"
+	pluginId               string = "monie/hello"
 	pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier
 	serverKey              string = "mn3LYe9NwIjK1janLI9nckPCgOT-+3ovajaNAjpCjbbCjc3ZtUkanPE"
 )
@@ -78,7 +78,7 @@ func TestPluginToolInvoke(t *testing.T) {
 	requestBody := map[string]any{
 		"tenant_id": tenantId,
 		"user_id":   "",
-		"plugin_id": "hello",
+		"plugin_id": "monie/hello",
 
 		// "unique_identifier": "monie/hello:1.0.0",
 		"conversation_id": "",

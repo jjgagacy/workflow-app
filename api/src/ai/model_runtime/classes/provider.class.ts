@@ -16,7 +16,7 @@ export class ProviderHelp {
 }
 
 export class ProviderCredentialSchema {
-  credentialFromSchemas?: CredentialFormSchema[];
+  credentialFormSchema?: CredentialFormSchema[];
 }
 
 export class FieldModelSchema {
@@ -31,11 +31,11 @@ export class FieldModelSchema {
 
 export class ModelCredentialSchema {
   model: FieldModelSchema;
-  credentialFormSchemas: CredentialFormSchema[];
+  credentialFormSchema: CredentialFormSchema[];
 
-  constructor(model: FieldModelSchema, credentialFormSchemas: CredentialFormSchema[]) {
+  constructor(model: FieldModelSchema, credentialFormSchema: CredentialFormSchema[]) {
     this.model = model;
-    this.credentialFormSchemas = credentialFormSchemas;
+    this.credentialFormSchema = credentialFormSchema;
   }
 }
 
@@ -45,22 +45,24 @@ export interface ProviderProps {
 
   description?: I18nObject;
   iconSmall?: I18nObject;
+  iconSmallDark?: I18nObject;
   iconLarge?: I18nObject;
   iconLargeDark?: I18nObject;
   background?: string;
   help?: ProviderHelp;
 
   supportedModelTypes: ModelType[];
-  configurateMethod: ConfigurateMethod[];
+  configMethod: ConfigurateMethod[];
 
   providerCredentialSchema?: ProviderCredentialSchema;
-  modeScredentialSchema?: ModelCredentialSchema;
+  modelCredentialSchema?: ModelCredentialSchema;
 
   models: AIModel[];
   position?: Record<string, string[]>;
 }
 
 export class Provider {
+  // 格式：org/name/provider
   provider: string;
   label: I18nObject;
 
@@ -69,6 +71,8 @@ export class Provider {
   @IsOptional()
   iconSmall?: I18nObject;
   @IsOptional()
+  iconSmallDark?: I18nObject;
+  @IsOptional()
   iconLarge?: I18nObject;
   @IsOptional()
   iconLargeDark?: I18nObject;
@@ -78,11 +82,11 @@ export class Provider {
   help?: ProviderHelp;
 
   supportedModelTypes: ModelType[];
-  configurateMethod: ConfigurateMethod[];
+  configMethods: ConfigurateMethod[];
 
   // credentials
   providerCredentialSchema?: ProviderCredentialSchema;
-  modeScredentialSchema?: ModelCredentialSchema;
+  modelCredentialSchema?: ModelCredentialSchema;
 
   models: AIModel[];
   @IsOptional()
@@ -108,16 +112,17 @@ export class Provider {
 
     this.description = props.description;
     this.iconSmall = props.iconSmall;
+    this.iconSmallDark = props.iconSmallDark;
     this.iconLarge = props.iconLarge;
     this.iconLargeDark = props.iconLargeDark;
     this.background = props.background;
     this.help = props.help;
 
     this.supportedModelTypes = props.supportedModelTypes;
-    this.configurateMethod = props.configurateMethod;
+    this.configMethods = props.configMethod;
 
     this.providerCredentialSchema = props.providerCredentialSchema;
-    this.modeScredentialSchema = props.modeScredentialSchema;
+    this.modelCredentialSchema = props.modelCredentialSchema;
 
     this.models = Provider.validateModels(props.models);
     this.position = props.position;

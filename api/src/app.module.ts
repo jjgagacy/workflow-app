@@ -63,10 +63,10 @@ import { MailModule } from './mail/mail.module';
 import { EnableEmailPasswordLoginGuard } from './common/guards/auth/enable-email-password-login.guard';
 import { DateScalar } from './common/graphql/scalars/date.scalar';
 import { WorkspaceResolver } from './graphql/workspace/resolvers/workspace.resolver';
-import { ModelProviderResolver } from './graphql/workspace/resolvers/model-provider.resolver';
+import { ModelProviderListResolver } from './graphql/workspace/resolvers/model-providers.resolver';
 import { PluginModule } from './ai/plugin/plugin.module';
 import { BasePluginClient } from './monie/classes/base-plugin-client';
-import { PluginModelClientService } from './ai/plugin/services/model-client.service';
+import { PluginModelClientService } from './ai/plugin/services/plugin-model-client.service';
 import { AccountResolver } from './graphql/account/account/resolvers/account.resolver';
 import { CreateAccountResolver } from "./graphql/account/account/resolvers/account.resolver";
 import { DeleteAccountResolver } from "./graphql/account/account/resolvers/account.resolver";
@@ -336,7 +336,7 @@ import { PluginResolver } from './graphql/workspace/resolvers/plugin.resolver';
     UpdateAccountFieldsResolver,
     DateScalar,
     WorkspaceResolver,
-    ModelProviderResolver,
+    ModelProviderListResolver,
     BasePluginClient,
     PluginModelClientService,
     SignUpResolver,

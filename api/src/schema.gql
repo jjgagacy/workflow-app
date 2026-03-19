@@ -54,6 +54,21 @@ input ConfirmEmailNewInput {
   token: String!
 }
 
+type CredentialFormSchema {
+  default: String
+  label: I18nObjectType!
+  maxLength: Int
+  options: [FormOption!]
+  placeholder: I18nObjectType
+  required: Boolean
+  type: FormType!
+  variable: String!
+}
+
+type CustomConfiguration {
+  status: String!
+}
+
 """Date custom scalar type"""
 scalar Date
 
@@ -105,6 +120,11 @@ input EmailCodeSignUpInput {
   username: String!
 }
 
+type FieldModelSchema {
+  label: I18nObjectType!
+  placeholder: I18nObjectType
+}
+
 type ForgetPasswordCheckResponse {
   email: String!
   isValid: Boolean!
@@ -122,6 +142,29 @@ input ForgetPasswordResetInput {
   confirmPassword: String!
   newPassword: String!
   token: String!
+}
+
+type FormOption {
+  label: I18nObjectType!
+  value: String!
+}
+
+"""表单字段类型"""
+enum FormType {
+  """单选框"""
+  RADIO
+
+  """密码/密钥输入框"""
+  SECRET_INPUT
+
+  """下拉选择框"""
+  SELECT
+
+  """开关"""
+  SWITCH
+
+  """文本输入框"""
+  TEXT_INPUT
 }
 
 type I18nObjectType {
@@ -190,6 +233,11 @@ type MenuResponse {
   id: Int!
 }
 
+type ModelCredentialSchema {
+  credentialFormSchema: [CredentialFormSchema!]!
+  model: FieldModelSchema!
+}
+
 type ModelProvider {
   """Name of the author"""
   author: String!
@@ -208,6 +256,25 @@ type ModelProvider {
 
   """Type of the provider"""
   providerType: String!
+}
+
+type ModelProviderInfo {
+  customConfiguration: CustomConfiguration!
+  description: I18nObjectType
+  icon: I18nObjectType
+  iconDark: I18nObjectType
+  label: I18nObjectType!
+  modelCredentialSchema: ModelCredentialSchema
+  preferredProviderType: String!
+  providerCredentialSchema: ProviderCredentialSchema
+  providerName: String!
+  supportedModelTypes: [String!]!
+  systemConfiguration: SystemConfiguration!
+  tenantId: String!
+}
+
+type ModelProviderList {
+  data: [ModelProviderInfo!]!
 }
 
 type ModelProvidersList {
@@ -337,6 +404,10 @@ type PluginInstallationResponse {
   version: String!
 }
 
+type ProviderCredentialSchema {
+  credentialFormSchema: [CredentialFormSchema!]
+}
+
 type Query {
   accountInfo: Account!
   accounts(email: String, id: Int, limit: Int, mobile: String, page: Int, realName: String, roleId: Int, username: String): AccountList!
@@ -347,6 +418,7 @@ type Query {
   listPluginFromIds(pluginIds: [String!]!): [PluginInstallationResponse!]!
   menuInfo(id: Int!): Menu!
   menus(key: String, module: Boolean, modulePerm: Boolean, name: String, parent: String, scope: Boolean, status: Int): [Menu!]!
+  modelProviderList(modelType: String!): [ModelProviderList!]!
   modelProviders(
     """Category to filter providers by"""
     category: String
@@ -361,9 +433,24 @@ type Query {
   workspaces: [WorkspaceList!]!
 }
 
+type QuotaInfo {
+  isValid: Boolean!
+  quotaLimit: Int!
+  quotaType: String!
+  quotaUnit: String!
+  quotaUsed: Int!
+  restrictModels: [RestrictModel!]!
+}
+
 input ResetPasswordSendEmailInput {
   email: String!
   language: String!
+}
+
+type RestrictModel {
+  baseModelName: String!
+  modelName: String!
+  modelType: String!
 }
 
 type Role {
@@ -425,6 +512,12 @@ type Route {
 type Scope {
   key: String!
   name: String!
+}
+
+type SystemConfiguration {
+  currentQuotaType: String!
+  enabled: Boolean!
+  quotaList: [QuotaInfo!]!
 }
 
 type TenantResponse {

@@ -41,7 +41,7 @@ export function Dialog(props: DialogProps) {
       <DialogPanel className="fixed inset-0 z-50 flex items-center justify-center">
         <div className="fixed inset-0 bg-black/50 z-60"></div>
         <div className="fixed inset-0 z-70 flex items-center justify-center">
-          <div className={`bg-background rounded-lg px-2 w-full max-w-md shadow-lg outline-none ${className}`}>
+          <div className={`bg-background rounded-lg px-2 w-full max-w-md shadow-lg outline-none border border-[var(--border)] ${className}`}>
             <DialogTitle>
               <div className={`flex justify-between items-center ${description && 'border-b border-[var(--border)]'}  px-4 py-4`}>
                 <h3 className="text-lg font-medium">

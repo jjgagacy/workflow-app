@@ -3,11 +3,11 @@
 import { Dialog } from "@/app/ui/dialog";
 import { useTranslation } from "react-i18next";
 import { Plugin } from "../../types";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { InstallStep } from "../types";
 import Install from "./steps/install";
-import api from "@/api";
 import { useCheckInstalled } from "../hooks/use-check-installed";
+import Installed from "../base/installed";
 
 type InstallFromMarketplaceProps = {
   identifier: string;
@@ -25,8 +25,12 @@ const InstallFromMarketplace = ({
   const { t } = useTranslation();
   const [step, setStep] = useState<InstallStep>(InstallStep.readyToInstall);
   const [isInstalling, setIsInstalling] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
   const { installInfo, isLoading, mutate } = useCheckInstalled({ identifiers: [identifier] });
-  console.log(installInfo ? installInfo[identifier] : null);
+
+  useEffect(() => {
+    setStep(installInfo && installInfo[identifier] ? InstallStep.installed : InstallStep.readyToInstall);
+  }, [installInfo, identifier, setStep]);
 
   const getTitile = useCallback(() => {
     return t(`system.install_model.title`)
@@ -66,19 +70,27 @@ const InstallFromMarketplace = ({
         cancelText={t('app.actions.cancel')}
         onConfirm={handleStartToInstall}
         onCancel={handleCancel}
+        actions={step === InstallStep.readyToInstall}
       >
-        {
-          step === InstallStep.readyToInstall && (
-            <Install
-              identifier={identifier}
-              manifest={manifest}
-              onCancel={onClose}
-              onInstalled={handleInstalled}
-              onFailed={handleFailed}
-              onStartToInstall={handleStartToInstall}
-            />
-          )
-        }
+        {step === InstallStep.readyToInstall && (
+          <Install
+            identifier={identifier}
+            manifest={manifest}
+            onCancel={onClose}
+            onInstalled={handleInstalled}
+            onFailed={handleFailed}
+            onStartToInstall={handleStartToInstall}
+          />
+        )}
+
+        {[InstallStep.installed, InstallStep.installFailed].includes(step) && (
+          <Installed
+            manifest={manifest}
+            isFailed={step === InstallStep.installFailed}
+            errorMessage={step === InstallStep.installFailed ? errorMessage : undefined}
+            onClose={onClose}
+          />
+        )}
       </Dialog>
     </>
   );

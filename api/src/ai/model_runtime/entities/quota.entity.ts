@@ -42,6 +42,7 @@ export class SystemConfiguration {
 
   @IsOptional()
   currentQuotaType?: QuotaType;
+
   @IsOptional()
   credentials?: Credentials;
 

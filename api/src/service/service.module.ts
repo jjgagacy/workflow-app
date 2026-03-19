@@ -60,7 +60,6 @@ import { PluginModule } from "@/ai/plugin/plugin.module";
     MarketplaceService,
     PluginDeclarationService,
     PluginService,
-
   ],
   exports: [
     AuthAccountService,
@@ -81,6 +80,7 @@ import { PluginModule } from "@/ai/plugin/plugin.module";
     MarketplaceService,
     PluginDeclarationService,
     PluginService,
+    ModelProviderService
   ],
 })
 export class ServiceModule { }
