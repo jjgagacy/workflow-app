@@ -56,10 +56,10 @@ input ConfirmEmailNewInput {
 
 type CredentialFormSchema {
   default: String
-  label: I18nObjectType!
+  label: I18nObject!
   maxLength: Int
   options: [FormOption!]
-  placeholder: I18nObjectType
+  placeholder: I18nObject
   required: Boolean
   type: FormType!
   variable: String!
@@ -121,8 +121,8 @@ input EmailCodeSignUpInput {
 }
 
 type FieldModelSchema {
-  label: I18nObjectType!
-  placeholder: I18nObjectType
+  label: I18nObject!
+  placeholder: I18nObject
 }
 
 type ForgetPasswordCheckResponse {
@@ -145,7 +145,7 @@ input ForgetPasswordResetInput {
 }
 
 type FormOption {
-  label: I18nObjectType!
+  label: I18nObject!
   value: String!
 }
 
@@ -167,7 +167,7 @@ enum FormType {
   TEXT_INPUT
 }
 
-type I18nObjectType {
+type I18nObject {
   """English (United States) translation"""
   en_US: String
 
@@ -243,13 +243,13 @@ type ModelProvider {
   author: String!
 
   """Description of the provider in multiple languages"""
-  description: I18nObjectType
+  description: I18nObject
 
   """Url of the provider icon"""
   icon: String!
 
   """Label of the provider in multiple languages"""
-  label: I18nObjectType!
+  label: I18nObject!
 
   """Name of the model"""
   name: String!
@@ -260,10 +260,10 @@ type ModelProvider {
 
 type ModelProviderInfo {
   customConfiguration: CustomConfiguration!
-  description: I18nObjectType
-  icon: I18nObjectType
-  iconDark: I18nObjectType
-  label: I18nObjectType!
+  description: I18nObject
+  icon: I18nObject
+  iconDark: I18nObject
+  label: I18nObject!
   modelCredentialSchema: ModelCredentialSchema
   preferredProviderType: String!
   providerCredentialSchema: ProviderCredentialSchema
@@ -418,7 +418,7 @@ type Query {
   listPluginFromIds(pluginIds: [String!]!): [PluginInstallationResponse!]!
   menuInfo(id: Int!): Menu!
   menus(key: String, module: Boolean, modulePerm: Boolean, name: String, parent: String, scope: Boolean, status: Int): [Menu!]!
-  modelProviderList(modelType: String!): [ModelProviderList!]!
+  modelProviderList(modelType: String): ModelProviderList!
   modelProviders(
     """Category to filter providers by"""
     category: String

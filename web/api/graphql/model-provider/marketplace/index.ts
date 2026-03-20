@@ -1,5 +1,5 @@
 import { useGraphQLQuery } from "@/hooks/use-graphql";
-import { GET_MODEL_PROVIDERS } from "../queries";
+import { GET_MODEL_PROVIDERS } from "./queries";
 import { ModelProvider } from "../types/model-provider";
 
 export const useGetModelProviders = (params: {

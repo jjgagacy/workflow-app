@@ -1,7 +1,7 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('I18nObjectType')
-export class I18nObjectType {
+@ObjectType('I18nObject')
+export class I18nObject {
   @Field(() => String, { nullable: true, description: "English (United States) translation" })
   en_US?: string;
 

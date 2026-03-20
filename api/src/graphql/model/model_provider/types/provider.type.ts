@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { I18nObjectType } from "./i18n-object.type";
+import { I18nObject } from "./i18n-object.type";
 import { FormType } from "@/ai/model_runtime/entities/form.entity";
 
 @ObjectType('RestrictModel')
@@ -78,8 +78,8 @@ registerEnumType(FormType, {
 
 @ObjectType('CredentialFormSchema')
 export class CredentialFormSchema {
-  @Field(() => I18nObjectType)
-  label!: I18nObjectType;
+  @Field(() => I18nObject)
+  label!: I18nObject;
 
   @Field()
   variable!: string;
@@ -96,8 +96,8 @@ export class CredentialFormSchema {
   @Field(() => [FormOption], { nullable: true })
   options?: FormOption[];
 
-  @Field(() => I18nObjectType, { nullable: true })
-  placeholder?: I18nObjectType;
+  @Field(() => I18nObject, { nullable: true })
+  placeholder?: I18nObject;
 
   @Field(() => Int, { nullable: true })
   maxLength?: number;
@@ -111,11 +111,11 @@ export class ProviderCredentialSchema {
 
 @ObjectType('FieldModelSchema')
 export class FieldModelSchema {
-  @Field(() => I18nObjectType)
-  label!: I18nObjectType;
+  @Field(() => I18nObject)
+  label!: I18nObject;
 
-  @Field(() => I18nObjectType, { nullable: true })
-  placeholder?: I18nObjectType;
+  @Field(() => I18nObject, { nullable: true })
+  placeholder?: I18nObject;
 }
 
 @ObjectType('ModelCredentialSchema')
@@ -129,8 +129,8 @@ export class ModelCredentialSchema {
 
 @ObjectType('FormOption')
 export class FormOption {
-  @Field(() => I18nObjectType)
-  label!: I18nObjectType;
+  @Field(() => I18nObject)
+  label!: I18nObject;
 
   @Field()
   value!: string;
@@ -145,17 +145,17 @@ export class ModelProviderInfo {
   @Field()
   providerName!: string;
 
-  @Field(() => I18nObjectType)
-  label!: I18nObjectType;
+  @Field(() => I18nObject)
+  label!: I18nObject;
 
-  @Field(() => I18nObjectType, { nullable: true })
-  description?: I18nObjectType;
+  @Field(() => I18nObject, { nullable: true })
+  description?: I18nObject;
 
-  @Field(() => I18nObjectType, { nullable: true })
-  icon?: I18nObjectType;
+  @Field(() => I18nObject, { nullable: true })
+  icon?: I18nObject;
 
-  @Field(() => I18nObjectType, { nullable: true })
-  iconDark?: I18nObjectType;
+  @Field(() => I18nObject, { nullable: true })
+  iconDark?: I18nObject;
 
   @Field(() => [String!]!)
   supportedModelTypes!: string[];

@@ -19,7 +19,7 @@ export function Navbar({ routes, onMenuClick }: NavbarProps) {
   const { toggleTheme } = useAppearance();
 
   return (
-    <div className="bg-background shadow-sm dark:shadow-gray-700/30 flex items-center rounded-lg mr-2">
+    <div className="dark:shadow-gray-700/30 flex items-center rounded-lg mr-2">
       {/* 移动端菜单按钮 */}
       {onMenuClick && (
         <button
@@ -34,7 +34,7 @@ export function Navbar({ routes, onMenuClick }: NavbarProps) {
 
       {/* 其他 Navbar 内容 */}
       <div className="flex-1">
-        <div className="px-4 sm:px-6 lg:px-8">
+        <div className="px-4 sm:px-2 lg:px-4">
           <div className="flex h-[3rem]">
             {/* Left navigation (optional) */}
             {!isMobile && (

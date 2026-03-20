@@ -1,5 +1,5 @@
 import { PageInfo } from "@/common/graphql/types/page-info.type";
-import { I18nObjectType } from "@/graphql/model/model_provider/types/i18n-object.type";
+import { I18nObject } from "@/graphql/model/model_provider/types/i18n-object.type";
 import { Field, ObjectType } from "@nestjs/graphql";
 
 @ObjectType('ModelProvider')
@@ -16,11 +16,11 @@ export class ModelProvider {
   @Field(() => String, { description: "Url of the provider icon" })
   icon!: string;
 
-  @Field(() => I18nObjectType, { description: "Label of the provider in multiple languages" })
-  label!: I18nObjectType;
+  @Field(() => I18nObject, { description: "Label of the provider in multiple languages" })
+  label!: I18nObject;
 
-  @Field(() => I18nObjectType, { nullable: true, description: "Description of the provider in multiple languages" })
-  description?: I18nObjectType;
+  @Field(() => I18nObject, { nullable: true, description: "Description of the provider in multiple languages" })
+  description?: I18nObject;
 }
 
 @ObjectType('ModelProvidersList')

@@ -6,8 +6,10 @@ import Logo from "../site/header/logo";
 import Avatar from "./avatar";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "./navbar/selector/language-selector";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function Header() {
+  const isMobile = useIsMobile();
   const { t } = useTranslation();
 
   return (
@@ -25,7 +27,7 @@ export default function Header() {
                 {t('app.back_workspace')}
                 <ArrowUpRight className="w-5 h-5 ml-1" />
               </Button>
-              <LanguageSelector reloadPage={false} />
+              {!isMobile && <LanguageSelector reloadPage={false} />}
               <Avatar />
             </div>
           </div>

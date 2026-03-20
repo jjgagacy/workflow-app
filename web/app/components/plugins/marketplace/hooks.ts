@@ -3,7 +3,7 @@ import i18next from "i18next";
 import { useTranslation } from "react-i18next";
 
 export const useMarketplacePlugins = () => {
-  const { error, modelProviders, mutate, isLoading } = api.modelProvider.useGetModelProviders();
+  const { error, modelProviders, mutate, isLoading } = api.marketplace.useGetModelProviders();
 
   return {
     modelProviders,

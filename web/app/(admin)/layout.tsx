@@ -4,6 +4,7 @@ import { Route } from "@/types/route";
 import AdminLayout from "../components/layout/admin-layout";
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { AppContextProvider } from "@/context/app-context";
+import { ModelProviderContextProvider } from "@/context/model-provider-context";
 
 interface AdminLayoutProps {
   children: ReactNode,
@@ -18,9 +19,11 @@ export default function Layout({ children }: AdminLayoutProps) {
       <NuqsAdapter>
         <ProtectedRoute>
           <AppContextProvider>
-            <AdminLayout routes={routes}>
-              {children}
-            </AdminLayout>
+            <ModelProviderContextProvider>
+              <AdminLayout routes={routes}>
+                {children}
+              </AdminLayout>
+            </ModelProviderContextProvider>
           </AppContextProvider>
         </ProtectedRoute>
       </NuqsAdapter>

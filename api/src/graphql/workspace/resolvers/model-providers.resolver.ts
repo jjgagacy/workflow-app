@@ -14,12 +14,12 @@ export class ModelProviderListResolver {
     private readonly modelProviderService: ModelProviderService
   ) { }
 
-  @Query(() => [ModelProviderList])
+  @Query(() => ModelProviderList)
   @UseGuards(AccountInitializedGuard)
   @UseGuards(TenantContextGuard)
   async modelProviderList(
-    @Args('modelType', { type: () => String }) modelType: string,
-    @CurrentTenent() tenant: any
+    @CurrentTenent() tenant: any,
+    @Args('modelType', { type: () => String, nullable: true }) modelType?: string,
   ): Promise<ModelProviderList> {
     return this.modelProviderService.getProviderList(tenant.id, modelType);
   }

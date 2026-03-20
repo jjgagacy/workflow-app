@@ -15,7 +15,6 @@ export interface RestrictModel {
   baseModelName: string;
 }
 
-
 export interface QuotaInfo {
   quotaType: string;
   quotaUnit: string;
@@ -42,7 +41,6 @@ export enum FormType {
   RADIO = 'radio',
   SWITCH = 'switch',
 }
-
 
 export interface FormOption {
   label: I18nObject;

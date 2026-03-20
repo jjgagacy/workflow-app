@@ -1,12 +1,12 @@
-import { GET_MODEL_PROVIDERS } from "../queries";
 import { useGraphQLQuery } from "@/hooks/use-graphql";
 import { ModelProviderInfo } from "../types/model-provider";
+import { LIST_MODEL_PROVIDER } from "../queries";
 
 export const useGetModelProviderList = (params: {
   modelType?: string;
 } = {}) => {
   const { data, error, isLoading, mutate } = useGraphQLQuery<{ modelProviderList: { data: ModelProviderInfo[] } }, typeof params>(
-    GET_MODEL_PROVIDERS,
+    LIST_MODEL_PROVIDER,
     params,
     {
       shouldRetryOnError: false,
