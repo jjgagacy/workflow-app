@@ -67,7 +67,7 @@ export class ProviderService {
     // 获取所有提供商模型记录
     const allProviderModelEntities = await this.getAllProviderModelEntities(tenantId);
     // 获取所有提供商
-    const allProviders = await this.modelProviderPlugin.getAllProviders(tenantId);
+    const allProviders = await this.modelProviderPlugin.getAllModelProviders(tenantId);
     // 获取首选提供商类型
     const preferredModelEntities = await this.getPreferredModelProviders(tenantId);
     // 获取所有提供商模型设置
@@ -157,10 +157,6 @@ export class ProviderService {
     throw new NotImplementedException();
   }
 
-  private async getAllProviders(tenantId: string): Promise<Map<string, Provider[]>> {
-    throw new NotImplementedException();
-  }
-
   private isFiltered(includeSet: Set<string>, excludeSet: Set<string>, data: any, nameFunc: (x: any) => string): boolean {
     const name = nameFunc(data);
     if (includeSet.size > 0 && !includeSet.has(name)) return true;
@@ -226,7 +222,7 @@ export class ProviderService {
   /**
    * toSystemConfiguration constructs a configuration that uses only "system" providers 
    * and models (i.e., built-in or platform-defined providers), without any custom 
-   * credentilas or overrides specified by the tenant.
+   * credentials or overrides specified by the tenant.
    *   1. Load the provider's hosting configuration
    *   2. Build a dictionary mapping from system provider entities 
    *   3. Determine which quota type should be used as the active quota (paid > free > trial)
@@ -306,7 +302,6 @@ export class ProviderService {
     // keys to claim the free allowance.
     if (currentQuotaType === QuotaType.FREE) {
       const freeRecord = systemRecordMapByQuota.get(QuotaType.FREE);
-
       if (freeRecord) {
         const secretVars = extractSecretVariables(provider.providerCredentialSchema?.credentialFormSchema || [])
         currentCredentials = await this.getProviderCredential(tenantId, freeRecord, secretVars);

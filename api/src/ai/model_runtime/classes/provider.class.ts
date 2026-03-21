@@ -68,6 +68,7 @@ export class Provider {
 
   @IsOptional()
   description?: I18nObject;
+
   @IsOptional()
   iconSmall?: I18nObject;
   @IsOptional()
@@ -88,7 +89,6 @@ export class Provider {
   providerCredentialSchema?: ProviderCredentialSchema;
   modelCredentialSchema?: ModelCredentialSchema;
 
-  models: AIModel[];
   @IsOptional()
   position?: Record<string, string[]>;
 
@@ -123,9 +123,6 @@ export class Provider {
 
     this.providerCredentialSchema = props.providerCredentialSchema;
     this.modelCredentialSchema = props.modelCredentialSchema;
-
-    this.models = Provider.validateModels(props.models);
-    this.position = props.position;
   }
 }
 

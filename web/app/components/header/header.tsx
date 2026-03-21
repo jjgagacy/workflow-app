@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowUpRight, LayoutDashboard, Workflow } from "lucide-react";
+import { ArrowUpRight, LayoutDashboard } from "lucide-react";
 import Button from "../base/button";
 import Logo from "../site/header/logo";
 import Avatar from "./avatar";

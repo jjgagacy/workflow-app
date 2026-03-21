@@ -12,10 +12,11 @@ import { CredentialFormSchema, extractSecretVariables } from "../entities/form.e
 import { obfuscateToken } from "@/encryption/encryption.service";
 import { ProviderEntity } from "@/account/entities/provider.entity";
 import { EntityManager } from "typeorm";
+import { ModelProviderDeclaration } from "./model-provider.class";
 
 export interface ConfigurationOptions {
   tenantId: string;
-  provider: Provider;
+  provider: ModelProviderDeclaration;
   preferredProviderType: ProviderType;
   usingProviderType: ProviderType;
   systemConfiguration: SystemConfiguration;
@@ -25,7 +26,7 @@ export interface ConfigurationOptions {
 
 export class ProviderConfiguration {
   tenantId: string;
-  provider: Provider;
+  provider: ModelProviderDeclaration;
   preferredProviderType: ProviderType;
   usingProviderType: ProviderType;
   systemConfiguration: SystemConfiguration;

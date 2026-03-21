@@ -18,5 +18,3 @@ export const PROVIDERS = {
 } as const;
 
 export type PROVIDER_NAME = typeof PROVIDERS[keyof typeof PROVIDERS];
-
-

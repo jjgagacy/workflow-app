@@ -13,9 +13,7 @@ export interface ApiKeyCredentials {
 export interface ModelCredentials extends BaseCredentials {
   baseModelName?: string;
   model?: string;
-  [key: string]: any;
 }
-
 
 // Azure OpenAI
 export interface AzureOpenAICredentials extends ApiKeyCredentials {

@@ -1,4 +1,4 @@
-import { Provider } from "@/ai/model_runtime/classes/provider.class";
+import { ModelProviderDeclaration } from "@/ai/model_runtime/classes/model-provider.class";
 
 export const DEFAULT_PLUGIN_ID = 'monie';
 
@@ -8,7 +8,7 @@ export interface ModelProviderProps {
   tenantId: string;
   provider: string;
   pluginUniqueIdentifier: string;
-  declaration: Provider;
+  declaration: ModelProviderDeclaration;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -23,7 +23,7 @@ export class ModelProvider {
   createdAt: Date;
   updatedAt: Date;
 
-  declaration: Provider;
+  declaration: ModelProviderDeclaration;
 
   constructor(props: ModelProviderProps) {
     this.id = props.id;

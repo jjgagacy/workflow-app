@@ -3,9 +3,8 @@ import { Injectable, NotImplementedException } from "@nestjs/common";
 import { ModelType } from "../../enums/model-runtime.enum";
 import { DefaultModel } from "../default-model.class";
 import { ProviderModelBundle } from "../../entities/model.entity";
-import { Provider } from "../provider.class";
 import { ProviderModel } from "../provider-model.class";
-import { ModelProvider } from "@/ai/plugin/dtos/model-provider.dto";
+import { ModelProviderDeclaration } from "../model-provider.class";
 
 @Injectable()
 export class PluginModelProvider {
@@ -29,7 +28,7 @@ export class PluginModelProvider {
     throw new NotImplementedException();
   }
 
-  async getAllProviders(tenantId: string): Promise<Provider[]> {
+  async getAllModelProviders(tenantId: string): Promise<ModelProviderDeclaration[]> {
     const modelProviders = await this.pluginModelClient.fetchModelProviders(tenantId);
     return modelProviders.map(modelProvider => {
       modelProvider.declaration.provider = modelProvider.pluginId + '/' + modelProvider.declaration.provider;

@@ -18,9 +18,9 @@ export interface ProviderModelProps {
  */
 export class ProviderModel {
   model: string;
+  modelType: ModelType;
   modelProperties: { [key in ModelPropertyKey]?: any };
   label: I18nObject;
-  modelType: ModelType;
 
   @IsOptional()
   features?: ModelFeature[];
