@@ -198,8 +198,12 @@ const translation = {
   theme_settings: 'Theme',
   timezone_settings: 'Timezone',
   save_settings: 'Save Settings',
-  model_provider: 'Model Provider',
-  install_model_provider: 'Install Model Provider',
+  model_provider: {
+    title: 'Model Provider',
+    install_model_provider: 'Install Model Provider',
+    install_model: 'Install Model',
+    models_list: 'Models List',
+  },
   install_model: {
     title: 'Install Model',
   }

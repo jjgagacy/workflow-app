@@ -199,8 +199,12 @@ const translation = {
   theme_settings: '主题设置',
   timezone_settings: '时区设置',
   save_settings: '保存设置',
-  model_provider: '模型提供商',
-  install_model_provider: '安装模型提供商',
+  model_provider: {
+    title: '模型提供商',
+    install_model_provider: '安装模型提供商',
+    install_model: '安装模型',
+    models_list: '模型列表',
+  },
   install_model: {
     title: '安装模型',
   }

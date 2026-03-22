@@ -116,7 +116,7 @@ export class MarketplaceService {
     if (!pluginDeclaration.model) {
       return null;
     }
-    const iconKey = useSmall ? 'iconSmall' : (theme === 'dark' ? 'iconLargeDark' : 'iconLarge');
+    const iconKey = useSmall ? (theme === 'dark' ? 'iconSmallDark' : 'iconSmall') : (theme === 'dark' ? 'iconLargeDark' : 'iconLarge');
     const iconPath = pluginDeclaration.model[iconKey as keyof ModelProviderDeclaration] as I18nObject | undefined;
     if (!iconPath) {
       return null;

@@ -5,11 +5,13 @@ import { ProviderService } from "@/ai/model_runtime/services/provider.service";
 import { EnumConverter } from "@/common/utils/enums";
 import { CustomConfiguration, ModelProviderInfo, ModelProviderList, QuotaInfo, RestrictModel, SystemConfiguration } from "@/graphql/model/model_provider/types/provider.type";
 import { Injectable } from "@nestjs/common";
+import { MarketplaceService } from "./marketplace.service";
 
 @Injectable()
 export class ModelProviderService {
   constructor(
-    private readonly providerService: ProviderService
+    private readonly providerService: ProviderService,
+    private readonly marketplaceService: MarketplaceService
   ) { }
 
   async getProviderList(
@@ -23,13 +25,20 @@ export class ModelProviderService {
         const modelTypeEnum = EnumConverter.toEnum(ModelType, modelType);
         if (!pc.provider.supportedModelTypes.includes(modelTypeEnum)) continue;
       }
+      const providerName = pc.provider.provider.split('/').slice(-1)[0];
       providerList.push({
         tenantId,
         providerName: pc.provider.provider,
         label: pc.provider.label || {},
         description: pc.provider.description,
-        icon: pc.provider.iconLarge,
-        iconDark: pc.provider.iconLargeDark,
+        icon: {
+          en_US: this.marketplaceService.getModelProviderIconUrl(providerName),
+          zh_Hans: this.marketplaceService.getModelProviderIconUrl(providerName, 'light', 'zh_Hans'),
+        },
+        iconDark: {
+          en_US: this.marketplaceService.getModelProviderIconUrl(providerName, 'dark'),
+          zh_Hans: this.marketplaceService.getModelProviderIconUrl(providerName, 'dark', 'zh_Hans'),
+        },
         supportedModelTypes: pc.provider.supportedModelTypes.map((v) => v as string),
         preferredProviderType: pc.preferredProviderType,
         customConfiguration: {

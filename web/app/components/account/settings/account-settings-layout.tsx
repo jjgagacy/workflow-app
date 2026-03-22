@@ -45,7 +45,7 @@ export default function AccountSettingsLayout() {
     },
     {
       key: 'model_provider',
-      label: t('system.model_provider'),
+      label: t('system.model_provider.title'),
       icon: <BrainCog className="w-5 h-5" />,
       description: '',
     }

@@ -19,13 +19,10 @@ func (app *App) Init(config *core.Config) (shutdowns []func(), err error) {
 
 	// local sentry
 	app.setupLocalSentry(config)
-
 	// setup pool
 	app.setupPool(config)
-
 	// init database
 	db.Init(config)
-
 	// init oss
 	oss := initOSS(config)
 
