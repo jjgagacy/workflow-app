@@ -21,6 +21,7 @@ const translation = {
     verify: 'Verify',
     back: 'Back',
     install: 'Install',
+    setup: 'Setup',
   },
   theme: {
     system: 'Follow System',

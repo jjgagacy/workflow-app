@@ -23,6 +23,7 @@ const translation = {
     verify: '验证',
     back: '返回',
     install: '安装',
+    setup: '设置',
   },
   theme: {
     system: '跟随系统',

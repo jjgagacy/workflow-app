@@ -207,7 +207,6 @@ export default function SettingContent() {
           </div>
         </div>
 
-
         {/* 外观设置 */}
         <div className="bg-background rounded-2xl">
           <div className="flex items-center mb-6">
@@ -288,7 +287,6 @@ export default function SettingContent() {
               </div>
             )}
           </div>
-
         </div>
 
         {/* 时区设置 */}
@@ -327,7 +325,6 @@ export default function SettingContent() {
             )}
           </div>
         </div>
-
       </div>
 
     </ContentSection>

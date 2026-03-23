@@ -19,7 +19,8 @@ export const getClientLocale = (): Locale => {
   return Cookies.get(LOCALE_COOKIE_NAME) as Locale || i18n.defaultLocale;
 }
 
-export const getLocalizedText = (obj: Record<string, string>, locale: string) => {
+export const getLocalizedText = (obj?: Record<string, string>, locale?: string) => {
   if (!obj) return '';
-  return obj[locale] || obj[i18n.defaultLocale.replace('-', '_')] || Object.values(obj)[0] || '';
+  const language = locale || i18n.defaultLocale.replace('-', '_');
+  return obj[language] || obj[i18n.defaultLocale.replace('-', '_')] || Object.values(obj)[0] || '';
 }

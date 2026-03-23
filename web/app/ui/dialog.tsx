@@ -61,8 +61,10 @@ export function Dialog(props: DialogProps) {
             )}
 
             {children && (
-              <div className="px-4 py-4">
-                {children}
+              <div className="max-h-[calc(100vh-300px)] overflow-y-auto">
+                <div className="px-4 py-4">
+                  {children}
+                </div>
               </div>
             )}
             {actions && (
