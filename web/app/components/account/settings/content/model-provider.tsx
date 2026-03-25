@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import { ContentSection } from "../content-section";
 import { useMarketplacePlugins } from "@/app/components/plugins/marketplace/hooks";
 import Loading from "@/app/components/base/loading";
-import { getClientLocale } from "@/i18n";
 import List from "@/app/components/plugins/marketplace/list";
 import { useMemo, useState } from "react";
 import { ConfigurationMethod, Plugin } from "@/app/components/plugins/types";
@@ -66,7 +65,6 @@ export default function ModelProvider() {
           configMethod={ConfigurationMethod.predefinedModel}
           onCancel={() => setShowSetupModal(false)}
           onSave={() => {
-            // Implement save logic here
             setShowSetupModal(false);
           }}
         />

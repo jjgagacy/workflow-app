@@ -151,6 +151,12 @@ type FormOption {
 
 """表单字段类型"""
 enum FormType {
+  ANY
+  BOOLEAN
+  FILE
+  FILES
+  NUMBER
+
   """单选框"""
   RADIO
 
@@ -231,6 +237,13 @@ input MenuInput {
 
 type MenuResponse {
   id: Int!
+}
+
+type ModelCredentialResponse {
+  credentials: JSON
+  model: String!
+  modelType: String!
+  providerName: String!
 }
 
 type ModelCredentialSchema {
@@ -404,6 +417,11 @@ type PluginInstallationResponse {
   version: String!
 }
 
+type ProviderCredentialResponse {
+  credentials: JSON
+  providerName: String!
+}
+
 type ProviderCredentialSchema {
   credentialFormSchema: [CredentialFormSchema!]
 }
@@ -418,6 +436,7 @@ type Query {
   listPluginFromIds(pluginIds: [String!]!): [PluginInstallationResponse!]!
   menuInfo(id: Int!): Menu!
   menus(key: String, module: Boolean, modulePerm: Boolean, name: String, parent: String, scope: Boolean, status: Int): [Menu!]!
+  modelCredentials(model: String!, modelType: String!, providerName: String!): ModelCredentialResponse!
   modelProviderList(modelType: String): ModelProviderList!
   modelProviders(
     """Category to filter providers by"""
@@ -427,6 +446,7 @@ type Query {
     excludes: [String!]
   ): ModelProvidersList!
   modules(key: String, limit: Int, name: String, page: Int): ModuleList!
+  providerCredentials(providerName: String!): ProviderCredentialResponse!
   roles(hasMenus: Boolean, hasRolePerms: Boolean, id: Int, key: String, limit: Int, name: String, page: Int, parent: String, status: Int): RoleList!
   routes: [Route!]!
   workspaceDetail: WorkspaceDetail!

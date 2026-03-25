@@ -35,11 +35,15 @@ export interface SystemConfiguration {
 }
 
 export enum FormType {
-  TEXT_INPUT = 'text-input',
-  SECRET_INPUT = 'secret-input',
-  SELECT = 'select',
-  RADIO = 'radio',
-  SWITCH = 'switch',
+  TEXT_INPUT = 'TEXT_INPUT',
+  NUMBER_INPUT = 'NUMBER_INPUT',
+  SECRET_INPUT = 'SECRET_INPUT',
+  SELECT = 'SELECT',
+  RADIO = 'RADIO',
+  BOOLEAN = 'BOOLEAN',
+  FILES = 'FILES',
+  FILE = 'FILE',
+  ANY = 'ANY',
 }
 
 export interface FormOption {
@@ -89,3 +93,5 @@ export interface ModelProviderInfo {
   providerCredentialSchema?: ProviderCredentialSchema;
   modelCredentialSchema?: ModelCredentialSchema;
 }
+
+export type FormValue = Record<string, any>;

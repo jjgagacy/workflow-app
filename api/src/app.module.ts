@@ -102,6 +102,7 @@ import { PreviewController } from './controllers/files/preview.controller';
 import { TenantAccountService } from './service/tenant.service';
 import { ModelProvidersResolver } from './graphql/marketplace/resolvers/model-providers.resolver';
 import { PluginResolver } from './graphql/workspace/resolvers/plugin.resolver';
+import { ModelResolver } from './graphql/workspace/resolvers/model.resolver';
 
 @Module({
   imports: [
@@ -337,6 +338,7 @@ import { PluginResolver } from './graphql/workspace/resolvers/plugin.resolver';
     DateScalar,
     WorkspaceResolver,
     ModelProviderListResolver,
+    ModelResolver,
     BasePluginClient,
     PluginModelClientService,
     SignUpResolver,

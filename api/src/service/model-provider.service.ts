@@ -6,6 +6,7 @@ import { EnumConverter } from "@/common/utils/enums";
 import { CustomConfiguration, ModelProviderInfo, ModelProviderList, QuotaInfo, RestrictModel, SystemConfiguration } from "@/graphql/model/model_provider/types/provider.type";
 import { Injectable } from "@nestjs/common";
 import { MarketplaceService } from "./marketplace.service";
+import { ModelCredentialResponse, ProviderCredentialResponse } from "@/graphql/workspace/types/provider.type";
 
 @Injectable()
 export class ModelProviderService {
@@ -78,5 +79,32 @@ export class ModelProviderService {
       } as QuotaInfo;
     });
   }
-}
 
+  public async getProviderCredentials(tenantId: string, providerName: string): Promise<ProviderCredentialResponse> {
+    const providerConfiguration = await this.providerService.getConfigurations(tenantId);
+    const providerConfig = providerConfiguration.get(providerName);
+    if (!providerConfig) {
+      throw new Error(`Provider configuration not found for provider: ${providerName}`);
+    }
+    const credentials = providerConfig.getCustomCredentials(true);
+    return {
+      providerName,
+      credentials,
+    } as ProviderCredentialResponse;
+  }
+
+  public async getModelCredentials(tenantId: string, providerName: string, model: string, modelType: string): Promise<ModelCredentialResponse> {
+    const providerConfiguration = await this.providerService.getConfigurations(tenantId);
+    const providerConfig = providerConfiguration.get(providerName);
+    if (!providerConfig) {
+      throw new Error(`Provider configuration not found for provider: ${providerName}`);
+    }
+    const credentials = providerConfig.getCustomModelCredentials(model, EnumConverter.toEnum(ModelType, modelType), true);
+    return {
+      providerName,
+      model,
+      modelType,
+      credentials,
+    } as ModelCredentialResponse;
+  }
+}

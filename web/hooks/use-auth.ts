@@ -1,5 +1,5 @@
 import { TenantInfo } from '@/types/tenant';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 export function useAuth() {
   // 从 localStorage 安全读取并解析数据
@@ -132,6 +132,19 @@ export function useAuth() {
     return user.isOwner === true;
   }
 
+  const isCurrentManager = useMemo((): boolean => {
+    const roles = getRoles();
+    return roles.includes('admin') || isOwner(user);
+  }, [user, getRoles]);
+
+  const isCurrentSuperUser = useMemo((): boolean => {
+    return isSuperUser(user);
+  }, [user]);
+
+  const isCurrentOwner = useMemo((): boolean => {
+    return isOwner(user);
+  }, [user]);
+
   return {
     isAuthenticated,
     login,
@@ -151,5 +164,8 @@ export function useAuth() {
     hasTenant,
     isSuperUser,
     isOwner,
+    isCurrentManager,
+    isCurrentSuperUser,
+    isCurrentOwner,
   };
 }

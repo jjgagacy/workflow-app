@@ -5,9 +5,14 @@ export type Mapping<T = any> = Record<string, T>;
 export enum FormType {
   TEXT_INPUT = 'text-input',
   SECRET_INPUT = 'secret-input',
+  NUMBER = 'number',
   SELECT = 'select',
   RADIO = 'radio',
   SWITCH = 'switch',
+  BOOLEAN = 'boolean',
+  ANY = 'any',
+  FILES = 'files',
+  FILE = 'file',
 }
 
 export enum CommonParameterType {

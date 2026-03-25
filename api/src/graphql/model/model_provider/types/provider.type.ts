@@ -136,7 +136,6 @@ export class FormOption {
   value!: string;
 }
 
-
 @ObjectType('ModelProviderInfo')
 export class ModelProviderInfo {
   @Field()

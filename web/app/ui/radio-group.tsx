@@ -38,7 +38,17 @@ interface RadioGroupProps {
 export const RadioGroup = React.forwardRef<
   HTMLDivElement,
   RadioGroupProps
->(({ value: valueProp, defaultValue, onValueChange, name, disabled = false, className, children, orientation = 'vertical', ...props }: RadioGroupProps, ref) => {
+>(({
+  value: valueProp,
+  defaultValue,
+  onValueChange,
+  name,
+  disabled = false,
+  className,
+  children,
+  orientation = 'vertical',
+  ...props
+}: RadioGroupProps, ref) => {
   const [internalValue, setInternalValue] = React.useState<string | number | undefined>(defaultValue);
   const value = typeof valueProp !== 'undefined' ? valueProp : internalValue;
   const handleValueChange = React.useCallback((newValue: string | number) => {

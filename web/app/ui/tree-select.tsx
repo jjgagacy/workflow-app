@@ -16,7 +16,7 @@ export type TreeNode = {
   children?: TreeNode[];
 }
 
-export type ITreeSelectProps = {
+type TreeSelectProps = {
   options: TreeNode[];
   selectedIdKey?: string | number | (string | number)[];
   idKey?: string;
@@ -27,7 +27,7 @@ export type ITreeSelectProps = {
   onChange?: (selected: TreeNode | (string | number)[] | any) => void;
 }
 
-export const TreeSelect: FC<ITreeSelectProps> = ({
+export const TreeSelect: FC<TreeSelectProps> = ({
   options: treeData,
   selectedIdKey,
   idKey = 'id',

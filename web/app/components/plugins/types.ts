@@ -1,5 +1,4 @@
 import { CredentialFormSchema } from "@/api/graphql/model-provider/types/model-provider";
-import { I18nObject } from "@/api/graphql/types/i18n";
 
 export type ProviderType = 'model' | 'tool' | 'endpoint';
 
@@ -24,7 +23,7 @@ export type PluginInstallation = {
 }
 
 export type CredentialFormSchemaTextInput = CredentialFormSchema;
-export type CredentialFormSchemaTextSelect = CredentialFormSchema;
+export type CredentialFormSchemaSelect = CredentialFormSchema;
 export type CredentialFormSchemaRadio = CredentialFormSchema;
 export type CredentialFormSchemaSecretInput = CredentialFormSchema;
 export type CredentialFormSchemaNumberInput = CredentialFormSchema & {
@@ -34,7 +33,7 @@ export type CredentialFormSchemaNumberInput = CredentialFormSchema & {
 
 export type CredentialFormSchemaAll =
   | CredentialFormSchemaTextInput
-  | CredentialFormSchemaTextSelect
+  | CredentialFormSchemaSelect
   | CredentialFormSchemaRadio
   | CredentialFormSchemaSecretInput
   | CredentialFormSchemaNumberInput;

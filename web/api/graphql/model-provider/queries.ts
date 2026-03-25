@@ -49,3 +49,19 @@ export const LIST_MODEL_PROVIDER = gql`
      }
    }
 }`;
+
+export const PROVIDER_CREDENTIALS = gql`
+  query($providerName: String!) {
+    providerCredentials(providerName: $providerName) {
+      credentials
+    }
+  }
+`;
+
+export const MODEL_CREDENTIALS = gql`
+  query($providerName: String!, model: String!, modelType: String!) {
+    modelCredentials(providerName: $providerName, model: $model, modelType: $modelType) {
+      credentials
+    }
+  }
+`;

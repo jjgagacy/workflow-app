@@ -6,6 +6,7 @@ import { ModelProviderList } from "@/graphql/model/model_provider/types/provider
 import { ModelProviderService } from "@/service/model-provider.service";
 import { UseGuards } from "@nestjs/common/decorators/core/use-guards.decorator";
 import { Args, Query, Resolver } from "@nestjs/graphql";
+import { ProviderCredentialResponse } from "../types/provider.type";
 
 @Resolver()
 @UseGuards(LoginRequiredGuard)
@@ -22,5 +23,15 @@ export class ModelProviderListResolver {
     @Args('modelType', { type: () => String, nullable: true }) modelType?: string,
   ): Promise<ModelProviderList> {
     return this.modelProviderService.getProviderList(tenant.id, modelType);
+  }
+
+  @Query(() => ProviderCredentialResponse)
+  @UseGuards(AccountInitializedGuard)
+  @UseGuards(TenantContextGuard)
+  async providerCredentials(
+    @CurrentTenent() tenant: any,
+    @Args('providerName', { type: () => String }) providerName: string,
+  ): Promise<ProviderCredentialResponse> {
+    return this.modelProviderService.getProviderCredentials(tenant.id, providerName);
   }
 }
