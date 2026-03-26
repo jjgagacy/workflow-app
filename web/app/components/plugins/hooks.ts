@@ -1,4 +1,5 @@
-import { useGetProviderCredentials } from "@/api/graphql/model-provider/settings/model-provider"
+import api from "@/api";
+import { useGetProviderCredentials, useSaveCredential } from "@/api/graphql/model-provider/settings/model-provider"
 import { FormValue } from "@/api/graphql/model-provider/types/model-provider";
 
 type CredentialResponse = {
@@ -14,8 +15,4 @@ export const useProviderCredentials = (
     credentials: providerCredentials || {},
     mutate
   };
-}
-
-export const saveCredentials = async (predefined: boolean, providerName: string, formValue: FormValue) => {
-  // todo: call api to save credentials
 }

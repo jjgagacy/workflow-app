@@ -8,10 +8,11 @@ import { useCallback, useMemo, useState } from "react";
 import { ConfigurationMethod, CredentialFormSchemaAll } from "../types";
 import { getLanguage } from "@/i18n/config";
 import { getClientLocale } from "@/i18n";
-import { saveCredentials, useProviderCredentials } from "../hooks";
+import { useProviderCredentials } from "../hooks";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "@/app/ui/toast";
 import { getErrorMessage } from "@/utils/errors";
+import api from "@/api";
 
 type ModelProviderSetupModalProps = {
   provider: ModelProviderInfo;
@@ -27,6 +28,7 @@ const ModelProviderSetupModal = ({ provider, configMethod, onCancel, onSave }: M
   const isProviderFormSchema = configMethod === ConfigurationMethod.predefinedModel;
   const [isLoading, setIsLoading] = useState(false);
   const { isCurrentManager } = useAuth();
+  const useSaveCredential = api.modelProvider.useSaveCredential();
 
   const formSchemas = useMemo(() => {
     const formSchemas = isProviderFormSchema
@@ -91,11 +93,12 @@ const ModelProviderSetupModal = ({ provider, configMethod, onCancel, onSave }: M
   const handleFormSave = async () => {
     try {
       setIsLoading(true);
-      await saveCredentials(
-        isProviderFormSchema,
-        provider.providerName,
-        secretFormValues(formValue)
-      );
+      await useSaveCredential({
+        input: {
+          providerName: provider.providerName,
+          credentials: secretFormValues(formValue),
+        }
+      });
       toast.success(t('system.operation_successed'));
       mutate();
       onSave();

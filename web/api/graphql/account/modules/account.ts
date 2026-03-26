@@ -187,7 +187,6 @@ export const useForgotPasswordReset = createMutationHook<
   }
 );
 
-
 export const useCurrentTenant = createMutationHook<
   { currentTenant: any },
   {},
@@ -198,7 +197,6 @@ export const useCurrentTenant = createMutationHook<
     transform: (data) => data.currentTenant
   }
 );
-
 
 export const useSwitchTenant = createMutationHook<
   { switchTenant: any },

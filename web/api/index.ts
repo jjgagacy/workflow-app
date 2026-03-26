@@ -5,6 +5,7 @@ import * as menu from './graphql/account/modules/menu';
 import * as module from './graphql/account/modules/module';
 import * as role from './graphql/account/modules/role';
 import * as modelProvider from './graphql/model-provider/settings/model-provider';
+import * as model from './graphql/model-provider/settings/model';
 import * as marketplace from './graphql/model-provider/marketplace/index';
 import * as plugin from './graphql/plugin/index';
 import { useGraphQLQuery } from '@/hooks/use-graphql';
@@ -31,6 +32,7 @@ export default {
   role,
   getRoutes,
   modelProvider,
+  model,
   plugin,
   marketplace
 }

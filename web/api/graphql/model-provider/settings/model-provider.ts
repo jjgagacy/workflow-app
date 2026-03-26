@@ -1,6 +1,8 @@
-import { useGraphQLQuery } from "@/hooks/use-graphql";
+import { createMutationHook, useGraphQLQuery } from "@/hooks/use-graphql";
 import { ModelProviderInfo } from "../types/model-provider";
 import { LIST_MODEL_PROVIDER, PROVIDER_CREDENTIALS } from "../queries";
+import { CredentialInput } from "../types";
+import { SAVE_CREDENTIALS } from "../mutations";
 
 export const useGetModelProviderList = (params: {
   modelType?: string;
@@ -41,3 +43,14 @@ export const useGetProviderCredentials = (params: {
     mutate
   }
 };
+
+export const useSaveCredential = createMutationHook<
+  { saveCredentials: boolean },
+  { input: CredentialInput },
+  boolean
+>(
+  SAVE_CREDENTIALS,
+  {
+    transform: (data) => data.saveCredentials
+  }
+);

@@ -107,4 +107,14 @@ export class ModelProviderService {
       credentials,
     } as ModelCredentialResponse;
   }
+
+  public async saveProviderCredentials(tenantId: string, providerName: string, credentials: Record<string, any>): Promise<boolean> {
+    const providerConfiguration = await this.providerService.getConfigurations(tenantId);
+    const providerConfig = providerConfiguration.get(providerName);
+    if (!providerConfig) {
+      throw new Error(`Provider configuration not found for provider: ${providerName}`);
+    }
+    await providerConfig.upsertCustomCredentials(credentials);
+    return true;
+  }
 }

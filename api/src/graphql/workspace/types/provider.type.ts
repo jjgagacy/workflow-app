@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, InputType, ObjectType } from "@nestjs/graphql";
 import GraphQLJSON from 'graphql-type-json';
 
 @ObjectType('ProviderCredentialResponse')
@@ -23,4 +23,14 @@ export class ModelCredentialResponse {
 
   @Field(() => GraphQLJSON, { nullable: true })
   credentials?: Record<string, any>;
+}
+
+
+@InputType('CredentialInput')
+export class CredentialInput {
+  @Field()
+  providerName!: string;
+
+  @Field(() => GraphQLJSON)
+  credentials!: Record<string, any>;
 }

@@ -54,7 +54,6 @@ export class ToolProviderID extends ProviderID {
   }
 }
 
-
 export function normalizeProviderName(name: string): string {
   if (!cache.has(name)) {
     cache.set(name, new ModelProviderID(name).toString());

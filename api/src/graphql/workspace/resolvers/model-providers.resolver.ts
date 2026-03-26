@@ -5,8 +5,8 @@ import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 import { ModelProviderList } from "@/graphql/model/model_provider/types/provider.type";
 import { ModelProviderService } from "@/service/model-provider.service";
 import { UseGuards } from "@nestjs/common/decorators/core/use-guards.decorator";
-import { Args, Query, Resolver } from "@nestjs/graphql";
-import { ProviderCredentialResponse } from "../types/provider.type";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { CredentialInput, ProviderCredentialResponse } from "../types/provider.type";
 
 @Resolver()
 @UseGuards(LoginRequiredGuard)
@@ -33,5 +33,15 @@ export class ModelProviderListResolver {
     @Args('providerName', { type: () => String }) providerName: string,
   ): Promise<ProviderCredentialResponse> {
     return this.modelProviderService.getProviderCredentials(tenant.id, providerName);
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(AccountInitializedGuard)
+  @UseGuards(TenantContextGuard)
+  async saveCredentials(
+    @Args('input') input: CredentialInput,
+    @CurrentTenent() tenant: any,
+  ): Promise<boolean> {
+    return this.modelProviderService.saveProviderCredentials(tenant.id, input.providerName, input.credentials);
   }
 }

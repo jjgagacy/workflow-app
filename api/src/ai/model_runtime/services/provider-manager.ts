@@ -20,6 +20,7 @@ import { TenantEntity } from "@/account/entities/tenant.entity";
 import { HIDDEN_VALUE } from "@/config/constants";
 import { StorageService } from "@/storage/storage.service";
 import { GlobalLogger } from "@/logger/logger.service";
+import { checkEntityCreatedId } from "@/common/database/utils/validate";
 
 @Injectable()
 export class ProviderManager {
@@ -92,7 +93,7 @@ export class ProviderManager {
     if (!tenant) throw new Error(`Failed to find tenant`);
 
     const encrypted = this.encryptionService.encrypt(token, tenant.encryptPublicKey!);
-    return encrypted.toString('utf8');
+    return encrypted.toString('base64');
   }
 
   async decryptToken(tenantId: string, encryptToken: string): Promise<string> {
@@ -102,7 +103,7 @@ export class ProviderManager {
       this.logger.error(`Private key not found, tenant_id: ${tenantId}`);
       throw new Error(`Private key not found`);
     }
-    const buf = Buffer.from(privateKeyContent);
+    const buf = Buffer.from(encryptToken, 'base64');
     return this.encryptionService.decrypt(buf, privateKeyContent);
   }
 
@@ -132,28 +133,27 @@ export class ProviderManager {
       providerConfiguration.tenantId,
       providerConfiguration.provider.provider
     );
-    const credentialsSecretVariables = extractSecretVariables(providerConfiguration.provider.providerCredentialSchema?.credentialFormSchema || []);
+    const secretVariables = extractSecretVariables(providerConfiguration.provider.providerCredentialSchema?.credentialFormSchema || []);
     let originalCredentials: Credentials = {};
     if (providerRecord && providerRecord.encryptedConfig) {
       originalCredentials = JSON.parse(providerRecord.encryptedConfig);
     }
     // If request uses HIDDEN_VALUE for a secret field, restore original decrypted token
     for (const [key, value] of Object.entries(credentials)) {
-      if (credentialsSecretVariables.includes(key)) {
+      if (secretVariables.includes(key)) {
         if (value === HIDDEN_VALUE && originalCredentials[key]) {
-          credentials[key] = this.decryptToken(providerConfiguration.tenantId, originalCredentials[key]);
+          credentials[key] = await this.decryptToken(providerConfiguration.tenantId, originalCredentials[key]);
         }
       }
     }
     // todo validate 
-    // todo validate 
     const validateCredentials = { ...credentials };
     for (const [key, value] of Object.entries(validateCredentials)) {
-      if (credentialsSecretVariables.includes(key)) {
-        validateCredentials[key] = this.encryptToken(providerConfiguration.tenantId, value);
+      if (secretVariables.includes(key)) {
+        validateCredentials[key] = await this.encryptToken(providerConfiguration.tenantId, value);
       }
     }
-    return { providerRecord: undefined, credentials: validateCredentials };
+    return { providerRecord: providerRecord || undefined, credentials: validateCredentials };
   }
 
   @Transactional()
@@ -194,7 +194,7 @@ export class ProviderManager {
         }
       });
       await workManager.save(providerRecord);
-      if (!providerRecord.id) throw new DatabaseRecordCreatedError(this.i18n.t('model.PROVIDER_CREATED_ERROR'));
+      checkEntityCreatedId(providerRecord, this.i18n);
     }
 
     // Delete credentials cache

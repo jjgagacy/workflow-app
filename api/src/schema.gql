@@ -65,6 +65,11 @@ type CredentialFormSchema {
   variable: String!
 }
 
+input CredentialInput {
+  credentials: JSON!
+  providerName: String!
+}
+
 type CustomConfiguration {
   status: String!
 }
@@ -356,6 +361,7 @@ type Mutation {
   login(input: LoginInput!): LoginResponse!
   removeAccount(id: Int!): Boolean!
   resetPasswordSendEmail(input: ResetPasswordSendEmailInput!): String!
+  saveCredentials(input: CredentialInput!): Boolean!
   setRolePerms(input: RoleSetPermInput!): Boolean!
   switchTenant(tenant_id: String!): TenantResponse!
   toggleAccountStatus(id: Int!): Boolean!
