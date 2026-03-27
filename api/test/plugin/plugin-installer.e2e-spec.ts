@@ -28,38 +28,38 @@ describe('PluginInstaller (e2e)', () => {
     await cacheService.get('foo');
   });
 
-  // describe('fetchPluginManifest', () => {
-  //   it('should fetch the plugin manifest for a given tenant and plugin identifier', async () => {
-  //     const manifest = await pluginInstallerService.fetchPluginManifest(testTenantId, testPluginUniqueIdentifier);
-  //     expect(manifest).toBeDefined();
-  //     console.log('Fetched plugin manifest:', manifest);
-  //   });
+  describe('fetchPluginManifest', () => {
+    it('should fetch the plugin manifest for a given tenant and plugin identifier', async () => {
+      const manifest = await pluginInstallerService.fetchPluginManifest(testTenantId, testPluginUniqueIdentifier);
+      expect(manifest).toBeDefined();
+      console.log('Fetched plugin manifest:', manifest);
+    });
 
-  //   it('should throw an error for an invalid plugin identifier', async () => {
-  //     await pluginInstallerService.fetchPluginManifest(testTenantId, 'invalid/identifier:1.0.0').catch((error) => {
-  //       expect(error).toBeDefined();
-  //       console.log('Error fetching plugin manifest with invalid identifier:', error.message);
-  //     });
-  //   });
-  // });
+    it('should throw an error for an invalid plugin identifier', async () => {
+      await pluginInstallerService.fetchPluginManifest(testTenantId, 'invalid/identifier:1.0.0').catch((error) => {
+        expect(error).toBeDefined();
+        console.log('Error fetching plugin manifest with invalid identifier:', error.message);
+      });
+    });
+  });
 
-  // describe('listPlugins', () => {
-  //   it('should list all installed plugins for a given tenant', async () => {
-  //     const plugins = await pluginInstallerService.listPlugins(testTenantId);
-  //     expect(plugins).toBeDefined();
-  //     console.log('List of installed plugins:', plugins);
-  //     console.log(plugins.map(p => p.endpointsSetups));
-  //   });
-  // });
+  describe('listPlugins', () => {
+    it('should list all installed plugins for a given tenant', async () => {
+      const plugins = await pluginInstallerService.listPlugins(testTenantId);
+      expect(plugins).toBeDefined();
+      console.log('List of installed plugins:', plugins);
+      console.log(plugins.map(p => p.endpointsSetups));
+    });
+  });
 
-  // describe('fetchPluginInstallationByIds', () => {
-  //   const pluginIds = ['monie/hello'];
-  //   it('should fetch plugin installations by their unique identifiers', async () => {
-  //     const installations = await pluginInstallerService.fetchPluginInstallationByPluginId(testTenantId, pluginIds);
-  //     expect(installations).toBeDefined();
-  //     console.log('Fetched plugin installations by IDs:', installations);
-  //   });
-  // });
+  describe('fetchPluginInstallationByIds', () => {
+    const pluginIds = ['monie/hello'];
+    it('should fetch plugin installations by their unique identifiers', async () => {
+      const installations = await pluginInstallerService.fetchPluginInstallationByPluginIds(testTenantId, pluginIds);
+      expect(installations).toBeDefined();
+      console.log('Fetched plugin installations by IDs:', installations);
+    });
+  });
 
   describe('checkToolExistence', () => {
     const toolIds = [new ProviderID('monie/hello/telegraph')];

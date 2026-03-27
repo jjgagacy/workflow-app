@@ -21,4 +21,3 @@ export class OauthSchema {
     Object.assign(this, data);
   }
 }
-

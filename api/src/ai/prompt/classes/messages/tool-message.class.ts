@@ -2,13 +2,13 @@ import { PromptMessageRole } from "../../enums/prompt-message.enum";
 import { PromptMessage } from "../prompt-message.class";
 
 export class ToolPromptMessage extends PromptMessage {
-    role: PromptMessageRole = PromptMessageRole.TOOL;
-    toolCallId: string;
+  role: PromptMessageRole = PromptMessageRole.TOOL;
+  toolCallId: string = '';
 
-    isEmtpy(): boolean {
-        if (!super.isEmpty() || this.toolCallId) {
-            return false;
-        }
-        return true;
+  isEmtpy(): boolean {
+    if (!super.isEmpty() || this.toolCallId) {
+      return false;
     }
+    return true;
+  }
 }

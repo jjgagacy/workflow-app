@@ -3,7 +3,7 @@ import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { FileItem, PluginRequestOptions } from "../../ai/plugin/interfaces/client.interface";
 import { AxiosResponse } from "axios";
-import { catchError, map, mergeMap, Observable, retry, throwError } from "rxjs";
+import { catchError, map, mergeMap, Observable, of, retry, takeUntil, tap, throwError, timer } from "rxjs";
 import { Readable } from 'stream';
 import FormData from "form-data";
 import { GlobalLogger, LogContext } from "@/logger/logger.service";
@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { formatBytes } from "@/common/utils/number";
 import { deepSnakeToCamel } from "@/common/utils/string";
 import { EXCLUDED_LANG_KEYS } from "@/i18n-global/langmap";
+import { safeStringify } from "@/common/utils/json";
 
 @Injectable()
 export class BasePluginClient {
@@ -77,13 +78,44 @@ export class BasePluginClient {
     }).pipe(
       retry({
         count: 3,
-        delay: 1500,
         resetOnSuccess: true,
+        delay: (error, retryCount) => {
+          // Only retry on network errors or 5xx server errors
+          if (error.code === 'ECONNREFUSED' ||
+            error.code === 'ECONNRESET' ||
+            error.response?.status >= 500) {
+            return timer(1500 * retryCount);
+          }
+          // Don't retry for client errors (4xx)
+          return throwError(() => error);
+        },
       }),
       catchError(error => {
-        return throwError(() => new Error(`Request plugin api error: ${error.message}, data: ${JSON.stringify(error.response?.data)}`));
+        return throwError(() => new Error(`Request plugin api error: ${error.message}, headers: ${JSON.stringify(safeStringify(error.config?.headers))} data: ${JSON.stringify(safeStringify(error.config?.data))}`));
       })
     );
+  }
+
+  private shouldRetry(error: any): boolean {
+    // Network errors
+    if (error.code === 'ECONNREFUSED' ||
+      error.code === 'ECONNRESET' ||
+      error.code === 'ETIMEDOUT') {
+      return true;
+    }
+
+    // Server errors (5xx)
+    if (error.response?.status >= 500 && error.response?.status < 600) {
+      return true;
+    }
+
+    // Rate limiting (429)
+    if (error.response?.status === 429) {
+      return true;
+    }
+
+    // Don't retry for client errors (4xx except 429)
+    return false;
   }
 
   jsonRequest<T = any>(
@@ -98,15 +130,66 @@ export class BasePluginClient {
   /**
    * Make a stream request to the plugin daemon api
    **/
-  streamRequest(
+  streamRequest<T>(
     options: Omit<PluginRequestOptions, 'stream'>,
-  ): Observable<string> {
+  ): Observable<T> {
+    const { headers = {}, method, path } = options || {};
+
+    const requestHeaders = {
+      'Content-Type': 'application/json',
+      ...headers
+    };
+    options.headers = requestHeaders;
+
+    const requestId = this.generateRequestId();
+    const startTime = Date.now();
+
+    const baseContext: LogContext = {
+      requestId,
+      method,
+      path,
+      timestamp: new Date().toISOString(),
+      headers: this.sanitizeHeaders(requestHeaders),
+      data: options?.data,
+      params: options?.params,
+      files: options?.files,
+    }
+    this.logger.log(`[${requestId}] request plugin details`, baseContext);
+
     return this.request<Readable>({
       ...options,
       stream: true,
     }).pipe(
       map(response => response.data),
       mergeMap(stream => this.transformStreamToLines(stream as unknown as Readable)),
+      mergeMap(line => {
+        const duration = Date.now() - startTime;
+        const pluginResponse = this.validatePluginResponse<T>(line);
+
+        this.logger.log(`[${requestId}] receive stream line`, {
+          ...baseContext,
+          duration: `${duration}ms`,
+          responseData: pluginResponse.data,
+          hasData: !!pluginResponse.data,
+        });
+
+        if (pluginResponse.data === null) {
+          const frame = new Error().stack?.split('\n')[2]; // Get caller info
+          throw new Error(`got empty data from plugin daemon: ${frame || 'unknown'}`);
+        }
+
+        return of(pluginResponse.data);
+      }),
+      catchError(error => {
+        const duration = Date.now() - startTime;
+        this.logger.error(`[${requestId}] request plugin api error`, {
+          ...baseContext,
+          duration: `${duration}ms`,
+          threshold: '5s',
+          error: error
+        });
+        return throwError(() => new Error(`Request plugin api error: ${error.message}, headers: ${JSON.stringify(safeStringify(error.config?.headers))} data: ${JSON.stringify(safeStringify(error.config?.data))}`));
+      })
     );
   }
 
@@ -124,6 +207,7 @@ export class BasePluginClient {
   private transformStreamToLines(stream: Readable): Observable<string> {
     return new Observable<string>(subscriber => {
       let buffer = "";
+      let hasData = false; // 标记是否收到过数据
 
       const onData = (chunk: Buffer) => {
         buffer += chunk.toString('utf-8');
@@ -139,7 +223,13 @@ export class BasePluginClient {
 
           if (trimmedLine.startsWith('data:')) {
             const dataLine = trimmedLine.slice(5).trim();
-            if (dataLine) subscriber.next(dataLine);
+            if (dataLine) {
+              subscriber.next(dataLine);
+              hasData = true;
+            }
+          } else {
+            subscriber.next(trimmedLine);
+            hasData = true;
           }
         }
       };
@@ -150,12 +240,21 @@ export class BasePluginClient {
           if (trimmedLine.startsWith('data:')) {
             const dataLine = trimmedLine.slice(5).trim();
             if (dataLine) subscriber.next(dataLine);
+          } else {
+            subscriber.next(trimmedLine);
           }
         }
         subscriber.complete();
       }
 
-      const onError = (error: any) => subscriber.error(error);
+      const onError = (error: any) => {
+        if (hasData && error.code === 'ECONNRESET') {
+          // 如果已经收到过数据，且是连接重置错误，视为流正常结束
+          subscriber.complete();
+        } else {
+          subscriber.error(error);
+        }
+      }
 
       stream.on('data', onData);
       stream.on('end', onEnd);
@@ -300,6 +399,47 @@ export class BasePluginClient {
       return formatBytes(bytes);
     } catch {
       return 'unknown';
+    }
+  }
+
+  private parseLine<T>(line: string): Observable<T> {
+    try {
+      const pluginResponse = this.validatePluginResponse<T>(line);
+
+      if (pluginResponse.code !== 0) {
+        throw new Error(`plugin daemon: ${pluginResponse.message}, code: ${pluginResponse.code}`);
+      }
+
+      if (pluginResponse.data === null) {
+        const frame = new Error().stack?.split('\n')[2]; // Get caller info
+        throw new Error(`got empty data from plugin daemon: ${frame || 'unknown'}`);
+      }
+
+      return of(pluginResponse.data);
+    } catch (error: any) {
+      return throwError(() => new PluginInvokeError(`Invalid plugin response: ${error.message}`));
+    }
+  }
+
+  private validatePluginResponse<T>(line: string): PluginDaemonBasicResponse<T> {
+    try {
+      const pluginResponse = JSON.parse(line);
+      if (!isValidPluginDaemonResponse(pluginResponse)) {
+        throw new Error('Invalid plugin daemon response data format')
+      }
+      if (pluginResponse.code != 0) {
+        handlePluginError(pluginResponse);
+      }
+      if (pluginResponse.data === null || pluginResponse.data === undefined) {
+        throw new Error('Plugin daemon returned empty data');
+      }
+      return new PluginDaemonBasicResponse<T>(pluginResponse.code, pluginResponse.message, pluginResponse.data ?? null);
+    } catch (error: any) {
+      if (error instanceof PluginDaemonError) {
+        throw error;
+      }
+      console.error('Request failed:', error);
+      throw error;
     }
   }
 }

@@ -93,10 +93,10 @@ func TestPluginToolInvoke(t *testing.T) {
 				"title":   "beijing",
 				"content": "parameter",
 			},
+			// 如果 Credentials 有字段，例如：
+			// "client_id": "xx",
+			// "client_key": "yy",
 		},
-		// 如果 Credentials 有字段，例如：
-		// "client_id": "xx",
-		// "client_key": "yy",
 	}
 	jsonData, err := json.Marshal(requestBody)
 	if err != nil {

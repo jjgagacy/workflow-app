@@ -5,6 +5,7 @@ import { MonieConfig } from "@/monie/monie.config";
 import { BasePluginClient } from "../../monie/classes/base-plugin-client";
 import { HostConfiguration } from "./services/host-configuration";
 import { PluginInstallerService } from "./services/plugin-installer.service";
+import { PluginToolService } from "./services/tool.service";
 
 @Module({
   imports: [MonieModule],
@@ -14,11 +15,13 @@ import { PluginInstallerService } from "./services/plugin-installer.service";
     BasePluginClient,
     HostConfiguration,
     PluginInstallerService,
+    PluginToolService,
   ],
   exports: [
     PluginModelClientService,
     HostConfiguration,
     PluginInstallerService,
+    PluginToolService,
   ],
 })
 export class PluginModule { }

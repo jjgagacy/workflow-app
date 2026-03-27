@@ -25,8 +25,8 @@ const Card = ({ className, plugin, footer, isLoading, locale: localeFromProps, o
     <div className={cn(className)}>
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center space-x-3">
-          <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white font-medium`}>
-            <img src={plugin.icon} alt={plugin.author} className="w-10" />
+          <div className={`w-auto rounded-lg flex items-center justify-center text-white font-medium`}>
+            <img src={plugin.icon} alt={plugin.author} className="w-auto h-[16px]" />
           </div>
           <div>
             <h3 className="font-medium text-gray-900 dark:text-white">{getLocalizedText(plugin.label, locale)}</h3>

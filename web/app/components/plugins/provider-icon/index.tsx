@@ -19,7 +19,7 @@ const ProviderIcon = ({
     <div className={cn("inline-flex items-center gap-2", className)}>
       <img
         src={getLocalizedText(provider.icon, locale)}
-        className="w-6 h-6"
+        className="w-auto h-[16px]"
       />
       <span className="text-sm font-medium text-gray-900 dark:text-white">
         {getLocalizedText(provider.label, locale)}

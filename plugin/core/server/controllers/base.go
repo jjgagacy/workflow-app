@@ -34,7 +34,6 @@ func logRequestBody(ctx *gin.Context) {
 
 func BindRequest[T any](ctx *gin.Context, success func(T)) {
 	var req T
-
 	// 调试：读取并打印 Body 内容
 	// logRequestBody(ctx)
 
@@ -57,19 +56,16 @@ func BindRequest[T any](ctx *gin.Context, success func(T)) {
 			}
 		}
 	}
-
 	// bind uri
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(400, entities.BadRequestError(err).ToResponse())
 		return
 	}
-
 	// validate
 	if err := validators.EntitiesValidator.Struct(req); err != nil {
 		ctx.JSON(400, entities.BadRequestError(err).ToResponse())
 		return
 	}
-
 	success(req)
 }
 

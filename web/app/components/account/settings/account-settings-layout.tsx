@@ -82,7 +82,7 @@ export default function AccountSettingsLayout() {
       <div className="flex flex-1 rounded-lg px-4 sm:px-6 lg:px-8 py-12 bg-background">
         <div className="container mx-auto 2xl:max-w-7xl">
           <div className="pb-4 border-b border-[var(--border)]/30">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               {t('system.settings')}
             </h1>
           </div>
