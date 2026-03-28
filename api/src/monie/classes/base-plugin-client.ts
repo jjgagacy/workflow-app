@@ -3,7 +3,7 @@ import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { FileItem, PluginRequestOptions } from "../../ai/plugin/interfaces/client.interface";
 import { AxiosResponse } from "axios";
-import { catchError, map, mergeMap, Observable, of, retry, takeUntil, tap, throwError, timer } from "rxjs";
+import { catchError, EMPTY, map, mergeMap, Observable, of, retry, takeUntil, tap, throwError, timer } from "rxjs";
 import { Readable } from 'stream';
 import FormData from "form-data";
 import { GlobalLogger, LogContext } from "@/logger/logger.service";
@@ -156,6 +156,8 @@ export class BasePluginClient {
     }
     this.logger.log(`[${requestId}] request plugin details`, baseContext);
 
+    let hasReceivedData = false;
+
     return this.request<Readable>({
       ...options,
       stream: true,
@@ -163,6 +165,7 @@ export class BasePluginClient {
       map(response => response.data),
       mergeMap(stream => this.transformStreamToLines(stream as unknown as Readable)),
       mergeMap(line => {
+        hasReceivedData = true;
         const duration = Date.now() - startTime;
         const pluginResponse = this.validatePluginResponse<T>(line);
 
@@ -188,6 +191,10 @@ export class BasePluginClient {
           threshold: '5s',
           error: error
         });
+        if (hasReceivedData && error.code === 'ECONNRESET') {
+          console.log(`[${requestId}] Connection reset after receiving data, treating as success`);
+          return EMPTY;
+        }
         return throwError(() => new Error(`Request plugin api error: ${error.message}, headers: ${JSON.stringify(safeStringify(error.config?.headers))} data: ${JSON.stringify(safeStringify(error.config?.data))}`));
       })
     );

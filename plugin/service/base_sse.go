@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"net/http"
 	"sync/atomic"
 	"time"
 
@@ -19,8 +20,15 @@ func baseSSEService[R any](
 	maxTimeout int, // seconds
 ) {
 	writer := ctx.Writer
-	writer.WriteHeader(200)
 	writer.Header().Set("Content-Type", "text/event-stream")
+	writer.Header().Set("Cache-Control", "no-cache")
+	writer.Header().Set("Connection", "keep-alive")
+	writer.Header().Set("X-Accel-Buffering", "no") // 禁用 nginx 缓冲
+	writer.WriteHeader(200)
+
+	if flusher, ok := writer.(http.Flusher); ok {
+		flusher.Flush()
+	}
 
 	done := make(chan bool)
 	doneClosed := new(int32)
@@ -30,10 +38,23 @@ func baseSSEService[R any](
 		if atomic.LoadInt32(closed) == 1 {
 			return
 		}
-		writer.Write([]byte("data: "))
-		writer.Write(utils.MarshalJsonBytes(data))
-		writer.Write([]byte("\n\n"))
-		writer.Flush()
+		// 写入 SSE 格式数据
+		dataBytes := utils.MarshalJsonBytes(data)
+		if _, err := writer.Write([]byte("data: ")); err != nil {
+			utils.Debug("Write error: %v", err)
+			return
+		}
+		if _, err := writer.Write(dataBytes); err != nil {
+			utils.Debug("Write data error: %v", err)
+			return
+		}
+		if _, err := writer.Write([]byte("\n\n")); err != nil {
+			utils.Debug("Write newline error: %v", err)
+			return
+		}
+		if flusher, ok := writer.(http.Flusher); ok {
+			flusher.Flush()
+		}
 	}
 
 	ch, err := fn()
