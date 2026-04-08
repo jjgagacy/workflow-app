@@ -36,6 +36,10 @@ import { UserEntity } from './entities/user.entity';
 import { UploadFilesEntity } from './entities/upload-files.entity';
 import { BullModule } from '@nestjs/bull';
 import { AccountProcessor } from './processors/account.processor';
+import { AppEntity } from './entities/app.entity';
+import { AppModelConfigEntity } from './entities/app-model-config.entity';
+import { WorkflowEntity } from './entities/workflow.entity';
+import { InstalledAppEntity } from './entities/installed-app.entity';
 
 @Global()
 @Module({
@@ -60,6 +64,10 @@ import { AccountProcessor } from './processors/account.processor';
       AccountIntegrateEntity,
       UserEntity,
       UploadFilesEntity,
+      AppEntity,
+      AppModelConfigEntity,
+      WorkflowEntity,
+      InstalledAppEntity,
     ]),
     BullModule.registerQueue({
       name: 'account',

@@ -6,28 +6,28 @@ import { GraphQLError } from 'graphql';
 
 @Catch(BadRequestException)
 export class BadExceptionFilter implements ExceptionFilter {
-    catch(exception: BadRequestException, host: ArgumentsHost) {
-        // In certain situations `httpAdapter` might not be available in the
-        // constructor method, thus we should resolve it here.
-        const contextType = host.getType<GqlContextType>();
+  catch(exception: BadRequestException, host: ArgumentsHost) {
+    // In certain situations `httpAdapter` might not be available in the
+    // constructor method, thus we should resolve it here.
+    const contextType = host.getType<GqlContextType>();
 
-        if (contextType === 'http') {
-            const ctx = host.switchToHttp();
-            const response = ctx.getResponse<Response>();
-            response
-                .status(500)
-                .json({
-                    statusCode: 500,
-                    message: exception.message,
-                });
-        } else {
-            // 如果是 GraphQL 请求，强制返回 JSON 格式的错误
-            throw new GraphQLError(exception.message, null, null, null, null, null, {
-                statusCode: 500,
-                message: exception.message,
-            });
-        }
+    if (contextType === 'http') {
+      const ctx = host.switchToHttp();
+      const response = ctx.getResponse<Response>();
+      response
+        .status(500)
+        .json({
+          statusCode: 500,
+          message: exception.message,
+        });
+    } else {
+      // 如果是 GraphQL 请求，强制返回 JSON 格式的错误
+      throw new GraphQLError(exception.message, null, null, null, null, null, {
+        statusCode: 500,
+        message: exception.message,
+      });
     }
+  }
 }
 
 

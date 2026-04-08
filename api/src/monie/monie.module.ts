@@ -5,7 +5,7 @@ import { BasePluginClient } from "./classes/base-plugin-client";
 
 @Global()
 @Module({
-    providers: [MonieConfig, SystemService, BasePluginClient],
-    exports: [MonieConfig, SystemService, BasePluginClient],
+  providers: [MonieConfig, SystemService, BasePluginClient],
+  exports: [MonieConfig, SystemService, BasePluginClient],
 })
 export class MonieModule { } 

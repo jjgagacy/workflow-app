@@ -6,13 +6,10 @@ import { GlobalLogger } from './logger/logger.service';
 import { ConfigService } from '@nestjs/config';
 import { WinstonLogger } from './logger/winston.service';
 import { MonieConfig } from './monie/monie.config';
-import { GraphQLExceptionFilter } from './common/filters/graphql-exception.filter';
-import { I18nService, I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
+import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import { setModuleRef } from './common/modules/global';
-import { ValidationPipe } from '@nestjs/common';
 import { I18nHelperService } from './i18n-global/i18n.service';
 import { AllExceptionsFilter } from './common/filters/all-exception.filter';
-import * as express from 'express';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 

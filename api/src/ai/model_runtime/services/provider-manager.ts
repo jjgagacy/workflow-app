@@ -1,5 +1,5 @@
 import { ProviderEntity } from "@/account/entities/provider.entity";
-import { mergeMonieProviderName, ModelProviderID } from "@/ai/plugin/entities/provider-id.entities";
+import { mergeMonieProviderName } from "@/ai/plugin/entities/provider-id.entities";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DataSource, EntityManager, In, Repository } from "typeorm";
@@ -335,5 +335,4 @@ export class ProviderManager {
     } as ProviderCredentialsCacheProps;
     this.credentialsCacheService.delete(credentialsCacheProps);
   }
-
 }

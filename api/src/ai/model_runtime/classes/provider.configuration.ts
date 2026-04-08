@@ -1,7 +1,6 @@
 import { NotImplementedException } from "@nestjs/common";
 import { ProviderType } from "../enums/provider.enum";
 import { CustomProviderConfiguration, SystemConfiguration } from "../entities/quota.entity";
-import { Provider } from "./provider.class";
 import { ModelType } from "../enums/model-runtime.enum";
 import { SystemConfigurationStatus } from "../enums/quota.enum";
 import { Credentials } from "../types/credentials.type";
@@ -215,4 +214,3 @@ export class ProviderConfigurations {
     }
   }
 }
-

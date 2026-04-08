@@ -7,4 +7,3 @@ export class RestrictModel {
     public baseModel?: string,
   ) { }
 }
-

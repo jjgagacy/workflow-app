@@ -16,4 +16,3 @@ export const PROVIDER_CONDITIONS: Record<string, FieldConditionConfig> = {
   isValid: { field: 'isValid', operator: 'equals' },
   tenantId: { field: 'tenant', operator: 'relation', relationField: 'id' },
 };
-

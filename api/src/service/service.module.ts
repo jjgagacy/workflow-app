@@ -80,7 +80,7 @@ import { PluginModule } from "@/ai/plugin/plugin.module";
     MarketplaceService,
     PluginDeclarationService,
     PluginService,
-    ModelProviderService
+    ModelProviderService,
   ],
 })
 export class ServiceModule { }

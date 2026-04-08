@@ -5,4 +5,3 @@ export class ProviderModelBundle {
     public configuration: ProviderConfiguration
   ) { }
 }
-

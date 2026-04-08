@@ -32,6 +32,7 @@ import { OpenDALStorage } from './storage/implements/opendal.storage';
 import { EnumConverter, EnumUtils } from './common/utils/enums';
 import { CreateAccountDto } from './account/account/dto/create-account.dto';
 import { validateDto } from './common/utils/validation';
+import { TaskService } from './tasks/task.service';
 
 class OrderCreatedEvent {
   constructor(private eventObj: { orderId: number; payload: any }) { }
@@ -58,6 +59,7 @@ export class AppController {
     private readonly deviceService: DeviceService,
     private readonly tenantService: TenantService,
     private readonly openDALStorage: OpenDALStorage,
+    private readonly taskService: TaskService,
   ) { }
 
   @Get()
@@ -77,9 +79,9 @@ export class AppController {
     // console.log('cahce value:', value);
     // console.log('cahce value:', await this.cacheManager.get('foo'));
     // console.log(this.cacheManager.stores);
-    const redisClient = await this.cacheService.getRedisClient();
-    this.cacheService.ping();
-    console.log('client', redisClient)
+    // const redisClient = await this.cacheService.getRedisClient();
+    // this.cacheService.ping();
+    // console.log('client', redisClient)
     // console.log(await this.generalCache.findAll());
     // console.log(await GeneralCacheService.findItem());
     // this.eventEmitter.emit('order.created', new OrderCreatedEvent({
@@ -111,15 +113,15 @@ export class AppController {
     // const active = EnumConverter.toEnum(AccountStatus, 0);
     // console.log(active, this.accountService.getAccountStatusName(active as AccountStatus));
     // console.log(this.accountService.getAccountStatusName(AccountStatus.ACTIVE));
-    const dto: CreateAccountDto = {
-      username: '123',
-      email: "511268609@qq.com",
-      createdBy: 'aa',
-    };
-    const tenantId = '272635fa-c96f-4ad4-b7c6-9406332ae89c';
+    // const dto: CreateAccountDto = {
+    //   username: '123',
+    //   email: "511268609@qq.com",
+    //   createdBy: 'aa',
+    // };
+    // const tenantId = '272635fa-c96f-4ad4-b7c6-9406332ae89c';
     // const tenant = await this.tenantService.getTenant('272635fa-c96f-4ad4-b7c6-9406332ae89c');
     // await this.authAccountService.createAccountForTenant(dto, tenant!, { checkEmailExistence: true });
-    await this.authAccountService.sendInviteMemberEmail({ email: '511268609@qq.com', tenantId });
+    // await this.authAccountService.sendInviteMemberEmail({ email: '511268609@qq.com', tenantId });
     // console.log('validate', await validateDto(CreateAccountDto, dto, this.i18n));
     // if (tenant && account) {
     //   await this.tenantService.addAccountTenantMembership(account, tenant, AccountRole.ADMIN);
@@ -133,6 +135,15 @@ export class AppController {
     // console.log('scheme', this.configService.get('storage.opendal.scheme'));
     // await this.openDALStorage.save('a/bar', 'bar');
     // console.log(await this.openDALStorage.list?.("", { files: true, directories: true }));
+
+    this.taskService.executeTask({ body: { number: 20 } }, 'ping').then(result => {
+      console.log('Ping result:', result);
+    }).catch(err => {
+      console.error('Error executing task:', err);
+    });
+
+    await new Promise(resolve => setTimeout(resolve, 2000)); // 等待任务完成
+
     return await this.i18n.t("hello.HELLO");
   }
 

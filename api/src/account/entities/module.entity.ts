@@ -8,29 +8,29 @@ import { TenantEntity } from "./tenant.entity";
 @Index(['tenant', 'name'], { unique: true })
 export class ModuleEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({
     nullable: false,
   })
-  key: string;
+  key!: string;
 
   @Column({
     nullable: false,
   })
-  name: string;
+  name!: string;
 
   @OneToMany(() => ModulePermEntity, modulePerm => modulePerm.module, {
     cascade: ['insert'],
   })
-  perms: ModulePermEntity[];
+  perms!: ModulePermEntity[];
 
   @OneToMany(() => MenuEntity, menu => menu.module, {
     cascade: ['insert'],
   })
-  menus: MenuEntity[];
+  menus!: MenuEntity[];
 
   @ManyToOne(() => TenantEntity, (tenant) => tenant.id)
   @JoinColumn({ name: 'tenant_id', referencedColumnName: 'id' })
-  tenant: TenantEntity;
+  tenant!: TenantEntity;
 }

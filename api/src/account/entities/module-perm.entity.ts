@@ -6,24 +6,24 @@ import { PermEntity } from "./perm.entity";
 @Entity({ name: 'module_perm' })
 export class ModulePermEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({
     nullable: false,
   })
-  key: string;
+  key!: string;
 
   @Column({
     nullable: false,
   })
-  name: string;
+  name!: string;
 
   @Column({
     nullable: false,
     type: 'int',
     default: 0,
   })
-  restrictLevel: number;
+  restrictLevel!: number;
 
   // 不能 relations { module: true }
   @ManyToOne(() => ModuleEntity, module => module.perms, {
@@ -31,23 +31,23 @@ export class ModulePermEntity extends BaseEntity {
     onDelete: 'CASCADE',
   })
   @JoinTable()
-  module: ModuleEntity;
+  module!: ModuleEntity;
 
   @ManyToMany(() => MenuRoleEntity, {
     cascade: true,
   })
-  menuRoles: MenuRoleEntity[];
+  menuRoles!: MenuRoleEntity[];
 
   @ManyToMany(() => PermEntity, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   @JoinTable({ name: 'module_perm_level' })
-  perms: PermEntity[];
+  perms!: PermEntity[];
 
   @Column({
     nullable: false,
     type: 'uuid',
   })
-  tenantId: string;
+  tenantId!: string;
 }
