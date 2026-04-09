@@ -55,6 +55,9 @@ export class AppEntity {
   @Index()
   workflow!: WorkflowEntity;
 
+  @Column({ nullable: false })
+  accountId!: number;
+
   @Column(() => Operate, { prefix: false })
   operate!: Operate;
 }

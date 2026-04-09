@@ -16,8 +16,14 @@ export class AppModelConfigEntity {
   @Column({ nullable: false })
   provider!: string;
 
-  @Column({ nullable: false })
+  @Column({ type: 'json', nullable: false })
   model!: string;
+
+  @Column({ type: 'text', nullable: false })
+  prePrompt!: string;
+
+  @Column({ type: 'json', nullable: false })
+  userInputForm!: string;
 
   @Column({ type: 'json', nullable: false })
   configuration!: string;

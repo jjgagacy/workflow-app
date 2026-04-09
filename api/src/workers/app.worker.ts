@@ -22,7 +22,7 @@ class AppRequestHandlerWorker<
 
   private async initNestApp() {
     this.app = await NestFactory.createApplicationContext(WorkerModule);
-    console.log("======== init worker thread app ============");
+    // console.log("======== init worker thread app ============");
   }
 
   private async ping(workerData?: Data): Promise<Response> {

@@ -29,10 +29,14 @@ import { MarketplaceService } from "./marketplace.service";
 import { PluginDeclarationService } from "./plugin/plugin-declaration.service";
 import { PluginService } from "./plugin/plugin.service";
 import { PluginModule } from "@/ai/plugin/plugin.module";
+import { AppService } from "@/app.service";
+import { AppsModule } from "@/ai/apps/apps.module";
+import { AppsService } from "@/ai/apps/apps.service";
+import { AppManagerService } from "./app-manager.service";
 
 @Global()
 @Module({
-  imports: [EncryptionModule, StorageModule, MailModule, ModelRuntimeModule, PluginModule],
+  imports: [EncryptionModule, StorageModule, MailModule, ModelRuntimeModule, PluginModule, AppsModule],
   providers: [
     AuthAccountService,
     GeneralCacheService,
@@ -60,6 +64,8 @@ import { PluginModule } from "@/ai/plugin/plugin.module";
     MarketplaceService,
     PluginDeclarationService,
     PluginService,
+    AppsService,
+    AppManagerService,
   ],
   exports: [
     AuthAccountService,

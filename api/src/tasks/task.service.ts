@@ -28,19 +28,19 @@ export class TaskService implements OnApplicationBootstrap, OnApplicationShutdow
     const useDynamicPool = this.configService.get<string>("USE_DYNAMIC_POOL") === 'true';
 
     const onlineHandler = () => {
-      console.log(`Worker is online`);
+      // console.log(`Worker is online`);
     };
 
     const exitHandler = () => {
-      console.log(`Worker exited with code `);
+      // console.log(`Worker exited with code `);
     }
 
     const errorHandler = (err: Error) => {
-      console.error('Worker error:', err);
+      // console.error('Worker error:', err);
     }
 
     const messageHandler = () => {
-      console.log('Message from worker:');
+      // console.log('Message from worker:');
     }
 
     const poolOptions = {
