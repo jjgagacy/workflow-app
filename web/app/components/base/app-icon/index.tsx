@@ -1,8 +1,9 @@
 import { cn } from "@/utils/classnames";
-import { AppIconType } from "../app.type";
-import Button from "../../base/button";
+import { AppIconType } from "../../app/app.type";
 import { useTranslation } from "react-i18next";
-import { Tooltip } from "../../base/tooltip";
+import { Tooltip } from "../tooltip";
+import Icon from "../icon";
+import { IconName } from "./icons";
 
 interface AppIconProps {
   iconType: AppIconType;
@@ -28,12 +29,18 @@ export default function AppIcon({ iconType, icon, className, onClick }: AppIconP
 
   return (
     <div className="">
-      {/* 提示框出现在右侧 */}
       <Tooltip content={t('app.newApp.chooseAppIcon')} placement="right">
         <div
           className={cn('w-10 h-10 text-lg flex items-center justify-center relative rounded-md grow-0 shrink-0 overflow-hidden cursor-pointer border border-[var(--border)] hover:bg-secondary dark:hover:bg-secondary/90', className)}
           onClick={onClick}>
-          {icon}
+          {iconType === 'emoji' ? (
+            <span className="font-emoji">{icon}</span>
+          ) : (
+            <Icon
+              icon={icon as IconName}
+              className="w-6 h-6 text-gray-700 dark:text-gray-300"
+            />
+          )}
         </div>
       </Tooltip>
     </div>

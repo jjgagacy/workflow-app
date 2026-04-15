@@ -1,4 +1,4 @@
-interface MonieProps {
+export interface MonieProps {
   className?: string;
   darkmode?: boolean;
   width?: number;

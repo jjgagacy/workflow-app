@@ -65,6 +65,9 @@ const translation = {
     iconAndName: 'Icon and Name',
     appDetails: 'App Details',
     description: 'App Description',
+    random: 'Random',
+    icon: 'Icon',
+    emoji: 'Emoji',
   }
 };
 

@@ -1,9 +1,11 @@
 'use client';
 
+import AppIconPicker from "@/app/components/app/app-icon-picker";
 import { Badge } from "@/app/components/base/badge";
 import Button from "@/app/components/base/button";
 import Countdown, { CountdownRef } from "@/app/components/base/countdown";
 import Loading from "@/app/components/base/loading";
+import { Tabs } from "@/app/components/base/tabs";
 import { Tooltip } from "@/app/components/base/tooltip";
 import { useDialog } from "@/app/components/hooks/use-dialog";
 import { Accordion } from "@/app/ui/accordion";
@@ -19,6 +21,7 @@ import { Textarea } from "@/app/ui/textarea";
 import { toast } from "@/app/ui/toast";
 import { TreeNode, TreeSelect } from "@/app/ui/tree-select";
 import { arrayToTree, treeToFlatten } from "@/utils/trees";
+import { AlertTriangleIcon, BellIcon, HomeIcon, SettingsIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 // import Loading from "../../loading";
 
@@ -104,12 +107,93 @@ export default function Page() {
     // Start countdown example
     countdownRef.current?.reset();
   }, []);
+  type TabValue = 'overview' | 'settings' | 'notifications' | 'danger' | 'disabled' | 'foo';
+  const [activeTab, setActiveTab] = useState<TabValue>('overview');
+  const tabOptions: Array<{
+    value: TabValue;
+    label: string;
+    icon?: React.ReactNode;
+    iconPosition?: 'left' | 'right';
+    tag?: string;
+    tooltip?: string;
+    variant?: 'default' | 'danger';
+    notification?: boolean;
+    href?: string;
+    to?: string;
+    align?: 'left' | 'right';
+  }> = [
+      {
+        value: 'overview',
+        label: '概览',
+        icon: <HomeIcon size={12} />,
+        iconPosition: 'left',
+      },
+      {
+        value: 'settings',
+        label: '设置',
+        icon: <SettingsIcon size={12} />,
+        iconPosition: 'left',
+        tag: '新',
+        tooltip: '个性化配置选项',
+      },
+      {
+        value: 'notifications',
+        label: '通知',
+        icon: <BellIcon size={12} />,
+        iconPosition: 'left',
+        notification: true, // 显示小红点
+        tag: '3',
+      },
+      {
+        value: 'danger',
+        label: '危险操作',
+        icon: <AlertTriangleIcon size={12} />,
+        iconPosition: 'left',
+        variant: 'danger',
+        tooltip: '谨慎操作，不可撤销',
+      },
+      // {
+      //   value: 'disabled',
+      //   label: '禁用',
+      //   icon: <AlertTriangleIcon size={12} />,
+      //   iconPosition: 'left',
+      //   variant: 'danger',
+      //   tooltip: '此选项已禁用',
+      //   href: 'https://www.example.com', // 外部链接示例
+      //   align: 'left',
+      // },
+      // {
+      //   value: 'foo',
+      //   label: 'Foooooo',
+      //   icon: <AlertTriangleIcon size={12} />,
+      //   iconPosition: 'left',
+      //   variant: 'danger',
+      //   tooltip: '此选项已禁用',
+      //   to: '/settings', // 内部路由示例
+      //   align: 'right',
+      // }
+    ];
 
   return (
     <div>
       <h1 className="mt-4">Dashboard</h1>
+      <div className=" min-h-[300px]">
+        <div className="relative">
+          <AppIconPicker />
+        </div>
+      </div>
+      <div className="flex flex-col w-2/4 bg-amber-100 min-h-[200px]">
+        <Tabs
+          value={activeTab}
+          options={tabOptions}
+          size="medium"
+          variant="default"
+          onChange={(value) => setActiveTab(value)}
+        />
+        aa
+      </div>
       <div className="flex justify-center w-3/4">
-        <Tooltip content="This is a tooltip" placement="right">
+        <Tooltip content="This is a tooltip" placement="bottom">
           <Button variant={'primary'}>Hover me</Button>
         </Tooltip>
       </div>

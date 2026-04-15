@@ -66,6 +66,9 @@ const translation = {
     iconAndName: '图标和名称',
     appDetails: '应用详情',
     description: '应用描述',
+    random: '随机',
+    icon: '图标',
+    emoji: 'Emoji',
   }
 };
 export default translation;
