@@ -15,6 +15,7 @@ import { DataTableToolbar } from "@/app/ui/table/data-table-toolbar";
 import { Input } from "@/app/ui/input";
 import { cn } from "@/utils/classnames";
 import { useTranslation } from "react-i18next";
+import { EditIcon, Lock, Trash, Trash2 } from "lucide-react";
 
 interface DepartmentTableParams<TData, TValue> {
   data: TData[];
@@ -108,16 +109,18 @@ export function DepartmentTable<TData, TValue>({ }: DepartmentTableParams<TData,
           <div className="space-x-2">
             <Link
               href={`/admin/system/dep/${dep.key}`}
-              className={cn(buttonVariants({ size: 'small' }))}
+              className={cn('flex items-center', buttonVariants({ size: 'medium', variant: 'secondary' }))}
             >
+              <EditIcon className="mr-1" size={12} />
               {t('system.edit')}
             </Link>
             <Button
               onClick={() => onDelete(dep)}
-              variant={'alert'}
+              variant={'secondary'}
               className=""
-              size={'small'}
+              size={'medium'}
             >
+              <Trash2 className="mr-1" size={12} />
               {t('system.delete')}
             </Button>
           </div>
@@ -149,7 +152,7 @@ export function DepartmentTable<TData, TValue>({ }: DepartmentTableParams<TData,
           id="search"
           type="text"
           value={search}
-          className="w-56"
+          className="w-56 h-10"
           onChange={e => {
             setQueryStates({ search: e.target.value })
           }}

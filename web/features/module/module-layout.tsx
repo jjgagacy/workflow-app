@@ -7,6 +7,7 @@ import { ModalProvider, useModalContext } from "@/hooks/use-modal";
 import { IconPlus } from "@tabler/icons-react";
 import ModuleListPage from "./module-list";
 import { useTranslation } from "react-i18next";
+import { Plus } from "lucide-react";
 
 export function ModuleLayout() {
   return (
@@ -34,8 +35,10 @@ export function ModulePage() {
         <Button
           variant={'primary'}
           onClick={handleAddModule}
+          size={'large'}
         >
-          <IconPlus className="mr-2 h-4 w-4" /> {t('system.add_permission_group')}
+          <Plus className="mr-2 h-4 w-4" />
+          {t('system.add_permission_group')}
         </Button>
       </div>
       <Separator />

@@ -91,12 +91,12 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
     if (isMobile) {
       return 'ml-0';
     }
-    return isCollapsed ? 'ml-32' : 'ml-64';
+    return isCollapsed ? 'ml-32 md:ml-24' : 'ml-64';
   }, [isCollapsed, isMobile]);
 
   // theme-xx replace xx to your theme
   return (
-    <div className="flex theme-xx min-h-screen">
+    <div className="flex theme-xx min-h-screen bg-muted/50">
       {/* 桌面端侧边栏 */}
       {!isMobile && (
         <Sidebar onToggleCollapse={handleChildEvent} collapsed={isCollapsed}>
@@ -107,7 +107,7 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
       {isMobile && mobileSidebarOpen && (
         <div className="fixed inset-0 z-50">
           <div
-            className="absolute inset-0 bg-black bg-opacity-50"
+            className="absolute inset-0 bg-transparent bg-opacity-50"
             onClick={() => setMobileSidebarOpen(false)}
           />
           <div className="absolute left-0 top-0 h-full w-64 bg-white dark:bg-gray-900 shadow-lg">
@@ -117,7 +117,7 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
           </div>
         </div>
       )}
-      <div className={`bg-muted/50 flex-1 flex flex-col overflow-x-auto transition-all ${sidebarWidth}`}>
+      <div className={`flex-1 flex flex-col overflow-x-auto transition-all ${sidebarWidth}`}>
         <Navbar
           routes={mergeRoutes}
           onMenuClick={isMobile ? toggleMobileSidebar : undefined}

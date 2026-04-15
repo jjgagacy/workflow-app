@@ -1,5 +1,6 @@
 /* default light theme */
 @theme {
+  --text-13: 13px;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -40,6 +41,14 @@
   --sidebar-ring: oklch(0.708 0 0);
   --color-component: oklch(0.205 0 0);
   --color-component-active: oklch(0.32 0 0);
+  --color-green: oklch(0.527 0.154 150.069);
+  /* 基础绿色，类似 Tailwind green-500 */
+  --color-green-light: oklch(0.792 0.115 150.069);
+  /* 浅绿色，类似 green-300 */
+  --color-green-dark: oklch(0.372 0.118 150.069);
+  /* 深绿色，类似 green-700 */
+  --color-green-foreground: oklch(1 0 0);
+  /* 绿色前景色（白色） */
 }
 
 /* @theme inline {

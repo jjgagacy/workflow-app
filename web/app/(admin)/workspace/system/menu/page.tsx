@@ -33,7 +33,7 @@ export default async function Page() {
           />
           <Link
             href='/workspace/system/menu/new'
-            className={cn(buttonVariants(), 'text-xs md:text-sm')}
+            className={cn(buttonVariants({ size: 'large' }), '')}
           >
             <IconPlus className="mr-2 h-4 w-4" /> {t('add_menu')}
           </Link>

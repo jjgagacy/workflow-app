@@ -8,6 +8,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { UserSelector } from "./selector/user-selector";
 import { LanguageSelector } from "./selector/language-selector";
 import { useAppearance } from "@/hooks/use-appearance";
+import { PercentCircle, SunMoon, SunMoonIcon } from "lucide-react";
 
 interface NavbarProps {
   routes: Route[];
@@ -39,7 +40,7 @@ export function Navbar({ routes, onMenuClick }: NavbarProps) {
             {/* Left navigation (optional) */}
             {!isMobile && (
               <div className="flex flex-1 items-center">
-                <Breadcrumbs routes={routes} />
+                {/* <Breadcrumbs routes={routes} /> */}
               </div>
             )}
             {/* Right user info */}
@@ -48,11 +49,11 @@ export function Navbar({ routes, onMenuClick }: NavbarProps) {
               <ThemeSelector />
               <button
                 type="button"
-                className="p-1 mr-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none"
+                className="p-1 mx-2 rounded-full focus:outline-none"
                 onClick={toggleTheme}
               >
                 <span className="sr-only">View notifications</span>
-                <IconPercentage50 className="h-6 w-6" aria-hidden="true" />
+                <SunMoon className="h-6 w-6" aria-hidden="true" />
               </button>
               <UserSelector />
             </div>

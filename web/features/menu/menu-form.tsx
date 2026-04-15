@@ -109,9 +109,9 @@ export default function MenuForm({
   });
 
   return (
-    <Card className="mx-auto w-full">
+    <Card className='mx-auto bg-transparent shadow-none lg:w-3/4'>
       <CardHeader>
-        <CardTitle className="text-left text-2xl font-bold">
+        <CardTitle className="text-left text-2xl font-semibold">
           {pageTitle}
         </CardTitle>
       </CardHeader>
@@ -240,7 +240,7 @@ export default function MenuForm({
               </div>
             </div>
 
-            <Button className="ml-4" type="submit" disabled={isLoading} loading={isLoading}>{updateMenuId ? t('system.edit_menu') : t('system.add_menu')}</Button>
+            <Button className="ml-4" size={'large'} type="submit" disabled={isLoading} loading={isLoading}>{updateMenuId ? t('system.edit_menu') : t('system.add_menu')}</Button>
           </form>
         </Form>
       </CardContent>

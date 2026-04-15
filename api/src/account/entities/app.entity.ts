@@ -1,4 +1,4 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { TenantEntity } from "./tenant.entity";
 import { Operate } from "@/common/database/entities/fields/operate";
 import { WorkflowEntity } from "./workflow.entity";
@@ -23,6 +23,9 @@ export class AppEntity {
 
   @Column({ nullable: false })
   mode!: string;
+
+  @Column({ nullable: false })
+  iconType!: string;
 
   @Column({ nullable: false })
   icon!: string
@@ -58,6 +61,35 @@ export class AppEntity {
   @Column({ nullable: false })
   accountId!: number;
 
-  @Column(() => Operate, { prefix: false })
-  operate!: Operate;
+  @CreateDateColumn({
+    name: 'created_at',
+    nullable: false,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt!: Date;
+
+  @UpdateDateColumn({
+    name: 'updated_at',
+    nullable: false,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  updatedAt?: Date;
+
+  @Column({
+    name: 'created_by',
+    type: 'varchar',
+    length: 32,
+    nullable: false,
+    default: '',
+  })
+  createdBy!: string;
+
+  @Column({
+    name: 'updated_by',
+    type: 'varchar',
+    length: 32,
+    nullable: false,
+    default: '',
+  })
+  updatedBy?: string;
 }

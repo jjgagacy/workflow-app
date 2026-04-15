@@ -22,6 +22,15 @@ const translation = {
     back: 'Back',
     install: 'Install',
     setup: 'Setup',
+    create: 'Create',
+    update: 'Update',
+    delete: 'Delete',
+    edit: 'Edit',
+    save: 'Save',
+    submit: 'Submit',
+    reset: 'Reset',
+    search: 'Search',
+    load_more: 'Load More',
   },
   theme: {
     system: 'Follow System',
@@ -50,6 +59,13 @@ const translation = {
     moon: 'Moon icon',
   },
   back_workspace: 'Back Workspace',
+  newApp: {
+    title: 'Create New App',
+    chooseAppIcon: 'Choose App Icon',
+    iconAndName: 'Icon and Name',
+    appDetails: 'App Details',
+    description: 'App Description',
+  }
 };
 
 export default translation;

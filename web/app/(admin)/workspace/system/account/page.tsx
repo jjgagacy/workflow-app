@@ -3,13 +3,13 @@ import { Heading } from "@/app/components/base/heading";
 import { PageContainer } from "@/app/components/layout/page-container";
 import { Separator } from "@/app/ui/separator";
 import { cn } from "@/utils/classnames";
-import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import Loading from "../../../loading";
 import AccountListPage from "@/features/account/account-list";
 import { getServerLocale, useTranslation } from "@/i18n/server";
 import { Metadata } from "next";
+import { Plus } from "lucide-react";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getServerLocale();
@@ -32,9 +32,9 @@ export default async function Page() {
             description={t('manage_account_info')} />
           <Link
             href='/workspace/system/account/new'
-            className={cn(buttonVariants(), 'text-xs md:text-sm')}
+            className={cn(buttonVariants({ size: 'large' }), '')}
           >
-            <IconPlus className='mr-2 h-4 w-4' /> {t('add_account')}
+            <Plus className='mr-2 h-4 w-4' /> {t('add_account')}
           </Link>
         </div>
         <Separator />

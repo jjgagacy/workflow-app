@@ -150,9 +150,9 @@ export default function AccountForm({
   }, [roles]);
 
   return (
-    <Card className='mx-auto w-full'>
+    <Card className='mx-auto bg-transparent shadow-none lg:w-3/4'>
       <CardHeader>
-        <CardTitle className="text-left text-2xl font-bold">
+        <CardTitle className="text-left text-2xl font-semibold">
           {pageTitle}
         </CardTitle>
       </CardHeader>
@@ -277,7 +277,7 @@ export default function AccountForm({
               </div>
             </div>
 
-            <Button type="submit" disabled={isLoading} loading={isLoading}>{updateAccountId ? t('system.edit_account') : t('system.add_account')}</Button>
+            <Button type="submit" disabled={isLoading} size={'large'} loading={isLoading}>{updateAccountId ? t('system.edit_account') : t('system.add_account')}</Button>
           </form>
         </Form>
       </CardContent>

@@ -89,9 +89,9 @@ export default function DepartmentForm({
   }
 
   return (
-    <Card className="mx-auto w-full">
+    <Card className='mx-auto bg-transparent shadow-none lg:w-3/4'>
       <CardHeader>
-        <CardTitle className="text-left text-2xl font-bold">
+        <CardTitle className="text-left text-2xl font-semibold">
           {pageTitle}
         </CardTitle>
       </CardHeader>
@@ -175,7 +175,7 @@ export default function DepartmentForm({
               </div>
             </div>
 
-            <Button type="submit" disabled={isLoading} loading={isLoading}>{updateDepKey ? t('system.edit_department') : t('system.add_department')}</Button>
+            <Button type="submit" disabled={isLoading} size={'large'} loading={isLoading}>{updateDepKey ? t('system.edit_department') : t('system.add_department')}</Button>
           </form>
         </Form>
       </CardContent>

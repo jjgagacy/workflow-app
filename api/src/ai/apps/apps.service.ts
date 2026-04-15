@@ -1,6 +1,5 @@
-import { CreateAccountDto } from "@/account/account/dto/create-account.dto";
 import { AppEntity } from "@/account/entities/app.entity";
-import { CreateAppDto, QueryAppDto } from "@/ai/apps/dto/app.dto";
+import { CreateAppDto, QueryAppDto, UpdateAppDto } from "@/ai/apps/dto/app.dto";
 import { AppMode } from "@/ai/apps/types/app.type";
 import { getPaginationOptions } from "@/common/database/dto/query.dto";
 import { isPaginator } from "@/common/database/utils/pagination";
@@ -23,14 +22,11 @@ export class AppsService {
     private readonly i18n: I18nService<I18nTranslations>,
   ) { }
 
-  async query(queryParams: Partial<QueryAppDto> | GetAppListArgs) {
-    const queryDto = new QueryAppDto();
-    if (queryParams instanceof QueryAppDto) {
-      Object.assign(queryDto, queryParams);
-    } else {
-      queryDto.setQueryArgs(queryParams as GetAppListArgs);
-    }
+  async getById(id: string): Promise<AppEntity | null> {
+    return await this.appRepository.findOne({ where: { id } });
+  }
 
+  async query(queryDto: QueryAppDto) {
     const where: FindOptionsWhere<AppEntity> = {
       tenant: { id: queryDto.tenantId },
       ...(queryDto.accountId && { accountId: queryDto.accountId }),
@@ -38,10 +34,27 @@ export class AppsService {
       ...(queryDto.mode && { mode: queryDto.mode }),
       ...(typeof queryDto.isPublic === 'boolean' && { isPublic: queryDto.isPublic }),
     };
-    const order: FindOptionsOrder<AppEntity> = queryDto.order || { id: 'DESC' };
+    const order: FindOptionsOrder<AppEntity> = queryDto.order || { createdAt: 'DESC' };
     const options: FindManyOptions<AppEntity> = {
       where,
       order,
+      relations: { tenant: true },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        mode: true,
+        icon: true,
+        enableSite: true,
+        enableApi: true,
+        isPublic: true,
+        createdAt: true,
+        updatedAt: true,
+        createdBy: true,
+        updatedBy: true,
+        tenant: { id: true },
+        workflow: { id: true },
+      },
       ...getPaginationOptions(queryDto),
     };
 
@@ -55,7 +68,7 @@ export class AppsService {
   }
 
   @Transactional()
-  async createApp(dto: CreateAppDto, entityManager?: EntityManager): Promise<AppEntity> {
+  async create(dto: CreateAppDto, entityManager?: EntityManager): Promise<AppEntity> {
     const appRepository = entityManager ? entityManager.getRepository(AppEntity) : this.appRepository;
 
     const dtoInstance = await validateDto(CreateAppDto, dto, this.i18n);
@@ -66,7 +79,7 @@ export class AppsService {
       name: dtoInstance.name,
       mode: dtoInstance.mode as string,
       ...this.mapBaseFields(dtoInstance),
-      operate: {
+      ...{
         createdAt: dtoInstance.createdAt || new Date(),
         createdBy: dtoInstance.createdBy,
       },
@@ -77,19 +90,38 @@ export class AppsService {
     return appEntity;
   }
 
+  @Transactional()
+  async update(app: AppEntity, dto: UpdateAppDto, entityManager?: EntityManager): Promise<AppEntity> {
+    const appRepository = entityManager ? entityManager.getRepository(AppEntity) : this.appRepository;
+
+    const dtoInstance = await validateDto(UpdateAppDto, dto, this.i18n);
+
+    const updateFields = {
+      ...this.mapBaseFields(dtoInstance),
+      ...{
+        updatedAt: new Date(),
+        updatedBy: dtoInstance.updatedBy,
+      },
+    }
+    Object.assign(app, updateFields);
+    await appRepository.save(app);
+    return app;
+  }
+
   validateAppMode(mode: string): void {
     EnumUtils.isEnumValue(AppMode, mode);
   }
 
-  private mapBaseFields(dto: CreateAppDto) {
-    const { description, icon, enableSite, enableApi, isPublic, workflowId } = dto;
+  private mapBaseFields(dto: CreateAppDto | UpdateAppDto) {
+    const { description, icon, iconType, enableSite, enableApi, isPublic, workflowId } = dto;
     return {
-      ...('description' in dto && { description }),
-      ...('icon' in dto && { icon }),
-      ...('enableSite' in dto && { enableSite }),
-      ...('enableApi' in dto && { enableApi }),
-      ...('isPublic' in dto && { isPublic }),
-      ...('workflowId' in dto && { workflowId }),
+      ...(dto.description && { description }),
+      ...(dto.icon && { icon }),
+      ...(dto.iconType && { iconType }),
+      ...(dto.enableSite && { enableSite }),
+      ...(dto.enableApi && { enableApi }),
+      ...(dto.isPublic && { isPublic }),
+      ...(dto.workflowId && { workflowId }),
     };
   }
 }

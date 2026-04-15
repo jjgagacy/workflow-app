@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import Providers from "./components/provider/providers";
 import { generateMetadata as Metadata } from "./components/layout/metadata";
 import { ThemeProvider } from "next-themes";
+import { Inter } from 'next/font/google'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,6 +20,12 @@ const geistMono = Geist_Mono({
 
 export const generateMetadata = Metadata;
 
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+})
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -30,7 +37,7 @@ export default async function RootLayout({
   const activeAppearanceValue = cookieStore.get('active_color_theme')?.value;
 
   return (
-    <html lang={locale ?? 'en'} suppressHydrationWarning>
+    <html lang={locale ?? 'en'} suppressHydrationWarning className={inter.className}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-black`}
       >

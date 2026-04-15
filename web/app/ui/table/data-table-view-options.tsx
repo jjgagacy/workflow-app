@@ -30,11 +30,12 @@ export function DataTableViewOptions<TData>({
         as='div'
         aria-label='Toggle columns'
         role='combobox'
-        className={'ml-auto hidden h-8 lg:flex'}
+        className={'ml-auto hidden h-10 lg:flex'}
       >
         <Button
           variant={'ghost'}
           className='flex justify-between items-center gap-2 whitespace-nowrap p-0 border-[var(--border)]'
+          size={'large'}
         >
           <FilterIcon className='text-gray-400 dark:text-white size-4' />
           <span>View</span>
@@ -52,7 +53,7 @@ export function DataTableViewOptions<TData>({
             </span>
             <Check
               className={cn(
-                'ml-auto size-4 shrink-0',
+                'ml-auto size-4 shrink-0 text-gray-400 dark:text-white',
                 column.getIsVisible() ? 'opacity-100' : 'opacity-0'
               )}
             />

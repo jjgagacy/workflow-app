@@ -13,6 +13,27 @@ export class CreateAppInput {
 
   @Field({ nullable: true })
   icon?: string;
+
+  @Field({ nullable: true })
+  iconType?: string;
+}
+
+@InputType('UpdateAppInput')
+export class UpdateAppInput {
+  @Field({ nullable: true })
+  name?: string;
+
+  @Field({ nullable: true })
+  description?: string;
+
+  @Field({ nullable: true })
+  mode?: string;
+
+  @Field({ nullable: true })
+  icon?: string;
+
+  @Field({ nullable: true })
+  iconType?: string;
 }
 
 @ObjectType('CreateAppResponse')

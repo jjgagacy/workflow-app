@@ -28,8 +28,8 @@ export function ThemeSelector() {
   return (
     <div className='flex items-center gap-2 rounded-lg mx-2'>
       <Menu as="div" className="relative">
-        <MenuButton className={`flex items-center space-x-2 max-w-xs rounded-md focus:outline-none p-2 ${getThemeHoverClass(activeColorTheme as ThemeType)} cursor-pointer transition-colors`}>
-          <Palette className="w-5 h-5 text-gray-400 hover:text-gray-500 mr-1" />
+        <MenuButton className={`flex items-center space-x-2 text-13 max-w-xs rounded-md focus:outline-none p-2 ${getThemeHoverClass(activeColorTheme as ThemeType)} cursor-pointer transition-colors`}>
+          <Palette className="w-5 h-5 mr-1" />
           {getThemeName(activeColorTheme)}
         </MenuButton>
         <Transition
@@ -42,13 +42,13 @@ export function ThemeSelector() {
           leaveTo="transform opacity-0 scale-95"
         >
           <MenuItems className="bg-muted-light origin-top-right absolute right-0 px-2 py-1 mt-2 w-48 rounded-md shadow-lg  border border-[var(--border)] focus:outline-none z-100">
-            <div className="text-gray-400 px-4 text-sm my-2 font-bold">Default</div>
+            <div className="text-gray-400 px-4 my-2 font-semibold">Default</div>
             {DEFAULT_THEMES.map(item => (
               <MenuItem key={item.name}>
                 {() => (
-                  <div className={`flex items-center justify-between px-4 py-2 rounded-md text-sm text-gray-700 w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}  dark:text-white`}>
+                  <div className={`flex items-center justify-between px-4 py-2 rounded-md text-gray-700 w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}  dark:text-white`}>
                     <button
-                      className={`w-full font-medium text-left flex-1 ${getActiveThemeClass(activeColorTheme as ThemeType, item.value as ThemeType)}`}
+                      className={`w-full text-13 text-left flex-1 ${getActiveThemeClass(activeColorTheme as ThemeType, item.value as ThemeType)}`}
                       onClick={() => setTheme(item.value)}
                     >
                       {item.name}
@@ -61,12 +61,12 @@ export function ThemeSelector() {
               </MenuItem>
             ))}
             <hr className="my-2 border-[var(--border)]" />
-            <div className="text-gray-400 text-sm px-4 my-2 font-bold">Scaled</div>
+            <div className="text-gray-400 px-4 my-2 font-semibold">Scaled</div>
             {SCALED_THEMES.map(item => (
               <MenuItem key={item.name}>
                 {() => (
-                  <div className={`flex items-center justify-between px-4 py-2 rounded-md text-sm text-gray-700 w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}  dark:text-white`}>
-                    <button className="w-full font-medium text-left flex-1" onClick={() => setTheme(item.value)}>
+                  <div className={`flex items-center justify-between px-4 py-2 rounded-md text-gray-700 w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}  dark:text-white`}>
+                    <button className="w-full text-13 text-left flex-1" onClick={() => setTheme(item.value)}>
                       {item.name}
                     </button>
                     {item.value === activeColorTheme && (

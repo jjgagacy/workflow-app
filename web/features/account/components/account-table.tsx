@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "@/app/ui/toast";
 import { useAuth } from "@/hooks/use-auth";
 import { getErrorMessage } from "@/utils/errors";
+import { Edit2Icon, Edit3Icon, EditIcon, Lock, LockOpen, Trash, Trash2Icon, TrashIcon, X } from "lucide-react";
 
 interface AccountTableParams<TData, TValue> {
   data: TData[];
@@ -105,28 +106,35 @@ export function AccountTable<TData, TValue>({ }: AccountTableParams<TData, TValu
         return (
           <div className="flex space-x-2">
             <Button
-              variant={'primary'}
+              variant={'secondary'}
               className=""
-              size={'small'}
+              size={'medium'}
             >
-              <Link href={`/workspace/system/account/${account.id}`}>
+              <Link className="flex items-center" href={`/workspace/system/account/${account.id}`}>
+                <EditIcon className="mr-1" size={12} />
                 {t('system.edit')}
               </Link>
             </Button>
             <Button
               onClick={() => onDelete(account)}
-              variant={'alert'}
+              variant={'secondary'}
               className=""
-              size={'small'}
+              size={'medium'}
             >
+              <Trash2Icon className="mr-1" size={12} />
               {t('system.delete')}
             </Button>
             <Button
               onClick={() => onToggleStatus(account)}
               variant={'secondary'}
               className=""
-              size={'small'}
+              size={'medium'}
             >
+              {account.status === 1 ? (
+                <Lock className="mr-1" size={12} />
+              ) : (
+                <LockOpen className="mr-1" size={12} />
+              )}
               {account.status === 1 ? t('system.enable') : t('system.disable')}
             </Button>
           </div>
@@ -156,7 +164,7 @@ export function AccountTable<TData, TValue>({ }: AccountTableParams<TData, TValu
           id="search"
           type="text"
           value={search} // 直接使用 queryStates 中的 search
-          className="w-56"
+          className="w-56 h-10"
           onChange={(e) => {
             setQueryStates({ search: e.target.value, page: 1 });
           }}

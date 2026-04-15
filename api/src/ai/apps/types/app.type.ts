@@ -3,3 +3,9 @@ export enum AppMode {
   WORKFLOW = 'workflow',
   CHAT = 'chat',
 }
+
+export enum IconType {
+  ICON = 'icon',
+  EMOJI = 'emoji',
+}
+

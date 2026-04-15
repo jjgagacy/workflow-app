@@ -3,14 +3,12 @@
 import Button from "@/app/components/base/button";
 import { Input } from "@/app/ui/input";
 import { useAppContext } from "@/context/app-context";
-import { ChevronRight, Edit, Edit2, Edit2Icon, Key, Mail, Shield, Trash2, User } from "lucide-react";
-import Image from "next/image";
+import { Edit, Mail, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next"
 import AvatarEdit from "./account/avatar-edit";
 import api from "@/api";
 import { toast } from "@/app/ui/toast";
-import { Dialog } from "@/app/ui/dialog";
 import ChangeEmailDialog from "./account/change-email-dialog";
 import AccountDeleteDialog from "./account/account-delete";
 import { useRouter } from "next/navigation";
@@ -139,7 +137,7 @@ export default function ProfileLayout() {
                         setIsEditingUsername(true);
                       }}
                       variant={'ghost'}
-                      size={'medium'}
+                      size={'large'}
                       className="inline-flex items-center"
                     >
                       <Edit className="w-4 h-4 mr-2" />
@@ -150,14 +148,14 @@ export default function ProfileLayout() {
                       <Button
                         onClick={handleSaveUsername}
                         variant={'primary'}
-                        size={'medium'}
+                        size={'large'}
                       >
                         {t('system.save')}
                       </Button>
                       <Button
                         onClick={() => { setIsEditingUsername(false); setTempUsername(userData.username); }}
                         variant={'ghost'}
-                        size={'medium'}
+                        size={'large'}
                       >
                         {t('system.cancel')}
                       </Button>
@@ -190,7 +188,7 @@ export default function ProfileLayout() {
                       setIsEditingEmail(true);
                     }}
                     variant={'ghost'}
-                    size={'medium'}
+                    size={'large'}
                     className="inline-flex items-center"
                   >
                     <Edit className="w-4 h-4 mr-2" />

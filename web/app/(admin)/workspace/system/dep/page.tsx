@@ -31,7 +31,7 @@ export default async function Page() {
             description={t('manage_company_departments')} />
           <Link
             href="/workspace/system/dep/new"
-            className={cn(buttonVariants(), 'text-xs md:text-sm')}
+            className={cn(buttonVariants({ size: 'large' }), '')}
           >
             <IconPlus className="mr-2 h-4 w-4" /> {t('add_department')}
           </Link>

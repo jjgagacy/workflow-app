@@ -37,11 +37,11 @@ export function Dialog(props: DialogProps) {
   } = props;
 
   return (
-    <HeadlessDialog open={isOpen} as="div" className="relative z-10 focus:outline-none" onClose={close}>
-      <DialogPanel className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="fixed inset-0 bg-black/50 z-60"></div>
+    <HeadlessDialog open={isOpen} as="div" className="relative z-60 focus:outline-none" onClose={close}>
+      <DialogPanel className="fixed inset-0 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black/50 z-70"></div>
         <div className="fixed inset-0 z-70 flex items-center justify-center">
-          <div className={`bg-background rounded-lg px-2 w-full max-w-md shadow-lg outline-none border border-[var(--border)] ${className}`}>
+          <div className={`bg-background flex flex-col rounded-lg px-2 w-full max-w-md shadow-lg outline-none border border-[var(--border)] ${className}`}>
             <DialogTitle>
               <div className={`flex justify-between items-center ${description && 'border-b border-[var(--border)]'}  px-4 py-4`}>
                 <h3 className="text-lg font-medium">
@@ -61,18 +61,19 @@ export function Dialog(props: DialogProps) {
             )}
 
             {children && (
-              <div className="max-h-[calc(100vh-300px)] overflow-y-auto">
+              <div className="flex-1 overflow-y-auto">
                 <div className="px-4 py-4">
                   {children}
                 </div>
               </div>
             )}
             {actions && (
-              <div className="flex justify-end gap-4 px-6 py-4">
+              <div className="flex justify-end gap-4 p-4">
                 {cancelText && (<Button
                   variant={'secondary'}
                   className="inline-flex items-center justify-center"
                   onClick={onCancel}
+                  size={'large'}
                 >
                   {cancelText}
                 </Button>)}
@@ -81,6 +82,7 @@ export function Dialog(props: DialogProps) {
                   className={`inline-flex items-center justify-center ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   onClick={onConfirm}
                   disabled={isLoading}
+                  size={'large'}
                 >
                   <span className="flex items-center justify-center gap-1">
                     {confirmText}

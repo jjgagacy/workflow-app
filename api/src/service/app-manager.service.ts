@@ -1,12 +1,13 @@
 import { AccountEntity } from "@/account/entities/account.entity";
+import { AppEntity } from "@/account/entities/app.entity";
 import { AppsService } from "@/ai/apps/apps.service";
-import { CreateAppDto } from "@/ai/apps/dto/app.dto";
+import { CreateAppDto, UpdateAppDto } from "@/ai/apps/dto/app.dto";
 import { defaultAppTemplate, getAppTemplate } from "@/ai/apps/entities/default-app-template";
 import { AppMode } from "@/ai/apps/types/app.type";
 import { Transactional } from "@/common/decorators/transaction.decorator";
 import { EnumConverter } from "@/common/utils/enums";
 import { AppCreatedEvent } from "@/events/app.event";
-import { CreateAppInput } from "@/graphql/app/types/app-input.type";
+import { CreateAppInput, UpdateAppInput } from "@/graphql/app/types/app-input.type";
 import { Injectable } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { DataSource, EntityManager } from "typeorm";
@@ -33,7 +34,7 @@ export class AppManagerService {
       mode,
     });
 
-    const app = await this.appsService.createApp(createAppDto, workManager);
+    const app = await this.appsService.create(createAppDto, workManager);
 
     // todo: model config
 
@@ -42,5 +43,16 @@ export class AppManagerService {
     this.eventEmitter.emit('app.created', event);
 
     return app;
+  }
+
+  @Transactional()
+  async updateApp(app: AppEntity, updateData: UpdateAppInput, account: AccountEntity, entityManager?: EntityManager): Promise<AppEntity> {
+    const workManager = entityManager || this.dataSource.manager;
+    const updateAppDto = new UpdateAppDto();
+    Object.assign(updateAppDto, updateData, {
+      updatedBy: account.username,
+    });
+
+    return await this.appsService.update(app, updateAppDto, workManager);
   }
 }

@@ -3,7 +3,7 @@ import { useAppContext } from '@/context/app-context';
 import { useAuth } from '@/hooks/use-auth';
 import { getThemeHoverClass, ThemeType } from '@/types/theme';
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
-import { ChevronDownIcon, CogIcon, LogOutIcon, UserIcon } from 'lucide-react';
+import { BrainCog, ChevronDownIcon, CogIcon, LogOutIcon, UserIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Fragment } from "react";
 import { useTranslation } from 'react-i18next';
@@ -35,11 +35,11 @@ export function UserSelector() {
               {accountInfo?.username?.charAt(0)}
             </div>
           )}
-          <span className="text-sm font-medium text-gray-700 dark:text-white">
+          <span className="font-normal text-13 text-gray-700 dark:text-white">
             {accountInfo?.username || t('system.not_logged_in')}
           </span>
           <ChevronDownIcon
-            className="h-4 w-4 text-gray-500"
+            className="h-4 w-4"
             aria-hidden="true"
           />
         </MenuButton>
@@ -58,7 +58,7 @@ export function UserSelector() {
               {() => (
                 <button
                   onClick={() => router.push('/account')}
-                  className={`flex font-medium items-center px-4 py-2 text-sm text-gray-700 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)} dark:text-white`}
+                  className={`flex font-normal text-13 items-center px-4 py-2 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)} dark:text-white`}
                 >
                   <UserIcon className="mr-2 h-4 w-4" />
                   {t('system.account_settings')}
@@ -69,10 +69,21 @@ export function UserSelector() {
               {() => (
                 <button
                   onClick={() => router.push('/settings?tab=setting')}
-                  className={`flex font-medium items-center px-4 py-2 text-sm text-gray-700 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)} dark:text-white`}
+                  className={`flex font-normal text-13 items-center px-4 py-2 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)} dark:text-white`}
                 >
                   <CogIcon className="mr-2 h-4 w-4" />
                   {t('system.system_settings')}
+                </button>
+              )}
+            </MenuItem>
+            <MenuItem>
+              {() => (
+                <button
+                  onClick={() => router.push('/settings?tab=model_provider')}
+                  className={`flex font-normal text-13 items-center px-4 py-2 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)} dark:text-white`}
+                >
+                  <BrainCog className="mr-2 h-4 w-4" />
+                  {t('system.model_provider.title')}
                 </button>
               )}
             </MenuItem>
@@ -81,7 +92,7 @@ export function UserSelector() {
               {() => (
                 <button
                   onClick={handleLogout}
-                  className={`flex font-medium items-center px-4 py-2 text-sm text-red-600 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)} dark:text-white`}
+                  className={`flex font-normal text-13 items-center px-4 py-2 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)} dark:text-white`}
                 >
                   <LogOutIcon className="mr-2 h-4 w-4" />
                   {t('system.logout')}

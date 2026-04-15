@@ -24,6 +24,15 @@ const translation = {
     back: '返回',
     install: '安装',
     setup: '设置',
+    create: '创建',
+    update: '更新',
+    delete: '删除',
+    edit: '编辑',
+    save: '保存',
+    submit: '提交',
+    reset: '重置',
+    search: '搜索',
+    load_more: '加载更多',
   },
   theme: {
     system: '跟随系统',
@@ -51,5 +60,12 @@ const translation = {
     moon: '月亮图标',
   },
   back_workspace: '返回工作空间',
+  newApp: {
+    title: '创建新应用',
+    chooseAppIcon: '选择应用图标',
+    iconAndName: '图标和名称',
+    appDetails: '应用详情',
+    description: '应用描述',
+  }
 };
 export default translation;

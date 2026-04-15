@@ -4,6 +4,7 @@ import { Badge } from "@/app/components/base/badge";
 import Button from "@/app/components/base/button";
 import Countdown, { CountdownRef } from "@/app/components/base/countdown";
 import Loading from "@/app/components/base/loading";
+import { Tooltip } from "@/app/components/base/tooltip";
 import { useDialog } from "@/app/components/hooks/use-dialog";
 import { Accordion } from "@/app/ui/accordion";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/ui/card";
@@ -107,6 +108,11 @@ export default function Page() {
   return (
     <div>
       <h1 className="mt-4">Dashboard</h1>
+      <div className="flex justify-center w-3/4">
+        <Tooltip content="This is a tooltip" placement="right">
+          <Button variant={'primary'}>Hover me</Button>
+        </Tooltip>
+      </div>
       {/* <Loading /> */}
       <Loading />
       <div className="flex gap-2">
@@ -115,6 +121,13 @@ export default function Page() {
         <Button variant={'warning'}>warning</Button>
         <Button variant={'tertiary'}>tertiary</Button>
         <Button variant={'ghost'}>ghost</Button>
+      </div>
+
+      <h1 className="mt-4">Button Sizes</h1>
+      <div className="flex gap-2">
+        <Button variant={'primary'} size={'large'}>按钮</Button>
+        <Button variant={'primary'} size={'medium'}>按钮</Button>
+        <Button variant={'primary'} size={'small'}>按钮</Button>
       </div>
 
       <h1 className="mt-4">badge</h1>

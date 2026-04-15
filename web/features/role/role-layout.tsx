@@ -7,6 +7,7 @@ import { ModalProvider, useModalContext } from "@/hooks/use-modal";
 import { IconPlus } from "@tabler/icons-react";
 import RoleListPage from "./role-list";
 import { useTranslation } from "react-i18next";
+import { Plus } from "lucide-react";
 
 export function RoleLayout() {
   return (
@@ -34,8 +35,10 @@ export function RolePage() {
         <Button
           variant={'primary'}
           onClick={handleAddRole}
+          size={'large'}
         >
-          <IconPlus className="mr-2 h-4 w-4" /> {t('system.add_role')}
+          <Plus className="mr-2 h-4 w-4" />
+          {t('system.add_role')}
         </Button>
       </div>
       <Separator />

@@ -15,6 +15,7 @@ import { DataTableToolbar } from "@/app/ui/table/data-table-toolbar";
 import { Input } from "@/app/ui/input";
 import { arrayToTree } from "@/utils/trees";
 import { useTranslation } from "react-i18next";
+import { EditIcon, Lock, Trash2Icon, X } from "lucide-react";
 
 interface MenuTableParams<TData, TValue> {
   data: TData[];
@@ -118,28 +119,31 @@ export function MenuTable<TData, TValue>({
         return (
           <div className="space-x-2">
             <Button
-              variant={'primary'}
+              variant={'secondary'}
               className=""
-              size={'small'}
+              size={'medium'}
             >
               <Link href={`/admin/system/menu/${menu.id}`}>
+                <EditIcon className="mr-1" size={12} />
                 {t('system.edit')}
               </Link>
             </Button>
             <Button
               onClick={() => onDelete(menu)}
-              variant={'alert'}
+              variant={'secondary'}
               className=""
-              size={'small'}
+              size={'medium'}
             >
+              <Trash2Icon className="mr-1" size={12} />
               {t('system.delete')}
             </Button>
             <Button
               onClick={() => onToggleStatus(menu)}
               variant={'secondary'}
               className=""
-              size={'small'}
+              size={'medium'}
             >
+              <Lock className="mr-1" size={12} />
               {menu.status === 1 ? t('system.disable') : t('system.enable')}
             </Button>
           </div>
@@ -171,7 +175,7 @@ export function MenuTable<TData, TValue>({
           id="search"
           type="text"
           value={search}
-          className="w-56"
+          className="w-56 h-10"
           onChange={(e) => {
             setQueryStates({ search: e.target.value })
           }}

@@ -6,7 +6,6 @@ import { ReactNode } from "react";
 import { useCustomTheme } from "../provider/customThemeProvider";
 import { getThemeHoverClass, ThemeType } from "@/types/theme";
 import { Monie } from "../base/monie";
-import { useAppearance } from "@/hooks/use-appearance";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -20,7 +19,7 @@ export function Sidebar({ collapsed, onToggleCollapse, children }: SidebarProps)
     <aside className="fixed left-0 top-0 h-screen">
       <div className="flex relative bg-gray-100 flex-col">
         <div
-          className={`bg-muted h-screen shadow-md transition-all duration-300 ease-in-out ${collapsed ? "w-20" : "w-64"
+          className={`bg-muted h-screen border-r border-[var(--border)] transition-all duration-300 ease-in-out ${collapsed ? "w-20" : "w-64"
             }`}
         >
           {/* Header with logo and collapse button */}

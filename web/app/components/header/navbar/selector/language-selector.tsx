@@ -21,8 +21,8 @@ export function LanguageSelector({ reloadPage = false }: { reloadPage?: boolean 
   return (
     <div className='flex items-center gap-2 hover:bg-secondary/80 rounded-lg mx-2'>
       <Menu as="div" className="relative">
-        <MenuButton className={`flex items-center space-x-2 p-2 max-w-xs rounded-md focus:outline-none ${getThemeHoverClass(activeColorTheme as ThemeType)}`}>
-          <Globe className="w-5 h-5 text-gray-400 hover:text-gray-500 mr-1" />
+        <MenuButton className={`flex items-center space-x-2 p-2 text-13 max-w-xs rounded-md focus:outline-none ${getThemeHoverClass(activeColorTheme as ThemeType)}`}>
+          <Globe className="w-5 h-5 mr-1" />
           {getLanguageNameByValue(i18n.language)}
         </MenuButton>
 
@@ -38,13 +38,13 @@ export function LanguageSelector({ reloadPage = false }: { reloadPage?: boolean 
           <MenuItems className="bg-muted-light origin-top-right absolute px-2 py-1 right-0 mt-2 w-48 rounded-md shadow-lg border border-[var(--border)] focus:outline-none z-100">
             {languages.map(lang => (
               <MenuItem key={lang.value}>
-                <div className={`flex items-center justify-between px-4 py-2 rounded-lg text-sm text-gray-700 w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}  dark:text-white`}>
+                <div className={`flex items-center justify-between px-4 py-2 rounded-lg w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}  dark:text-white`}>
                   <button
                     onClick={() => toggleLanguage(lang.value)}
                     className='w-full text-left flex flex-1 items-center'
                   >
                     <span className="text-lg mr-2">{lang.emoji || LanguageEmojiDefault}</span>
-                    <h3 className='font-medium'>{lang.name}</h3>
+                    <h3 className='font-normal text-13'>{lang.name}</h3>
                   </button>
                 </div>
               </MenuItem>

@@ -15,6 +15,7 @@ import { DataTableToolbar } from "@/app/ui/table/data-table-toolbar";
 import { Input } from "@/app/ui/input";
 import RoleForm from "../role-form";
 import { useTranslation } from "react-i18next";
+import { EditIcon, Trash2, X } from "lucide-react";
 
 interface RoleTableParams<TData, TValue> {
   data: TData[];
@@ -120,16 +121,18 @@ export function RoleTable<TData, TValue>({
           <div className="space-x-2">
             <Button
               onClick={() => openEditModal(role)}
-              variant={'primary'}
-              size={'small'}
+              variant={'secondary'}
+              size={'medium'}
             >
+              <EditIcon className="mr-1" size={12} />
               {t('system.edit')}
             </Button>
             <Button
               onClick={() => onDelete(role)}
-              variant={'alert'}
-              size={'small'}
+              variant={'secondary'}
+              size={'medium'}
             >
+              <Trash2 className="mr-1" size={12} />
               {t('system.delete')}
             </Button>
           </div>
@@ -161,7 +164,7 @@ export function RoleTable<TData, TValue>({
             id="search"
             type="text"
             value={search}
-            className="w-56"
+            className="w-56 h-10"
             onChange={e => {
               setQueryStates({ search: e.target.value });
             }}

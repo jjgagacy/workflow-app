@@ -8,6 +8,7 @@ import { EditIcon, EyeIcon, LogOutIcon, Mail } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
+import { Tooltip } from "@/app/components/base/tooltip";
 
 export default function ProfileContent() {
   const { t } = useTranslation();
@@ -71,7 +72,7 @@ export default function ProfileContent() {
         </div>
         <div className="flex flex-col items-end space-y-4">
           <div className="flex gap-2">
-            <div className="relative group">
+            <Tooltip content={t('system.edit_account')} placement="bottom">
               <button
                 onClick={handleViewProfile}
                 className="flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 dark:bg-neutral-700 hover:bg-gray-200 dark:hover:bg-neutral-600 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -79,28 +80,18 @@ export default function ProfileContent() {
               >
                 <EditIcon className="h-5 w-5" />
               </button>
-              <div className="absolute right-0 top-full mt-2 px-3 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-neutral-800 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                {t('system.edit_account')}
-                <div className="absolute -top-1 right-3 w-2 h-2 bg-gray-900 dark:bg-neutral-800 transform rotate-45"></div>
-              </div>
-            </div>
+            </Tooltip>
 
-            <div className="relative group">
+            <Tooltip content={t('system.logout')} placement="bottom">
               <button
                 onClick={handleLogout}
                 className="flex items-center justify-center w-10 h-10 rounded-lg bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
               >
                 <LogOutIcon className="h-5 w-5" />
               </button>
-              <div className="absolute right-0 top-full mt-2 px-3 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-neutral-800 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                {t('system.logout')}
-                <div className="absolute -top-1 right-3 w-2 h-2 bg-gray-900 dark:bg-neutral-800 transform rotate-45"></div>
-              </div>
-            </div>
-
+            </Tooltip>
           </div>
         </div>
-
       </div>
     </ContentSection>
   );

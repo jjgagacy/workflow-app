@@ -3,7 +3,7 @@
 import { MenuItem } from '@/types/menu';
 
 import { IconChevronDown, IconChevronRight, IconEyeCog } from '@tabler/icons-react';
-import { List, UserCog } from 'lucide-react';
+import { List, Plus, PlusIcon, UserCog } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -12,6 +12,8 @@ import { useTranslation } from 'react-i18next';
 import { useCustomTheme } from '../../provider/customThemeProvider';
 import { getThemeActiveClass, getThemeBgClass, getThemeHoverClass, getThemeSelectedClass, ThemeType } from '@/types/theme';
 import { useMenus } from '../../hooks/use-menus';
+import Button from '../../base/button';
+import CreateAppDialog from '../model/create-app-dialog';
 
 interface NavigationProps {
   collapsed: boolean;
@@ -23,6 +25,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
   const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({});
   const [hoveredItem, setHoveredItem] = useState('');
   const [menuPosition, setMenuPosition] = useState(0);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
   const { t } = useTranslation();
 
   const pathname = usePathname();
@@ -151,9 +154,23 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
     }, 500);
   };
 
-
   return (
-    <div className={`py-2 px-2 navigation-menu__root space-y-1 relative z-10 text-component`}>
+    <div className={`py-2 px-2 pt-6 gap-y-1 grid navigation-menu__root space-y-0 relative z-10 text-component`}>
+      <div className='relative'>
+        <div className={`flex items-center px-2 py-2 rounded-lg  cursor-pointer ${collapsed ? "justify-center" : "justify-between"}`}>
+          <Button
+            variant={'tertiary'}
+            size={`${collapsed ? 'medium' : 'large'}`}
+            className='w-full'
+            onClick={() => {
+              setShowCreateDialog(true)
+            }}
+          >
+            <PlusIcon className={`${collapsed ? "mr-0" : "mr-1"}`} size={`${collapsed ? 14 : 18}`} />
+            {!collapsed && t('app.actions.create')}
+          </Button>
+        </div>
+      </div>
       {menuItems.map((item) => (
         <div key={item.key}>
           {item.children && collapsed ? (
@@ -183,7 +200,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                 >
                   <div className="flex items-center">
                     <span>{item.icon}</span>
-                    {!collapsed && (<span className="ml-3 font-medium">{item.title}</span>)}
+                    {!collapsed && (<span className="ml-2 font-normal">{item.title}</span>)}
                   </div>
                   {!collapsed && (<span>&nbsp;</span>)}
                 </Link>
@@ -198,7 +215,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
               >
                 <div className="flex items-center">
                   <span>{item.icon}</span>
-                  {!collapsed && <span className="ml-3 font-medium">{item.title}</span>}
+                  {!collapsed && <span className="ml-2 font-normal">{item.title}</span>}
                 </div>
                 {!collapsed && (
                   <span>
@@ -211,7 +228,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                 )}
               </div>
               {openSubmenus[item.title] && !collapsed && (
-                <div className={`py-1 ${collapsed ? "pl-0" : "pl-10"}`}>
+                <div className={`py-0 ${collapsed ? "pl-0" : "pl-10"}`}>
                   {item.children.map((child) => (
                     <Link
                       key={child.key}
@@ -221,7 +238,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                         } ${isActive(child.path) ? `${getThemeSelectedClass(activeColorTheme as ThemeType)} text-component-active shadow-[inset_0_0_0_1px_white,inset_0_0_0_2px_rgba(255,255,255,0.2)] dark:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.8),inset_0_0_0_2px_rgba(0,0,0,0.3)]` : ""}`}
                     >
                       <span>{child.icon}</span>
-                      <span className="ml-3 font-medium">{child.title}</span>
+                      <span className="ml-2 font-normal">{child.title}</span>
                     </Link>
                   ))}
                 </div>
@@ -241,6 +258,11 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
         setHoveredItem={setHoveredItem}
         onMouseEnter={handleDropdownMouseEnter}
         onMouseLeave={handleDropdownMouseLeave}
+      />
+
+      <CreateAppDialog
+        isOpen={showCreateDialog}
+        onClose={() => setShowCreateDialog(false)}
       />
     </div>
   );
