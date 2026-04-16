@@ -2,7 +2,7 @@ import { AccountEntity } from "@/account/entities/account.entity";
 import { AppEntity } from "@/account/entities/app.entity";
 import { AppsService } from "@/ai/apps/apps.service";
 import { CreateAppDto, UpdateAppDto } from "@/ai/apps/dto/app.dto";
-import { defaultAppTemplate, getAppTemplate } from "@/ai/apps/entities/default-app-template";
+import { getAppTemplate } from "@/ai/apps/entities/default-app-template";
 import { AppMode } from "@/ai/apps/types/app.type";
 import { Transactional } from "@/common/decorators/transaction.decorator";
 import { EnumConverter } from "@/common/utils/enums";
@@ -14,7 +14,6 @@ import { DataSource, EntityManager } from "typeorm";
 
 @Injectable()
 export class AppManagerService {
-
   constructor(
     private readonly dataSource: DataSource,
     private readonly appsService: AppsService,

@@ -68,6 +68,14 @@ const translation = {
     random: 'Random',
     icon: 'Icon',
     emoji: 'Emoji',
+    select: 'Select app type',
+    workflowDescription: 'Workflow apps automate tasks and processes',
+    chatDescription: 'Chat Bot apps interact with users through natural language',
+  },
+  appType: 'App Type',
+  types: {
+    workflow: 'Workflow',
+    chat: 'Chat Bot',
   }
 };
 

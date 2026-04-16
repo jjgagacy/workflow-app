@@ -45,7 +45,17 @@
   --color-green-light: oklch(0.792 0.115 150.069);
   --color-green-dark: oklch(0.372 0.118 150.069);
   --color-green-foreground: oklch(1 0 0);
+  --color-text-shade-1: oklch(0.145 0 0);
+  --color-text: oklch(0.556 0 0);
+  --color-text-tint-1: oklch(0.556 0 0);
+  --color-text-tint-2: oklch(0.708 0 0);
+  --color-text-tint-3: oklch(0.922 0 0);
+  --color-text-danger: oklch(0.577 0.245 27.325);
+  --color-text-success: oklch(0.527 0.154 150.069);
+  --color-text-warning: oklch(0.828 0.189 84.429);
 }
+
+.test {}
 
 /* @theme inline {
     --radius-sm: calc(var(--radius) - 4px);

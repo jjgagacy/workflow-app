@@ -69,6 +69,14 @@ const translation = {
     random: '随机',
     icon: '图标',
     emoji: 'Emoji',
+    select: '选择应用类型',
+    workflowDescription: '工作流应用用于自动化任务和流程',
+    chatDescription: '聊天机器人应用通过自然语言与用户互动',
+  },
+  appType: '应用类型',
+  types: {
+    workflow: '工作流',
+    chat: '聊天机器人',
   }
 };
 export default translation;

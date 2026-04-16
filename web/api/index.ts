@@ -8,6 +8,7 @@ import * as modelProvider from './graphql/model-provider/settings/model-provider
 import * as model from './graphql/model-provider/settings/model';
 import * as marketplace from './graphql/model-provider/marketplace/index';
 import * as plugin from './graphql/plugin/index';
+import * as app from './graphql/app/index';
 import { useGraphQLQuery } from '@/hooks/use-graphql';
 import { GET_ROUTES } from './graphql/account/queries';
 
@@ -34,5 +35,6 @@ export default {
   modelProvider,
   model,
   plugin,
-  marketplace
+  marketplace,
+  app
 }

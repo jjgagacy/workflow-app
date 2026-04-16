@@ -54,6 +54,18 @@ input ConfirmEmailNewInput {
   token: String!
 }
 
+input CreateAppInput {
+  description: String
+  icon: String
+  iconType: String
+  mode: String!
+  name: String!
+}
+
+type CreateAppResponse {
+  id: String!
+}
+
 type CredentialFormSchema {
   default: String
   label: I18nObject!
@@ -334,6 +346,7 @@ type Mutation {
   checkSignUpUsername(username: String!): Boolean!
   confirmEmailNewSend(input: ConfirmEmailNewInput!): String!
   createAccount(input: AccountInput!): AccountResponse!
+  createApp(input: CreateAppInput!): CreateAppResponse!
   createDep(input: DepInput!): DepResponse!
   createMenu(input: MenuInput!): MenuResponse!
   createModule(input: ModuleInput!): ModuleResponse!

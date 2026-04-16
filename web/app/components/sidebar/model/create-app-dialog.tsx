@@ -15,7 +15,6 @@ export default function CreateAppDialog({
   onSuccess
 }: CreateAppDialogProps) {
   const { t } = useTranslation();
-  const [loading, setLoading] = useState(false);
 
   const handleSuccess = (appId: string) => {
     if (onSuccess) {
@@ -28,21 +27,17 @@ export default function CreateAppDialog({
     <>
       <Dialog
         isOpen={isOpen}
-        isLoading={loading}
         title={t('app.newApp.title')}
         description=""
-        confirmText={t('system.confirm')}
-        cancelText={t('system.cancel')}
-        onConfirm={() => { }}
-        onCancel={onClose}
         className="max-w-3xl! min-h-3/4"
+        actions={false}
       >
         <h1 className="text-lg font-semibold mt-3 mb-5">{t('app.newApp.appDetails')}</h1>
         <div className="flex flex-1 items-center">
           <div className="px-0 w-full">
             <CreateApp
               onClose={() => onClose()}
-              onSuccess={() => handleSuccess('')}
+              onSuccess={(appId) => handleSuccess(appId)}
             />
           </div>
         </div>

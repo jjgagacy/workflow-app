@@ -12,8 +12,8 @@ interface DialogProps {
   children?: ReactNode;
   confirmText?: string;
   cancelText?: string | null;
-  onConfirm: () => void;
-  onCancel: () => void;
+  onConfirm?: () => void;
+  onCancel?: () => void;
   destructive?: boolean;
   className?: string;
   isLoading?: boolean;
@@ -68,32 +68,70 @@ export function Dialog(props: DialogProps) {
               </div>
             )}
             {actions && (
-              <div className="flex justify-end gap-4 p-4">
-                {cancelText && (<Button
-                  variant={'secondary'}
-                  className="inline-flex items-center justify-center"
-                  onClick={onCancel}
-                  size={'large'}
-                >
-                  {cancelText}
-                </Button>)}
-                <Button
-                  variant={`${destructive ? 'warning' : 'primary'}`}
-                  className={`inline-flex items-center justify-center ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  onClick={onConfirm}
-                  disabled={isLoading}
-                  size={'large'}
-                >
-                  <span className="flex items-center justify-center gap-1">
-                    {confirmText}
-                    {isLoading && <Spinner />}
-                  </span>
-                </Button>
-              </div>
+              <DialogActions>
+                {cancelText && (<DialogButtonCancel onCancel={onCancel} cancelText={cancelText} />)}
+                <DialogButtonConfirm
+                  destructive={destructive}
+                  onConfirm={onConfirm}
+                  isLoading={isLoading}
+                  confirmText={confirmText}
+                />
+              </DialogActions>
             )}
           </div>
         </div>
       </DialogPanel>
     </HeadlessDialog>
+  );
+}
+
+type CancelButtonProps = {
+  onCancel?: () => void;
+  cancelText: string;
+}
+
+type ConfirmButtonProps = {
+  destructive?: boolean;
+  onConfirm?: () => void;
+  isLoading: boolean;
+  confirmText: string;
+  disabled?: boolean;
+}
+
+export const DialogActions = ({ children }: { children: ReactNode }) => {
+  return (
+    <div className="flex justify-end gap-4 py-4">
+      {children}
+    </div>
+  );
+}
+
+export const DialogButtonCancel = ({ onCancel, cancelText }: CancelButtonProps) => {
+  return (
+    <Button
+      variant={'secondary'}
+      className="inline-flex items-center justify-center"
+      onClick={onCancel}
+      size={'large'}
+    >
+      {cancelText}
+    </Button>
+  );
+}
+
+export const DialogButtonConfirm = ({ destructive, onConfirm, isLoading, confirmText, disabled }: ConfirmButtonProps) => {
+  return (
+    <Button
+      variant={`${destructive ? 'warning' : 'primary'}`}
+      className={`inline-flex items-center justify-center ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+      onClick={onConfirm}
+      disabled={isLoading || disabled}
+      size={'large'}
+    >
+      <span className="flex items-center justify-center gap-1">
+        {confirmText}
+        {isLoading && <Spinner />}
+      </span>
+    </Button>
   );
 }

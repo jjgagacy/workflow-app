@@ -14,6 +14,9 @@ export class InstalledAppEntity {
   @Index()
   tenant!: TenantEntity;
 
+  @Column({ name: 'owner_tenant_id', type: 'uuid', nullable: false })
+  ownerTenantId!: string;
+
   @ManyToOne(() => AppEntity, {
     onDelete: 'CASCADE',
   })

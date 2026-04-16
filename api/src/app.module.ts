@@ -108,6 +108,11 @@ import { TypeOrmConfig } from './config/typeorm.config';
 import { GraphQLFormatError } from './config/graphql.config';
 import { BullConfig } from './config/bull.config';
 import { TaskModule } from './tasks/task.module';
+import { AppResolver } from './graphql/app/resolvers/app.resolver';
+import { AppsModule } from './ai/apps/apps.module';
+import { AppsService } from './ai/apps/apps.service';
+import { AppManagerService } from './service/app-manager.service';
+import { InstalledAppService } from './ai/apps/installed-app.service';
 
 // const isWorkerThread = !require.main?.filename.includes('worker');
 // console.log(`AppModule loaded in ${isWorkerThread ? 'main thread' : 'worker thread'}`);
@@ -153,6 +158,7 @@ import { TaskModule } from './tasks/task.module';
     McpModule,
     PromptModule,
     RagModule,
+    AppsModule,
     ToolModule,
     WorkflowModule,
     MonieModule,
@@ -268,6 +274,9 @@ import { TaskModule } from './tasks/task.module';
     ChangeEmailResolver,
     ModelProvidersResolver,
     PluginResolver,
+    AppResolver,
+    AppsService,
+    AppManagerService,
   ],
 })
 export class AppModule implements NestModule {

@@ -10,6 +10,7 @@ import { ReactNode, useEffect, useRef, useState, type FC } from "react";
 type Item = {
   value: number | string;
   name: string;
+  description?: string;
 } & Record<string, any>;
 
 type SelectProps = {
@@ -117,7 +118,10 @@ export const SimpleSelect: FC<SelectProps> = ({
                     {({ selected }) => (
                       <>
                         {renderOption ? renderOption({ item, selected }) : (
-                          <span className={cn('block truncate', selected ? 'font-semibold' : 'font-normal')}>{item.name}</span>
+                          <div className="flex flex-col">
+                            <span className={cn('block truncate', selected ? 'font-semibold' : 'font-normal')}>{item.name}</span>
+                            {item.description && (<span className="text-xs text-text-tint-1 truncate">{item.description}</span>)}
+                          </div>
                         )}
                         {selected && (
                           <span className={`absolute inset-y-0 right-0 flex items-center pr-4 ${getThemeActiveClass(activeColorTheme as ThemeType)}`}>

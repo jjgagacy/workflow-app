@@ -1,4 +1,5 @@
 import { QueryDto } from "@/common/database/dto/query.dto";
+import { IsNotEmpty } from "class-validator";
 
 export class QueryInstalledAppDto extends QueryDto {
   accountId?: number;
@@ -13,14 +14,17 @@ export class BaseInstalledAppDto {
 }
 
 export class CreateInstalledAppDto extends BaseInstalledAppDto {
-  accountId!: number;
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   tenantId!: string;
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
+  ownerTenantId!: string;
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   appId!: string;
-  createdBy!: string;
   createdAt?: Date;
 }
 
 export class UpdateInstalledAppDto extends BaseInstalledAppDto {
+  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   updatedBy!: string;
   updatedAt?: Date;
 }

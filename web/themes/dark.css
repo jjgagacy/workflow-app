@@ -38,4 +38,13 @@ html[data-theme="dark"] {
   --sidebar-ring: oklch(0.439 0 0);
   --color-component: oklch(82.344% 0.00009 271.152);
   --color-component-active: oklch(0.8 0 0);
+
+  --color-text-shade-1: oklch(0.985 0 0);
+  --color-text: oklch(0.708 0 0);
+  --color-text-tint-1: oklch(0.708 0 0);
+  --color-text-tint-2: oklch(0.556 0 0);
+  --color-text-tint-3: oklch(0.372 0 0);
+  --color-text-danger: oklch(0.396 0.141 25.723);
+  --color-text-success: oklch(0.627 0.194 149.214);
+  --color-text-warning: oklch(0.769 0.188 70.08);
 }

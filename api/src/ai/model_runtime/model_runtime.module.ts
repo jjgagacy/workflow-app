@@ -13,7 +13,7 @@ import { EncryptionService } from '@/encryption/encryption.service';
 import { EncryptionModule } from '@/encryption/encryption.module';
 
 @Module({
-  imports: [PluginModule, StorageModule, PluginModule, EncryptionModule],
+  imports: [PluginModule, StorageModule, EncryptionModule],
   providers: [
     ModelTypeService,
     ProviderListService,

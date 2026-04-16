@@ -33,6 +33,7 @@ import { EnumConverter, EnumUtils } from './common/utils/enums';
 import { CreateAccountDto } from './account/account/dto/create-account.dto';
 import { validateDto } from './common/utils/validation';
 import { TaskService } from './tasks/task.service';
+import { AppCreatedEvent } from './events/app.event';
 
 class OrderCreatedEvent {
   constructor(private eventObj: { orderId: number; payload: any }) { }
@@ -136,13 +137,16 @@ export class AppController {
     // await this.openDALStorage.save('a/bar', 'bar');
     // console.log(await this.openDALStorage.list?.("", { files: true, directories: true }));
 
-    this.taskService.executeTask({ body: { number: 20 } }, 'ping').then(result => {
-      console.log('Ping result:', result);
-    }).catch(err => {
-      console.error('Error executing task:', err);
-    });
+    // this.taskService.executeTask({ body: { number: 20 } }, 'ping').then(result => {
+    //   console.log('Ping result:', result);
+    // }).catch(err => {
+    //   console.error('Error executing task:', err);
+    // });
 
-    await new Promise(resolve => setTimeout(resolve, 2000)); // 等待任务完成
+    // await new Promise(resolve => setTimeout(resolve, 2000)); // 等待任务完成
+
+    const event = new AppCreatedEvent('a1d70063-3a2d-4ab6-b09e-e8abd50837c2', '272635fa-c96f-4ad4-b7c6-9406332ae89c');
+    this.eventEmitter.emit('app.created', event);
 
     return await this.i18n.t("hello.HELLO");
   }

@@ -1,6 +1,7 @@
 'use client';
 
 import AppIconPicker from "@/app/components/app/app-icon-picker";
+import CreateApp from "@/app/components/app/create-app";
 import { Badge } from "@/app/components/base/badge";
 import Button from "@/app/components/base/button";
 import Countdown, { CountdownRef } from "@/app/components/base/countdown";
@@ -59,7 +60,7 @@ export default function Page() {
   }
 
   const selectItems = [
-    { value: 1, name: '选项一' },
+    { value: 1, name: '选项一', description: '这是选项一的描述信息' },
     { value: 2, name: '选项二' },
     { value: 3, name: '选项三' },
     { value: 4, name: '选项四' },
@@ -177,9 +178,16 @@ export default function Page() {
   return (
     <div>
       <h1 className="mt-4">Dashboard</h1>
+      <div className="flex w-[400px] bg-gray-100 dark:bg-gray-800">
+        <div className="px-0 w-full">
+          <CreateApp
+            onClose={() => { }}
+            onSuccess={() => { }}
+          />
+        </div>
+      </div>
       <div className=" min-h-[300px]">
         <div className="relative">
-          <AppIconPicker />
         </div>
       </div>
       <div className="flex flex-col w-2/4 bg-amber-100 min-h-[200px]">
@@ -289,7 +297,6 @@ export default function Page() {
           </CardContent>
         </Card>
       </div>
-
 
       <Dialog
         isOpen={openDialog}

@@ -5,7 +5,7 @@ import { AppsBillingGuard } from "@/common/guards/billing.guard";
 import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 import { AppManagerService } from "@/service/app-manager.service";
 import { BadRequestException, UseGuards } from "@nestjs/common";
-import { Args, Resolver } from "@nestjs/graphql";
+import { Args, Mutation, Resolver } from "@nestjs/graphql";
 import { CreateAppInput, CreateAppResponse } from "../types/app-input.type";
 import { CurrentUser } from "@/common/decorators/current-user";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
@@ -23,6 +23,7 @@ export class AppResolver {
     private readonly i18n: I18nService<I18nTranslations>
   ) { }
 
+  @Mutation(() => CreateAppResponse)
   @UseGuards(LoginRequiredGuard)
   @UseGuards(TenantContextGuard)
   @UseGuards(AccountInitializedGuard)
@@ -39,5 +40,4 @@ export class AppResolver {
     const app = await this.appManagerService.createApp(tenant.id, input, account);
     return { id: app.id };
   }
-
 }
