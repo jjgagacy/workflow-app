@@ -220,7 +220,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                 <Link
                   href={item.path || '#'}
                   onClick={() => toggleMobileSidebar?.()}
-                  className={`flex items-center font-medium w-full`}
+                  className={`flex items-center ${collapsed ? 'justify-center' : ''} font-medium w-full`}
                   title={item.title}
                 >
                   <div className="flex items-center">
