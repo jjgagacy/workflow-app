@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type FC } from "reac
 import { Checkbox } from "./checkbox";
 import { useCustomTheme } from "../components/provider/customThemeProvider";
 import { getThemeBgClass, getThemeHoverClass, ThemeType } from "@/types/theme";
+import { some } from "lodash-es";
 
 export type TreeNode = {
   [key: string]: any;
@@ -135,26 +136,59 @@ export const TreeSelect: FC<TreeSelectProps> = ({
   }, [selectedArr, idKey]);
 
   // 选择节点
-  const handleSelect = useCallback((node: TreeNode, checked?: boolean) => {
-    if (multiple && typeof checked === 'undefined') return;
+  const handleSelect = useCallback((node: TreeNode, checked?: boolean, e?: React.MouseEvent) => {
+    // 阻止事件冒泡，避免触发外层容器
+    if (e) {
+      e.stopPropagation();
+    }
+    // if (multiple && typeof checked === 'undefined') return;
 
     if (multiple) {
       const newSelected = new Set(selectedArr);
-      if (checked) {
-        newSelected.add(node[idKey]);
+      let finalChecked: boolean;
+      if (typeof checked !== 'undefined') {
+        finalChecked = checked;
+        // newSelected.add(node[idKey]);
       } else {
-        newSelected.delete(node[idKey]);
+        // 点击父节点时，根据当前状态决定：如果全部选中则取消，否则全部选中
+        const allChildrenSelected = getAllChildrenSelected(node);
+        finalChecked = !allChildrenSelected;
+        // if (allChildrenSelected) {
+        //   newSelected.delete(node[idKey]);
+        // } else {
+        //   newSelected.add(node[idKey]);
+        // }
+        // newSelected.delete(node[idKey]);
       }
-      // 递归处理子节点
-      const processChildren = (n: TreeNode) => {
-        if (checked) {
+
+      // 递归处理当前节点及其所有子节点
+      const processNode = (n: TreeNode) => {
+        if (finalChecked) {
           newSelected.add(n[idKey]);
         } else {
           newSelected.delete(n[idKey]);
         }
-        n.children?.forEach(processChildren);
+        n.children?.forEach(processNode);
       };
-      node.children?.forEach(processChildren);
+
+      processNode(node);
+
+      // 递归向上处理父节点（根据子节点状态更新父节点）
+      const updateParentSelection = (n: TreeNode) => {
+        const parent = findParentNode(treeData, n[idKey]);
+        if (parent) {
+          const allChildrenSelected = parent.children?.every(child => newSelected.has(child[idKey]));
+          const someChildrenSelected = parent.children?.some(child => newSelected.has(child[idKey])) ?? false;
+          if (allChildrenSelected) {
+            newSelected.add(parent[idKey]);
+          } else if (!someChildrenSelected) {
+            newSelected.delete(parent[idKey]);
+          }
+          // 部分选中状态通过 indeterminate 处理，不修改 selected 状态
+          updateParentSelection(parent);
+        }
+      }
+      updateParentSelection(node);
 
       const newSelectedArr = Array.from(newSelected);
       setSelectedArr(newSelectedArr);
@@ -180,6 +214,26 @@ export const TreeSelect: FC<TreeSelectProps> = ({
     }
     return node[idKey] === selectedValue;
   }, [selectedArr, selectedValue, multiple, idKey]);
+
+  const getAllChildrenSelected = useCallback((node: TreeNode): boolean => {
+    if (!node.children || node.children.length === 0) {
+      return selectedArr.includes(node[idKey]);
+    }
+    return node.children.every(child => selectedArr.includes(child[idKey]) && getAllChildrenSelected(child));
+  }, [selectedArr, idKey]);
+
+  const findParentNode = useCallback((nodes: TreeNode[], childId: string | number): TreeNode | null => {
+    for (const node of nodes) {
+      if (node.children) {
+        if (node.children.some(child => child[idKey] === childId)) {
+          return node;
+        }
+        const found = findParentNode(node.children, childId);
+        if (found) return found;
+      }
+    }
+    return null;
+  }, [idKey]);
 
   // 切换节点展开状态
   const toggleExpanded = useCallback((nodeId: string | number) => {
@@ -219,14 +273,23 @@ export const TreeSelect: FC<TreeSelectProps> = ({
     const isExpanded = expandedNodes.has(node[idKey]);
     const isChecked = isNodeSelected(node);
     const indeterminate = isNodeIndeterminate(node);
+    // 计算是否全部子节点都被选中（用于父节点点击时的状态判断）
+    const allChildrenSelected = hasChildren && node.children?.every(child => isNodeSelected(child));
 
     return (
       <div className="w-full">
         <div
-          className={`flex items-center py-1 px-2 ${getThemeHoverClass(activeTheme as ThemeType)} cursor-pointer ${selectedValue === node[idKey] ? `${getThemeBgClass(activeTheme as ThemeType)}` : ""
+          className={`flex w-full items-center py-1 px-2 ${getThemeHoverClass(activeTheme as ThemeType)} cursor-pointer ${selectedValue === node[idKey] ? `${getThemeBgClass(activeTheme as ThemeType)}` : ""
             }`}
-          style={{ paddingLeft: `${level * 16 + 8}px` }}
-          onClick={() => handleSelect(node)}
+          style={{ paddingLeft: `${level * 4 + 8}px` }}
+          onClick={(e) => {
+            if (hasChildren && multiple) {
+              e.stopPropagation();
+              handleSelect(node, !allChildrenSelected);
+            } else {
+              handleSelect(node);
+            }
+          }}
           onDoubleClick={(e) => {
             e.stopPropagation();
             if (hasChildren) toggleExpanded(node[idKey]);

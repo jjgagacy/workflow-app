@@ -5,13 +5,16 @@ import { useTranslation } from "react-i18next";
 export function useMenus() {
   const { t } = useTranslation();
 
-  const defaultMenuItems: MenuItem[] = [
+  const hiddenMenuRouteItems: MenuItem[] = [
     {
       key: 'dashboard',
       title: t('system.dashboard'),
       icon: <LayoutDashboard className="w-5 h-5" />,
       path: "/workspace"
     },
+  ];
+
+  const defaultMenuItems: MenuItem[] = [
     {
       key: 'system',
       title: t('system.system_settings'),
@@ -28,6 +31,7 @@ export function useMenus() {
   ];
 
   return {
-    defaultMenuItems
+    defaultMenuItems,
+    hiddenMenuRouteItems
   }
 }

@@ -9,6 +9,10 @@ const translation = {
   role: 'Role',
   permission_module: 'Permission Module',
   menu: 'Menu',
+  app: 'App',
+  workflow: 'Workflow',
+  knowledge: 'Knowledge',
+  table: 'Table',
 
   manage_account_info: 'Manage Your Account Information',
   account_management: 'Account Management',

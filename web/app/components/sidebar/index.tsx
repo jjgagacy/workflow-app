@@ -25,7 +25,7 @@ export function Sidebar({ collapsed, onToggleCollapse, children }: SidebarProps)
           {/* Header with logo and collapse button */}
           <div className={`flex items-center ${collapsed ? 'justify-center' : 'justify-between'} p-4 border-b border-[var(--border)] shrink-0 h-[3rem]`}>
             {!collapsed && (
-              <div className="flex items-center">
+              <a className="flex items-center cursor-pointer" href="/workspace">
                 <Image
                   src={`${darkmode ? "/assets/logo-dark.png" : "/assets/logo.png"}`}
                   alt="Monie Logo"
@@ -35,7 +35,7 @@ export function Sidebar({ collapsed, onToggleCollapse, children }: SidebarProps)
                   className="h-6 w-6 mr-2"
                 />
                 <Monie width={56} height={24} darkmode={darkmode} />
-              </div>
+              </a>
             )}
             <button
               onClick={() => onToggleCollapse(!collapsed)}

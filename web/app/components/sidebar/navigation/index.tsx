@@ -2,8 +2,8 @@
 
 import { MenuItem } from '@/types/menu';
 
-import { IconChevronDown, IconChevronRight, IconEyeCog } from '@tabler/icons-react';
-import { List, Plus, PlusIcon, UserCog } from 'lucide-react';
+import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
+import { AppWindow, GitBranch, LayoutDashboard, Library, List, PlusIcon, Table } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -36,24 +36,49 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
   const { defaultMenuItems } = useMenus();
 
   const defaultMenus: MenuItem[] = [
+    {
+      key: 'app',
+      title: t('system.app'),
+      icon: <AppWindow className="w-5 h-5" />,
+      path: '/workspace/app',
+    },
+    {
+      key: 'workflow',
+      title: t('system.workflow'),
+      icon: <GitBranch className="w-5 h-5" />,
+      path: '/workspace/workflow',
+    },
+    {
+      key: 'knowledge',
+      title: t('system.knowledge'),
+      icon: <Library className="w-5 h-5" />,
+      path: '/workspace/knowledge',
+    },
+    {
+      key: 'table',
+      title: t('system.table'),
+      icon: <Table className="w-5 h-5" />,
+      path: '/workspace/table',
+    },
     ...defaultMenuItems,
-    {
-      key: 'foo',
-      title: "Foo",
-      icon: <UserCog className="w-5 h-5" />,
-      path: '/workspace/foo',
-      children: [
-        { key: 'foo', title: "Foo", icon: <UserCog className="w-5 h-5" />, path: "/workspace/foo/foo" },
-        { key: 'bar', title: "Bar", icon: <UserCog className="w-5 h-5" />, path: "/workspace/foo/bar" },
-      ]
-    },
-    {
-      key: 'monie',
-      title: 'Monie',
-      icon: <IconEyeCog className='w-5 h-5' />,
-      path: 'http://monie.cc/',
-      fetched: true,
-    },
+
+    // {
+    //   key: 'foo',
+    //   title: "Foo",
+    //   icon: <UserCog className="w-5 h-5" />,
+    //   path: '/workspace/foo',
+    //   children: [
+    //     { key: 'foo', title: "Foo", icon: <UserCog className="w-5 h-5" />, path: "/workspace/foo/foo" },
+    //     { key: 'bar', title: "Bar", icon: <UserCog className="w-5 h-5" />, path: "/workspace/foo/bar" },
+    //   ]
+    // },
+    // {
+    //   key: 'monie',
+    //   title: 'Monie',
+    //   icon: <IconEyeCog className='w-5 h-5' />,
+    //   path: 'http://monie.cc/',
+    //   fetched: true,
+    // },
     // ... other menu items
     ...(routes?.filter(route => route.fetched).map(route => ({
       key: route.key,
@@ -195,7 +220,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                 <Link
                   href={item.path || '#'}
                   onClick={() => toggleMobileSidebar?.()}
-                  className={`flex items-center font-medium`}
+                  className={`flex items-center font-medium w-full`}
                   title={item.title}
                 >
                   <div className="flex items-center">
@@ -234,7 +259,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                       key={child.key}
                       onClick={() => toggleMobileSidebar?.()}
                       href={child.path || '#'}
-                      className={`flex items-center px-2 py-2 mb-1 rounded-lg ${getThemeHoverClass(activeColorTheme as ThemeType)} ${collapsed ? "justify-center" : ""
+                      className={`flex items-center w-full px-2 py-2 mb-1 rounded-lg ${getThemeHoverClass(activeColorTheme as ThemeType)} ${collapsed ? "justify-center" : ""
                         } ${isActive(child.path) ? `${getThemeSelectedClass(activeColorTheme as ThemeType)} text-component-active shadow-[inset_0_0_0_1px_white,inset_0_0_0_2px_rgba(255,255,255,0.2)] dark:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.8),inset_0_0_0_2px_rgba(0,0,0,0.3)]` : ""}`}
                     >
                       <span>{child.icon}</span>

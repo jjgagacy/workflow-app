@@ -108,7 +108,7 @@ export function DepartmentTable<TData, TValue>({ }: DepartmentTableParams<TData,
         return (
           <div className="space-x-2">
             <Link
-              href={`/admin/system/dep/${dep.key}`}
+              href={`/workspace/system/dep/${dep.key}`}
               className={cn('flex items-center', buttonVariants({ size: 'medium', variant: 'secondary' }))}
             >
               <EditIcon className="mr-1" size={12} />

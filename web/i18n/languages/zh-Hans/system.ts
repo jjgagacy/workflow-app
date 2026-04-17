@@ -9,6 +9,10 @@ const translation = {
   role: '角色',
   permission_module: '权限模块',
   menu: '菜单',
+  app: '应用',
+  workflow: '工作流',
+  knowledge: '知识库',
+  table: '表格',
 
   manage_account_info: '管理您的账户信息',
   account_management: '账户管理',

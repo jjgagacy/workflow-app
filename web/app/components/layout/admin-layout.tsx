@@ -30,13 +30,14 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
   const pathname = usePathname();
   const isMobile = useIsMobile();
   const { t } = useTranslation();
-  const { defaultMenuItems } = useMenus();
+  const { defaultMenuItems, hiddenMenuRouteItems } = useMenus();
 
   const toggleMobileSidebar = () => {
     setMobileSidebarOpen(!mobileSidebarOpen);
   };
 
   const menuItems: MenuItem[] = [
+    ...hiddenMenuRouteItems,
     ...defaultMenuItems,
     // ... other menu items
     ...(routes?.map(route => ({
