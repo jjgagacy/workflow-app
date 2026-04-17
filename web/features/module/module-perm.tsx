@@ -200,14 +200,14 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
                     <Button
                       onClick={handleSave}
                       variant={'warning'}
-                      size={'small'}
+                      size={'medium'}
                     >
                       {t('system.save')}
                     </Button>
                     <Button
                       onClick={cancelEdit}
                       variant={'secondary'}
-                      size={'small'}
+                      size={'medium'}
                     >
                       {t('system.cancel')}
                     </Button>
@@ -262,14 +262,14 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
                           <Button
                             onClick={handleSave}
                             variant={'primary'}
-                            size={'small'}
+                            size={'medium'}
                           >
                             {t('system.save')}
                           </Button>
                           <Button
                             onClick={cancelEdit}
                             variant={'secondary'}
-                            size={'small'}
+                            size={'medium'}
                           >
                             {t('system.cancel')}
                           </Button>
@@ -279,14 +279,14 @@ export function ModulePermPage({ isOpen, onOpenChange, onSubmitSuccess }: Module
                           <Button
                             onClick={() => startEdit(module)}
                             variant={'primary'}
-                            size={'small'}
+                            size={'medium'}
                           >
                             {t('system.edit')}
                           </Button>
                           <Button
                             onClick={() => handleDelete(module.key)}
                             variant={'alert'}
-                            size={'small'}
+                            size={'medium'}
                           >
                             {t('system.delete')}
                           </Button>

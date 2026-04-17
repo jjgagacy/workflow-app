@@ -3,8 +3,7 @@ import { IsNotEmpty } from 'class-validator';
 export abstract class BaseDepDto {
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   key!: string;
-  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  parent!: string;
+  parent?: string;
   managerId?: number;
 
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })

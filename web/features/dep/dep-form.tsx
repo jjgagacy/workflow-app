@@ -17,6 +17,7 @@ import Button from "@/app/components/base/button";
 import { TreeSelect } from "@/app/ui/tree-select";
 import { toast } from "@/app/ui/toast";
 import { useTranslation } from "react-i18next";
+import { getErrorMessage } from "@/utils/errors";
 
 export default function DepartmentForm({
   depKey,
@@ -79,10 +80,10 @@ export default function DepartmentForm({
         await createDepartment({ ...values });
         toast.success(t('system.add_success'));
       }
-      router.push('/admin/system/dep');
+      router.push('/workspace/system/dep');
     } catch (error) {
       console.error(error);
-      toast.error(t('system.operation_failed'));
+      toast.error(getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }

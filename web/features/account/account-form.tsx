@@ -133,7 +133,7 @@ export default function AccountForm({
         });
         toast.success(t('system.add_success'));
       }
-      router.push('/admin/system/account');
+      router.push('/workspace/system/account');
     } catch (error) {
       console.error(error);
       toast.error(getErrorMessage(error));
