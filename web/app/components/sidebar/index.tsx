@@ -23,7 +23,7 @@ export function Sidebar({ collapsed, onToggleCollapse, children }: SidebarProps)
             }`}
         >
           {/* Header with logo and collapse button */}
-          <div className={`flex items-center ${collapsed ? 'justify-center' : 'justify-between'} p-4 border-b border-[var(--border)] shrink-0 h-[3rem]`}>
+          <div className={`flex items-center ${collapsed ? 'justify-center' : 'justify-between'} p-4 border-b border-[var(--border)] shrink-0 h-[3.5rem]`}>
             {!collapsed && (
               <a className="flex items-center cursor-pointer" href="/workspace">
                 <Image
@@ -64,7 +64,7 @@ export function Sidebar({ collapsed, onToggleCollapse, children }: SidebarProps)
           </div>
 
           {/* Navigation content area */}
-          <div className="flex-1 h-[calc(100vh-3rem)] relative overflow-y-auto no-scrollbar">
+          <div className="flex-1 h-[calc(100vh-3.5rem)] relative overflow-y-auto no-scrollbar">
             {children}
           </div>
         </div>

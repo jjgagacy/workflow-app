@@ -123,17 +123,10 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
           routes={mergeRoutes}
           onMenuClick={isMobile ? toggleMobileSidebar : undefined}
         />
-        {/* <TagView routes={mergeRoutes} /> */}
         <div className="flex-1 overflow-y-auto px-4 sm:px-2 lg:px-4 py-6">
-          <Keepalive
-            active={matchRoute === null ? null : matchRoute.key}
-            include={include}
-            isAsyncInclude
-          >
-            <ViewProvider value={{ name: matchRoute?.key || '' }}>
-              {children}
-            </ViewProvider>
-          </Keepalive>
+          <ViewProvider value={{ name: matchRoute?.key || '' }}>
+            {children}
+          </ViewProvider>
         </div>
       </div>
     </div>

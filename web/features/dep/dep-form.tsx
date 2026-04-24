@@ -80,7 +80,7 @@ export default function DepartmentForm({
         await createDepartment({ ...values });
         toast.success(t('system.add_success'));
       }
-      router.push('/workspace/system/dep');
+      router.push('/system/dep');
     } catch (error) {
       console.error(error);
       toast.error(getErrorMessage(error));

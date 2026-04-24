@@ -14,11 +14,11 @@ export const themes: ThemeConfig[] = [
   {
     value: 'default',
     name: 'Default',
-    bgColor: 'bg-gray-50 dark:bg-gray-900',
+    bgColor: 'bg-gray-200/60 dark:bg-neutral-700',
     textColor: 'text-gray-700 dark:text-gray-200',
-    hoverColor: 'hover:bg-gray-100 dark:hover:bg-neutral-700',
+    hoverColor: 'hover:bg-gray-200/60 dark:hover:bg-neutral-700',
     activeColor: 'text-gray-600 dark:text-gray-300',
-    selectedColor: 'bg-gray-100 dark:bg-neutral-700',
+    selectedColor: 'bg-gray-200/40 dark:bg-neutral-700',
   },
   {
     value: 'blue',

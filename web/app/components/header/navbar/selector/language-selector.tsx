@@ -19,11 +19,11 @@ export function LanguageSelector({ reloadPage = false }: { reloadPage?: boolean 
   };
 
   return (
-    <div className='flex items-center gap-2 hover:bg-secondary/80 rounded-lg mx-2'>
+    <div className='flex items-center gap-2 hover:bg-secondary/80 rounded-lg mx-1'>
       <Menu as="div" className="relative">
         <MenuButton className={`flex items-center space-x-2 p-2 text-13 max-w-xs rounded-md focus:outline-none ${getThemeHoverClass(activeColorTheme as ThemeType)}`}>
-          <Globe className="w-5 h-5 mr-1" />
-          {getLanguageNameByValue(i18n.language)}
+          <Globe className="w-5 h-5 mr-1 text-text-primary" />
+          <span className="text-text-primary font-semibold">{getLanguageNameByValue(i18n.language)}</span>
         </MenuButton>
 
         <Transition
@@ -44,7 +44,7 @@ export function LanguageSelector({ reloadPage = false }: { reloadPage?: boolean 
                     className='w-full text-left flex flex-1 items-center'
                   >
                     <span className="text-lg mr-2">{lang.emoji || LanguageEmojiDefault}</span>
-                    <h3 className='font-normal text-13'>{lang.name}</h3>
+                    <h3 className='font-semibold text-13 text-text-secondary'>{lang.name}</h3>
                   </button>
                 </div>
               </MenuItem>

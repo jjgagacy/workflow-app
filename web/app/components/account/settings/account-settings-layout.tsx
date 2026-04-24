@@ -98,7 +98,7 @@ export default function AccountSettingsLayout() {
                       : ''
                       }`}
                   >
-                    <div className={`mr-3 ${activeMenu === item.key ? 'text-gray-600' : 'text-gray-400'
+                    <div className={`mr-3 ${activeMenu === item.key ? 'text-text-primary' : 'text-gray-500 dark:text-gray-400'
                       }`}>
                       {item.icon}
                     </div>

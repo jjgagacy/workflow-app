@@ -9,6 +9,9 @@ import { UserSelector } from "./selector/user-selector";
 import { LanguageSelector } from "./selector/language-selector";
 import { useAppearance } from "@/hooks/use-appearance";
 import { PercentCircle, SunMoon, SunMoonIcon } from "lucide-react";
+import { SearchInput } from "./search-input";
+import { useCallback, useState } from "react";
+import { mockSearchData } from "../../hooks/use-searchInput";
 
 interface NavbarProps {
   routes: Route[];
@@ -18,6 +21,14 @@ interface NavbarProps {
 export function Navbar({ routes, onMenuClick }: NavbarProps) {
   const isMobile = useIsMobile();
   const { toggleTheme } = useAppearance();
+  const [searchValue, setSearchValue] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
+
+  const handleSearch = useCallback(async (query: string) => {
+    console.log('Performing search for:', query);
+    // 这里可以调用实际的搜索 API，当前使用模拟数据
+    return mockSearchData;
+  }, []);
 
   return (
     <div className="dark:shadow-gray-700/30 flex items-center rounded-lg mr-2">
@@ -36,11 +47,19 @@ export function Navbar({ routes, onMenuClick }: NavbarProps) {
       {/* 其他 Navbar 内容 */}
       <div className="flex-1">
         <div className="px-4 sm:px-2 lg:px-4">
-          <div className="flex h-[3rem]">
+          <div className="flex h-[3.5rem]">
             {/* Left navigation (optional) */}
             {!isMobile && (
-              <div className="flex flex-1 items-center">
+              <div className="flex flex-1 items-center mr-2">
                 {/* <Breadcrumbs routes={routes} /> */}
+                <SearchInput
+                  value={searchValue}
+                  onChange={setSearchValue}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  // recentData={mockSearchData}
+                  onSearch={handleSearch}
+                />
               </div>
             )}
             {/* Right user info */}
@@ -49,11 +68,11 @@ export function Navbar({ routes, onMenuClick }: NavbarProps) {
               <ThemeSelector />
               <button
                 type="button"
-                className="p-1 mx-2 rounded-full focus:outline-none"
+                className="p-1 mx-2 rounded-full focus:outline-none text-text-primary"
                 onClick={toggleTheme}
               >
                 <span className="sr-only">View notifications</span>
-                <SunMoon className="h-6 w-6" aria-hidden="true" />
+                <SunMoon className="h-5 w-5" aria-hidden="true" />
               </button>
               <UserSelector />
             </div>

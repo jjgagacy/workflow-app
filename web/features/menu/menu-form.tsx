@@ -94,7 +94,7 @@ export default function MenuForm({
         await createMenu({ ...values });
         toast.success(t('system.add_success'));
       }
-      router.push('/admin/system/menu');
+      router.push('/system/menu');
     } catch (error) {
       console.error(error);
       toast.error(t('system.operation_failed'));

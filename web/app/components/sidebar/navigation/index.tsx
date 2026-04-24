@@ -3,7 +3,7 @@
 import { MenuItem } from '@/types/menu';
 
 import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
-import { AppWindow, GitBranch, LayoutDashboard, Library, List, PlusIcon, Table } from 'lucide-react';
+import { AppWindow, GitBranch, Library, List, PlusIcon, Table } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -40,28 +40,27 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
       key: 'app',
       title: t('system.app'),
       icon: <AppWindow className="w-5 h-5" />,
-      path: '/workspace/app',
+      path: '/apps',
     },
     {
       key: 'workflow',
       title: t('system.workflow'),
       icon: <GitBranch className="w-5 h-5" />,
-      path: '/workspace/workflow',
+      path: '/workflows',
     },
     {
       key: 'knowledge',
       title: t('system.knowledge'),
       icon: <Library className="w-5 h-5" />,
-      path: '/workspace/knowledge',
+      path: '/knowledges',
     },
     {
       key: 'table',
       title: t('system.table'),
       icon: <Table className="w-5 h-5" />,
-      path: '/workspace/table',
+      path: '/tables',
     },
     ...defaultMenuItems,
-
     // {
     //   key: 'foo',
     //   title: "Foo",
@@ -181,8 +180,8 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
 
   return (
     <div className={`py-2 px-2 pt-6 gap-y-1 grid navigation-menu__root space-y-0 relative z-10 text-component`}>
-      <div className='relative'>
-        <div className={`flex items-center px-2 py-2 rounded-lg  cursor-pointer ${collapsed ? "justify-center" : "justify-between"}`}>
+      <div className='relative mb-4'>
+        <div className={`flex items-center rounded-lg cursor-pointer ${collapsed ? "justify-center" : "justify-between"}`}>
           <Button
             variant={'tertiary'}
             size={`${collapsed ? 'medium' : 'large'}`}
@@ -201,7 +200,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
           {item.children && collapsed ? (
             <ul>
               <li
-                className={`relative px-2 py-2 rounded-lg ${getThemeHoverClass(activeColorTheme as ThemeType)} ${isActive(item.path) || item.children.some(c => isActive(c.path)) ? `${getThemeSelectedClass(activeColorTheme as ThemeType)} jj` : ""}`}
+                className={`relative px-2 py-2 rounded-lg ${getThemeHoverClass(activeColorTheme as ThemeType)} ${isActive(item.path) || item.children.some(c => isActive(c.path)) ? `${getThemeSelectedClass(activeColorTheme as ThemeType)}` : ""} rounded-md shadow-2xl shadow-green-800/20`}
                 onMouseEnter={(e) => handleMouseEnter(e, item.key)}
                 onMouseLeave={handleMouseLeave}
               >
@@ -216,16 +215,16 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
             </ul>
           ) : !item.children ? (
             <div className='relative'>
-              <div className={`flex items-center px-2 py-2 rounded-lg ${getThemeHoverClass(activeColorTheme as ThemeType)} cursor-pointer ${collapsed ? "justify-center" : "justify-between"}`}>
+              <div className={`flex items-center rounded-lg ${getThemeHoverClass(activeColorTheme as ThemeType)} cursor-pointer ${collapsed ? "justify-center" : "justify-between"}`}>
                 <Link
                   href={item.path || '#'}
                   onClick={() => toggleMobileSidebar?.()}
-                  className={`flex items-center ${collapsed ? 'justify-center' : ''} font-medium w-full`}
+                  className={`flex px-2 py-2 items-center ${collapsed ? 'justify-center' : ''} font-medium w-full ${isActive(item.path) ? `${getThemeSelectedClass(activeColorTheme as ThemeType)} text-component-active ` : ""} rounded-md shadow-2xl shadow-green-800/20`}
                   title={item.title}
                 >
                   <div className="flex items-center">
                     <span>{item.icon}</span>
-                    {!collapsed && (<span className="ml-2 font-normal">{item.title}</span>)}
+                    {!collapsed && (<span className="ml-2 text-text-primary font-semibold">{item.title}</span>)}
                   </div>
                   {!collapsed && (<span>&nbsp;</span>)}
                 </Link>
@@ -240,7 +239,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
               >
                 <div className="flex items-center">
                   <span>{item.icon}</span>
-                  {!collapsed && <span className="ml-2 font-normal">{item.title}</span>}
+                  {!collapsed && <span className="ml-2 text-text-primary font-semibold">{item.title}</span>}
                 </div>
                 {!collapsed && (
                   <span>
@@ -260,10 +259,10 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                       onClick={() => toggleMobileSidebar?.()}
                       href={child.path || '#'}
                       className={`flex items-center w-full px-2 py-2 mb-1 rounded-lg ${getThemeHoverClass(activeColorTheme as ThemeType)} ${collapsed ? "justify-center" : ""
-                        } ${isActive(child.path) ? `${getThemeSelectedClass(activeColorTheme as ThemeType)} text-component-active shadow-[inset_0_0_0_1px_white,inset_0_0_0_2px_rgba(255,255,255,0.2)] dark:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.8),inset_0_0_0_2px_rgba(0,0,0,0.3)]` : ""}`}
+                        } ${isActive(child.path) ? `${getThemeSelectedClass(activeColorTheme as ThemeType)} text-component-active` : ""} rounded-md shadow-2xl shadow-green-800/20`}
                     >
                       <span>{child.icon}</span>
-                      <span className="ml-2 font-normal">{child.title}</span>
+                      <span className="ml-2 text-text-primary font-semibold">{child.title}</span>
                     </Link>
                   ))}
                 </div>

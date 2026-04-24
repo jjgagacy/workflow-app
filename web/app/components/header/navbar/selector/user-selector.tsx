@@ -21,7 +21,7 @@ export function UserSelector() {
   }
 
   return (
-    <div className='flex items-center gap-2 rounded-md mx-2'>
+    <div className='flex items-center gap-2 rounded-md mx-1'>
       <Menu as="div" className="relative">
         <MenuButton className="flex items-center p-2 space-x-2 max-w-xs rounded-full focus:outline-none">
           {accountInfo?.avatar ? (
@@ -31,11 +31,11 @@ export function UserSelector() {
               className="h-8 w-8 rounded-full"
             />
           ) : (
-            <div className="h-6 w-6 rounded-full bg-gray-700 flex items-center justify-center text-white">
+            <div className="h-6 w-6 rounded-full bg-gray-700 flex items-center justify-center text-text-primary">
               {accountInfo?.username?.charAt(0)}
             </div>
           )}
-          <span className="font-normal text-13 text-gray-700 dark:text-white">
+          <span className="font-semibold text-13 text-text-primary">
             {accountInfo?.username || t('system.not_logged_in')}
           </span>
           <ChevronDownIcon
@@ -58,9 +58,9 @@ export function UserSelector() {
               {() => (
                 <button
                   onClick={() => router.push('/account')}
-                  className={`flex font-normal text-13 items-center px-4 py-2 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)} dark:text-white`}
+                  className={`flex font-semibold text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
                 >
-                  <UserIcon className="mr-2 h-4 w-4" />
+                  <UserIcon className="mr-2 h-5 w-5 text-text-secondary" />
                   {t('system.account_settings')}
                 </button>
               )}
@@ -69,9 +69,9 @@ export function UserSelector() {
               {() => (
                 <button
                   onClick={() => router.push('/settings?tab=setting')}
-                  className={`flex font-normal text-13 items-center px-4 py-2 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)} dark:text-white`}
+                  className={`flex font-semibold text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
                 >
-                  <CogIcon className="mr-2 h-4 w-4" />
+                  <CogIcon className="mr-2 h-5 w-5 text-text-secondary" />
                   {t('system.system_settings')}
                 </button>
               )}
@@ -80,21 +80,21 @@ export function UserSelector() {
               {() => (
                 <button
                   onClick={() => router.push('/settings?tab=model_provider')}
-                  className={`flex font-normal text-13 items-center px-4 py-2 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)} dark:text-white`}
+                  className={`flex font-semibold text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
                 >
-                  <BrainCog className="mr-2 h-4 w-4" />
+                  <BrainCog className="mr-2 h-5 w-5 text-text-secondary" />
                   {t('system.model_provider.title')}
                 </button>
               )}
             </MenuItem>
-            <hr className="my-2 border-[var(--border)]" />
+            <hr className="my-2 border-[var(--border-card)]" />
             <MenuItem>
               {() => (
                 <button
                   onClick={handleLogout}
-                  className={`flex font-normal text-13 items-center px-4 py-2 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)} dark:text-white`}
+                  className={`flex font-semibold text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
                 >
-                  <LogOutIcon className="mr-2 h-4 w-4" />
+                  <LogOutIcon className="mr-2 h-5 w-5 text-text-secondary" />
                   {t('system.logout')}
                 </button>
               )}
