@@ -1,4 +1,4 @@
-import { AppIconType, AppMode } from "@/app/components/app/app.type";
+import { AppIconType, AppMode } from '@/app/components/app/constants/appModes';
 
 export type CreateAppInput = {
   name: string;

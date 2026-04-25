@@ -1,11 +1,11 @@
-export type AppIconType = 'icon' | 'emoji';
-
-export enum AppMode {
-  WORKFLOW = 'workflow',
-  CHAT = 'chat',
-}
-
 import { LucideIcon } from 'lucide-react';
+import { AppMode } from './constants/appModes';
+
+export interface AppTypeConfig {
+  value: AppMode;
+  i18n: string;
+  icon: string;
+}
 
 // 状态类型
 export type ApplicationStatus = 'published' | 'draft' | 'archived' | 'shared';
@@ -33,3 +33,4 @@ export interface Apps {
   dataTables?: number;
   mcpTools?: number;
 }
+

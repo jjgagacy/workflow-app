@@ -74,6 +74,7 @@ const translation = {
   },
   appType: 'App Type',
   types: {
+    all: 'All Types',
     workflow: 'Workflow',
     chat: 'Chat Bot',
   }

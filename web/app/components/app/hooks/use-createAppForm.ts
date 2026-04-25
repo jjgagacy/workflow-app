@@ -1,6 +1,6 @@
 import { DEBOUNCE_MS } from "@/hooks/use-data-table";
 import { AppIconSource } from "../../base/app-icon";
-import { AppMode } from "../app.type";
+import { AppMode } from '../constants/appModes';
 import { useCallback, useEffect, useRef, useState } from "react";
 import { defaultIconSet } from "../../base/app-icon/icons";
 import { createApp } from "@/services/apps";

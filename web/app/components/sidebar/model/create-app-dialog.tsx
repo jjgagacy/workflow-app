@@ -31,6 +31,7 @@ export default function CreateAppDialog({
         description=""
         className="max-w-3xl! min-h-3/4"
         actions={false}
+        onCancel={() => onClose()}
       >
         <h1 className="text-lg font-semibold mt-3 mb-5">{t('app.newApp.appDetails')}</h1>
         <div className="flex flex-1 items-center">

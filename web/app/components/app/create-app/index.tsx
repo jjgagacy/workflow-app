@@ -3,20 +3,23 @@ import { Label } from "@/app/ui/label";
 import AppIcon from "../../base/app-icon";
 import { useTranslation } from "react-i18next";
 import AppIconPicker from "../app-icon-picker";
-import { AppMode } from "../app.type";
+import { AppMode } from '../constants/appModes';
 import { SimpleSelect } from "@/app/ui/select";
 import { useCreateAppForm } from "../hooks/use-createAppForm";
 import { DialogActions, DialogButtonCancel, DialogButtonConfirm } from "@/app/ui/dialog";
+import { useAppModes } from "../hooks/use-appModes";
 
 interface CreateAppProps {
   onSuccess: (id: string) => void;
   onClose: () => void;
 }
+
 export default function CreateApp({
   onClose,
   onSuccess
 }: CreateAppProps) {
   const { t } = useTranslation();
+  const { appModeItems } = useAppModes();
 
   const {
     formData,
@@ -35,11 +38,6 @@ export default function CreateApp({
     onSuccess,
     onClose
   });
-
-  const appModeItems = [
-    { value: AppMode.WORKFLOW, name: t('app.types.workflow'), description: t('app.newApp.workflowDescription') },
-    { value: AppMode.CHAT, name: t('app.types.chat'), description: t('app.newApp.chatDescription') },
-  ];
 
   return (
     <div className="flex flex-col gap-8 h-full">

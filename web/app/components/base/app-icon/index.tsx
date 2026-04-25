@@ -1,5 +1,5 @@
 import { cn } from "@/utils/classnames";
-import { AppIconType } from "../../app/app.type";
+import { AppIconType } from '../../app/constants/appModes';
 import { useTranslation } from "react-i18next";
 import { Tooltip } from "../tooltip";
 import Icon from "../icon";

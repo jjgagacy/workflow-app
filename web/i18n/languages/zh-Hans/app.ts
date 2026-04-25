@@ -75,6 +75,7 @@ const translation = {
   },
   appType: '应用类型',
   types: {
+    all: '所有类型',
     workflow: '工作流',
     chat: '聊天机器人',
   }
