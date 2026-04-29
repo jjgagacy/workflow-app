@@ -5,6 +5,7 @@ import AdminLayout from "../components/layout/admin-layout";
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { AppContextProvider } from "@/context/app-context";
 import { ModelProviderContextProvider } from "@/context/model-provider-context";
+import '@xyflow/react/dist/style.css';
 
 interface AdminLayoutProps {
   children: ReactNode,

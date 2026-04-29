@@ -5,3 +5,13 @@ export const PageContainer = ({ children, scrollable }: { children: React.ReactN
     </div>
   );
 }
+
+export const ContentContainer = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="px-4 sm:px-2 lg:px-4 py-6">
+      <div className="max-w-7xl mx-auto">
+        {children}
+      </div>
+    </div>
+  );
+}

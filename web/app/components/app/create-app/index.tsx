@@ -40,55 +40,57 @@ export default function CreateApp({
   });
 
   return (
-    <div className="flex flex-col gap-8 h-full">
-      <fieldset>
-        <div className="mb-2 flex items-center">
-          <Label>{t('app.newApp.iconAndName')}</Label>
-        </div>
-        <div className="flex flex-1 items-center space-x-3">
-          <div className="relative">
-            <AppIcon
-              iconType={iconSource.type}
-              icon={iconSource.icon}
-              className="mr-1"
-              onClick={() => setShowIconPicker(!showIconPicker)}
-            />
-            {showIconPicker && (
-              <AppIconPicker
-                containerRef={iconPickerRef}
-                onSelect={handleIconSelect}
-                onClose={() => setShowIconPicker(false)}
+    <div className="h-full">
+      <div className="px-4 flex flex-col gap-8">
+        <fieldset>
+          <div className="mb-2 flex items-center">
+            <Label>{t('app.newApp.iconAndName')}</Label>
+          </div>
+          <div className="flex flex-1 items-center space-x-3">
+            <div className="relative">
+              <AppIcon
+                iconType={iconSource.type}
+                icon={iconSource.icon}
+                className="mr-1"
+                onClick={() => setShowIconPicker(!showIconPicker)}
               />
-            )}
+              {showIconPicker && (
+                <AppIconPicker
+                  containerRef={iconPickerRef}
+                  onSelect={handleIconSelect}
+                  onClose={() => setShowIconPicker(false)}
+                />
+              )}
+            </div>
+            <div className="flex-1">
+              <Input className="w-full" value={formData.name} onChange={(e) => setName(e.target.value)} />
+            </div>
           </div>
-          <div className="flex-1">
-            <Input className="w-full" value={formData.name} onChange={(e) => setName(e.target.value)} />
+        </fieldset>
+        <fieldset>
+          <div className="mb-2 flex items-center">
+            <Label>{t('app.newApp.description')}</Label>
           </div>
-        </div>
-      </fieldset>
-      <fieldset>
-        <div className="mb-2 flex items-center">
-          <Label>{t('app.newApp.description')}</Label>
-        </div>
-        <div className="flex flex-1 items-center space-x-3">
-          <Input className="w-full" value={formData.description} onChange={(e) => setDescription(e.target.value)} />
-        </div>
-      </fieldset>
-      <fieldset>
-        <div className="mb-2 flex items-center">
-          <Label>{t('app.appType')}</Label>
-        </div>
-        <div className="flex flex-1 items-center space-x-3">
-          <SimpleSelect
-            items={appModeItems}
-            placeholder={t('app.newApp.select')}
-            defaultValue={formData.mode || ""}
-            className="w-full"
-            onSelect={(item) => setMode(item.value as AppMode)}
-          />
-        </div>
-      </fieldset>
-      <DialogActions>
+          <div className="flex flex-1 items-center space-x-3">
+            <Input className="w-full" value={formData.description} onChange={(e) => setDescription(e.target.value)} />
+          </div>
+        </fieldset>
+        <fieldset>
+          <div className="mb-2 flex items-center">
+            <Label>{t('app.appType')}</Label>
+          </div>
+          <div className="flex flex-1 items-center space-x-3">
+            <SimpleSelect
+              items={appModeItems}
+              placeholder={t('app.newApp.select')}
+              defaultValue={formData.mode || ""}
+              className="w-full"
+              onSelect={(item) => setMode(item.value as AppMode)}
+            />
+          </div>
+        </fieldset>
+      </div>
+      <DialogActions className="mt-8">
         <DialogButtonCancel
           onCancel={onClose}
           cancelText={t('system.cancel')}
@@ -100,6 +102,6 @@ export default function CreateApp({
           disabled={!isValid}
         />
       </DialogActions>
-    </div>
+    </div >
   );
 }

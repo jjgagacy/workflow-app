@@ -98,9 +98,9 @@ type ConfirmButtonProps = {
   disabled?: boolean;
 }
 
-export const DialogActions = ({ children }: { children: ReactNode }) => {
+export const DialogActions = ({ children, className }: { children: ReactNode, className?: string }) => {
   return (
-    <div className="flex justify-end gap-4 py-4">
+    <div className={`flex justify-end gap-4 py-4 px-4 ${className}`}>
       {children}
     </div>
   );

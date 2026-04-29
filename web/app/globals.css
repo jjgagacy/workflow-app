@@ -6,6 +6,7 @@
 
 @import '../themes/dark.css';
 @import '../themes/theme.css';
+@import '../themes/xy-theme.css';
 
 /* 基础变量 */
 :root,

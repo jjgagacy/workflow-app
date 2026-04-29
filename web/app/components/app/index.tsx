@@ -161,7 +161,7 @@ const AppsPage = () => {
     <div className="min-h-screen bg-background">
       {/* 顶部导航栏 */}
       <div className="bg-background border-b border-[var(--border)] sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-4">
