@@ -4,17 +4,24 @@ import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import Loading from "../../base/loading";
+import { AppNavbar } from "../navbar";
+import { useAppStore } from "../store";
+import { testAppInfo } from "../app.type";
+import { AppType } from "../constants/appTypes";
 
 type AppLayoutProps = {
   children: React.ReactNode;
   appId: string;
+  appType: AppType;
 }
 
-const AppLayout = ({ children, appId }: AppLayoutProps) => {
+const AppLayout = ({ children, appId, appType }: AppLayoutProps) => {
   const { t } = useTranslation();
   const router = useRouter();
   const pathname = usePathname();
+  const { apps } = useAppStore();
 
+  const appInfo = testAppInfo;
   // return (
   //   <div className='flex h-full items-center justify-center bg-background-body'>
   //     <Loading />
@@ -22,9 +29,10 @@ const AppLayout = ({ children, appId }: AppLayoutProps) => {
   // )
 
   return (
-    <>
+    <div className="flex flex-col h-screen">
+      <AppNavbar appInfo={appInfo} appType={appType} />
       {children}
-    </>
+    </div>
   );
 }
 

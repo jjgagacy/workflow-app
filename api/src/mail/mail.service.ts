@@ -28,19 +28,35 @@ export class MailService implements OnModuleInit {
   ) {
     this.mailType = configService.get<string>('MAIL_TYPE', 'smtp');
     this.defaultSendFrom = configService.get<string>('MAIL_DEFAULT_SEND_FROM', '');
-    this.sender = new MailSender({
+    this.sender = new Proxy(new MailSender({
       client: null as any,
       defaultSendFrom: this.defaultSendFrom,
       logger: this.logger,
-    });
+    }), {
+      get: (target, prop, receiver) => {
+        this.ensureInitialized();
+        return Reflect.get(target, prop, receiver);
+      }
+    }) as MailSender;
     this.queue = new MailQueue(this.mailQueue, this.sender, this.logger);
     this.template = new TemplateMail(this.sender, this.logger);
   }
 
   async onModuleInit() {
-    await this.initMailClient();
-    if (this.client) {
-      this.sender.setClient(this.client);
+    //   await this.initMailClient();
+    //   if (this.client) {
+    //     this.sender.setClient(this.client);
+    //   }
+  }
+
+  private async ensureInitialized(): Promise<void> {
+    if (!this.client) {
+      await this.initMailClient();
+      if (this.client) {
+        this.sender.setClient(this.client);
+      } else {
+        throw new Error('Failed to initialize mail client');
+      }
     }
   }
 

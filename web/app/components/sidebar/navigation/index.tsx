@@ -33,33 +33,10 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hoverRef = useRef<{ key: string; timeout: NodeJS.Timeout | null }>({ key: '', timeout: null });
   const { activeColorTheme } = useCustomTheme();
-  const { defaultMenuItems } = useMenus();
+  const { defaultMenuItems, appMenuItems } = useMenus();
 
   const defaultMenus: MenuItem[] = [
-    {
-      key: 'app',
-      title: t('system.app'),
-      icon: <AppWindow className="w-5 h-5" />,
-      path: '/apps',
-    },
-    {
-      key: 'workflow',
-      title: t('system.workflow'),
-      icon: <GitBranch className="w-5 h-5" />,
-      path: '/workflows',
-    },
-    {
-      key: 'knowledge',
-      title: t('system.knowledge'),
-      icon: <Library className="w-5 h-5" />,
-      path: '/knowledges',
-    },
-    {
-      key: 'table',
-      title: t('system.table'),
-      icon: <Table className="w-5 h-5" />,
-      path: '/tables',
-    },
+    ...appMenuItems,
     ...defaultMenuItems,
     // {
     //   key: 'foo',

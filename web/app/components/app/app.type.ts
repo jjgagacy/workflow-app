@@ -1,4 +1,4 @@
-import { LucideIcon } from 'lucide-react';
+import { LucideIcon, MessageSquare } from 'lucide-react';
 import { AppMode } from './constants/appModes';
 
 export interface AppTypeConfig {
@@ -34,3 +34,21 @@ export interface Apps {
   mcpTools?: number;
 }
 
+export const testAppInfo: Apps = {
+  id: 1,
+  name: '智能客服',
+  type: 'chat',
+  status: 'published',
+  statusText: '已发布',
+  statusColor: 'green',
+  icon: MessageSquare,
+  iconColor: 'blue',
+  knowledgeBases: 3,
+  visits: '1.2K',
+  lastEdited: '2024-06-01T12:00:00Z',
+  embedAvailable: true,
+  isStarred: true,
+  description: '一个基于知识库的智能客服应用，支持多轮对话和上下文理解。',
+  dataTables: 2,
+  mcpTools: 5,
+};

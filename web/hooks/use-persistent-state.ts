@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export function usePersistentState<T>(key: string, initialValue: T): [T, (value: T) => void] {
+export function usePersistentState<T>(key: string, initialValue: T): [T, (value: T | ((prev: T) => T)) => void] {
   // 安全地从 localStorage 读取值
   const readStoredValue = (): T => {
     // 确保在服务端渲染时不执行
@@ -21,12 +21,12 @@ export function usePersistentState<T>(key: string, initialValue: T): [T, (value:
   const [state, setState] = useState<T>(readStoredValue);
 
   // 持久化状态到 localStorage 的包装函数
-  const setPersistedState = (value: T) => {
+  const setPersistedState = (value: T | ((prev: T) => T)) => {
     try {
       // 允许值是一个函数，类似于 useState 的更新函数
       const valueToStore = value instanceof Function ? value(state) : value;
       setState(valueToStore);
-      
+
       // 保存到 localStorage
       if (typeof window !== 'undefined') {
         localStorage.setItem(key, JSON.stringify(valueToStore));

@@ -1,5 +1,5 @@
 import { MenuItem } from "@/types/menu";
-import { Briefcase, Crown, Fingerprint, Home, LayoutDashboard, Sliders, UserCog } from "lucide-react";
+import { AppWindow, Briefcase, Crown, Fingerprint, GitBranch, LayoutDashboard, Library, Sliders, Table, UserCog } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export function useMenus() {
@@ -30,8 +30,36 @@ export function useMenus() {
     },
   ];
 
+  const appMenuItems: MenuItem[] = [
+    {
+      key: 'app',
+      title: t('system.app'),
+      icon: <AppWindow className="w-5 h-5" />,
+      path: '/apps',
+    },
+    {
+      key: 'workflow',
+      title: t('system.workflow'),
+      icon: <GitBranch className="w-5 h-5" />,
+      path: '/workflows',
+    },
+    {
+      key: 'knowledge',
+      title: t('system.knowledge'),
+      icon: <Library className="w-5 h-5" />,
+      path: '/knowledges',
+    },
+    {
+      key: 'table',
+      title: t('system.table'),
+      icon: <Table className="w-5 h-5" />,
+      path: '/tables',
+    },
+  ];
+
   return {
     defaultMenuItems,
-    hiddenMenuRouteItems
+    hiddenMenuRouteItems,
+    appMenuItems,
   }
 }

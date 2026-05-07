@@ -33,6 +33,7 @@ const translation = {
     reset: '重置',
     search: '搜索',
     load_more: '加载更多',
+    settings: '设置',
   },
   theme: {
     system: '跟随系统',
@@ -72,12 +73,18 @@ const translation = {
     select: '选择应用类型',
     workflowDescription: '工作流应用用于自动化任务和流程',
     chatDescription: '聊天机器人应用通过自然语言与用户互动',
+    editName: '编辑应用名称',
   },
   appType: '应用类型',
   types: {
     all: '所有类型',
     workflow: '工作流',
     chat: '聊天机器人',
+    knowledge: '知识库',
+    table: '表格'
+  },
+  appMenu: {
+
   }
 };
 export default translation;

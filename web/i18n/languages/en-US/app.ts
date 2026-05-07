@@ -31,6 +31,7 @@ const translation = {
     reset: 'Reset',
     search: 'Search',
     load_more: 'Load More',
+    settings: 'Settings',
   },
   theme: {
     system: 'Follow System',
@@ -71,12 +72,18 @@ const translation = {
     select: 'Select app type',
     workflowDescription: 'Workflow apps automate tasks and processes',
     chatDescription: 'Chat Bot apps interact with users through natural language',
+    editName: 'Edit App Name',
   },
   appType: 'App Type',
   types: {
     all: 'All Types',
     workflow: 'Workflow',
     chat: 'Chat Bot',
+    knowledge: 'Knowledge Base',
+    table: 'Table',
+  },
+  appMenu: {
+
   }
 };
 

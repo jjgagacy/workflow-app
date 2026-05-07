@@ -2,19 +2,18 @@
 
 import { Route } from "@/types/route";
 import { ReactNode } from "react";
-import { Navbar } from "../header/navbar";
 import { ViewProvider } from "../hooks/use-view";
 import { LayoutWrapper } from ".";
 import { SidebarContainer } from "../sidebar/container";
 import { SidebarWrapper } from "../sidebar/wrapper";
 import { useLayoutCore } from "../hooks/use-layout";
 
-interface AdminLayoutProps {
+interface AppLayoutProps {
   children: ReactNode;
   routes?: Route[];
 }
 
-export default function AdminLayout({ children, routes, ...rest }: AdminLayoutProps) {
+export default function AppLayout({ children, routes, ...rest }: AppLayoutProps) {
   const { mergeRoutes, handleChildEvent, matchRoute, sidebarWidth, collapsed, mobileOpen, setMobileOpen, isMobile, toggleSidebar } = useLayoutCore();
 
   return (
@@ -28,7 +27,6 @@ export default function AdminLayout({ children, routes, ...rest }: AdminLayoutPr
         onMobileClose={() => setMobileOpen(false)}
       />
       <LayoutWrapper sidebarWidth={sidebarWidth}>
-        <Navbar routes={mergeRoutes} onMenuClick={toggleSidebar} />
         <div className="flex-1 overflow-y-auto">
           <ViewProvider value={{ name: matchRoute?.key || '' }}>
             {children}
