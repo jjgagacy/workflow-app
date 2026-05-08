@@ -47,7 +47,7 @@ export const ZoomControlsMenu = () => {
                 className={`flex font-semibold text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
               >
                 <ZoomIn className="mr-2 h-5 w-5 text-text-secondary" />
-                {t('system.zoom_in') || 'Zoom In'}
+                {t('app.appMenu.zoomIn')}
               </button>
             )}
           </MenuItem>
@@ -61,7 +61,7 @@ export const ZoomControlsMenu = () => {
                 className={`flex font-semibold text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
               >
                 <ZoomOut className="mr-2 h-5 w-5 text-text-secondary" />
-                {t('system.zoom_out') || 'Zoom Out'}
+                {t('app.appMenu.zoomOut')}
               </button>
             )}
           </MenuItem>
@@ -75,7 +75,7 @@ export const ZoomControlsMenu = () => {
                 className={`flex font-semibold text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
               >
                 <Maximize className="mr-2 h-5 w-5 text-text-secondary" />
-                {t('system.reset_zoom') || 'Reset Zoom'}
+                {t('app.appMenu.resetZoom')}
               </button>
             )}
           </MenuItem>

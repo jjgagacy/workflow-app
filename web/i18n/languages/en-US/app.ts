@@ -83,7 +83,16 @@ const translation = {
     table: 'Table',
   },
   appMenu: {
-
+    apiAccess: 'API Access',
+    log: 'Logs',
+    activity: 'Activity',
+    zoomIn: 'Zoom In',
+    zoomOut: 'Zoom Out',
+    resetZoom: 'Reset Zoom',
+    helpCenter: 'Help Center',
+    canvasShortcuts: 'Canvas Shortcuts',
+    publish: 'Publish',
+    unpublish: 'Unpublish',
   }
 };
 

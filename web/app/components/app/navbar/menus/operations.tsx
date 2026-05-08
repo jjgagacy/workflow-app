@@ -1,16 +1,17 @@
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
-import { Apps } from "../app.type";
+import { AppMenuItem, Apps } from "../../app.type";
 import { ChevronDownIcon, Copy, Edit, Edit2, Pencil, Settings, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { getThemeHoverClass, ThemeType } from "@/types/theme";
-import { useCustomTheme } from "../../provider/customThemeProvider";
+import { useCustomTheme } from "../../../provider/customThemeProvider";
 
 interface AppActionsProps {
-  appInfo: Apps
+  appInfo: Apps,
+  menuItems: AppMenuItem[],
 }
 
-export function AppActions({ appInfo: apps }: AppActionsProps) {
+export function Operations({ appInfo: apps, menuItems }: AppActionsProps) {
   const [isRenaming, setIsRenaming] = useState(false);
   const [newName, setNewName] = useState(apps.name);
   const { t } = useTranslation();
@@ -67,7 +68,7 @@ export function AppActions({ appInfo: apps }: AppActionsProps) {
                   setIsRenaming(true);
                   close();
                 }}
-                className={`flex font-normal text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
+                className={`flex font-semibold text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
               >
                 <Edit className="mr-2 h-5 w-5 text-text-secondary" />
                 {t('app.newApp.editName')}
@@ -81,7 +82,7 @@ export function AppActions({ appInfo: apps }: AppActionsProps) {
                   setIsRenaming(true);
                   close();
                 }}
-                className={`flex font-normal text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
+                className={`flex font-semibold text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
               >
                 <Settings className="mr-2 h-5 w-5 text-text-secondary" />
                 {t('app.actions.settings')}
@@ -89,20 +90,24 @@ export function AppActions({ appInfo: apps }: AppActionsProps) {
             )}
           </MenuItem>
           <hr className="my-2 border-[var(--border-card)]" />
-          <MenuItem>
-            {({ close }) => (
-              <button
-                onClick={() => {
-                  onDuplicate?.();
-                  close();
-                }}
-                className={`flex font-normal text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
-              >
-                <Copy className="mr-2 h-5 w-5 text-text-secondary" />
-                {t('system.duplicate') || 'Duplicate'}
-              </button>
-            )}
-          </MenuItem>
+          {menuItems.map((item) => (
+            <MenuItem key={item.name}>
+              {({ close }) => (
+                <a
+                  href={item.href}
+                  className={`flex font-semibold text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    close();
+                    window.location.href = item.href;
+                  }}
+                >
+                  <item.icon className="mr-2 h-5 w-5 text-text-secondary" />
+                  {item.name}
+                </a>
+              )}
+            </MenuItem>
+          ))}
           <hr className="my-2 border-[var(--border-card)]" />
           <MenuItem>
             {({ close }) => (
@@ -111,7 +116,7 @@ export function AppActions({ appInfo: apps }: AppActionsProps) {
                   onDelete?.();
                   close();
                 }}
-                className={`flex font-normal text-13 items-center px-4 py-2 text-red-600 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
+                className={`flex font-semibold text-13 items-center px-4 py-2 text-red-600 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
               >
                 <Trash2 className="mr-2 h-5 w-5" />
                 {t('system.delete') || 'Delete'}

@@ -1,6 +1,5 @@
-import React from "react";
-import AppLayout from "@/app/components/app/layout";
-import { AppType } from "@/app/components/app/constants/appTypes";
+import React, { } from "react";
+import LayoutClient from "./layout-client";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -11,9 +10,9 @@ async function Layout({ children, params }: LayoutProps) {
   const { appId } = await params;
 
   return (
-    <AppLayout appId={appId} appType={AppType.WORKFLOW}>
+    <LayoutClient appId={appId}>
       {children}
-    </AppLayout>
+    </LayoutClient>
   );
 }
 

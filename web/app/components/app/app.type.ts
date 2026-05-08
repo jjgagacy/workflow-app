@@ -52,3 +52,10 @@ export const testAppInfo: Apps = {
   dataTables: 2,
   mcpTools: 5,
 };
+
+export interface AppMenuItem {
+  name: string;
+  href: string;
+  icon: LucideIcon;
+  selectedIcon?: LucideIcon;
+}

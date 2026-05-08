@@ -1,6 +1,6 @@
 import { addEdge, applyEdgeChanges, applyNodeChanges, Background, ConnectionMode, Controls, DefaultEdgeOptions, MiniMap, OnNodeDrag, Panel, ReactFlow, ReactFlowProvider, useReactFlow } from "@xyflow/react";
 import { ViewportWithAnnotation } from "./components/annotation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { TextUpdaterNode } from "./components/text-updater";
 import { CustomNode } from "./components/custom-node";
 import { CustomEdge } from "./components/custom-edge";
@@ -10,6 +10,12 @@ import { initialNodes } from "./node";
 import { initialEdges } from "./edge";
 import { Edge, Node } from "./types";
 import { WorkflowHistoryProvider } from "./store/workflow-history-store";
+import { Control } from "./operator/control";
+import { Sidebar } from "./operator/sidebar";
+import { useWorkflowStore } from "./context";
+import { NodeListSelector } from "./nodes/nodeListSelector";
+import { SlideTransition } from "../base/transition/slide-transition";
+import { useNodeSelectorClose } from "./hooks/useNodeSelectorClose";
 
 const customGetNodesBounds = (nodes: any[]) => {
   if (nodes.length === 0) return { minX: 0, minY: 0, maxX: 0, maxY: 0, width: 0, height: 0 };
@@ -50,6 +56,11 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   const [nodes, setNodes] = useState<Node[]>(nodesData);
   const [edges, setEdges] = useState<Edge[]>(edgesData);
   const { activeTheme } = useAppearance();
+  const showSidebar = useWorkflowStore(s => s.showSidebar);
+  const setShowSidebar = useWorkflowStore(s => s.setShowSidebar);
+  const showNodeSelector = useWorkflowStore(s => s.showNodeSelector);
+  const setShowNodeSelector = useWorkflowStore(s => s.setShowNodeSelector);
+  const nodeSelectorWrapperRef = useRef<HTMLDivElement>(null);
 
   const onNodesChange = useCallback(
     (changes: any) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
@@ -83,38 +94,50 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
         const containerHeight = container.clientHeight;
         const newX = (containerWidth - bounds.width) / 2 - bounds.minX;
         const newY = (containerHeight - bounds.height) / 2 - bounds.minY;
-        console.log('Centering viewport to:', { newX, newY });
         setViewport({ x: newX, y: newY, zoom: 1 });
       }
     }, 100);
   }, []);
 
   const onNodeDrag: OnNodeDrag = (_, node) => {
-    console.log('drag event', node.data);
   };
 
+  useNodeSelectorClose(showNodeSelector, setShowNodeSelector, nodeSelectorWrapperRef);
+
   return (
-    <div id="react-flow-body" className="relative w-full h-full">
+    <div id="react-flow-body" className="flex w-full h-full">
       {children}
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-        connectionMode={ConnectionMode.Loose}
-        colorMode={activeTheme === 'dark' ? 'dark' : 'light'}
-        defaultEdgeOptions={defaultEdgeOptions}
-      >
-        <Background />
-        <Panel position="top-left">
-          <ViewportWithAnnotation />
-        </Panel>
-        <Controls />
-        <MiniMap zoomable pannable />
-      </ReactFlow>
+      <div className="relative flex w-full h-full">
+        <div className="absolute right-4 top-4 flex w-12 items-center justify-center z-50 p-1 pr-2 min-h-5">
+          <Control />
+        </div>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          connectionMode={ConnectionMode.Loose}
+          colorMode={activeTheme === 'dark' ? 'dark' : 'light'}
+          defaultEdgeOptions={defaultEdgeOptions}
+          className="w-full h-full relative z-0"
+        >
+          <Background />
+          <Panel position="top-left">
+            <ViewportWithAnnotation />
+          </Panel>
+          <Controls />
+          <MiniMap zoomable pannable />
+        </ReactFlow>
+        <SlideTransition show={showNodeSelector}>
+          <div ref={nodeSelectorWrapperRef}>
+            <NodeListSelector />
+          </div>
+        </SlideTransition>
+      </div>
+      {showSidebar && <Sidebar />}
     </div>
   );
 }

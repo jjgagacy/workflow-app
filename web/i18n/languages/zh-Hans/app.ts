@@ -84,7 +84,16 @@ const translation = {
     table: '表格'
   },
   appMenu: {
-
+    apiAccess: 'API 访问',
+    log: '日志',
+    activity: '监测',
+    zoomIn: '放大',
+    zoomOut: '缩小',
+    resetZoom: '重置缩放',
+    helpCenter: '帮助中心',
+    canvasShortcuts: '画布快捷键',
+    publish: '发布',
+    unpublish: '取消发布',
   }
 };
 export default translation;
