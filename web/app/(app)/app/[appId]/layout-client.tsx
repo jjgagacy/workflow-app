@@ -14,16 +14,19 @@ function LayoutClient({ children, appId }: { children: React.ReactNode, appId: s
   const getAppMenuItems = useCallback((appId: string) => {
     const menuItems: AppMenuItem[] = [
       {
+        id: 'api-access',
         name: t('app.appMenu.apiAccess'),
         href: `/app/${appId}/api`,
         icon: Plug,
       },
       {
+        id: 'log',
         name: t('app.appMenu.log'),
         href: `/app/${appId}/log`,
         icon: FileText,
       },
       {
+        id: 'activity',
         name: t('app.appMenu.activity'),
         href: `/app/${appId}/activity`,
         icon: Activity,

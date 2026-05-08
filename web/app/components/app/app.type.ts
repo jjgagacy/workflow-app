@@ -54,6 +54,7 @@ export const testAppInfo: Apps = {
 };
 
 export interface AppMenuItem {
+  id: string;
   name: string;
   href: string;
   icon: LucideIcon;

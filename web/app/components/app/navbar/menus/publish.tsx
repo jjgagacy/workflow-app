@@ -19,7 +19,7 @@ export const PublishMenu = () => {
 
   return (
     <Menu as="div" className="relative">
-      <MenuButton className="flex items-center gap-1 px-3 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+      <MenuButton className="flex items-center font-semibold text-text-secondary gap-1 px-3 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
         <Rocket className="mr-1 h-4 w-4 text-text-secondary" />
         {t('app.appMenu.publish')}
         <ChevronDownIcon className="h-3 w-3 text-text-secondary" aria-hidden="true" />
