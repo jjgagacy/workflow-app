@@ -44,7 +44,7 @@ export const PublishMenu = () => {
                 }}
                 className={`flex font-semibold text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
               >
-                <Rocket className="mr-2 h-5 w-5 text-text-secondary" />
+                <Rocket className="mr-1 h-4 w-4 text-text-secondary" />
                 {t('app.appMenu.publish')}
               </button>
             )}
@@ -59,7 +59,7 @@ export const PublishMenu = () => {
                 }}
                 className={`flex font-semibold text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
               >
-                <EyeOff className="mr-2 h-5 w-5 text-text-secondary" />
+                <EyeOff className="mr-1 h-4 w-4 text-text-secondary" />
                 {t('app.appMenu.unpublish')}
               </button>
             )}

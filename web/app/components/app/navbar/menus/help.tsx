@@ -20,7 +20,7 @@ export const HelpMenu = () => {
   return (
     <Menu as="div" className="relative">
       <MenuButton className="flex items-center gap-1 px-3 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-        <HelpCircle className="h-5 w-5 text-text-secondary" />
+        <HelpCircle className="h-4 w-4 text-text-secondary" />
       </MenuButton>
 
       <Transition
@@ -42,7 +42,7 @@ export const HelpMenu = () => {
                 }}
                 className={`flex font-semibold text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
               >
-                <HelpCircle className="mr-2 h-5 w-5 text-text-secondary" />
+                <HelpCircle className="mr-1 h-4 w-4 text-text-secondary" />
                 {t('app.appMenu.helpCenter')}
               </button>
             )}
@@ -56,7 +56,7 @@ export const HelpMenu = () => {
                 }}
                 className={`flex font-semibold text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
               >
-                <span className="mr-2 h-5 w-5 flex items-center justify-center text-text-secondary">
+                <span className="mr-1 h-4 w-4 flex items-center justify-center text-text-secondary">
                   ⌨️
                 </span>
                 {t('app.appMenu.canvasShortcuts')}

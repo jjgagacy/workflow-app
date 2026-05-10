@@ -93,6 +93,12 @@ const translation = {
     canvasShortcuts: 'Canvas Shortcuts',
     publish: 'Publish',
     unpublish: 'Unpublish',
+  },
+  nodeCategory: {
+    flow: 'Flow',
+    tools: 'Tools',
+    ai: 'AI',
+    core: 'Core',
   }
 };
 

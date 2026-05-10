@@ -3,7 +3,7 @@ import { Operations } from "./menus/operations";
 import { AppMenuItem, Apps } from "../app.type";
 import { ZoomControlsMenu } from "./menus/zoom";
 import { HelpMenu } from "./menus/help";
-import { AppType, getAllAppTypes } from "../constants/appTypes";
+import { AppType } from "../constants/appTypes";
 import { useAppTypes } from "../hooks/use-appTypes";
 import { AppTypeInfo } from "./app-type-info";
 import { PublishMenu } from "./menus/publish";
@@ -18,7 +18,6 @@ interface AppNavBarProps {
   appType: AppType
   menuItems: AppMenuItem[]
 }
-
 
 export function AppNavbar({ appInfo, appType, menuItems }: AppNavBarProps) {
   const { getAppType } = useAppTypes()

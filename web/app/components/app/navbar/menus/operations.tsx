@@ -39,14 +39,14 @@ export function Operations({ appInfo: apps, menuItems }: AppActionsProps) {
   const tabValues: { value: TabValue, label: string, icon: React.ReactNode }[] = menuItems.map(item => ({
     value: item.id as TabValue,
     label: item.name,
-    icon: <item.icon className="mr-2 h-5 w-5 text-text-secondary" />
+    icon: <item.icon className="mr-1 h-4 w-4 text-text-secondary" />
   }));
 
   return (
     <>
       <Menu as="div" className="relative">
         <MenuButton className="flex items-center gap-1 px-2 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-          <span className="text-xl"><Edit className="w-5 h-5 text-text-primary" /></span>
+          <span className="text-xl"><Edit className="w-4 h-4 text-text-primary" /></span>
           {isRenaming ? (
             <input
               type="text"
@@ -83,7 +83,7 @@ export function Operations({ appInfo: apps, menuItems }: AppActionsProps) {
                   }}
                   className={`flex font-semibold text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
                 >
-                  <Edit className="mr-2 h-5 w-5 text-text-secondary" />
+                  <Edit className="mr-2 h-4 w-4 text-text-secondary" />
                   {t('app.newApp.editName')}
                 </button>
               )}
@@ -97,7 +97,7 @@ export function Operations({ appInfo: apps, menuItems }: AppActionsProps) {
                   }}
                   className={`flex font-semibold text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
                 >
-                  <Settings className="mr-2 h-5 w-5 text-text-secondary" />
+                  <Settings className="mr-2 h-4 w-4 text-text-secondary" />
                   {t('app.actions.settings')}
                 </button>
               )}
@@ -113,7 +113,7 @@ export function Operations({ appInfo: apps, menuItems }: AppActionsProps) {
                   }}
                   className={`flex font-semibold text-13 items-center px-4 py-2 text-red-600 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
                 >
-                  <Trash2 className="mr-2 h-5 w-5" />
+                  <Trash2 className="mr-2 h-4 w-4" />
                   {t('system.delete') || 'Delete'}
                 </button>
               )}
@@ -132,7 +132,7 @@ export function Operations({ appInfo: apps, menuItems }: AppActionsProps) {
               window.location.href = item.href;
             }}
           >
-            <item.icon className="mr-2 h-5 w-5 text-text-primary" />
+            <item.icon className="mr-1 h-4 w-4 text-text-primary" />
             {item.name}
           </a>
         </div>

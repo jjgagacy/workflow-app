@@ -94,6 +94,12 @@ const translation = {
     canvasShortcuts: '画布快捷键',
     publish: '发布',
     unpublish: '取消发布',
+  },
+  nodeCategory: {
+    flow: '流程',
+    tools: '工具',
+    ai: 'AI',
+    core: '核心',
   }
 };
 export default translation;

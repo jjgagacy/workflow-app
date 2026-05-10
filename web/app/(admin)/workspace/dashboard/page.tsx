@@ -8,6 +8,7 @@ import Countdown, { CountdownRef } from "@/app/components/base/countdown";
 import Loading from "@/app/components/base/loading";
 import { Tabs } from "@/app/components/base/tabs";
 import { Tooltip } from "@/app/components/base/tooltip";
+import { KeyboardShortcutDisplay } from "@/app/components/base/tooltip/keyboard";
 import { useDialog } from "@/app/components/hooks/use-dialog";
 import { Accordion } from "@/app/ui/accordion";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/ui/card";
@@ -178,7 +179,10 @@ export default function Page() {
   return (
     <div>
       <h1 className="mt-4">Dashboard</h1>
-      <div className="flex w-[400px] bg-gray-100 dark:bg-gray-800">
+      <div className="m-4">
+        <KeyboardShortcutDisplay shortcut={{ keys: ['N'], metaKey: false }} />
+      </div>
+      <div className="m-4 flex w-[400px] bg-gray-100 dark:bg-gray-800">
         <div className="px-0 w-full">
           <CreateApp
             onClose={() => { }}

@@ -16,6 +16,9 @@ import { useWorkflowStore } from "./context";
 import { NodeListSelector } from "./nodes/nodeListSelector";
 import { SlideTransition } from "../base/transition/slide-transition";
 import { useNodeSelectorClose } from "./hooks/useNodeSelectorClose";
+import { useKeyboardShortcut } from "./hooks/useKeyboardShortcut";
+import { SearchCommandPalette } from "./components/command/search-palette";
+import { testPaletteItems } from "./components/command/palette/data";
 
 const customGetNodesBounds = (nodes: any[]) => {
   if (nodes.length === 0) return { minX: 0, minY: 0, maxX: 0, maxY: 0, width: 0, height: 0 };
@@ -60,6 +63,8 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   const setShowSidebar = useWorkflowStore(s => s.setShowSidebar);
   const showNodeSelector = useWorkflowStore(s => s.showNodeSelector);
   const setShowNodeSelector = useWorkflowStore(s => s.setShowNodeSelector);
+  const showCommandPalette = useWorkflowStore(s => s.showCommandPalette);
+  const setShowCommandPalette = useWorkflowStore(s => s.setShowCommandPalette);
   const nodeSelectorWrapperRef = useRef<HTMLDivElement>(null);
 
   const onNodesChange = useCallback(
@@ -103,6 +108,8 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   };
 
   useNodeSelectorClose(showNodeSelector, setShowNodeSelector, nodeSelectorWrapperRef);
+  useKeyboardShortcut('n', () => setShowNodeSelector(!showNodeSelector), { ctrlKey: false });
+  useKeyboardShortcut('k', () => setShowCommandPalette(!showCommandPalette), { ctrlKey: false });
 
   return (
     <div id="react-flow-body" className="flex w-full h-full">
@@ -138,6 +145,11 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
         </SlideTransition>
       </div>
       {showSidebar && <Sidebar />}
+      {showCommandPalette &&
+        <SearchCommandPalette
+          items={testPaletteItems}
+          onClose={() => setShowCommandPalette(false)}
+        />}
     </div>
   );
 }

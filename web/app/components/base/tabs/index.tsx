@@ -4,7 +4,7 @@ import { Tooltip } from "../tooltip";
 import { ChevronLeft, ExternalLink } from "lucide-react";
 import React, { useCallback, useEffect } from "react";
 
-interface ExtendedTabOptions<Value> {
+export interface ExtendedTabOptions<Value> {
   value: Value;
   label?: string;
   icon?: React.ReactNode;
@@ -134,7 +134,7 @@ export function Tabs<Value extends string | number>({
       whitespace-nowrap
       cursor-pointer
       transition-all duration-200
-      focus:outline-none focus:ring-2 focus:ring-primary/20
+      focus:outline-none focus:ring-1 focus:ring-primary/10
       hover:text-primary
       ${variant === 'default' ? 'text-xs font-bold px-2 sm:px-3' : ''}
       ${variant === 'outline' ? 'border border-[var(--border)] rounded-md' : ''}
