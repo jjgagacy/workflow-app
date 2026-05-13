@@ -5,7 +5,7 @@ export const useDeviceSupport = () => {
   const [ctrlKeyText, setCtrlKeyText] = useState('Ctrl');
 
   useEffect(() => {
-    const platform = window.navigator.platform.toLowerCase();
+    const platform = globalThis.navigator.platform.toLowerCase();
     setIsMac(platform.includes('mac'));
     setCtrlKeyText(platform.includes('mac') ? '⌘' : 'Ctrl');
   }, []);

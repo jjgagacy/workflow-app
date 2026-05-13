@@ -29,7 +29,7 @@ export default function SignUp() {
 
   const handleGoogleLogin = () => {
     // 模拟 Google 登录
-    window.location.href = '/api/auth/google';
+    globalThis.location.href = '/api/auth/google';
   };
 
   const returnSetUsername = () => {

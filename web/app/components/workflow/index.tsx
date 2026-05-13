@@ -15,10 +15,16 @@ import { Sidebar } from "./operator/sidebar";
 import { useWorkflowStore } from "./context";
 import { NodeListSelector } from "./nodes/nodeListSelector";
 import { SlideTransition } from "../base/transition/slide-transition";
-import { useNodeSelectorClose } from "./hooks/useNodeSelectorClose";
-import { useKeyboardShortcut } from "./hooks/useKeyboardShortcut";
+import { useNodeSelectorClose } from "./hooks/use-nodeSelectorClose";
+import { useKeyboardShortcut } from "./hooks/use-keyboardShortcut";
 import { SearchCommandPalette } from "./components/command/search-palette";
 import { testPaletteItems } from "./components/command/palette/data";
+import { ContextMenu } from "./contextmenu";
+import { usePanelContextMenu } from "./hooks/use-panelMenu";
+import { useNodeContextMenu } from "./hooks/use-nodeMenu";
+import { NodeContextMenu } from "./contextmenu/node";
+import { useSelectionContextMenu } from "./hooks/use-selectionMenu";
+import { SelectionContextMenu } from "./contextmenu/selection";
 
 const customGetNodesBounds = (nodes: any[]) => {
   if (nodes.length === 0) return { minX: 0, minY: 0, maxX: 0, maxY: 0, width: 0, height: 0 };
@@ -53,6 +59,7 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   const defaultEdgeOptions: DefaultEdgeOptions = {
     animated: false,
   };
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // 在这里使用 useReactFlow 是安全的，因为这个组件会被放在 ReactFlowProvider 内部
   const { setViewport } = useReactFlow();
@@ -66,6 +73,9 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   const showCommandPalette = useWorkflowStore(s => s.showCommandPalette);
   const setShowCommandPalette = useWorkflowStore(s => s.setShowCommandPalette);
   const nodeSelectorWrapperRef = useRef<HTMLDivElement>(null);
+  const { handleContextMenu, handleCancelContextMenu } = usePanelContextMenu(containerRef);
+  const { handleNodeContextMenu, handleCancelNodeContextMenu } = useNodeContextMenu(containerRef);
+  const { handleSelectionContextMenu, handleCancelSelectionContextMenu } = useSelectionContextMenu(containerRef);
 
   const onNodesChange = useCallback(
     (changes: any) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
@@ -114,7 +124,10 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   return (
     <div id="react-flow-body" className="flex w-full h-full">
       {children}
-      <div className="relative flex w-full h-full">
+      <div className="relative flex w-full h-full" ref={containerRef}>
+        <ContextMenu containerRef={containerRef} />
+        <NodeContextMenu containerRef={containerRef} />
+        <SelectionContextMenu containerRef={containerRef} />
         <div className="absolute right-4 top-4 flex w-12 items-center justify-center z-50 p-1 pr-2 min-h-5">
           <Control />
         </div>
@@ -129,6 +142,9 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
           connectionMode={ConnectionMode.Loose}
           colorMode={activeTheme === 'dark' ? 'dark' : 'light'}
           defaultEdgeOptions={defaultEdgeOptions}
+          onPaneContextMenu={handleContextMenu as any}
+          onNodeContextMenu={handleNodeContextMenu as any}
+          onSelectionContextMenu={handleSelectionContextMenu as any}
           className="w-full h-full relative z-0"
         >
           <Background />

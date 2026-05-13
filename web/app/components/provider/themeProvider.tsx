@@ -52,7 +52,7 @@ function ThemeManager({ children }: { children: React.ReactNode }) {
         setNextTheme(savedAppearanceTheme);
       } else {
         // 跟随系统
-        const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isSystemDark = globalThis.matchMedia('(prefers-color-scheme: dark)').matches;
         setNextTheme(isSystemDark ? 'dark' : 'light');
       }
     }
@@ -74,7 +74,7 @@ function ThemeManager({ children }: { children: React.ReactNode }) {
       setNextTheme(theme);
     } else {
       // 跟随系统
-      const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isSystemDark = matchMedia('(prefers-color-scheme: dark)').matches;
       setNextTheme(isSystemDark ? 'dark' : 'light');
     }
   };
@@ -83,9 +83,9 @@ function ThemeManager({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (appearanceTheme !== 'system') return;
 
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = globalThis.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = () => {
-      const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isSystemDark = globalThis.matchMedia('(prefers-color-scheme: dark)').matches;
       setNextTheme(isSystemDark ? 'dark' : 'light');
     };
 

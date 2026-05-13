@@ -99,6 +99,9 @@ const translation = {
     tools: 'Tools',
     ai: 'AI',
     core: 'Core',
+  },
+  nodeList: {
+    searchPlaceholder: 'Search nodes and tools...',
   }
 };
 

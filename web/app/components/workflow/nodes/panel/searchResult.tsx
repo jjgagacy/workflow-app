@@ -1,4 +1,7 @@
+import { useCustomTheme } from "@/app/components/provider/customThemeProvider";
 import { NodeCatalog } from "../types";
+import { useTranslation } from "react-i18next";
+import { getThemeHoverClass, ThemeType } from "@/types/theme";
 
 interface SearchResultProps {
   groupedNodes: Record<string, NodeCatalog[]>;
@@ -6,6 +9,8 @@ interface SearchResultProps {
 }
 
 export function SearchResult({ groupedNodes, onSelectNode }: SearchResultProps) {
+  const { t } = useTranslation();
+  const { activeColorTheme } = useCustomTheme();
   return (
     <div className="space-y-4">
       {Object.entries(groupedNodes).map(([sectionTitle, sectionNodes]) => (
@@ -21,24 +26,26 @@ export function SearchResult({ groupedNodes, onSelectNode }: SearchResultProps) 
               <div
                 key={node.id}
                 onClick={() => onSelectNode?.(node)}
-                className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer ${getThemeHoverClass(activeColorTheme as ThemeType)} transition-colors group`}
               >
                 {/* 节点图标 */}
-                <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg group-hover:bg-gray-200 dark:group-hover:bg-gray-600 transition-colors">
-                  {node.icon || (
-                    <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                  )}
+                <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-md transition-colors" >
+                  {
+                    node.icon || (
+                      <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    )
+                  }
                 </div>
 
                 {/* 节点信息 */}
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                  <div className="text-sm font-medium text-text-primary truncate">
                     {node.name}
                   </div>
                   {node.description && (
-                    <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    <div className="text-xs text-text-secondary truncate">
                       {node.description}
                     </div>
                   )}
@@ -51,8 +58,9 @@ export function SearchResult({ groupedNodes, onSelectNode }: SearchResultProps) 
               </div>
             ))}
           </div>
-        </div>
-      ))}
-    </div>
+        </div >
+      ))
+      }
+    </div >
   );
 }

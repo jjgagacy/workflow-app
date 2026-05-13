@@ -1,3 +1,4 @@
+import { useGlobalEventListener } from '@/app/components/hooks/use-globalEventListener';
 import { TenantInfo } from '@/types/tenant';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 

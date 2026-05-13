@@ -129,7 +129,7 @@ export function Operations({ appInfo: apps, menuItems }: AppActionsProps) {
             onClick={(e) => {
               e.preventDefault();
               close();
-              window.location.href = item.href;
+              globalThis.location.href = item.href;
             }}
           >
             <item.icon className="mr-1 h-4 w-4 text-text-primary" />

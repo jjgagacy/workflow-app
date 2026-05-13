@@ -1,7 +1,9 @@
 'use client';
 
 import { useGraphQLClient } from '@/api/graphql'
+import { getErrorMessage } from '@/utils/errors';
 import { DocumentNode } from 'graphql'
+import { ClientError } from 'graphql-request';
 import { useMemo } from 'react';
 import useSWR from 'swr';
 
@@ -15,7 +17,7 @@ export const useGraphQLQuery = <
 ) => {
   const client = useGraphQLClient();
   const fetcher = () => client.request<TData>(query, variables);
-  return useSWR<TData>(
+  const swrResponse = useSWR<TData>(
     [query, variables],
     fetcher,
     {
@@ -23,6 +25,14 @@ export const useGraphQLQuery = <
       ...options
     }
   );
+  if (typeof swrResponse.error !== 'undefined' && swrResponse.error instanceof ClientError) {
+    const message = getErrorMessage(swrResponse.error);
+    if (message === 'Unauthorized') {
+      // 处理未授权错误，例如重定向到登录页
+      globalThis.location.href = '/login';
+    }
+  }
+  return swrResponse;
 }
 
 export function createQueryHook<

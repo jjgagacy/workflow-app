@@ -70,7 +70,7 @@ export const NodeListPanel = ({ nodes = [], onSelectNode }: NodeListPanelProps) 
     <div className="flex flex-col h-full">
       <div className="p-3 border-b border-gray-200 dark:border-gray-700">
         <SearchInput
-          placeholder={t('app.nodeList.searchPlaceholder') || "Search 9,000+ apps and tools..."}
+          placeholder={t('app.nodeList.searchPlaceholder')}
           value={searchValue}
           onChange={setSearchValue}
           autoFocus

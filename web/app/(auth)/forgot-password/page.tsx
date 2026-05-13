@@ -54,7 +54,7 @@ export default function Page() {
             setSuccessMessage(result.message);
             // 1秒后跳转到登录页
             setTimeout(() => {
-              window.location.href = '/login';
+              globalThis.location.href = '/login';
             }, 1000);
           }
           break;

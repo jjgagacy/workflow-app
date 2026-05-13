@@ -13,14 +13,14 @@ function setThemeCookie(theme: string) {
   if (typeof window === 'undefined') return false;
   // console.log('Setting theme cookie:', COOKIE_NAME, '=', theme);
 
-  document.cookie = `${COOKIE_NAME}=${theme}; path=/; max-age=31536000; SameSite=Lax; ${window.location.protocol === 'https:' ? 'Secure;' : ''}`;
+  document.cookie = `${COOKIE_NAME}=${theme}; path=/; max-age=31536000; SameSite=Lax; ${globalThis.location.protocol === 'https:' ? 'Secure;' : ''}`;
 }
 
 function setColorThemeCookie(colorTheme: string) {
   if (typeof window === 'undefined') return false;
   // console.log('Setting color theme cookie:', COLOR_THEME_NAME, '=', colorTheme);
 
-  document.cookie = `${COLOR_THEME_NAME}=${colorTheme}; path=/; max-age=31536000; SameSite=Lax; ${window.location.protocol === 'https:' ? 'Secure;' : ''}`;
+  document.cookie = `${COLOR_THEME_NAME}=${colorTheme}; path=/; max-age=31536000; SameSite=Lax; ${globalThis.location.protocol === 'https:' ? 'Secure;' : ''}`;
 }
 
 type ActiveThemeContext = {

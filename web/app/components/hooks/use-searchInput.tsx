@@ -1,5 +1,6 @@
 // useSearchInput.ts
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { getGlobalTarget, useGlobalEventListener } from './use-globalEventListener';
 
 export interface SearchResult {
   id: string;
@@ -172,37 +173,34 @@ export function useSearchInput({
   }, [value, performSearch, debounceDelay]);
 
   // 键盘导航
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!showResults) return;
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (!showResults) return;
 
-      switch (e.key) {
-        case 'ArrowDown':
-          e.preventDefault();
-          setSelectedIndex(prev =>
-            prev < results.length - 1 ? prev + 1 : prev
-          );
-          break;
-        case 'ArrowUp':
-          e.preventDefault();
-          setSelectedIndex(prev => prev > 0 ? prev - 1 : -1);
-          break;
-        case 'Enter':
-          e.preventDefault();
-          if (selectedIndex >= 0 && results[selectedIndex]) {
-            handleSelectResult(results[selectedIndex]);
-          }
-          break;
-        case 'Escape':
-          e.preventDefault();
-          handleClose();
-          break;
-      }
-    };
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedIndex(prev =>
+          prev < results.length - 1 ? prev + 1 : prev
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedIndex(prev => prev > 0 ? prev - 1 : -1);
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (selectedIndex >= 0 && results[selectedIndex]) {
+          handleSelectResult(results[selectedIndex]);
+        }
+        break;
+      case 'Escape':
+        e.preventDefault();
+        handleClose();
+        break;
+    }
+  };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showResults, results, selectedIndex]);
+  useGlobalEventListener('keydown', handleKeyDown);
 
   // 滚动到选中的项
   useEffect(() => {
@@ -257,30 +255,26 @@ export function useSearchInput({
   };
 
   // 添加全局快捷键监听
-  useEffect(() => {
-    const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      // 检测 Cmd+K (Mac) 或 Ctrl+K (Windows/Linux)
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault(); // 阻止浏览器默认行为
-        e.stopPropagation();
+  const handleGlobalKeyDown = (e: KeyboardEvent) => {
+    // 检测 Cmd+K (Mac) 或 Ctrl+K (Windows/Linux)
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault(); // 阻止浏览器默认行为
+      e.stopPropagation();
 
-        // 聚焦到搜索框
-        inputRef.current?.focus();
+      // 聚焦到搜索框
+      inputRef.current?.focus();
+      // 可选：选中已有文本
+      inputRef.current?.select();
+    }
 
-        // 可选：选中已有文本
-        inputRef.current?.select();
-      }
+    // 可选：按 ESC 关闭搜索结果
+    // if (e.key === 'Escape' && showResults) {
+    //   e.preventDefault();
+    //   handleClose();
+    // }
+  };
 
-      // 可选：按 ESC 关闭搜索结果
-      // if (e.key === 'Escape' && showResults) {
-      //   e.preventDefault();
-      //   handleClose();
-      // }
-    };
-
-    window.addEventListener('keydown', handleGlobalKeyDown);
-    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
-  }, [inputRef, showResults]);
+  useGlobalEventListener('keydown', handleGlobalKeyDown);
 
   return {
     // 状态

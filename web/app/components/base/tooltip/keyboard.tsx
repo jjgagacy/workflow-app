@@ -14,7 +14,12 @@ export const KeyboardShortcutDisplay = forwardRef<HTMLDivElement, { shortcut: Ke
         if (key === 'arrowdown') return '↓';
         if (key === 'arrowleft') return '←';
         if (key === 'arrowright') return '→';
-        if (key === 'space') return 'Space';
+        if (key === 'space') return '␣';
+        if (key === 'enter') return '⏎';
+        if (key === 'tab') return '⇥';
+        if (key === 'backspace') return '⌫';
+        if (key === 'escape') return '⎋';
+        // 其他键默认显示，首字母大写
         return key.charAt(0).toUpperCase() + key.slice(1);
       });
 
