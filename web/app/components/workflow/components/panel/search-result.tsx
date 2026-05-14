@@ -1,5 +1,5 @@
 import { useCustomTheme } from "@/app/components/provider/customThemeProvider";
-import { NodeCatalog } from "../types";
+import { NodeCatalog } from "../../nodes/types";
 import { useTranslation } from "react-i18next";
 import { getThemeHoverClass, ThemeType } from "@/types/theme";
 
@@ -29,7 +29,7 @@ export function SearchResult({ groupedNodes, onSelectNode }: SearchResultProps) 
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer ${getThemeHoverClass(activeColorTheme as ThemeType)} transition-colors group`}
               >
                 {/* 节点图标 */}
-                <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-md transition-colors" >
+                <div className="flex-shrink-0 w-8 h-8 flex text-text-secondary items-center justify-center rounded-md transition-colors" >
                   {
                     node.icon || (
                       <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -180,6 +180,13 @@ export default function Page() {
     <div>
       <h1 className="mt-4">Dashboard</h1>
       <div className="m-4">
+        <span className="text-2x p-2 border" style={{
+          backgroundColor: 'var(--color-bg-disabled)',
+          color: 'var(--color-text-disabled)',
+          borderColor: 'var(--color-border-disabled)',
+        }}>测试 test string!</span>
+      </div>
+      <div className="m-4">
         <KeyboardShortcutDisplay shortcut={{ keys: ['N'], metaKey: false }} />
       </div>
       <div className="m-4 flex w-[400px] bg-gray-100 dark:bg-gray-800">

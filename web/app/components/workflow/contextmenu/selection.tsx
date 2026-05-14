@@ -4,6 +4,10 @@ import { usePanelContextMenu } from "../hooks/use-panelMenu";
 import { useClickAway } from "ahooks";
 import { SELECTION_MENU_WIDTH, useSelectionContextMenu } from "../hooks/use-selectionMenu";
 import { useNodeContextMenu } from "../hooks/use-nodeMenu";
+import { MenuContainer } from ".";
+import { ContextMenuItem } from "./action/menu-item";
+import { CheckSquare, Copy, Eraser, PowerSquare, WandSparkles, X } from "lucide-react";
+import { Divider } from "../../base/divider";
 
 interface SelectionContextMenuProps {
   containerRef?: React.RefObject<HTMLElement | null>;
@@ -32,17 +36,56 @@ export const SelectionContextMenu = memo(({ containerRef }: SelectionContextMenu
   }
 
   return (
-    <div
-      className={`absolute z-20 w-[${SELECTION_MENU_WIDTH}px] rounded-md border-[0.5px] bg-background shadow-md`}
+    <MenuContainer
       style={{
+        width: SELECTION_MENU_WIDTH,
         top: selectionMenu.y,
         left: selectionMenu.x,
         display: selectionMenu.visible ? 'block' : 'none',
       }}
       ref={ref}>
+      <ContextMenuItem
+        label="Copy"
+        icon={<Copy />}
+        shortcut={{ keys: ['C'], ctrlKey: true }}
+        onClick={() => {
 
-      789
+        }}
+      />
+      <Divider />
+      <ContextMenuItem
+        label="Tidy up selection"
+        icon={<WandSparkles />}
+        onClick={() => {
+        }}
+      />
+      <ContextMenuItem
+        label="Select All"
+        icon={<CheckSquare />}
+        onClick={() => {
+        }}
+      />
+      <ContextMenuItem
+        label="Clear Selection"
+        icon={<Eraser />}
+        onClick={() => {
+        }}
+      />
+      <Divider />
+      <ContextMenuItem
+        label="Deactivate"
+        icon={<PowerSquare />}
+        shortcut={{ keys: ['D'] }}
+        onClick={() => {
+        }}
+      />
+      <ContextMenuItem
+        label="Delete"
+        icon={<X />}
+        onClick={() => {
 
-    </div>
+        }}
+      />
+    </MenuContainer>
   );
 });

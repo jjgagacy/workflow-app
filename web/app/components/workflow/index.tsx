@@ -13,7 +13,7 @@ import { WorkflowHistoryProvider } from "./store/workflow-history-store";
 import { Control } from "./operator/control";
 import { Sidebar } from "./operator/sidebar";
 import { useWorkflowStore } from "./context";
-import { NodeListSelector } from "./nodes/nodeListSelector";
+import { NodeListSelector } from "./components/nodeListSelector";
 import { SlideTransition } from "../base/transition/slide-transition";
 import { useNodeSelectorClose } from "./hooks/use-nodeSelectorClose";
 import { useKeyboardShortcut } from "./hooks/use-keyboardShortcut";

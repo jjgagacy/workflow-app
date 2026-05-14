@@ -59,6 +59,10 @@
   --color-text-danger: oklch(0.577 0.245 27.325);
   --color-text-success: oklch(0.527 0.154 150.069);
   --color-text-warning: oklch(0.828 0.189 84.429);
+  --color-text-disabled: oklch(0.600 0.020 0);
+  /* 或 oklch(0.600 0 0) */
+  --color-bg-disabled: oklch(0.960 0.020 0);
+  --color-border-disabled: oklch(0.850 0.020 0);
 }
 
 .test {

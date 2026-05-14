@@ -36,6 +36,13 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     if (error) {
+      const err = getErrorMessage(error);
+      if (err === 'Unauthorized') {
+        // 可能是未登录或者登录状态过期，直接清空账户信息
+        setAccountInfo(defaultAccountInfo);
+        globalThis.location.href = '/login'; // 跳转到登录页
+        return;
+      }
       toast.error(getErrorMessage(error));
     } else if (accountData) {
       setAccountInfo(accountData);

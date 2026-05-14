@@ -1,9 +1,9 @@
 import { ExtendedTabOptions, Tabs } from "@/app/components/base/tabs";
-import { NodeCatalog, NodeCategory, NodeCategoryType } from "../types";
+import { NodeCatalog, NodeCategory, NodeCategoryType } from "../../nodes/types";
 import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
 import { SearchInput } from "./search-input";
-import { SearchResult } from "./searchResult";
+import { SearchResult } from "./search-result";
 
 interface NodeListPanelProps {
   nodes?: NodeCatalog[];
@@ -64,7 +64,6 @@ export const NodeListPanel = ({ nodes = [], onSelectNode }: NodeListPanelProps) 
 
   const hasSearch = searchValue.trim().length > 0;
   const hasResults = filteredNodes.length > 0;
-
 
   return (
     <div className="flex flex-col h-full">

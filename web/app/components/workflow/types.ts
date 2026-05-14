@@ -14,13 +14,11 @@ export enum NodeType {
   HttpRequest = 'http-request',
   VariableAssigner = 'variable-assigner',
   VariableAggregator = 'variable-aggregator',
-  Tool = 'tool',
   ParameterExtractor = 'parameter-extractor',
   Iteration = 'iteration',
   DocExtractor = 'document-extractor',
   ListFilter = 'list-operator',
   IterationStart = 'iteration-start',
-  Assigner = 'assigner', // is now named as VariableAssigner
   Agent = 'agent',
   Loop = 'loop',
   LoopStart = 'loop-start',

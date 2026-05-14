@@ -51,4 +51,8 @@ html[data-theme="dark"] {
   --color-text-danger: oklch(0.396 0.141 25.723);
   --color-text-success: oklch(0.627 0.194 149.214);
   --color-text-warning: oklch(0.769 0.188 70.08);
+  --color-text-disabled: oklch(0.450 0.020 0);
+  /* 或 oklch(0.450 0 0) */
+  --color-bg-disabled: oklch(0.200 0.020 0);
+  --color-border-disabled: oklch(0.300 0.020 0);
 }

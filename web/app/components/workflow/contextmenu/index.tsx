@@ -5,7 +5,7 @@ import { useClickAway } from "ahooks";
 import { useNodeContextMenu } from "../hooks/use-nodeMenu";
 import { useSelectionContextMenu } from "../hooks/use-selectionMenu";
 import { ContextMenuItem } from "./action/menu-item";
-import { CheckSquare, Eraser, PlusCircle, Square, WandSparkles } from "lucide-react";
+import { CheckSquare, Eraser, Play, PlusCircle, Square, StickyNote, WandSparkles } from "lucide-react";
 import { Divider } from "../../base/divider";
 import { cn } from "@/utils/classnames";
 
@@ -72,15 +72,37 @@ export const ContextMenu = memo(({ containerRef }: ContextMenuProps) => {
           console.log("Add Node");
         }}
       />
-
+      <ContextMenuItem
+        label="Add Comment"
+        icon={<StickyNote />}
+        onClick={() => {
+          console.log("Add Comment");
+        }}
+      />
+      <ContextMenuItem
+        label="Paste"
+        icon={<Square />}
+        shortcut={{ keys: ['V'], metaKey: true }}
+        onClick={() => {
+          console.log("Paste");
+        }}
+      />
+      <ContextMenuItem
+        label="Run"
+        icon={<Play />}
+        shortcut={{ keys: ['R'], ctrlKey: true }}
+        onClick={() => {
+          console.log("Run");
+        }}
+      />
       <Divider />
+
       <ContextMenuItem
         label="Tidy up flow"
         icon={<WandSparkles />}
         onClick={() => {
         }}
       />
-
       <Divider />
       <ContextMenuItem
         label="Select All"

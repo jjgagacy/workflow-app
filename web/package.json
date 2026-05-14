@@ -28,6 +28,7 @@
     "graphql-request": "^7.2.0",
     "i18next": "^25.3.4",
     "i18next-resources-to-backend": "^1.2.1",
+    "immer": "^11.1.8",
     "is-emoji-supported": "^0.0.5",
     "js-cookie": "^3.0.5",
     "lodash-es": "^4.17.21",
