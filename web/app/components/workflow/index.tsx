@@ -5,7 +5,7 @@ import { TextUpdaterNode } from "./components/text-updater";
 import { CustomNode } from "./components/custom-node";
 import { CustomEdge } from "./components/custom-edge";
 import { useAppearance } from "@/hooks/use-appearance";
-import { CUSTOM_EDGE_NAME, CUSTOM_NODE_NAME } from "./constants";
+import { CUSTOM_EDGE_NAME, CUSTOM_NODE_NAME, CUSTOM_NOTE_NODE_NAME } from "./constants";
 import { initialNodes } from "./node";
 import { initialEdges } from "./edge";
 import { Edge, Node } from "./types";
@@ -25,6 +25,9 @@ import { useNodeContextMenu } from "./hooks/use-nodeMenu";
 import { NodeContextMenu } from "./contextmenu/node";
 import { useSelectionContextMenu } from "./hooks/use-selectionMenu";
 import { SelectionContextMenu } from "./contextmenu/selection";
+import { CandidateNode } from "./components/candidate-node";
+import { CustomNoteNode } from "./components/note-node";
+import { useEventListener } from "ahooks";
 
 const customGetNodesBounds = (nodes: any[]) => {
   if (nodes.length === 0) return { minX: 0, minY: 0, maxX: 0, maxY: 0, width: 0, height: 0 };
@@ -72,6 +75,7 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   const setShowNodeSelector = useWorkflowStore(s => s.setShowNodeSelector);
   const showCommandPalette = useWorkflowStore(s => s.showCommandPalette);
   const setShowCommandPalette = useWorkflowStore(s => s.setShowCommandPalette);
+  const setMousePosition = useWorkflowStore(s => s.setMousePosition);
   const nodeSelectorWrapperRef = useRef<HTMLDivElement>(null);
   const { handleContextMenu, handleCancelContextMenu } = usePanelContextMenu(containerRef);
   const { handleNodeContextMenu, handleCancelNodeContextMenu } = useNodeContextMenu(containerRef);
@@ -92,6 +96,7 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
 
   const nodeTypes = {
     [CUSTOM_NODE_NAME]: CustomNode,
+    [CUSTOM_NOTE_NODE_NAME]: CustomNoteNode,
     textUpdater: TextUpdaterNode,
   };
 
@@ -121,6 +126,15 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   useKeyboardShortcut('n', () => setShowNodeSelector(!showNodeSelector), { ctrlKey: false });
   useKeyboardShortcut('k', () => setShowCommandPalette(!showCommandPalette), { ctrlKey: false });
 
+  useEventListener('mousemove', (e) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (rect) {
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      setMousePosition({ x, y });
+    }
+  });
+
   return (
     <div id="react-flow-body" className="flex w-full h-full">
       {children}
@@ -128,6 +142,7 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
         <ContextMenu containerRef={containerRef} />
         <NodeContextMenu containerRef={containerRef} />
         <SelectionContextMenu containerRef={containerRef} />
+        <CandidateNode />
         <div className="absolute right-4 top-4 flex w-12 items-center justify-center z-50 p-1 pr-2 min-h-5">
           <Control />
         </div>

@@ -120,6 +120,9 @@ const translation = {
     triggers: '触发器',
     network: '网络',
     knowledge: '知识库'
+  },
+  'note-node': {
+    placeholder: '在此输入备注内容...'
   }
 };
 

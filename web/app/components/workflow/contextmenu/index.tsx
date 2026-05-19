@@ -8,6 +8,7 @@ import { ContextMenuItem } from "./action/menu-item";
 import { CheckSquare, Eraser, Play, PlusCircle, Square, StickyNote, WandSparkles } from "lucide-react";
 import { Divider } from "../../base/divider";
 import { cn } from "@/utils/classnames";
+import { useAddNote } from "../hooks/nodes/use-addNote";
 
 interface ContextMenuProps {
   containerRef?: React.RefObject<HTMLElement | null>;
@@ -38,6 +39,7 @@ export const ContextMenu = memo(({ containerRef }: ContextMenuProps) => {
   const { handleContextMenu, handleCancelContextMenu } = usePanelContextMenu(containerRef || ref);
   const { handleCancelNodeContextMenu } = useNodeContextMenu(containerRef || ref);
   const { handleCancelSelectionContextMenu } = useSelectionContextMenu(containerRef || ref);
+  const { addNote } = useAddNote();
 
   useEffect(() => {
     if (contextMenu.visible) {
@@ -73,10 +75,11 @@ export const ContextMenu = memo(({ containerRef }: ContextMenuProps) => {
         }}
       />
       <ContextMenuItem
-        label="Add Comment"
+        label="Add Note"
         icon={<StickyNote />}
         onClick={() => {
-          console.log("Add Comment");
+          addNote();
+          handleCancelContextMenu();
         }}
       />
       <ContextMenuItem

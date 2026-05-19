@@ -1,5 +1,5 @@
 import { ExtendedTabOptions, Tabs } from "@/app/components/base/tabs";
-import { NodeCatalog, NodeCategory, NodeCategoryType } from "../../nodes/types";
+import { NodeCatalog, NodeCategory, NodeCategoryType } from "../../types";
 import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
 import { SearchInput } from "./search-input";

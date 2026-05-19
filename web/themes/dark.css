@@ -55,4 +55,6 @@ html[data-theme="dark"] {
   /* 或 oklch(0.450 0 0) */
   --color-bg-disabled: oklch(0.200 0.020 0);
   --color-border-disabled: oklch(0.300 0.020 0);
+  --color-bg-sticky: oklch(0.28 0.014 50);
+  --color-border-sticky: oklch(0.38 0.018 48);
 }

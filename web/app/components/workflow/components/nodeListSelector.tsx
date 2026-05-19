@@ -1,5 +1,5 @@
 import { useAvailableNodes } from "../hooks/use-nodesData";
-import { NODES_DATA } from "../nodes/data";
+import { NODES_DATA } from "../data";
 import { NodeListPanel } from "./panel/nodeListPanel";
 
 export const NodeListSelector = () => {

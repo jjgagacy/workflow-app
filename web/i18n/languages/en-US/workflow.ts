@@ -120,6 +120,9 @@ const translation = {
     triggers: 'Triggers',
     network: 'Network',
     knowledge: 'Knowledge'
+  },
+  'note-node': {
+    placeholder: 'Enter note content here...'
   }
 };
 

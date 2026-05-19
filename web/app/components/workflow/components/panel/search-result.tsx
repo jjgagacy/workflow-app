@@ -1,5 +1,5 @@
 import { useCustomTheme } from "@/app/components/provider/customThemeProvider";
-import { NodeCatalog } from "../../nodes/types";
+import { NodeCatalog } from "../../types";
 import { useTranslation } from "react-i18next";
 import { getThemeHoverClass, ThemeType } from "@/types/theme";
 

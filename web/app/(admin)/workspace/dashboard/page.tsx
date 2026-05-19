@@ -6,10 +6,15 @@ import { Badge } from "@/app/components/base/badge";
 import Button from "@/app/components/base/button";
 import Countdown, { CountdownRef } from "@/app/components/base/countdown";
 import Loading from "@/app/components/base/loading";
+import Popover from "@/app/components/base/popover";
 import { Tabs } from "@/app/components/base/tabs";
 import { Tooltip } from "@/app/components/base/tooltip";
 import { KeyboardShortcutDisplay } from "@/app/components/base/tooltip/keyboard";
 import { useDialog } from "@/app/components/hooks/use-dialog";
+import { CustomNoteNode } from "@/app/components/workflow/components/note-node";
+import { CUSTOM_NOTE_NODE_NAME } from "@/app/components/workflow/constants";
+import { WorkflowContextProvider } from "@/app/components/workflow/context";
+import { NodeType } from "@/app/components/workflow/types";
 import { Accordion } from "@/app/ui/accordion";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/ui/card";
 import { Checkbox } from "@/app/ui/checkbox";
@@ -179,6 +184,44 @@ export default function Page() {
   return (
     <div>
       <h1 className="mt-4">Dashboard</h1>
+      <div className="p-2">
+        <Popover
+          trigger={<Button variant={'ghost'}>Open Popover</Button>}
+          direction="top"
+          gap={4}
+          offset={0}
+          padding={8}
+          triggerClassName=""
+          panelClassName="bg-green-50 dark:bg-gray-800 rounded shadow-lg"
+          sameWidth={false}
+          disabled={false}
+          portal={true}
+        >
+          {({ close }) => (
+            <div className="p-4 ">
+              <p>This is the content of the popover.</p>
+              <Button variant={'primary'} onClick={() => close()}>Action</Button>
+            </div>
+          )}
+        </Popover>
+      </div>
+      <div className="p-2 flex gap-4 border rounded">
+        <div className="w-8 h-8 border-[0.5px] border-[var(--sticky-color-border-variant-1)] bg-[var(--sticky-color-bg-variant-1)] rounded flex items-center justify-center text-xs">
+        </div>
+        <div className="w-8 h-8 border-[0.5px] border-[var(--sticky-color-border-variant-2)] bg-[var(--sticky-color-bg-variant-2)] rounded flex items-center justify-center text-xs">
+        </div>
+        <div className="w-8 h-8 border-[0.5px] border-[var(--sticky-color-border-variant-3)] bg-[var(--sticky-color-bg-variant-3)] rounded flex items-center justify-center text-xs">
+        </div>
+        <div className="w-8 h-8 border-[0.5px] border-[var(--sticky-color-border-variant-4)] bg-[var(--sticky-color-bg-variant-4)] rounded flex items-center justify-center text-xs">
+        </div>
+        <div className="w-8 h-8 border-[0.5px] border-[var(--sticky-color-border-variant-5)] bg-[var(--sticky-color-bg-variant-5)] rounded flex items-center justify-center text-xs">
+        </div>
+        <div className="w-8 h-8 border-[0.5px] border-[var(--sticky-color-border-variant-6)] bg-[var(--sticky-color-bg-variant-6)] rounded flex items-center justify-center text-xs">
+        </div>
+      </div>
+      <div className="w-8 h-8 border border-[var(--color-border-sticky)] bg-[var(--color-bg-sticky)] rounded flex items-center justify-center text-xs">
+        HE
+      </div>
       <div className="m-4">
         <span className="text-2x p-2 border" style={{
           backgroundColor: 'var(--color-bg-disabled)',

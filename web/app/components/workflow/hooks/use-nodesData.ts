@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next"
 import { produce } from 'immer'
-import { NODES_DATA } from "../nodes/data";
-import { NodeCatalog } from "../nodes/types";
+import { NODES_DATA } from "../data";
+import { NodeCatalog } from "../types";
 
 export const useNodesData = () => {
   const { t } = useTranslation();

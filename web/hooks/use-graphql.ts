@@ -27,7 +27,7 @@ export const useGraphQLQuery = <
   );
   if (typeof swrResponse.error !== 'undefined' && swrResponse.error instanceof ClientError) {
     const message = getErrorMessage(swrResponse.error);
-    if (message === 'Unauthorized') {
+    if (message === 'Unauthorized' && location.pathname !== '/login') {
       // 处理未授权错误，例如重定向到登录页
       globalThis.location.href = '/login';
     }
