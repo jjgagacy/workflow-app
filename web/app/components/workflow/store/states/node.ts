@@ -3,11 +3,11 @@ import { Node } from "../../types"
 
 export type NodeState = {
   candidateNode: Node | null;
-  setCandidateNode: (node: Node) => void;
+  setCandidateNode: (node: Node | undefined) => void;
 }
 
 export const createNodeState: StateCreator<NodeState> = (set, get) => ({
   candidateNode: null,
-  setCandidateNode: (node: Node) => set({ candidateNode: node }),
+  setCandidateNode: (node: Node | undefined) => set({ candidateNode: node }),
 });
 

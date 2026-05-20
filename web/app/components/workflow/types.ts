@@ -30,9 +30,10 @@ export type NodeData<T = {}> = {
   value?: any;
   description?: string;
   type: NodeType;
-  selected?: boolean;
+  // selected?: boolean;
   size?: Dimensions;
   position?: XYPosition;
+  candidate?: boolean;
 } & T;
 
 export type Node<T = {}> = ReactFlowNode<NodeData<T>>;

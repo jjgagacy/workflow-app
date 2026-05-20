@@ -7,8 +7,8 @@ export type CommonState = {
   setShowNodeSelector: (show: boolean) => void;
   showCommandPalette: boolean;
   setShowCommandPalette: (show: boolean) => void;
-  mousePosition: { x: number; y: number };
-  setMousePosition: (position: { x: number; y: number }) => void;
+  mousePosition: { x: number; y: number, offsetX: number, offsetY: number };
+  setMousePosition: (position: { x: number; y: number, offsetX: number, offsetY: number }) => void;
 }
 
 export const createCommonState: StateCreator<CommonState> = (set, get) => ({
@@ -18,6 +18,6 @@ export const createCommonState: StateCreator<CommonState> = (set, get) => ({
   setShowNodeSelector: (show: boolean) => set({ showNodeSelector: show }),
   showCommandPalette: false,
   setShowCommandPalette: (show: boolean) => set({ showCommandPalette: show }),
-  mousePosition: { x: 0, y: 0 },
-  setMousePosition: (position: { x: number; y: number }) => set({ mousePosition: position }),
+  mousePosition: { x: 0, y: 0, offsetX: 0, offsetY: 0 },
+  setMousePosition: (position: { x: number; y: number, offsetX: number, offsetY: number }) => set({ mousePosition: position }),
 });

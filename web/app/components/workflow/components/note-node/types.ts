@@ -13,3 +13,8 @@ export type NoteNodeData = NodeData & {
   content: string;
   theme: NoteNodeTheme;
 }
+
+export type UpdateNodeData = {
+  id: string;
+  data: Record<string, string>;
+}

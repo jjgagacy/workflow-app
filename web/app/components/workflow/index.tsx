@@ -1,4 +1,4 @@
-import { addEdge, applyEdgeChanges, applyNodeChanges, Background, ConnectionMode, Controls, DefaultEdgeOptions, MiniMap, OnNodeDrag, Panel, ReactFlow, ReactFlowProvider, useReactFlow } from "@xyflow/react";
+import { addEdge, applyEdgeChanges, applyNodeChanges, Background, ConnectionMode, Controls, DefaultEdgeOptions, MiniMap, OnNodeDrag, Panel, ReactFlow, ReactFlowProvider, useNodesState, useReactFlow } from "@xyflow/react";
 import { ViewportWithAnnotation } from "./components/annotation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TextUpdaterNode } from "./components/text-updater";
@@ -28,6 +28,7 @@ import { SelectionContextMenu } from "./contextmenu/selection";
 import { CandidateNode } from "./components/candidate-node";
 import { CustomNoteNode } from "./components/note-node";
 import { useEventListener } from "ahooks";
+import { useInteractions } from "./hooks/nodes/use-interactions";
 
 const customGetNodesBounds = (nodes: any[]) => {
   if (nodes.length === 0) return { minX: 0, minY: 0, maxX: 0, maxY: 0, width: 0, height: 0 };
@@ -66,7 +67,7 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
 
   // 在这里使用 useReactFlow 是安全的，因为这个组件会被放在 ReactFlowProvider 内部
   const { setViewport } = useReactFlow();
-  const [nodes, setNodes] = useState<Node[]>(nodesData);
+  const [nodes, setNodes] = useNodesState(nodesData);
   const [edges, setEdges] = useState<Edge[]>(edgesData);
   const { activeTheme } = useAppearance();
   const showSidebar = useWorkflowStore(s => s.showSidebar);
@@ -80,6 +81,24 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   const { handleContextMenu, handleCancelContextMenu } = usePanelContextMenu(containerRef);
   const { handleNodeContextMenu, handleCancelNodeContextMenu } = useNodeContextMenu(containerRef);
   const { handleSelectionContextMenu, handleCancelSelectionContextMenu } = useSelectionContextMenu(containerRef);
+  const {
+    handleNodeMouseEnter,
+    handleNodeMouseLeave,
+    handleNodeMouseMove,
+    handleNodeClick,
+    handleConnectStart,
+    handleConnectEnd,
+    handleNodeDoubleClick,
+    handleNodeDrag,
+    handleNodeDragStart,
+    handleNodeDragStop,
+    handleNodeSelectionChange,
+    handleNodeSelectionDrag,
+    handleNodeSelectionDragStart,
+    handleNodeSelectionDragStop,
+    handleNodeSelectionStart,
+    handleNodeSelectionEnd,
+  } = useInteractions();
 
   const onNodesChange = useCallback(
     (changes: any) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
@@ -131,9 +150,11 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
     if (rect) {
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      setMousePosition({ x, y });
+      setMousePosition({ x, y, offsetX: rect.left, offsetY: rect.top });
     }
   });
+
+  console.log('render workflow body', { nodes, edges });
 
   return (
     <div id="react-flow-body" className="flex w-full h-full">
@@ -160,6 +181,22 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
           onPaneContextMenu={handleContextMenu as any}
           onNodeContextMenu={handleNodeContextMenu as any}
           onSelectionContextMenu={handleSelectionContextMenu as any}
+          onNodeMouseEnter={handleNodeMouseEnter}
+          onNodeMouseLeave={handleNodeMouseLeave}
+          onNodeMouseMove={handleNodeMouseMove}
+          onNodeClick={handleNodeClick}
+          onConnectStart={handleConnectStart}
+          onConnectEnd={handleConnectEnd}
+          onNodeDoubleClick={handleNodeDoubleClick}
+          onNodeDrag={handleNodeDrag}
+          onNodeDragStart={handleNodeDragStart}
+          onNodeDragStop={handleNodeDragStop}
+          onSelectionChange={handleNodeSelectionChange}
+          onSelectionDrag={handleNodeSelectionDrag}
+          onSelectionDragStart={handleNodeSelectionDragStart}
+          onSelectionDragStop={handleNodeSelectionDragStop}
+          onSelectionEnd={handleNodeSelectionEnd}
+          onSelectionStart={handleNodeSelectionStart}
           className="w-full h-full relative z-0"
         >
           <Background />

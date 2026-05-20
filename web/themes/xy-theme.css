@@ -1,11 +1,7 @@
-.dark .react-flow__node {
-  background: var(--background);
-  color: white;
-}
+.dark .react-flow__node {}
 
 .light .react-flow__node {
   background: var(--background);
-  color: #111;
 }
 
 .react-flow {
@@ -20,8 +16,8 @@
   --xy-node-border-default: 1px solid #ededed;
 
   --xy-node-boxshadow-default:
-    0px 3.54px 4.55px 0px #00000005, 0px 3.54px 4.55px 0px #0000000d,
-    0px 0.51px 1.01px 0px #0000001a;
+    0px 3.54px 4.55px 4px #00000005, 0px 3.54px 4.55px 4px #0000000d,
+    0px 0.51px 1.01px 4px #0000001a;
 
   --xy-node-border-radius-default: 8px;
 
@@ -56,17 +52,15 @@
 /* Customizing Default Theming */
 
 .react-flow__node {
-  box-shadow: var(--xy-node-boxshadow-default);
+  box-shadow: none;
   border-radius: var(--xy-node-border-radius-default);
   background-color: var(--xy-node-background-color-default);
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
-  padding: 10px;
-  font-size: 12px;
+  text-align: left;
   flex-direction: column;
-  border: var(--xy-node-border-default);
+  /* border: var(--xy-node-border-default); */
   color: var(--xy-node-color, var(--xy-node-color-default));
 }
 
@@ -85,6 +79,7 @@
 }
 
 .react-flow__node.selectable.selected {
+  border-width: 0;
   border-color: var(--xy-theme-selected);
   box-shadow: var(--xy-node-boxshadow-default);
 }
