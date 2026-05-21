@@ -24,6 +24,7 @@ export const useFontSize = () => {
     });
   }, [editor]);
 
+  // 监听编辑器状态变化并同步更新 React 状态
   useEffect(() => {
     return mergeRegister(
       editor.registerUpdateListener(() => {
@@ -31,12 +32,12 @@ export const useFontSize = () => {
           const selection = $getSelection();
           if ($isRangeSelection(selection)) {
             const size = $getSelectionStyleValueForProperty(selection, 'font-size', '12px');
-            setFontSize(size);
+            setFontSize(size); // 更新 React 状态
           }
         });
       }),
       editor.registerCommand(
-        SELECTION_CHANGE_COMMAND,
+        SELECTION_CHANGE_COMMAND, // 移动光标或改变选中区域时触发
         () => {
           const selection = $getSelection();
           if ($isRangeSelection(selection)) {

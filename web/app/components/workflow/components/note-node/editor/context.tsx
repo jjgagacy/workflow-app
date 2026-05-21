@@ -3,6 +3,9 @@
 import { createContext, useRef } from "react";
 import { createNoteEditorStore, NoteEditorStore } from "./store";
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { LinkNode } from "@lexical/link";
+import { ListItemNode, ListNode } from "@lexical/list";
+import theme from "./theme";
 
 export const NoteEditorContext = createContext<NoteEditorStore | null>(null);
 
@@ -28,8 +31,8 @@ export const NoteEditorProvider = ({ children, initialValue }: NoteEditorProvide
 
   const initialConfig = {
     namespace: "NoteEditor",
-    theme: {},
-    nodes: [],
+    theme: theme,
+    nodes: [LinkNode, ListNode, ListItemNode],
     editorState: !value?.root.children.length ? undefined : JSON.stringify(value),
     onError: (error: Error) => {
       console.error("Error in NoteEditor:", error);

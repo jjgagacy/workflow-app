@@ -2,9 +2,17 @@ import type { EditorState } from 'lexical'
 import { memo } from 'react';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import { ClickableLinkPlugin } from '@lexical/react/LexicalClickableLinkPlugin'
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin'
+import { ListPlugin } from '@lexical/react/LexicalListPlugin'
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin'
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/utils/classnames';
+import { useSelectionFormat } from '../hooks/use-selection-format';
+import { useClickAway } from 'ahooks';
+import { useNodesUpdate } from '../../../hooks/nodes/use-nodesUpdate';
 
 
 type EditorProps = {
@@ -14,6 +22,10 @@ type EditorProps = {
 
 export const Editor = memo(({ placeholder, onChange }: EditorProps) => {
   const { t } = useTranslation();
+
+  useSelectionFormat();
+
+  const { onNodeDataUpdate } = useNodesUpdate();
 
   const PlaceHolder = () => {
     return (
@@ -26,6 +38,12 @@ export const Editor = memo(({ placeholder, onChange }: EditorProps) => {
     );
   }
 
+  const handleEditorChange = (editorState: EditorState) => {
+    if (onChange) {
+      onChange(editorState);
+    }
+  }
+
   return (
     <div className='relative text-sm'>
       <RichTextPlugin
@@ -33,6 +51,11 @@ export const Editor = memo(({ placeholder, onChange }: EditorProps) => {
         contentEditable={<ContentEditable className="min-h-[60px] w-full h-full text-text-secondary outline-none" />}
         ErrorBoundary={LexicalErrorBoundary}
       />
+      <LinkPlugin />
+      <ClickableLinkPlugin />
+      <ListPlugin />
+      <HistoryPlugin />
+      <OnChangePlugin onChange={handleEditorChange} />
     </div>
   );
 });
