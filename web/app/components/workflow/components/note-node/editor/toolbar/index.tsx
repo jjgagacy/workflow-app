@@ -2,6 +2,7 @@ import { Divider } from "@/app/components/base/divider";
 import { useTranslation } from "react-i18next";
 import { NoteNodeTheme } from "../../types";
 import { ColorPicker } from "./color-picker";
+import { FontSizeSelector } from "./font-size-selector";
 
 type ToolbarProps = {
   theme: NoteNodeTheme;
@@ -20,8 +21,8 @@ export const Toolbar = ({ theme, onCopy, onDelete, onDuplicate, onThemeChange }:
         theme={theme}
         onThemeChange={onThemeChange}
       />
-      <Divider type={'vertical'} className="h-3.5" />
-      <p className="pl-2">bb123</p>
+      <Divider type={'vertical'} className="h-3.5 mx-1" />
+      <FontSizeSelector />
     </div>
   );
 }

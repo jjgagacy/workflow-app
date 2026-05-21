@@ -1,8 +1,9 @@
-import { NodeMouseHandler, useReactFlow, useStoreApi } from "@xyflow/react";
+import { NodeMouseHandler, OnResize, ResizeParamsWithDirection, useReactFlow, useStoreApi } from "@xyflow/react";
 import { useWorkflowContext, useWorkflowStore } from "../../context";
 import { useTranslation } from "react-i18next";
 import { useCallback } from "react";
 import { useWorkflow } from "../use-workflow";
+import { produce } from "immer";
 
 export const useInteractions = () => {
   const { t } = useTranslation();
@@ -107,6 +108,30 @@ export const useInteractions = () => {
       return;
   }, [store, workflowContext]);
 
+  const handleNodeResize = useCallback((id: string, params: ResizeParamsWithDirection) => {
+    if (workflowReadonly())
+      return;
+
+    const { nodes } = store.getState();
+    const { addNodes } = reactFlow;
+    const { x, y, width, height } = params;
+    const node = nodes.find(n => n.id === id);
+
+    const newNodes = produce(nodes, draft => {
+      const targetNode = draft.find(n => n.id === id);
+      if (targetNode) {
+        targetNode.position = { x, y };
+        targetNode.data = {
+          ...targetNode.data,
+          size: { width, height }
+        };
+      }
+    });
+
+    addNodes(newNodes);
+
+  }, [store, workflowContext]);
+
   return {
     handleNodeMouseEnter,
     handleNodeMouseLeave,
@@ -124,5 +149,6 @@ export const useInteractions = () => {
     handleNodeSelectionDragStop,
     handleNodeSelectionStart,
     handleNodeSelectionEnd,
+    handleNodeResize,
   }
 }

@@ -10,6 +10,8 @@ import Editor from "./editor";
 import { useNote } from "./hooks/use-note";
 import { Toolbar } from "./editor/toolbar";
 import { THEME_COLORS } from "./constants";
+import NodeResizer from "../node-resizer";
+import { Grip } from "lucide-react";
 
 
 export const CustomNoteNode = ({ id, data }: NodeProps<Node<NoteNodeData>>) => {
@@ -38,6 +40,12 @@ export const CustomNoteNode = ({ id, data }: NodeProps<Node<NoteNodeData>>) => {
     >
       <NoteEditorProvider initialValue={data.content}>
         <div className="relative w-full h-full">
+          {/* node resizer  */}
+          <NodeResizer
+            id={id}
+            nodeData={data}
+            icon={<Grip className="w-3 h-3 text-gray-400 dark:text-gray-600" />}
+          />
           {/* toolbar  */}
           {node?.selected && (
             <div className="absolute left-1/2 -translate-x-1/2 top-[-35px] z-10 flex items-center gap-1 px-2 py-0.5 rounded bg-background border border-[var(--border)] text-xs group-hover:opacity-100 transition-opacity shadow-sm">
@@ -51,13 +59,14 @@ export const CustomNoteNode = ({ id, data }: NodeProps<Node<NoteNodeData>>) => {
             </div>
           )}
           {/* editor */}
-          <div className="grow overflow-y-auto px-3 py-2.5">
+          <div className="grow overflow-y-auto px-3 py-2.5 h-full">
             <div className={cn(
               node?.selected && 'nodrag nopan nowheel cursor-text'
             )}>
               <Editor onChange={onEditorChange} />
             </div>
           </div>
+          <div className='p-3 pt-0'></div>
         </div>
       </NoteEditorProvider>
     </div>
