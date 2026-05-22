@@ -10,21 +10,21 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin'
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/utils/classnames';
-import { useSelectionFormat } from '../hooks/use-selection-format';
+import { useFormatChange } from '../hooks/use-format-change';
 import { useNodesUpdate } from '../../../hooks/nodes/use-nodesUpdate';
 import { LinkEditorComponent } from '../plugins/link-editor/component';
+import LinkEditorPlugin from '../plugins/link-editor';
 
 
 type EditorProps = {
   placeholder?: string;
   onChange?: (editorState: EditorState) => void;
-  containerElement?: HTMLDivElement | null;
+  containerElement: HTMLDivElement | null;
 }
 
 export const Editor = memo(({ placeholder, onChange, containerElement }: EditorProps) => {
   const { t } = useTranslation();
-
-  useSelectionFormat();
+  useFormatChange();
 
   const { onNodeDataUpdate } = useNodesUpdate();
 
@@ -53,10 +53,10 @@ export const Editor = memo(({ placeholder, onChange, containerElement }: EditorP
         ErrorBoundary={LexicalErrorBoundary}
       />
       <LinkPlugin />
-      <ClickableLinkPlugin />
+      <ClickableLinkPlugin disabled={true} />
       <ListPlugin />
       <HistoryPlugin />
-      <LinkEditorComponent containerElement={containerElement} />
+      <LinkEditorPlugin containerElement={containerElement} />
       <OnChangePlugin onChange={handleEditorChange} />
     </div>
   );

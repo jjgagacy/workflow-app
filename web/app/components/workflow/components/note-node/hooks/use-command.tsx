@@ -45,7 +45,6 @@ export const useCommand = () => {
     }
 
     if (type === "link") {
-      const { selectionLink } = noteEditorStore.getState();
       editor.update(() => {
         const selection = $getSelection();
 
@@ -62,7 +61,6 @@ export const useCommand = () => {
           }
         }
       });
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, selectionLink ? null : "");
       return;
     }
 

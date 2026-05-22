@@ -8,11 +8,10 @@ import {
   shift,
   useFloating,
 } from '@floating-ui/react';
-import { useClickAway } from "ahooks";
 import { Input } from "@/app/ui/input";
 import Button from "@/app/components/base/button";
 import { useClickOutside } from "@/hooks/use-click-outside";
-import { useLinkPlugin } from "./hooks";
+import { useLinkPlugin, useOpenLink } from "./hooks";
 
 export const LinkEditorComponent = ({ containerElement }: { containerElement?: HTMLElement | null }) => {
   const { t } = useTranslation();
@@ -21,7 +20,6 @@ export const LinkEditorComponent = ({ containerElement }: { containerElement?: H
   const setLinkOperatorShow = useNoteEditorStore(s => s.setLinkOperatorShow);
   const setLinkAnchorElement = useNoteEditorStore(s => s.setLinkAnchorElement);
   const selectionLinkUrl = useNoteEditorStore(s => s.selectionLinkUrl);
-  const setSelectionLinkUrl = useNoteEditorStore(s => s.setSelectionLinkUrl);
   const [linkUrl, setLinkUrl] = useState(selectionLinkUrl);
   const floatingRef = useRef<HTMLDivElement>(null);
   const { saveLink } = useLinkPlugin();
@@ -37,7 +35,7 @@ export const LinkEditorComponent = ({ containerElement }: { containerElement?: H
 
   useEffect(() => {
     setLinkUrl(selectionLinkUrl)
-  }, [selectionLinkUrl]);
+  }, [linkAnchorElement, selectionLinkUrl]);
 
   useEffect(() => {
     if (linkAnchorElement)
@@ -54,8 +52,7 @@ export const LinkEditorComponent = ({ containerElement }: { containerElement?: H
     setLinkAnchorElement(false);
   }, []);
 
-  if (!linkAnchorElement)
-    return null;
+  console.log('link operator show', linkOperatorShow);
 
   return (
     <>
@@ -67,26 +64,14 @@ export const LinkEditorComponent = ({ containerElement }: { containerElement?: H
             className="bg-background rounded-md border border-[var(--border)] p-2 shadow nodrag nopan"
           >
             {
-              linkOperatorShow ? (
-                <div className="flex flex-col gap-2">
-                  <button
-                    className="px-2 py-1 text-sm hover:bg-gray-100 rounded"
-                    onClick={() => {
-                      setLinkOperatorShow(false);
-                      setLinkAnchorElement(false);
-                    }}
-                  >
-                    {t('workflow.note.linkEditor.confirm')}
-                  </button>
-                </div>
-              ) : (
+              !linkOperatorShow && (
                 <div className="flex flex-row gap-2">
                   <Input
                     className="w-full text-sm h-6"
                     value={linkUrl}
                     onChange={(e) => setLinkUrl(e.target.value)}
                     placeholder=""
-                    autoFocus
+                  // autoFocus
                   />
                   <Button
                     className="px-2 py-1 text-sm"
@@ -99,6 +84,21 @@ export const LinkEditorComponent = ({ containerElement }: { containerElement?: H
                   >
                     {t('app.actions.confirm')}
                   </Button>
+                </div>
+              )
+            }
+            {
+              linkOperatorShow && (
+                <div className="flex flex-col gap-2">
+                  <button
+                    className="px-2 py-1 text-sm hover:bg-gray-100 rounded"
+                    onClick={() => {
+                      setLinkOperatorShow(false);
+                      setLinkAnchorElement(false);
+                    }}
+                  >
+                    {linkUrl}
+                  </button>
                 </div>
               )
             }

@@ -24,9 +24,6 @@ export const useInteractions = () => {
     const { nodes, edges } = store.getState();
     const { addNodes, addEdges } = reactFlow;
 
-
-
-
   }, [store, workflowContext]);
 
   const handleNodeMouseLeave = useCallback<NodeMouseHandler>((_, node) => {

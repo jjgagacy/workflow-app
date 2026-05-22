@@ -47,10 +47,11 @@ export const createNoteEditorStore = () => {
         setTimeout(() => {
           const selection = window.getSelection();
           if (selection && selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-            const rect = range.getBoundingClientRect();
-            const anchorElement = document.elementFromPoint(rect.left, rect.top) as HTMLElement;
-            set({ linkAnchorElement: anchorElement });
+            const nativeSelection = window.getSelection();
+            if (nativeSelection?.focusNode) {
+              const parent = nativeSelection.focusNode.parentElement;
+              set(() => ({ linkAnchorElement: parent }));
+            }
           }
         }, 0);
       } else {

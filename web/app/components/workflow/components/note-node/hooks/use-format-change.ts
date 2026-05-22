@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { $isLinkNode } from "@lexical/link";
+import { $isLinkNode, LinkNode } from "@lexical/link";
 import { $isListNode } from "@lexical/list";
 import { mergeRegister } from "@lexical/utils";
 import {
@@ -11,6 +11,7 @@ import {
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
 import { useNoteEditorContext } from "../editor/store";
+import { getSelectedNode } from "../utils";
 
 const matchesSelectionAncestor = (
   nodes: LexicalNode[],
@@ -30,16 +31,37 @@ const matchesSelectionAncestor = (
   });
 };
 
-export const useSelectionFormat = () => {
+const getSelectedLinkNode = (selection: ReturnType<typeof $getSelection>) => {
+  if (!$isRangeSelection(selection)) {
+    return null;
+  }
+
+  const node = getSelectedNode(selection);
+  const parent = node.getParent();
+
+  if ($isLinkNode(node)) {
+    return node;
+  }
+
+  if ($isLinkNode(parent)) {
+    return parent;
+  }
+
+  return null;
+};
+
+export const useFormatChange = () => {
   const [editor] = useLexicalComposerContext();
   const noteEditorStore = useNoteEditorContext();
 
-  useEffect(() => {
-    if (!noteEditorStore) {
-      return;
-    }
+  if (!noteEditorStore)
+    return;
 
-    const syncSelectionFormat = () => {
+  const syncSelectionFormat = () => {
+    editor.getEditorState().read(() => {
+      if (editor.isComposing())
+        return;
+
       const {
         setSelectionBold,
         setSelectionItalic,
@@ -47,6 +69,7 @@ export const useSelectionFormat = () => {
         setSelectionStrikethrough,
         setSelectionLink,
         setSelectionBulletedList,
+        setSelectionLinkUrl,
       } = noteEditorStore.getState();
       const selection = $getSelection();
 
@@ -57,6 +80,7 @@ export const useSelectionFormat = () => {
         setSelectionStrikethrough(false);
         setSelectionLink(false);
         setSelectionBulletedList(false);
+        setSelectionLinkUrl('');
         return;
       }
 
@@ -73,20 +97,48 @@ export const useSelectionFormat = () => {
       setSelectionStrikethrough(selection.hasFormat("strikethrough"));
       setSelectionLink(hasLink);
       setSelectionBulletedList(hasBulletedList);
-    };
+
+      const node = getSelectedNode(selection);
+      const parent = node.getParent();
+      let linkNode: LinkNode | null = null;
+
+      if ($isLinkNode(node)) {
+        linkNode = node;
+      } else if ($isLinkNode(parent)) {
+        linkNode = parent;
+      }
+
+      console.log('url', linkNode?.getURL() ?? '');
+
+      setSelectionLinkUrl(linkNode?.getURL() ?? '');
+    });
+  };
+
+  useEffect(() => {
+    if (!noteEditorStore) {
+      return;
+    }
 
     return mergeRegister(
       editor.registerUpdateListener(() => {
-        editor.getEditorState().read(syncSelectionFormat);
+        syncSelectionFormat();
       }),
       editor.registerCommand(
         SELECTION_CHANGE_COMMAND,
         () => {
-          editor.getEditorState().read(syncSelectionFormat);
+          syncSelectionFormat();
           return false;
         },
         COMMAND_PRIORITY_CRITICAL,
       ),
     );
   }, [editor, noteEditorStore]);
+
+  useEffect(() => {
+    globalThis.document.addEventListener('selectionchange', syncSelectionFormat)
+    return () => {
+      globalThis.document.removeEventListener('selectionchange', syncSelectionFormat)
+    }
+  }, [syncSelectionFormat])
+
 };

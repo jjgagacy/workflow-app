@@ -154,7 +154,7 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
     }
   });
 
-  console.log('render workflow body', { nodes, edges });
+  // console.log('render workflow body', { nodes, edges });
 
   return (
     <div id="react-flow-body" className="flex w-full h-full">

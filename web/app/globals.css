@@ -217,7 +217,8 @@ html[data-changing-theme] * {
 
 .note-editor-theme_link {
   cursor: pointer;
-  color: var(--text-text-selected);
+  color: var(--color-green);
+  text-decoration: underline;
 }
 
 .note-editor-theme_link:hover {
