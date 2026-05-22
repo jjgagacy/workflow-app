@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useNoteEditorStore } from "../../editor/store";
 import { useEffect, useRef, useState } from "react";
 import {
+  autoUpdate,
   FloatingPortal,
   flip,
   offset,
@@ -29,6 +30,7 @@ export const LinkEditorComponent = ({ containerElement }: { containerElement?: H
 
   const { refs, floatingStyles, elements } = useFloating({
     placement: 'bottom',
+    whileElementsMounted: autoUpdate,
     middleware: [
       offset(4),
       flip(),
@@ -41,8 +43,12 @@ export const LinkEditorComponent = ({ containerElement }: { containerElement?: H
   }, [linkAnchorElement, selectionLinkUrl]);
 
   useEffect(() => {
-    if (linkAnchorElement)
+    if (linkAnchorElement) {
       refs.setReference(linkAnchorElement);
+      return;
+    }
+
+    refs.setReference(null);
   }, [linkAnchorElement, refs]);
 
   const setFloatingRef = (node: HTMLDivElement) => {
@@ -59,7 +65,7 @@ export const LinkEditorComponent = ({ containerElement }: { containerElement?: H
     }
 
     setLinkOperatorShow(false);
-    setLinkAnchorElement(false);
+    setLinkAnchorElement(null);
   };
 
   useClickOutside(floatingRef, () => {

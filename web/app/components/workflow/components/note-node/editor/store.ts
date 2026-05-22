@@ -18,7 +18,7 @@ type State = {
   setSelectionLink: (value: boolean) => void;
   setSelectionBulletedList: (value: boolean) => void;
   linkAnchorElement: HTMLElement | null;
-  setLinkAnchorElement: (open?: boolean) => void;
+  setLinkAnchorElement: (value?: HTMLElement | null) => void;
   linkOperatorShow: boolean;
   setLinkOperatorShow: (value: boolean) => void;
   linkEditing: boolean;
@@ -44,22 +44,7 @@ export const createNoteEditorStore = () => {
     setSelectionLink: (value) => set({ selectionLink: value }),
     setSelectionBulletedList: (value) => set({ selectionBulletedList: value }),
     linkAnchorElement: null,
-    setLinkAnchorElement: (open = false) => {
-      if (open) {
-        setTimeout(() => {
-          const selection = window.getSelection();
-          if (selection && selection.rangeCount > 0) {
-            const nativeSelection = window.getSelection();
-            if (nativeSelection?.focusNode) {
-              const parent = nativeSelection.focusNode.parentElement;
-              set(() => ({ linkAnchorElement: parent }));
-            }
-          }
-        }, 0);
-      } else {
-        set({ linkAnchorElement: null });
-      }
-    },
+    setLinkAnchorElement: (value = null) => set({ linkAnchorElement: value }),
     linkOperatorShow: false,
     setLinkOperatorShow: (value) => set({ linkOperatorShow: value }),
     linkEditing: false,

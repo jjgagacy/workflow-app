@@ -8,6 +8,29 @@ import { TOGGLE_LINK_COMMAND } from "@lexical/link";
 import { useNoteEditorContext, useNoteEditorStore } from "../../editor/store";
 import { CLICK_COMMAND, COMMAND_PRIORITY_LOW, mergeRegister } from "lexical";
 
+const getAnchorElementFromTarget = (target: EventTarget | null) => {
+  if (!(target instanceof Node)) {
+    return null;
+  }
+
+  const element = target instanceof HTMLElement ? target : target.parentElement;
+
+  return element?.closest('a') ?? null;
+};
+
+const getAnchorElementFromSelection = () => {
+  const selection = window.getSelection();
+  const node = selection?.focusNode;
+
+  if (!node) {
+    return null;
+  }
+
+  const element = node instanceof HTMLElement ? node : node.parentElement;
+
+  return element?.closest('a') ?? null;
+};
+
 export const useLinkPlugin = () => {
   const { t } = useTranslation();
   const [editor] = useLexicalComposerContext()
@@ -20,7 +43,7 @@ export const useLinkPlugin = () => {
     if (!nextUrl) {
       editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
       setLinkEditing(false);
-      setLinkAnchorElement(false);
+      setLinkAnchorElement(null);
       return;
     }
 
@@ -30,13 +53,13 @@ export const useLinkPlugin = () => {
     }
     editor.dispatchCommand(TOGGLE_LINK_COMMAND, escape(nextUrl));
     setLinkEditing(false);
-    setLinkAnchorElement(false);
+    setLinkAnchorElement(null);
   }, [editor, setLinkAnchorElement, setLinkEditing, t]);
 
   const unLink = useCallback(() => {
     editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
     setLinkEditing(false);
-    setLinkAnchorElement(false);
+    setLinkAnchorElement(null);
   }, [editor, setLinkAnchorElement, setLinkEditing, t]);
 
   return {
@@ -66,7 +89,7 @@ export const useOpenLink = () => {
           } = noteEditorStore.getState();
 
           if (selectionLink) {
-            setLinkAnchorElement(true);
+            setLinkAnchorElement(getAnchorElementFromSelection());
             if (selectionLinkUrl && !linkEditing) {
               setLinkOperatorShow(true);
             } else {
@@ -74,7 +97,7 @@ export const useOpenLink = () => {
             }
           } else {
             setLinkEditing(false);
-            setLinkAnchorElement(false);
+            setLinkAnchorElement(null);
             setLinkOperatorShow(false);
           }
         });
@@ -100,7 +123,8 @@ export const useOpenLink = () => {
               if (linkEditing) {
                 return false;
               }
-              setLinkAnchorElement(true);
+              const anchorElement = getAnchorElementFromTarget(payload.target);
+              setLinkAnchorElement(anchorElement ?? getAnchorElementFromSelection());
 
               if (selectionLinkUrl) {
                 setLinkOperatorShow(true);
@@ -109,7 +133,7 @@ export const useOpenLink = () => {
               }
             } else {
               setLinkEditing(false);
-              setLinkAnchorElement(false);
+              setLinkAnchorElement(null);
               setLinkOperatorShow(false);
             }
           });

@@ -54,10 +54,10 @@ export const useCommand = () => {
           const { setLinkAnchorElement } = noteEditorStore.getState();
           if ($isLinkNode(node) || (parent && $isLinkNode(parent))) {
             editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
-            setLinkAnchorElement(false);
+            setLinkAnchorElement(null);
           } else {
             editor.dispatchCommand(TOGGLE_LINK_COMMAND, '');
-            setLinkAnchorElement(true);
+            setLinkAnchorElement(null);
           }
         }
       });
