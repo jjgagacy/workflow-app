@@ -31,25 +31,6 @@ const matchesSelectionAncestor = (
   });
 };
 
-const getSelectedLinkNode = (selection: ReturnType<typeof $getSelection>) => {
-  if (!$isRangeSelection(selection)) {
-    return null;
-  }
-
-  const node = getSelectedNode(selection);
-  const parent = node.getParent();
-
-  if ($isLinkNode(node)) {
-    return node;
-  }
-
-  if ($isLinkNode(parent)) {
-    return parent;
-  }
-
-  return null;
-};
-
 export const useFormatChange = () => {
   const [editor] = useLexicalComposerContext();
   const noteEditorStore = useNoteEditorContext();
@@ -107,8 +88,6 @@ export const useFormatChange = () => {
       } else if ($isLinkNode(parent)) {
         linkNode = parent;
       }
-
-      console.log('url', linkNode?.getURL() ?? '');
 
       setSelectionLinkUrl(linkNode?.getURL() ?? '');
     });

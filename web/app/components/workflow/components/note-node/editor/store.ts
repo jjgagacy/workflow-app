@@ -21,6 +21,8 @@ type State = {
   setLinkAnchorElement: (open?: boolean) => void;
   linkOperatorShow: boolean;
   setLinkOperatorShow: (value: boolean) => void;
+  linkEditing: boolean;
+  setLinkEditing: (value: boolean) => void;
   selectionLinkUrl: string;
   setSelectionLinkUrl: (value: string) => void;
 }
@@ -60,6 +62,8 @@ export const createNoteEditorStore = () => {
     },
     linkOperatorShow: false,
     setLinkOperatorShow: (value) => set({ linkOperatorShow: value }),
+    linkEditing: false,
+    setLinkEditing: (value) => set({ linkEditing: value }),
     selectionLinkUrl: "",
     setSelectionLinkUrl: (value) => set({ selectionLinkUrl: value }),
   }));
