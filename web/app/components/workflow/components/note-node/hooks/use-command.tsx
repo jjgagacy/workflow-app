@@ -1,10 +1,11 @@
 import { useCallback } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { TOGGLE_LINK_COMMAND } from "@lexical/link";
+import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
 import { INSERT_UNORDERED_LIST_COMMAND } from "@lexical/list";
 import { $getSelection, $createParagraphNode, $isRangeSelection, FORMAT_TEXT_COMMAND } from "lexical";
 import { $setBlocksType } from "@lexical/selection";
 import { useNoteEditorContext } from "../editor/store";
+import { getSelectedNode } from "../utils";
 
 export type NoteCommandType =
   | "bold"
@@ -45,6 +46,22 @@ export const useCommand = () => {
 
     if (type === "link") {
       const { selectionLink } = noteEditorStore.getState();
+      editor.update(() => {
+        const selection = $getSelection();
+
+        if ($isRangeSelection(selection)) {
+          const node = getSelectedNode(selection);
+          const parent = node.getParent();
+          const { setLinkAnchorElement } = noteEditorStore.getState();
+          if ($isLinkNode(node) || (parent && $isLinkNode(parent))) {
+            editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+            setLinkAnchorElement(false);
+          } else {
+            editor.dispatchCommand(TOGGLE_LINK_COMMAND, '');
+            setLinkAnchorElement(true);
+          }
+        }
+      });
       editor.dispatchCommand(TOGGLE_LINK_COMMAND, selectionLink ? null : "");
       return;
     }

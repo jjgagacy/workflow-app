@@ -13,6 +13,7 @@
   "dependencies": {
     "@apollo/client": "^3.13.9",
     "@dagrejs/dagre": "^3.0.0",
+    "@floating-ui/react": "^0.27.19",
     "@formatjs/intl-localematcher": "^0.6.1",
     "@headlessui/react": "^2.2.7",
     "@hookform/resolvers": "^5.2.1",

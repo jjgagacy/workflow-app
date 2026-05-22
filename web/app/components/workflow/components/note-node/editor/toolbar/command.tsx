@@ -85,7 +85,7 @@ export const Command = ({ type }: CommandProps) => {
         aria-label={t(`editor.command.${type}`)}
         aria-pressed={isActive}
         className={cn(
-          'flex h-4 w-4 cursor-pointer items-center justify-center',
+          'flex h-5 w-5 cursor-pointer items-center justify-center',
           `p-0.5 rounded-xs ${getThemeHoverClass(activeColorTheme as ThemeType)}`,
           isActive && getThemeBgClass(activeColorTheme as ThemeType),
         )}

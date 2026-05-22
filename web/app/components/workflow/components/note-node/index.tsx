@@ -48,7 +48,7 @@ export const CustomNoteNode = ({ id, data }: NodeProps<Node<NoteNodeData>>) => {
           />
           {/* toolbar  */}
           {node?.selected && (
-            <div className="absolute left-1/2 -translate-x-1/2 top-[-35px] z-10 flex items-center gap-1 px-2 py-0.5 rounded bg-background border border-[var(--border)] text-xs group-hover:opacity-100 transition-opacity shadow-sm">
+            <div className="absolute left-1/2 -translate-x-1/2 top-[-35px] z-10 flex items-center gap-1 px-2 py-0.5 rounded-md bg-background border border-[var(--border)] text-xs group-hover:opacity-100 transition-opacity shadow-sm">
               <Toolbar
                 theme={theme}
                 onCopy={() => { }}
@@ -63,7 +63,7 @@ export const CustomNoteNode = ({ id, data }: NodeProps<Node<NoteNodeData>>) => {
             <div className={cn(
               node?.selected && 'nodrag nopan nowheel cursor-text'
             )}>
-              <Editor onChange={onEditorChange} />
+              <Editor onChange={onEditorChange} containerElement={ref.current} />
             </div>
           </div>
           <div className='p-3 pt-0'></div>

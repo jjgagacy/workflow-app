@@ -17,6 +17,12 @@ type State = {
   setSelectionStrikethrough: (value: boolean) => void;
   setSelectionLink: (value: boolean) => void;
   setSelectionBulletedList: (value: boolean) => void;
+  linkAnchorElement: HTMLElement | null;
+  setLinkAnchorElement: (open?: boolean) => void;
+  linkOperatorShow: boolean;
+  setLinkOperatorShow: (value: boolean) => void;
+  selectionLinkUrl: string;
+  setSelectionLinkUrl: (value: string) => void;
 }
 
 export type NoteEditorStore = ReturnType<typeof createNoteEditorStore>;
@@ -35,6 +41,26 @@ export const createNoteEditorStore = () => {
     setSelectionStrikethrough: (value) => set({ selectionStrikethrough: value }),
     setSelectionLink: (value) => set({ selectionLink: value }),
     setSelectionBulletedList: (value) => set({ selectionBulletedList: value }),
+    linkAnchorElement: null,
+    setLinkAnchorElement: (open = false) => {
+      if (open) {
+        setTimeout(() => {
+          const selection = window.getSelection();
+          if (selection && selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            const rect = range.getBoundingClientRect();
+            const anchorElement = document.elementFromPoint(rect.left, rect.top) as HTMLElement;
+            set({ linkAnchorElement: anchorElement });
+          }
+        }, 0);
+      } else {
+        set({ linkAnchorElement: null });
+      }
+    },
+    linkOperatorShow: false,
+    setLinkOperatorShow: (value) => set({ linkOperatorShow: value }),
+    selectionLinkUrl: "",
+    setSelectionLinkUrl: (value) => set({ selectionLinkUrl: value }),
   }));
 }
 

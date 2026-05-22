@@ -11,16 +11,17 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin'
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/utils/classnames';
 import { useSelectionFormat } from '../hooks/use-selection-format';
-import { useClickAway } from 'ahooks';
 import { useNodesUpdate } from '../../../hooks/nodes/use-nodesUpdate';
+import { LinkEditorComponent } from '../plugins/link-editor/component';
 
 
 type EditorProps = {
   placeholder?: string;
   onChange?: (editorState: EditorState) => void;
+  containerElement?: HTMLDivElement | null;
 }
 
-export const Editor = memo(({ placeholder, onChange }: EditorProps) => {
+export const Editor = memo(({ placeholder, onChange, containerElement }: EditorProps) => {
   const { t } = useTranslation();
 
   useSelectionFormat();
@@ -55,6 +56,7 @@ export const Editor = memo(({ placeholder, onChange }: EditorProps) => {
       <ClickableLinkPlugin />
       <ListPlugin />
       <HistoryPlugin />
+      <LinkEditorComponent containerElement={containerElement} />
       <OnChangePlugin onChange={handleEditorChange} />
     </div>
   );
