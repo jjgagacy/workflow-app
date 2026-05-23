@@ -21,7 +21,7 @@ export const CandidateNode = () => {
     if (candidateNode) {
       e.preventDefault();
       const { nodes } = store.getState();
-      const { screenToFlowPosition, addNodes } = reactFlow;
+      const { screenToFlowPosition, setNodes } = reactFlow;
       const { x, y } = screenToFlowPosition({ x: mousePosition.x + mousePosition.offsetX, y: mousePosition.y + mousePosition.offsetY });
       const newNodes = produce(nodes, draft => {
         const { candidate, ...dataRest } = candidateNode.data as NoteNodeData;
@@ -34,7 +34,7 @@ export const CandidateNode = () => {
         }
         draft.push(newNode);
       });
-      addNodes(newNodes);
+      setNodes(newNodes);
       setCandidateNode(undefined);
     }
   });

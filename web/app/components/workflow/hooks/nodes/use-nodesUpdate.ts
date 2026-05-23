@@ -15,7 +15,7 @@ export const useNodesUpdate = () => {
 
     const { nodes } = store.getState();
     const nodeIndex = nodes.findIndex((node) => node.id === id);
-    const { addNodes } = reactFlow;
+    const { setNodes } = reactFlow;
     const newNodes = produce(nodes, draft => {
       const node = draft[nodeIndex];
       const newNode = {
@@ -28,7 +28,7 @@ export const useNodesUpdate = () => {
       draft[nodeIndex] = newNode;
     });
 
-    addNodes(newNodes);
+    setNodes(newNodes);
   }, []);
 
   return {

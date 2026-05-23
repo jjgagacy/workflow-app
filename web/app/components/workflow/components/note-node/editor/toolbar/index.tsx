@@ -4,6 +4,7 @@ import { NoteNodeTheme } from "../../types";
 import { ColorPicker } from "./color-picker";
 import { FontSizeSelector } from "./font-size-selector";
 import { Command } from "./command";
+import { Operator } from "./operator";
 
 type ToolbarProps = {
   theme: NoteNodeTheme;
@@ -14,8 +15,6 @@ type ToolbarProps = {
 }
 
 export const Toolbar = ({ theme, onCopy, onDelete, onDuplicate, onThemeChange }: ToolbarProps) => {
-  const { t } = useTranslation();
-
   return (
     <div className="inline-flex items-center p-1">
       <ColorPicker
@@ -34,6 +33,11 @@ export const Toolbar = ({ theme, onCopy, onDelete, onDuplicate, onThemeChange }:
         <Command type="bulleted-list" />
       </div>
       <Divider type={'vertical'} className="h-3.5 mx-1" />
+      <Operator
+        onCopy={onCopy}
+        onDuplicate={onDuplicate}
+        onDelete={onDelete}
+      />
     </div>
   );
 }

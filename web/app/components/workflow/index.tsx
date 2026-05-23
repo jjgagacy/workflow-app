@@ -29,6 +29,8 @@ import { CandidateNode } from "./components/candidate-node";
 import { CustomNoteNode } from "./components/note-node";
 import { useEventListener } from "ahooks";
 import { useInteractions } from "./hooks/nodes/use-interactions";
+import { setAutoFreeze } from "immer";
+import { useWorkflowShortcut } from "./hooks/use-workflowShortcut";
 
 const customGetNodesBounds = (nodes: any[]) => {
   if (nodes.length === 0) return { minX: 0, minY: 0, maxX: 0, maxY: 0, width: 0, height: 0 };
@@ -153,6 +155,16 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
       setMousePosition({ x, y, offsetX: rect.left, offsetY: rect.top });
     }
   });
+
+  useEffect(() => {
+    setAutoFreeze(false);
+
+    return () => {
+      setAutoFreeze(true);
+    };
+  }, []);
+
+  useWorkflowShortcut();
 
   // console.log('render workflow body', { nodes, edges });
 

@@ -12,12 +12,14 @@ import { Toolbar } from "./editor/toolbar";
 import { THEME_COLORS } from "./constants";
 import NodeResizer from "../node-resizer";
 import { Grip } from "lucide-react";
+import { useInteractions } from "../../hooks/nodes/use-interactions";
 
 
 export const CustomNoteNode = ({ id, data }: NodeProps<Node<NoteNodeData>>) => {
   // const candidateNode = useWorkflowStore(s => s.candidateNode);
   const { t } = useTranslation();
   const { onEditorChange, onThemeChange } = useNote(id);
+  const { handleNodeDelete } = useInteractions();
   const theme = data.theme;
   const ref = useRef<HTMLDivElement | null>(null);
   const store = useStoreApi();
@@ -52,7 +54,7 @@ export const CustomNoteNode = ({ id, data }: NodeProps<Node<NoteNodeData>>) => {
               <Toolbar
                 theme={theme}
                 onCopy={() => { }}
-                onDelete={() => { }}
+                onDelete={() => handleNodeDelete(id)}
                 onDuplicate={() => { }}
                 onThemeChange={onThemeChange}
               />

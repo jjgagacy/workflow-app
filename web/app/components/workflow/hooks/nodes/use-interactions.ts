@@ -110,7 +110,7 @@ export const useInteractions = () => {
       return;
 
     const { nodes } = store.getState();
-    const { addNodes } = reactFlow;
+    const { setNodes } = reactFlow;
     const { x, y, width, height } = params;
     const node = nodes.find(n => n.id === id);
 
@@ -125,8 +125,25 @@ export const useInteractions = () => {
       }
     });
 
-    addNodes(newNodes);
+    setNodes(newNodes);
 
+  }, [store, workflowContext]);
+
+  const handleNodeDelete = useCallback((id: string) => {
+    if (workflowReadonly())
+      return;
+    const { nodes, edges } = store.getState();
+    const { setNodes, addEdges } = reactFlow;
+
+    const index = nodes.findIndex(n => n.id === id);
+    const nodeToDelete = nodes[index];
+    if (!nodeToDelete)
+      return;
+
+    const newNodes = produce(nodes, draft => {
+      draft.splice(index, 1);
+    });
+    setNodes(newNodes);
   }, [store, workflowContext]);
 
   return {
@@ -147,5 +164,6 @@ export const useInteractions = () => {
     handleNodeSelectionStart,
     handleNodeSelectionEnd,
     handleNodeResize,
+    handleNodeDelete,
   }
 }
