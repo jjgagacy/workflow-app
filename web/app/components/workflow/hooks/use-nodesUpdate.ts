@@ -1,8 +1,8 @@
 import { useReactFlow, useStoreApi } from "@xyflow/react"
 import { useCallback } from "react";
-import { UpdateNodeData } from "../../components/note-node/types";
-import { useWorkflow } from "../use-workflow";
 import { produce } from "immer";
+import { useWorkflow } from "./use-workflow";
+import { UpdateNodeData } from "../components/note-node/types";
 
 export const useNodesUpdate = () => {
   const store = useStoreApi();

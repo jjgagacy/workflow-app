@@ -78,11 +78,11 @@ export const Command = ({ type }: CommandProps) => {
 
   return (
     <Tooltip
-      content={t(`editor.command.${type}`)}
+      content={t(`workflow.note-node.command.${type}`)}
     >
       <button
         type="button"
-        aria-label={t(`editor.command.${type}`)}
+        aria-label={t(`workflow.note-node.command.${type}`)}
         aria-pressed={isActive}
         className={cn(
           'flex h-5 w-5 cursor-pointer items-center justify-center',

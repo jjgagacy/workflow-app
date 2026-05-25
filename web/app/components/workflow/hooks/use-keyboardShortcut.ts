@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { isTargetInputArea } from "../utils/node";
 
 export const useKeyboardShortcut = (
   key: string,
@@ -12,13 +13,13 @@ export const useKeyboardShortcut = (
       if (
         event.key.toLowerCase() === key.toLowerCase()) {
         const target = event.target as HTMLElement;
-        const isInput = ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || target.isContentEditable;
 
-        if (isInput) return;
+        if (isTargetInputArea(target)) return;
 
-        if (ctrlKey && !event.ctrlKey) return;
-        if (shiftKey && !event.shiftKey) return;
-        if (altKey && !event.altKey) return;
+        if (event.ctrlKey !== ctrlKey) return;
+        if (event.shiftKey !== shiftKey) return;
+        if (event.altKey !== altKey) return;
+        if (event.metaKey) return;
 
         if (preventDefault) {
           event.preventDefault();

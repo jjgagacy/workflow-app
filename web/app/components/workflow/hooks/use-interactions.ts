@@ -1,11 +1,12 @@
 import { NodeMouseHandler, OnResize, ResizeParamsWithDirection, useReactFlow, useStoreApi } from "@xyflow/react";
-import { useWorkflowContext, useWorkflowStore } from "../../context";
 import { useTranslation } from "react-i18next";
 import { useCallback } from "react";
-import { useWorkflow } from "../use-workflow";
 import { produce } from "immer";
+import { useWorkflow } from "./use-workflow";
+import { useWorkflowContext } from "../context";
+import { NodeType } from "../types";
 
-export const useInteractions = () => {
+export const useWorkflowInteractions = () => {
   const { t } = useTranslation();
   const store = useStoreApi();
   const workflowContext = useWorkflowContext();
@@ -124,16 +125,14 @@ export const useInteractions = () => {
         };
       }
     });
-
     setNodes(newNodes);
-
   }, [store, workflowContext]);
 
   const handleNodeDelete = useCallback((id: string) => {
     if (workflowReadonly())
       return;
     const { nodes, edges } = store.getState();
-    const { setNodes, addEdges } = reactFlow;
+    const { setNodes, setEdges } = reactFlow;
 
     const index = nodes.findIndex(n => n.id === id);
     const nodeToDelete = nodes[index];
@@ -145,6 +144,19 @@ export const useInteractions = () => {
     });
     setNodes(newNodes);
   }, [store, workflowContext]);
+
+  const handleNodesDelete = useCallback(() => {
+    if (workflowReadonly())
+      return;
+    const { nodes, edges } = store.getState();
+    const { setNodes, setEdges } = reactFlow;
+
+    const selectedNodes = nodes.filter(n => n.selected && n.data.type != NodeType.Start);
+
+    selectedNodes.forEach(node => {
+      handleNodeDelete(node.id);
+    });
+  }, [store, workflowContext])
 
   return {
     handleNodeMouseEnter,
@@ -165,5 +177,6 @@ export const useInteractions = () => {
     handleNodeSelectionEnd,
     handleNodeResize,
     handleNodeDelete,
+    handleNodesDelete
   }
 }

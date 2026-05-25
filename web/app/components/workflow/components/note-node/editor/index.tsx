@@ -11,9 +11,8 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin'
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/utils/classnames';
 import { useFormatChange } from '../hooks/use-format-change';
-import { useNodesUpdate } from '../../../hooks/nodes/use-nodesUpdate';
-import { LinkEditorComponent } from '../plugins/link-editor/component';
 import LinkEditorPlugin from '../plugins/link-editor';
+import { useNodesUpdate } from '../../../hooks/use-nodesUpdate';
 
 
 type EditorProps = {
@@ -31,7 +30,7 @@ export const Editor = memo(({ placeholder, onChange, containerElement }: EditorP
   const PlaceHolder = () => {
     return (
       <div className={cn(
-        'pointer-events-none absolute left-0 top-0 w-full h-full select-none text-text-secondary',
+        'pointer-events-none absolute left-0 top-0 w-full h-full select-none text-text-secondary dark:text-foreground',
         'overflow-hidden'
       )}>
         {placeholder || t('workflow.note-node.placeholder')}

@@ -8,6 +8,7 @@ import { MenuContainer } from ".";
 import { ContextMenuItem } from "./action/menu-item";
 import { Copy, FolderOpen, Power, PowerSquare, Replace, X } from "lucide-react";
 import { Divider } from "../../base/divider";
+import { useTranslation } from "react-i18next";
 
 interface NodeContextMenuProps {
   containerRef?: React.RefObject<HTMLElement | null>;
@@ -15,6 +16,7 @@ interface NodeContextMenuProps {
 
 export const NodeContextMenu = memo(({ containerRef }: NodeContextMenuProps) => {
   const ref = useRef(null);
+  const { t } = useTranslation();
   const nodeMenu = useWorkflowStore(s => s.nodeMenu);
   const contextMenu = useWorkflowStore(s => s.contextMenu);
   const { handleNodeContextMenu, handleCancelNodeContextMenu } = useNodeContextMenu(containerRef || ref);
@@ -46,7 +48,7 @@ export const NodeContextMenu = memo(({ containerRef }: NodeContextMenuProps) => 
       }}
       ref={ref}>
       <ContextMenuItem
-        label="Open"
+        label={t('workflow.nodeMenu.open')}
         icon={<FolderOpen />}
         shortcut={{ keys: ['enter'] }}
         onClick={() => {
@@ -54,7 +56,7 @@ export const NodeContextMenu = memo(({ containerRef }: NodeContextMenuProps) => 
         }}
       />
       <ContextMenuItem
-        label="Replace"
+        label={t('workflow.nodeMenu.replace')}
         icon={<Replace />}
         shortcut={{ keys: ['R'] }}
         onClick={() => {
@@ -62,7 +64,7 @@ export const NodeContextMenu = memo(({ containerRef }: NodeContextMenuProps) => 
         }}
       />
       <ContextMenuItem
-        label="Copy"
+        label={t('workflow.nodeMenu.copy')}
         icon={<Copy />}
         shortcut={{ keys: ['C'], ctrlKey: true }}
         onClick={() => {
@@ -71,7 +73,7 @@ export const NodeContextMenu = memo(({ containerRef }: NodeContextMenuProps) => 
       />
       <Divider />
       <ContextMenuItem
-        label="Deactivate"
+        label={t('workflow.nodeMenu.deactivate')}
         icon={<PowerSquare />}
         shortcut={{ keys: ['D'] }}
         onClick={() => {
@@ -79,7 +81,7 @@ export const NodeContextMenu = memo(({ containerRef }: NodeContextMenuProps) => 
         }}
       />
       <ContextMenuItem
-        label="Delete"
+        label={t('workflow.nodeMenu.delete')}
         icon={<X />}
         onClick={() => {
 

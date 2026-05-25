@@ -1,6 +1,18 @@
+import { useCallback } from "react";
 import { usePlatformShortcut } from "./use-platformShortcut";
+import { isTargetInputArea } from "../utils/node";
+import { useWorkflowInteractions } from "./use-interactions";
+import { useReactFlow } from '@xyflow/react';
 
 export const useWorkflowShortcut = () => {
+
+  const { handleNodesDelete } = useWorkflowInteractions();
+  const reactFlow = useReactFlow();
+
+  const isShortcutAllowed = useCallback((event: KeyboardEvent) => {
+    return !isTargetInputArea(event.target as HTMLElement);
+  }, []);
+
   usePlatformShortcut('s', (event) => {
     event.preventDefault();
     console.log('Workflow saved!');
@@ -60,5 +72,12 @@ export const useWorkflowShortcut = () => {
     event.preventDefault();
     console.log('Workflow reset zoom!');
   }, { useCapture: true });
+
+  usePlatformShortcut(['delete', 'backspace'], (event) => {
+    if (!isShortcutAllowed(event))
+      return;
+    handleNodesDelete();
+    event.preventDefault();
+  }, { metaKey: false, ctrlKey: false });
 
 };

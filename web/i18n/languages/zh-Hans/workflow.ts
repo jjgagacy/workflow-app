@@ -122,8 +122,52 @@ const translation = {
     knowledge: '知识库'
   },
   'note-node': {
-    placeholder: '在此输入备注内容...'
-  }
+    placeholder: '在此输入备注内容...',
+    command: {
+      bold: '加粗',
+      italic: '斜体',
+      underline: '下划线',
+      strikethrough: '删除线',
+      link: '链接',
+      'bulleted-list': '无序列表'
+    }
+  },
+  contextMenu: {
+    addNode: '添加节点',
+    addNote: '添加备注',
+    paste: '粘贴',
+    run: '运行',
+    tidyUpFlow: '整理流程',
+    selectAll: '全选',
+    unselectAll: '取消全选'
+  },
+  nodeMenu: {
+    open: '打开',
+    replace: '替换',
+    copy: '复制',
+    deactivate: '停用',
+    delete: '删除'
+  },
+  selectionMenu: {
+    copy: '复制',
+    tidyUpSelection: '整理选择',
+    selectAll: '全选',
+    clearSelection: '清除选择',
+    deactivate: '停用',
+    delete: '删除'
+  },
+  control: {
+    addNode: '添加节点',
+    addNote: '添加备注',
+    pointerMode: '指针模式',
+    handMode: '抓手模式',
+    tidyNodes: '整理节点',
+    run: '运行',
+    searchCommand: '搜索命令',
+    copy: '拷贝',
+    duplicate: '复制',
+    delete: '删除',
+  },
 };
 
 export default translation;

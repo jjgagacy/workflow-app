@@ -16,3 +16,9 @@ export function newCandidateNode({ data, position, id, zIndex, type, ...rest }: 
 
   return node;
 }
+
+export const isTargetInputArea = (target: HTMLElement) => {
+  return Boolean(
+    target.closest('input, textarea, select, [contenteditable="true"], [contenteditable=""], [role="textbox"]'),
+  );
+}

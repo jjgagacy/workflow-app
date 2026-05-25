@@ -5,6 +5,7 @@ import { useCustomTheme } from "@/app/components/provider/customThemeProvider";
 import { getThemeHoverClass, ThemeType } from "@/types/theme";
 import { cn } from "@/utils/classnames";
 import { Copy, CopyPlus, Ellipsis, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 type OperatorProps = {
   onCopy: () => void;
@@ -23,24 +24,25 @@ type OperatorItem = {
 
 export const Operator = ({ onCopy, onDuplicate, onDelete }: OperatorProps) => {
   const { activeColorTheme } = useCustomTheme();
+  const { t } = useTranslation();
   const items: OperatorItem[] = [
     {
       key: 'copy',
-      label: '拷贝',
+      label: t('workflow.control.copy'),
       icon: <Copy className="h-3.5 w-3.5" />,
       shortcut: { keys: ['c'], metaKey: true },
       onClick: onCopy,
     },
     {
       key: 'duplicate',
-      label: '复制',
+      label: t('workflow.control.duplicate'),
       icon: <CopyPlus className="h-3.5 w-3.5" />,
       shortcut: { keys: ['d'], metaKey: true },
       onClick: onDuplicate,
     },
     {
       key: 'delete',
-      label: '删除',
+      label: t('workflow.control.delete'),
       icon: <Trash2 className="h-3.5 w-3.5" />,
       shortcut: { keys: ['delete'] },
       danger: true,

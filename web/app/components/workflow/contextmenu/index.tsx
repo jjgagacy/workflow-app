@@ -8,7 +8,8 @@ import { ContextMenuItem } from "./action/menu-item";
 import { CheckSquare, Eraser, Play, PlusCircle, Square, StickyNote, WandSparkles } from "lucide-react";
 import { Divider } from "../../base/divider";
 import { cn } from "@/utils/classnames";
-import { useAddNote } from "../hooks/nodes/use-addNote";
+import { useAddNote } from "../hooks/use-addNote";
+import { useTranslation } from "react-i18next";
 
 interface ContextMenuProps {
   containerRef?: React.RefObject<HTMLElement | null>;
@@ -35,6 +36,7 @@ export const MenuContainer = ({ children, className, style, ref }: MenuContainer
 
 export const ContextMenu = memo(({ containerRef }: ContextMenuProps) => {
   const ref = useRef(null);
+  const { t } = useTranslation();
   const contextMenu = useWorkflowStore(s => s.contextMenu);
   const { handleContextMenu, handleCancelContextMenu } = usePanelContextMenu(containerRef || ref);
   const { handleCancelNodeContextMenu } = useNodeContextMenu(containerRef || ref);
@@ -67,7 +69,7 @@ export const ContextMenu = memo(({ containerRef }: ContextMenuProps) => {
       }}
       ref={ref}>
       <ContextMenuItem
-        label="Add Node"
+        label={t('workflow.contextMenu.addNode')}
         icon={<PlusCircle />}
         shortcut={{ keys: ['N'] }}
         onClick={() => {
@@ -75,7 +77,7 @@ export const ContextMenu = memo(({ containerRef }: ContextMenuProps) => {
         }}
       />
       <ContextMenuItem
-        label="Add Note"
+        label={t('workflow.contextMenu.addNote')}
         icon={<StickyNote />}
         onClick={() => {
           addNote();
@@ -83,7 +85,7 @@ export const ContextMenu = memo(({ containerRef }: ContextMenuProps) => {
         }}
       />
       <ContextMenuItem
-        label="Paste"
+        label={t('workflow.contextMenu.paste')}
         icon={<Square />}
         shortcut={{ keys: ['V'], metaKey: true }}
         onClick={() => {
@@ -91,7 +93,7 @@ export const ContextMenu = memo(({ containerRef }: ContextMenuProps) => {
         }}
       />
       <ContextMenuItem
-        label="Run"
+        label={t('workflow.contextMenu.run')}
         icon={<Play />}
         shortcut={{ keys: ['R'], ctrlKey: true }}
         onClick={() => {
@@ -101,20 +103,20 @@ export const ContextMenu = memo(({ containerRef }: ContextMenuProps) => {
       <Divider />
 
       <ContextMenuItem
-        label="Tidy up flow"
+        label={t('workflow.contextMenu.tidyUpFlow')}
         icon={<WandSparkles />}
         onClick={() => {
         }}
       />
       <Divider />
       <ContextMenuItem
-        label="Select All"
+        label={t('workflow.contextMenu.selectAll')}
         icon={<CheckSquare />}
         onClick={() => {
         }}
       />
       <ContextMenuItem
-        label="Unselect all"
+        label={t('workflow.contextMenu.unselectAll')}
         icon={<Eraser />}
         onClick={() => {
         }}

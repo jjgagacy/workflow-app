@@ -1,7 +1,7 @@
 import type { EditorState } from 'lexical'
 import { useCallback } from "react"
 import { NoteNodeTheme } from '../types';
-import { useNodesUpdate } from '../../../hooks/nodes/use-nodesUpdate';
+import { useNodesUpdate } from '../../../hooks/use-nodesUpdate';
 
 export const useNote = (id: string) => {
   const { onNodeDataUpdate } = useNodesUpdate();

@@ -1,8 +1,8 @@
 import { cn } from "@/utils/classnames";
-import { useInteractions } from "../hooks/nodes/use-interactions";
 import { NodeData } from "../types";
 import { NodeResizeControl, useReactFlow, useStoreApi } from "@xyflow/react";
 import { NODE_RESIZE_MIN_HEIGHT, NODE_RESIZE_MIN_WIDTH } from "../constants";
+import { useWorkflowInteractions } from "../hooks/use-interactions";
 
 export type NodeResizerProps = {
   id: string;
@@ -11,7 +11,7 @@ export type NodeResizerProps = {
 };
 
 export const NodeResizer = ({ id, nodeData, icon }: NodeResizerProps) => {
-  const { handleNodeResize } = useInteractions();
+  const { handleNodeResize } = useWorkflowInteractions();
   const store = useStoreApi();
   const { nodes } = store.getState();
   const node = nodes.find(n => n.id === id);

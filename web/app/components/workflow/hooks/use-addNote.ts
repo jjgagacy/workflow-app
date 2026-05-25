@@ -1,8 +1,8 @@
 import { useCallback } from "react"
-import { useWorkflowContext, useWorkflowStore } from "../../context"
-import { newCandidateNode } from "../../utils/node";
-import { CUSTOM_NODE_NAME, CUSTOM_NOTE_NODE_NAME } from "../../constants";
-import { NoteNodeData, NoteNodeTheme } from "../../components/note-node/types";
+import { useWorkflowContext, useWorkflowStore } from "../context"
+import { newCandidateNode } from "../utils/node";
+import { CUSTOM_NODE_NAME, CUSTOM_NOTE_NODE_NAME } from "../constants";
+import { NoteNodeData, NoteNodeTheme } from "../components/note-node/types";
 
 export const useAddNote = () => {
   const workflowStore = useWorkflowContext();

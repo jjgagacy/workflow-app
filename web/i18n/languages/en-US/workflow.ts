@@ -122,8 +122,52 @@ const translation = {
     knowledge: 'Knowledge'
   },
   'note-node': {
-    placeholder: 'Enter note content here...'
-  }
+    placeholder: 'Enter note content here...',
+    command: {
+      bold: 'Bold',
+      italic: 'Italic',
+      underline: 'Underline',
+      strikethrough: 'Strikethrough',
+      link: 'Link',
+      'bulleted-list': 'Bulleted List'
+    }
+  },
+  contextMenu: {
+    addNode: 'Add Node',
+    addNote: 'Add Note',
+    paste: 'Paste',
+    run: 'Run',
+    tidyUpFlow: 'Tidy up flow',
+    selectAll: 'Select All',
+    unselectAll: 'Unselect all'
+  },
+  nodeMenu: {
+    open: 'Open',
+    replace: 'Replace',
+    copy: 'Copy',
+    deactivate: 'Deactivate',
+    delete: 'Delete'
+  },
+  selectionMenu: {
+    copy: 'Copy',
+    tidyUp: 'Tidy up selection',
+    selectAll: 'Select All',
+    clearSelection: 'Clear Selection',
+    deactivate: 'Deactivate',
+    delete: 'Delete'
+  },
+  control: {
+    addNode: 'Add Node',
+    addNote: 'Add Note',
+    pointerMode: 'Pointer Mode',
+    handMode: 'Hand Mode',
+    tidyNodes: 'Tidy Nodes',
+    run: 'Run',
+    searchCommand: 'Search Command',
+    copy: 'Copy',
+    duplicate: 'Duplicate',
+    delete: 'Delete'
+  },
 };
 
 export default translation;

@@ -6,8 +6,10 @@ import { useCustomTheme } from "../../provider/customThemeProvider";
 import { getThemeBgClass, getThemeHoverClass, ThemeType } from "@/types/theme";
 import { useWorkflowStore } from "../context";
 import { ShortcutTooltip } from "../../base/tooltip/shortcut";
+import { useTranslation } from "react-i18next";
 
 export const Control = () => {
+  const { t } = useTranslation();
   const { activeColorTheme } = useCustomTheme();
   const setShowSidebar = useWorkflowStore(s => s.setShowSidebar);
   const showSidebar = useWorkflowStore(s => s.showSidebar);
@@ -16,7 +18,7 @@ export const Control = () => {
 
   return (
     <div className={cn('flex flex-col items-center rounded-md gap-2 bg-gray-100 dark:bg-gray-800 p-2')}>
-      <ShortcutTooltip label="Add Node" shortcut={{ keys: ['N'], metaKey: false }} placement="left">
+      <ShortcutTooltip label={t('workflow.control.addNode')} shortcut={{ keys: ['N'], metaKey: false }} placement="left">
         <div
           className={cn(`flex h-8 w-8 cursor-pointer items-center border border-[var(--border)] justify-center rounded-sm ${getThemeBgClass(activeColorTheme as ThemeType)} ${getThemeHoverClass(activeColorTheme as ThemeType)} transition-colors`)}
           onClick={() => setShowNodeSelector(true)}
@@ -24,7 +26,7 @@ export const Control = () => {
           <Plus className="h-4 w-4" />
         </div>
       </ShortcutTooltip>
-      <ShortcutTooltip label="Search Command" shortcut={{ keys: ['K'], metaKey: false }} placement="left">
+      <ShortcutTooltip label={t('workflow.control.searchCommand')} shortcut={{ keys: ['K'], metaKey: false }} placement="left">
         <div
           className={cn(`flex h-8 w-8 cursor-pointer items-center border border-[var(--border)] justify-center rounded-sm ${getThemeBgClass(activeColorTheme as ThemeType)} ${getThemeHoverClass(activeColorTheme as ThemeType)} transition-colors`)}
           onClick={() => setShowCommandPalette(true)}
@@ -32,14 +34,14 @@ export const Control = () => {
           <Search className="h-4 w-4" />
         </div>
       </ShortcutTooltip>
-      <Tooltip content="Add Comment" placement="left">
+      <Tooltip content={t('workflow.control.addNote')} placement="left">
         <div
           className={cn(`flex h-8 w-8 cursor-pointer items-center border border-[var(--border)] justify-center rounded-sm ${getThemeBgClass(activeColorTheme as ThemeType)} ${getThemeHoverClass(activeColorTheme as ThemeType)} transition-colors`)}
         >
           <Bookmark className="h-4 w-4" />
         </div>
       </Tooltip>
-      <Tooltip content="Run" placement="left">
+      <Tooltip content={t('workflow.control.run')} placement="left">
         <div
           className={cn(`flex h-8 w-8 cursor-pointer items-center border border-[var(--border)] justify-center rounded-sm ${getThemeBgClass(activeColorTheme as ThemeType)} ${getThemeHoverClass(activeColorTheme as ThemeType)} transition-colors`)}
           onClick={() => setShowSidebar(!showSidebar)}>

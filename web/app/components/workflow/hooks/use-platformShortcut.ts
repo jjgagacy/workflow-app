@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useDeviceSupport } from "../../app/hooks";
 import { useKeyPress } from "ahooks";
+import { isTargetInputArea } from "../utils/node";
 
 type PlatformShortcutOptions = {
   shiftKey?: boolean;
@@ -10,6 +11,7 @@ type PlatformShortcutOptions = {
   preventDefault?: boolean;
   exactMatch?: boolean;
   useCapture?: boolean;
+  enableOnInput?: boolean;
 };
 
 export const usePlatformShortcut = (
@@ -26,9 +28,10 @@ export const usePlatformShortcut = (
     preventDefault = true,
     exactMatch = true,
     useCapture = false,
+    enableOnInput = false,
   } = options || {};
 
-  // 修改：生成单个快捷键组合
+  // 生成单个快捷键组合
   const buildShortcut = (singleKey: string): string => {
     const keys: string[] = [];
 
@@ -41,7 +44,7 @@ export const usePlatformShortcut = (
     return keys.join('.');
   };
 
-  // 修改：根据 key 类型生成 shortcut（字符串或数组）
+  // 根据 key 类型生成 shortcut（字符串或数组）
   const shortcut = useMemo(() => {
     if (Array.isArray(key)) {
       return key.map(buildShortcut);
@@ -49,8 +52,13 @@ export const usePlatformShortcut = (
     return buildShortcut(key);
   }, [altKey, ctrlKey, key, metaKey, modKey, shiftKey]);
 
-  // useKeyPress 本身就支持数组，直接传入即可
   useKeyPress(shortcut, (event) => {
+    const target = event.target as HTMLElement | null;
+
+    if (!enableOnInput && target && isTargetInputArea(target)) {
+      return;
+    }
+
     if (preventDefault) event.preventDefault();
     onPress(event);
   }, { exactMatch, useCapture });

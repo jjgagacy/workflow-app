@@ -27,6 +27,13 @@
   --xy-edge-label-color-default: #505050;
 }
 
+html[data-theme="dark"] {
+  --xy-node-boxshadow-dark:
+    0px 3.54px 4.55px 4px #ffffff08,
+    0px 3.54px 4.55px 4px #ffffff12,
+    0px 0.51px 1.01px 4px #ffffff20;
+}
+
 .react-flow.dark {
   --xy-node-boxshadow-default:
     0px 3.54px 4.55px 0px rgba(255, 255, 255, 0.05),

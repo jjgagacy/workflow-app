@@ -28,9 +28,10 @@ import { SelectionContextMenu } from "./contextmenu/selection";
 import { CandidateNode } from "./components/candidate-node";
 import { CustomNoteNode } from "./components/note-node";
 import { useEventListener } from "ahooks";
-import { useInteractions } from "./hooks/nodes/use-interactions";
 import { setAutoFreeze } from "immer";
 import { useWorkflowShortcut } from "./hooks/use-workflowShortcut";
+import { useWorkflowInteractions } from "./hooks/use-interactions";
+import { Tools } from "./components/tools";
 
 const customGetNodesBounds = (nodes: any[]) => {
   if (nodes.length === 0) return { minX: 0, minY: 0, maxX: 0, maxY: 0, width: 0, height: 0 };
@@ -78,6 +79,7 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   const setShowNodeSelector = useWorkflowStore(s => s.setShowNodeSelector);
   const showCommandPalette = useWorkflowStore(s => s.showCommandPalette);
   const setShowCommandPalette = useWorkflowStore(s => s.setShowCommandPalette);
+  const interactionMode = useWorkflowStore(s => s.interactionMode);
   const setMousePosition = useWorkflowStore(s => s.setMousePosition);
   const nodeSelectorWrapperRef = useRef<HTMLDivElement>(null);
   const { handleContextMenu, handleCancelContextMenu } = usePanelContextMenu(containerRef);
@@ -100,7 +102,7 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
     handleNodeSelectionDragStop,
     handleNodeSelectionStart,
     handleNodeSelectionEnd,
-  } = useInteractions();
+  } = useWorkflowInteractions();
 
   const onNodesChange = useCallback(
     (changes: any) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
@@ -144,7 +146,7 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   };
 
   useNodeSelectorClose(showNodeSelector, setShowNodeSelector, nodeSelectorWrapperRef);
-  useKeyboardShortcut('n', () => setShowNodeSelector(!showNodeSelector), { ctrlKey: false });
+  useKeyboardShortcut('n', () => setShowNodeSelector(true), { ctrlKey: false });
   useKeyboardShortcut('k', () => setShowCommandPalette(!showCommandPalette), { ctrlKey: false });
 
   useEventListener('mousemove', (e) => {
@@ -190,6 +192,10 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
           connectionMode={ConnectionMode.Loose}
           colorMode={activeTheme === 'dark' ? 'dark' : 'light'}
           defaultEdgeOptions={defaultEdgeOptions}
+          panOnDrag={interactionMode === 'hand'}
+          selectionOnDrag={interactionMode === 'pointer'}
+          nodesDraggable={interactionMode === 'pointer'}
+          elementsSelectable={interactionMode === 'pointer'}
           onPaneContextMenu={handleContextMenu as any}
           onNodeContextMenu={handleNodeContextMenu as any}
           onSelectionContextMenu={handleSelectionContextMenu as any}
@@ -209,14 +215,25 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
           onSelectionDragStop={handleNodeSelectionDragStop}
           onSelectionEnd={handleNodeSelectionEnd}
           onSelectionStart={handleNodeSelectionStart}
-          className="w-full h-full relative z-0"
+          className={`w-full h-full relative z-0 ${interactionMode === 'hand' ? 'cursor-grab' : 'cursor-default'}`}
         >
-          <Background />
+          <Background
+            gap={[14, 14]}
+            size={2}
+            color="var(--color-workflow-color)"
+            bgColor="var(--color-workflow-bg)"
+          />
           <Panel position="top-left">
-            <ViewportWithAnnotation />
+            <Tools />
           </Panel>
-          <Controls />
-          <MiniMap zoomable pannable />
+          <MiniMap
+            color="var(--color-workflow-color)"
+            bgColor="var(--color-workflow-bg)"
+            maskColor="var(--color-workflow-mask-color)"
+            nodeBorderRadius={5}
+            style={{ width: 120, height: 80 }}
+            zoomable
+            pannable />
         </ReactFlow>
         <SlideTransition show={showNodeSelector}>
           <div ref={nodeSelectorWrapperRef}>

@@ -12,14 +12,14 @@ import { Toolbar } from "./editor/toolbar";
 import { THEME_COLORS } from "./constants";
 import NodeResizer from "../node-resizer";
 import { Grip } from "lucide-react";
-import { useInteractions } from "../../hooks/nodes/use-interactions";
+import { useWorkflowInteractions } from "../../hooks/use-interactions";
 
 
 export const CustomNoteNode = ({ id, data }: NodeProps<Node<NoteNodeData>>) => {
   // const candidateNode = useWorkflowStore(s => s.candidateNode);
   const { t } = useTranslation();
   const { onEditorChange, onThemeChange } = useNote(id);
-  const { handleNodeDelete } = useInteractions();
+  const { handleNodeDelete } = useWorkflowInteractions();
   const theme = data.theme;
   const ref = useRef<HTMLDivElement | null>(null);
   const store = useStoreApi();
@@ -29,7 +29,7 @@ export const CustomNoteNode = ({ id, data }: NodeProps<Node<NoteNodeData>>) => {
   return (
     <div
       className={cn(
-        'relative flex flex-col items-start border border-[var(--border)] rounded-md hover:shadow-lg hover:ring-1 hover:ring-gray-200 transition-colors',
+        'relative flex flex-col items-start border border-[var(--border)] rounded-md hover:shadow-lg hover:ring-1 hover:ring-gray-200 hover:dark:ring-gray-700 transition-colors',
         THEME_COLORS[theme]?.bg,
         THEME_COLORS[theme]?.border,
         // node?.selected && 'ring-2 ring-primary',

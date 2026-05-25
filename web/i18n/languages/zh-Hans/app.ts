@@ -100,6 +100,9 @@ const translation = {
     tools: '工具',
     ai: 'AI',
     core: '核心',
+  },
+  nodeList: {
+    searchPlaceholder: '搜索节点和工具...',
   }
 };
 export default translation;

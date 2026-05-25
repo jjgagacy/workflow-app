@@ -8,6 +8,7 @@ import { MenuContainer } from ".";
 import { ContextMenuItem } from "./action/menu-item";
 import { CheckSquare, Copy, Eraser, PowerSquare, WandSparkles, X } from "lucide-react";
 import { Divider } from "../../base/divider";
+import { useTranslation } from "react-i18next";
 
 interface SelectionContextMenuProps {
   containerRef?: React.RefObject<HTMLElement | null>;
@@ -15,6 +16,7 @@ interface SelectionContextMenuProps {
 
 export const SelectionContextMenu = memo(({ containerRef }: SelectionContextMenuProps) => {
   const ref = useRef(null);
+  const { t } = useTranslation();
   const selectionMenu = useWorkflowStore(s => s.selectionMenu);
   const { handleSelectionContextMenu, handleCancelSelectionContextMenu } = useSelectionContextMenu(containerRef || ref);
   const { handleCancelContextMenu } = usePanelContextMenu(containerRef || ref);
@@ -45,7 +47,7 @@ export const SelectionContextMenu = memo(({ containerRef }: SelectionContextMenu
       }}
       ref={ref}>
       <ContextMenuItem
-        label="Copy"
+        label={t('workflow.selectionMenu.copy')}
         icon={<Copy />}
         shortcut={{ keys: ['C'], ctrlKey: true }}
         onClick={() => {
@@ -54,33 +56,33 @@ export const SelectionContextMenu = memo(({ containerRef }: SelectionContextMenu
       />
       <Divider />
       <ContextMenuItem
-        label="Tidy up selection"
+        label={t('workflow.selectionMenu.tidyUpSelection')}
         icon={<WandSparkles />}
         onClick={() => {
         }}
       />
       <ContextMenuItem
-        label="Select All"
+        label={t('workflow.selectionMenu.selectAll')}
         icon={<CheckSquare />}
         onClick={() => {
         }}
       />
       <ContextMenuItem
-        label="Clear Selection"
+        label={t('workflow.selectionMenu.clearSelection')}
         icon={<Eraser />}
         onClick={() => {
         }}
       />
       <Divider />
       <ContextMenuItem
-        label="Deactivate"
+        label={t('workflow.selectionMenu.deactivate')}
         icon={<PowerSquare />}
         shortcut={{ keys: ['D'] }}
         onClick={() => {
         }}
       />
       <ContextMenuItem
-        label="Delete"
+        label={t('workflow.selectionMenu.delete')}
         icon={<X />}
         onClick={() => {
 

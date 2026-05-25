@@ -66,33 +66,38 @@
   --color-bg-sticky: oklch(0.96 0.008 70);
   --color-border-sticky: oklch(0.88 0.012 65);
   /* gold - 金色 */
-  --sticky-color-bg-variant-1: oklch(0.85 0.08 75);
-  --sticky-color-border-variant-1: oklch(0.75 0.12 75);
+  --sticky-color-bg-variant-1: oklch(0.98 0.03 75);
+  --sticky-color-border-variant-1: oklch(0.92 0.05 75);
 
   /* red - 红色 */
-  --sticky-color-bg-variant-2: oklch(0.88 0.09 22);
-  --sticky-color-border-variant-2: oklch(0.78 0.14 22);
+  --sticky-color-bg-variant-2: oklch(0.98 0.03 22);
+  --sticky-color-border-variant-2: oklch(0.92 0.05 22);
 
   /* green - 绿色 */
-  --sticky-color-bg-variant-3: oklch(0.88 0.06 145);
-  --sticky-color-border-variant-3: oklch(0.75 0.10 145);
+  --sticky-color-bg-variant-3: oklch(0.98 0.02 145);
+  --sticky-color-border-variant-3: oklch(0.92 0.04 145);
 
   /* blue - 蓝色 */
-  --sticky-color-bg-variant-4: oklch(0.88 0.06 250);
-  --sticky-color-border-variant-4: oklch(0.75 0.10 250);
+  --sticky-color-bg-variant-4: oklch(0.98 0.02 250);
+  --sticky-color-border-variant-4: oklch(0.92 0.04 250);
 
   /* purple - 紫色 */
-  --sticky-color-bg-variant-5: oklch(0.92 0.04 280);
-  --sticky-color-border-variant-5: oklch(0.82 0.08 280);
+  --sticky-color-bg-variant-5: oklch(0.98 0.02 280);
+  --sticky-color-border-variant-5: oklch(0.93 0.03 280);
 
   /* neutral - 中性 */
-  --sticky-color-bg-variant-6: oklch(0.97 0 0);
-  --sticky-color-border-variant-6: oklch(0.70 0 0);
+  --sticky-color-bg-variant-6: oklch(0.99 0 0);
+  --sticky-color-border-variant-6: oklch(0.90 0 0);
+
+  --color-workflow-bg: klch(96.2% 0.008 260 / 1);
+  --color-workflow-color: oklch(58.9% 0.045 270 / 0.15);
+  --color-workflow-mask-color: oklch(0% 0 0 / 0.2);
 }
 
 .test {
   --color-bg-sticky: oklch(0.96 0.008 70);
   --color-border-sticky: oklch(0.88 0.012 65);
+  --color-workflow-color: oklch(58.9% 0.045 270 / 0.15);
 }
 
 /* @theme inline {
