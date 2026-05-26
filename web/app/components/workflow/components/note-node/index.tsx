@@ -19,7 +19,7 @@ export const CustomNoteNode = ({ id, data }: NodeProps<Node<NoteNodeData>>) => {
   // const candidateNode = useWorkflowStore(s => s.candidateNode);
   const { t } = useTranslation();
   const { onEditorChange, onThemeChange } = useNote(id);
-  const { handleNodeDelete } = useWorkflowInteractions();
+  const { handleNodeDelete, handleNodesCopy, handleNodesDuplicate } = useWorkflowInteractions();
   const theme = data.theme;
   const ref = useRef<HTMLDivElement | null>(null);
   const store = useStoreApi();
@@ -53,9 +53,9 @@ export const CustomNoteNode = ({ id, data }: NodeProps<Node<NoteNodeData>>) => {
             <div className="absolute left-1/2 -translate-x-1/2 top-[-35px] z-10 flex items-center gap-1 px-2 py-0.5 rounded-md bg-background border border-[var(--border)] text-xs group-hover:opacity-100 transition-opacity shadow-sm">
               <Toolbar
                 theme={theme}
-                onCopy={() => { }}
+                onCopy={() => handleNodesCopy(id)}
                 onDelete={() => handleNodeDelete(id)}
-                onDuplicate={() => { }}
+                onDuplicate={() => handleNodesDuplicate(id)}
                 onThemeChange={onThemeChange}
               />
             </div>

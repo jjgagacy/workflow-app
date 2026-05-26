@@ -9,6 +9,7 @@ import { ContextMenuItem } from "./action/menu-item";
 import { Copy, FolderOpen, Power, PowerSquare, Replace, X } from "lucide-react";
 import { Divider } from "../../base/divider";
 import { useTranslation } from "react-i18next";
+import { useWorkflowInteractions } from "../hooks/use-interactions";
 
 interface NodeContextMenuProps {
   containerRef?: React.RefObject<HTMLElement | null>;
@@ -22,6 +23,7 @@ export const NodeContextMenu = memo(({ containerRef }: NodeContextMenuProps) => 
   const { handleNodeContextMenu, handleCancelNodeContextMenu } = useNodeContextMenu(containerRef || ref);
   const { handleCancelContextMenu } = usePanelContextMenu(containerRef || ref);
   const { handleCancelSelectionContextMenu } = useSelectionContextMenu(containerRef || ref);
+  const { handleNodesCopy } = useWorkflowInteractions();
 
   useEffect(() => {
     if (nodeMenu.visible) {
@@ -68,7 +70,10 @@ export const NodeContextMenu = memo(({ containerRef }: NodeContextMenuProps) => 
         icon={<Copy />}
         shortcut={{ keys: ['C'], ctrlKey: true }}
         onClick={() => {
-
+          if (nodeMenu.nodeId) {
+            handleNodesCopy(nodeMenu.nodeId);
+          }
+          handleCancelNodeContextMenu();
         }}
       />
       <Divider />

@@ -9,6 +9,7 @@ import { ContextMenuItem } from "./action/menu-item";
 import { CheckSquare, Copy, Eraser, PowerSquare, WandSparkles, X } from "lucide-react";
 import { Divider } from "../../base/divider";
 import { useTranslation } from "react-i18next";
+import { useWorkflowInteractions } from "../hooks/use-interactions";
 
 interface SelectionContextMenuProps {
   containerRef?: React.RefObject<HTMLElement | null>;
@@ -21,6 +22,7 @@ export const SelectionContextMenu = memo(({ containerRef }: SelectionContextMenu
   const { handleSelectionContextMenu, handleCancelSelectionContextMenu } = useSelectionContextMenu(containerRef || ref);
   const { handleCancelContextMenu } = usePanelContextMenu(containerRef || ref);
   const { handleNodeContextMenu, handleCancelNodeContextMenu } = useNodeContextMenu(containerRef || ref);
+  const { handleNodesCopy, handleNodesSelectAll, handleNodesUnselectAll } = useWorkflowInteractions();
 
   useEffect(() => {
     if (selectionMenu.visible) {
@@ -51,7 +53,8 @@ export const SelectionContextMenu = memo(({ containerRef }: SelectionContextMenu
         icon={<Copy />}
         shortcut={{ keys: ['C'], ctrlKey: true }}
         onClick={() => {
-
+          handleNodesCopy();
+          handleCancelSelectionContextMenu();
         }}
       />
       <Divider />
@@ -65,12 +68,16 @@ export const SelectionContextMenu = memo(({ containerRef }: SelectionContextMenu
         label={t('workflow.selectionMenu.selectAll')}
         icon={<CheckSquare />}
         onClick={() => {
+          handleNodesSelectAll();
+          handleCancelSelectionContextMenu();
         }}
       />
       <ContextMenuItem
         label={t('workflow.selectionMenu.clearSelection')}
         icon={<Eraser />}
         onClick={() => {
+          handleNodesUnselectAll();
+          handleCancelSelectionContextMenu();
         }}
       />
       <Divider />

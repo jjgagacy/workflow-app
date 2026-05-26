@@ -1,3 +1,4 @@
+import { useReactFlow } from "@xyflow/react";
 import { memo, useEffect, useRef } from "react";
 import { useWorkflowStore } from "../context";
 import { RIGHT_MENU_WIDTH, usePanelContextMenu } from "../hooks/use-panelMenu";
@@ -10,6 +11,9 @@ import { Divider } from "../../base/divider";
 import { cn } from "@/utils/classnames";
 import { useAddNote } from "../hooks/use-addNote";
 import { useTranslation } from "react-i18next";
+import { useWorkflowInteractions } from "../hooks/use-interactions";
+import type { Edge, Node } from "../types";
+import { getLayoutedNodes } from "../utils/layout";
 
 interface ContextMenuProps {
   containerRef?: React.RefObject<HTMLElement | null>;
@@ -42,6 +46,23 @@ export const ContextMenu = memo(({ containerRef }: ContextMenuProps) => {
   const { handleCancelNodeContextMenu } = useNodeContextMenu(containerRef || ref);
   const { handleCancelSelectionContextMenu } = useSelectionContextMenu(containerRef || ref);
   const { addNote } = useAddNote();
+  const { handleNodesPaste, handleNodesSelectAll, handleNodesUnselectAll } = useWorkflowInteractions();
+  const { getNodes, getEdges, setNodes, fitView } = useReactFlow<Node, Edge>();
+  const setShowNodeSelector = useWorkflowStore(s => s.setShowNodeSelector);
+
+  const handleTidyNodes = () => {
+    const nodes = getNodes();
+
+    if (!nodes.length) {
+      return;
+    }
+
+    setNodes(getLayoutedNodes(nodes, getEdges()));
+    handleCancelContextMenu();
+    requestAnimationFrame(() => {
+      void fitView({ padding: 0.18, duration: 240 });
+    });
+  };
 
   useEffect(() => {
     if (contextMenu.visible) {
@@ -73,7 +94,8 @@ export const ContextMenu = memo(({ containerRef }: ContextMenuProps) => {
         icon={<PlusCircle />}
         shortcut={{ keys: ['N'] }}
         onClick={() => {
-          console.log("Add Node");
+          setShowNodeSelector(true);
+          handleCancelContextMenu();
         }}
       />
       <ContextMenuItem
@@ -89,7 +111,8 @@ export const ContextMenu = memo(({ containerRef }: ContextMenuProps) => {
         icon={<Square />}
         shortcut={{ keys: ['V'], metaKey: true }}
         onClick={() => {
-          console.log("Paste");
+          handleNodesPaste();
+          handleCancelContextMenu();
         }}
       />
       <ContextMenuItem
@@ -105,20 +128,23 @@ export const ContextMenu = memo(({ containerRef }: ContextMenuProps) => {
       <ContextMenuItem
         label={t('workflow.contextMenu.tidyUpFlow')}
         icon={<WandSparkles />}
-        onClick={() => {
-        }}
+        onClick={handleTidyNodes}
       />
       <Divider />
       <ContextMenuItem
         label={t('workflow.contextMenu.selectAll')}
         icon={<CheckSquare />}
         onClick={() => {
+          handleNodesSelectAll();
+          handleCancelContextMenu();
         }}
       />
       <ContextMenuItem
         label={t('workflow.contextMenu.unselectAll')}
         icon={<Eraser />}
         onClick={() => {
+          handleNodesUnselectAll();
+          handleCancelContextMenu();
         }}
       />
     </MenuContainer>

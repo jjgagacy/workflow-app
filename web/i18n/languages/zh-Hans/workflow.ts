@@ -137,7 +137,7 @@ const translation = {
     addNote: '添加备注',
     paste: '粘贴',
     run: '运行',
-    tidyUpFlow: '整理流程',
+    tidyUpFlow: '整理节点',
     selectAll: '全选',
     unselectAll: '取消全选'
   },

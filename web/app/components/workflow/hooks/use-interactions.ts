@@ -4,7 +4,9 @@ import { useCallback } from "react";
 import { produce } from "immer";
 import { useWorkflow } from "./use-workflow";
 import { useWorkflowContext } from "../context";
-import { NodeType } from "../types";
+import { Node, NodeType } from "../types";
+
+const PASTE_OFFSET = 32;
 
 export const useWorkflowInteractions = () => {
   const { t } = useTranslation();
@@ -17,6 +19,57 @@ export const useWorkflowInteractions = () => {
   const {
     onSelectNodes
   } = useWorkflow();
+
+  const cloneNodes = useCallback((sourceNodes: Node[], options?: {
+    targetPosition?: { x: number; y: number };
+    updateClipboard?: boolean;
+  }) => {
+    const { nodes } = store.getState();
+    const { setNodes } = reactFlow;
+    const { setCopiedNodes } = workflowContext.getState();
+
+    if (!sourceNodes.length)
+      return;
+
+    const minX = Math.min(...sourceNodes.map(node => node.position.x));
+    const minY = Math.min(...sourceNodes.map(node => node.position.y));
+    const targetX = options?.targetPosition?.x ?? minX + PASTE_OFFSET;
+    const targetY = options?.targetPosition?.y ?? minY + PASTE_OFFSET;
+    const idSeed = Date.now();
+    const idMap = new Map(sourceNodes.map((node, index) => [node.id, `node-${idSeed}-${index}`]));
+
+    const clonedNodes = sourceNodes.map((node) => {
+      const nextNode = structuredClone(node) as Node;
+      nextNode.id = idMap.get(node.id) || `node-${Date.now()}`;
+      nextNode.position = {
+        x: targetX + (node.position.x - minX),
+        y: targetY + (node.position.y - minY),
+      };
+      nextNode.parentId = node.parentId ? idMap.get(node.parentId) : undefined;
+      nextNode.selected = true;
+      nextNode.dragging = false;
+      nextNode.data = {
+        ...nextNode.data,
+        candidate: false,
+      };
+
+      return nextNode;
+    });
+
+    const nextNodes = produce(nodes as Node[], (draft) => {
+      draft.forEach((node) => {
+        node.selected = false;
+      });
+
+      draft.push(...clonedNodes);
+    });
+
+    setNodes(nextNodes);
+
+    if (options?.updateClipboard) {
+      setCopiedNodes(clonedNodes);
+    }
+  }, [reactFlow, store, workflowContext]);
 
   const handleNodeMouseEnter = useCallback<NodeMouseHandler>((_, node) => {
     if (workflowReadonly())
@@ -156,7 +209,92 @@ export const useWorkflowInteractions = () => {
     selectedNodes.forEach(node => {
       handleNodeDelete(node.id);
     });
-  }, [store, workflowContext])
+  }, [store, workflowContext]);
+
+  const handleNodesCopy = useCallback((id?: string) => {
+    if (workflowReadonly())
+      return;
+    const { nodes } = store.getState();
+    const { setCopiedNodes } = workflowContext.getState();
+    const copiedNodes = (id
+      ? nodes.filter(node => node.id === id)
+      : nodes.filter(node => node.selected && node.data.type != NodeType.Start)) as Node[];
+
+    setCopiedNodes(copiedNodes);
+
+  }, [store, workflowContext]);
+
+  const handleNodesPaste = useCallback(() => {
+    if (workflowReadonly())
+      return;
+
+    const { screenToFlowPosition } = reactFlow;
+    const { copiedNodes, mousePosition } = workflowContext.getState();
+
+    if (!copiedNodes.length)
+      return;
+
+    const minX = Math.min(...copiedNodes.map(node => node.position.x));
+    const minY = Math.min(...copiedNodes.map(node => node.position.y));
+    const baseX = (mousePosition.x + mousePosition.offsetX) || minX + PASTE_OFFSET;
+    const baseY = (mousePosition.y + mousePosition.offsetY) || minY + PASTE_OFFSET;
+    const { x, y } = screenToFlowPosition({ x: baseX, y: baseY });
+
+    cloneNodes(copiedNodes, {
+      targetPosition: { x, y },
+      updateClipboard: true,
+    });
+  }, [cloneNodes, reactFlow, workflowContext]);
+
+  const handleNodesDuplicate = useCallback((id?: string) => {
+    if (workflowReadonly())
+      return;
+
+    const { nodes } = store.getState();
+    const duplicatedNodes = (id
+      ? nodes.filter(node => node.id === id)
+      : nodes.filter(node => node.selected && node.data.type != NodeType.Start)) as Node[];
+
+    cloneNodes(duplicatedNodes);
+  }, [cloneNodes, store, workflowReadonly]);
+
+  const handleNodesSelectAll = useCallback(() => {
+    if (workflowReadonly())
+      return;
+
+    const { nodes } = store.getState();
+    const { setNodes } = reactFlow;
+
+    if (!nodes.length)
+      return;
+
+    const newNodes = produce(nodes, draft => {
+      draft.forEach((node) => {
+        node.selected = true;
+      });
+    });
+
+    setNodes(newNodes);
+  }, [reactFlow, store, workflowReadonly]);
+
+  const handleNodesUnselectAll = useCallback(() => {
+    if (workflowReadonly())
+      return;
+
+    const { nodes } = store.getState();
+    const { setNodes } = reactFlow;
+
+    if (!nodes.length)
+      return;
+
+    const newNodes = produce(nodes, draft => {
+      draft.forEach((node) => {
+        node.selected = false;
+      });
+    });
+
+    setNodes(newNodes);
+  }, [reactFlow, store, workflowReadonly]);
 
   return {
     handleNodeMouseEnter,
@@ -177,6 +315,11 @@ export const useWorkflowInteractions = () => {
     handleNodeSelectionEnd,
     handleNodeResize,
     handleNodeDelete,
-    handleNodesDelete
+    handleNodesDelete,
+    handleNodesCopy,
+    handleNodesPaste,
+    handleNodesDuplicate,
+    handleNodesSelectAll,
+    handleNodesUnselectAll,
   }
 }

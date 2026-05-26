@@ -1,17 +1,63 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { usePlatformShortcut } from "./use-platformShortcut";
 import { isTargetInputArea } from "../utils/node";
 import { useWorkflowInteractions } from "./use-interactions";
 import { useReactFlow } from '@xyflow/react';
+import { WORKFLOW_VIEWPORT_EVENT, type WorkflowViewportAction } from "../utils/viewport";
 
 export const useWorkflowShortcut = () => {
 
-  const { handleNodesDelete } = useWorkflowInteractions();
+  const { handleNodesDelete, handleNodesCopy, handleNodesPaste, handleNodesDuplicate } = useWorkflowInteractions();
   const reactFlow = useReactFlow();
 
   const isShortcutAllowed = useCallback((event: KeyboardEvent) => {
     return !isTargetInputArea(event.target as HTMLElement);
   }, []);
+
+  const handleFitView = useCallback(() => {
+    void reactFlow.fitView({ padding: 0.18, duration: 240 });
+  }, [reactFlow]);
+
+  const handleZoomOut = useCallback(() => {
+    void reactFlow.zoomOut({ duration: 180 });
+  }, [reactFlow]);
+
+  const handleZoomIn = useCallback(() => {
+    void reactFlow.zoomIn({ duration: 180 });
+  }, [reactFlow]);
+
+  const handleResetZoom = useCallback(() => {
+    void reactFlow.zoomTo(1, { duration: 180 });
+  }, [reactFlow]);
+
+  useEffect(() => {
+    const handleViewportAction = (event: Event) => {
+      const { detail } = event as CustomEvent<WorkflowViewportAction>;
+
+      switch (detail) {
+        case 'fit-view':
+          handleFitView();
+          break;
+        case 'zoom-out':
+          handleZoomOut();
+          break;
+        case 'zoom-in':
+          handleZoomIn();
+          break;
+        case 'reset-zoom':
+          handleResetZoom();
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener(WORKFLOW_VIEWPORT_EVENT, handleViewportAction);
+
+    return () => {
+      window.removeEventListener(WORKFLOW_VIEWPORT_EVENT, handleViewportAction);
+    };
+  }, [handleFitView, handleResetZoom, handleZoomIn, handleZoomOut]);
 
   usePlatformShortcut('s', (event) => {
     event.preventDefault();
@@ -20,17 +66,19 @@ export const useWorkflowShortcut = () => {
 
   usePlatformShortcut('c', (event) => {
     event.preventDefault();
-    console.log('Workflow copied!');
+    handleNodesCopy();
   }, { useCapture: true });
 
   usePlatformShortcut('v', (event) => {
     event.preventDefault();
-    console.log('Workflow pasted!');
+    handleNodesPaste();
   }, { useCapture: true });
 
   usePlatformShortcut('d', (event) => {
+    if (!isShortcutAllowed(event))
+      return;
     event.preventDefault();
-    console.log('Workflow duplicated!');
+    handleNodesDuplicate();
   }, { useCapture: true });
 
   usePlatformShortcut('r', (event) => {
@@ -55,22 +103,22 @@ export const useWorkflowShortcut = () => {
 
   usePlatformShortcut('1', (event) => {
     event.preventDefault();
-    console.log('Workflow fitview!');
+    handleFitView();
   }, { useCapture: true });
 
   usePlatformShortcut('dash', (event) => {
     event.preventDefault();
-    console.log('Workflow zoom out!');
+    handleZoomOut();
   }, { useCapture: true });
 
   usePlatformShortcut('equalsign', (event) => {
     event.preventDefault();
-    console.log('Workflow zoom in!');
+    handleZoomIn();
   }, { useCapture: true });
 
   usePlatformShortcut('0', (event) => {
     event.preventDefault();
-    console.log('Workflow reset zoom!');
+    handleResetZoom();
   }, { useCapture: true });
 
   usePlatformShortcut(['delete', 'backspace'], (event) => {

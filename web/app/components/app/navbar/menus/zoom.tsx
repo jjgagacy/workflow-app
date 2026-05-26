@@ -4,20 +4,21 @@ import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/r
 import { ChevronDownIcon, Maximize, ZoomIn, ZoomOut } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Fragment } from "react/jsx-runtime";
+import { dispatchWorkflowViewportAction } from "@/app/components/workflow/utils/viewport";
 
 export const ZoomControlsMenu = () => {
   const { t } = useTranslation();
   const { activeColorTheme } = useCustomTheme();
   const onZoomIn = () => {
-
+    dispatchWorkflowViewportAction('zoom-in');
   }
 
   const onZoomOut = () => {
-
+    dispatchWorkflowViewportAction('zoom-out');
   }
 
   const onResetZoom = () => {
-
+    dispatchWorkflowViewportAction('reset-zoom');
   }
 
   return (
