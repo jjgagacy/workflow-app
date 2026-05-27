@@ -16,13 +16,13 @@
   --xy-node-border-default: 1px solid #ededed;
 
   --xy-node-boxshadow-default:
-    0px 3.54px 4.55px 4px #00000005, 0px 3.54px 4.55px 4px #0000000d,
-    0px 0.51px 1.01px 4px #0000001a;
+    0px 3.54px 4.55px 4px #28282805,
+    0px 0.51px 1.01px 4px #2424241a;
 
   --xy-node-border-radius-default: 8px;
 
-  --xy-handle-background-color-default: #ffffff;
-  --xy-handle-border-color-default: #aaaaaa;
+  --xy-handle-background-color-default: transparent;
+  --xy-handle-border-color-default: transparent;
 
   --xy-edge-label-color-default: #505050;
 }

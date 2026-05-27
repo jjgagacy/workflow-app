@@ -1,5 +1,5 @@
 import { ExtendedTabOptions, Tabs } from "@/app/components/base/tabs";
-import { NodeCatalog, NodeCategory, NodeCategoryType } from "../../types";
+import { NodeCatalog, NodeCategory, NodeCategoryType, NodeCategoryProps } from "../../types";
 import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
 import { SearchInput } from "./search-input";
@@ -7,7 +7,7 @@ import { SearchResult } from "./search-result";
 
 interface NodeListPanelProps {
   nodes?: NodeCatalog[];
-  onSelectNode?: (node: NodeCatalog) => void;
+  onSelectNode?: (node: NodeCatalog, nodeTypeValue?: NodeCategoryProps) => void;
 }
 
 export const NodeListPanel = ({ nodes = [], onSelectNode }: NodeListPanelProps) => {

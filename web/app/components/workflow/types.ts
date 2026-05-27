@@ -34,6 +34,7 @@ export type NodeData<T = {}> = {
   size?: Dimensions;
   position?: XYPosition;
   candidate?: boolean;
+  icon?: React.ReactNode;
 } & T;
 
 export type Node<T = {}> = ReactFlowNode<NodeData<T>>;
@@ -41,14 +42,17 @@ export type Node<T = {}> = ReactFlowNode<NodeData<T>>;
 export type Edge<T = {}> = ReactFlowEdge<{
   sourceType: NodeType;
   targetType: NodeType;
-} & T>; export enum NodeCategory {
+} & T>;
+
+export enum NodeCategory {
   FLOW = 'flow',
   TOOLS = 'tools',
   AI = 'ai',
   CORE = 'core'
 }
 
-export type NodeCategoryType = NodeCategory.FLOW |
+export type NodeCategoryType =
+  NodeCategory.FLOW |
   NodeCategory.TOOLS |
   NodeCategory.AI |
   NodeCategory.CORE;
@@ -72,3 +76,31 @@ export interface NodeCatalog extends BaseNodeType {
   section?: string;
 }
 
+export type NodeCategoryFlowProps = {
+
+}
+
+export type NodeCategoryToolsProps = {
+  provider: string;
+  tool: string;
+  providerName: string;
+  toolName: string;
+  label: string;
+  params: Record<string, any>;
+  paramSchema: Record<string, any>;
+  outputSchema: Record<string, any>;
+}
+
+export type NodeCategoryAIProps = {
+
+}
+
+export type NodeCategoryCoreProps = {
+
+}
+
+export type NodeCategoryProps =
+  NodeCategoryFlowProps |
+  NodeCategoryToolsProps |
+  NodeCategoryAIProps |
+  NodeCategoryCoreProps;

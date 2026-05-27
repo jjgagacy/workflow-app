@@ -25,7 +25,10 @@ export function SearchResult({ groupedNodes, onSelectNode }: SearchResultProps) 
             {sectionNodes.map((node) => (
               <div
                 key={node.id}
-                onClick={() => onSelectNode?.(node)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onSelectNode?.(node)
+                }}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer ${getThemeHoverClass(activeColorTheme as ThemeType)} transition-colors group`}
               >
                 {/* 节点图标 */}

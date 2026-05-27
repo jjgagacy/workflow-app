@@ -6,6 +6,7 @@ import { useEventListener } from "ahooks";
 import { produce } from "immer";
 import { Node } from "../types";
 import { NoteNodeData } from "./note-node/types";
+import { CustomNode } from "./custom-node";
 
 export const CandidateNode = () => {
   const store = useStoreApi();
@@ -47,6 +48,11 @@ export const CandidateNode = () => {
       className="z-10 absolute"
       style={{ left: mousePosition.x, top: mousePosition.y, transform: `translate(-50%, -50%) scale(${zoom})` }}
     >
+      {
+        candidateNode.type !== CUSTOM_NOTE_NODE_NAME && (
+          <CustomNode {...candidateNode as any} />
+        )
+      }
       {
         candidateNode.type === CUSTOM_NOTE_NODE_NAME && (
           <CustomNoteNode {...candidateNode as any} />
