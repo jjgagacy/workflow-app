@@ -1,7 +1,7 @@
 import { useAvailableNodes } from "../hooks/use-nodesData";
 import { NodeListPanel } from "./panel/nodeListPanel";
 import { NodeCatalog, NodeCategoryProps } from "../types";
-import { isSupportedCatalogNode, newCandidateNode, resolveCatalogNode } from "../utils/node";
+import { getCatalogNodeIconColor, isSupportedCatalogNode, newCandidateNode, resolveCatalogNode } from "../utils/node";
 import { useWorkflowStore } from "../context";
 
 export const NodeListSelector = () => {
@@ -24,6 +24,7 @@ export const NodeListSelector = () => {
         description: node.description,
         candidate: true,
         icon: node.icon,
+        iconColor: getCatalogNodeIconColor(node),
       },
       position: {
         x: 0,

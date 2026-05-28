@@ -92,7 +92,6 @@ export const SearchCommandPalette = ({
     if (item.handler) {
       item.handler();
     }
-    console.log('Selected command:', item.title);
     closePalette();
   }, [navigateToChildren, closePalette]);
 

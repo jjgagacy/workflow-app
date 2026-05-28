@@ -168,6 +168,43 @@ const translation = {
     duplicate: 'Duplicate',
     delete: 'Delete'
   },
+  operator: {
+    'string eq': 'Equals',
+    'string not_eq': 'Does not equal',
+    'string contains': 'Contains',
+    'string not_contains': 'Does not contain',
+    'string starts_with': 'Starts with',
+    'string ends_with': 'Ends with',
+    'string is_empty': 'Is empty',
+    'string is_not_empty': 'Is not empty',
+    'number eq': 'Equals',
+    'number not_eq': 'Does not equal',
+    'number gt': 'Greater than',
+    'number gte': 'Greater than or equal to',
+    'number lt': 'Less than',
+    'number lte': 'Less than or equal to',
+    'number is_empty': 'Is empty',
+    'number is_not_empty': 'Is not empty',
+    'boolean is_true': 'Is true',
+    'boolean is_false': 'Is false',
+    'boolean eq': 'Equals',
+    'boolean not_eq': 'Does not equal',
+    'array contains': 'Contains',
+    'array not_contains': 'Does not contain',
+    'array is_empty': 'Is empty',
+    'array is_not_empty': 'Is not empty',
+    'object has_key': 'Has key',
+    'object not_has_key': 'Does not have key',
+    'object is_empty': 'Is empty',
+    'object is_not_empty': 'Is not empty',
+    'any eq': 'Equals',
+    'any not_eq': 'Does not equal',
+    'any is_empty': 'Is empty',
+    'any is_not_empty': 'Is not empty',
+    'file name_contains': 'File name contains',
+    'file is_empty': 'Is empty',
+    'file is_not_empty': 'Is not empty'
+  }
 };
 
 export default translation;

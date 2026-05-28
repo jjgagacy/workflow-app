@@ -1,4 +1,5 @@
 import { Node as ReactFlowNode, Edge as ReactFlowEdge, XYPosition, Dimensions } from "@xyflow/react";
+import { ComparisonOperator, OperatorType } from "./nodes/if-else/types";
 
 export enum NodeType {
   Base = 'base',
@@ -35,6 +36,7 @@ export type NodeData<T = {}> = {
   position?: XYPosition;
   candidate?: boolean;
   icon?: React.ReactNode;
+  iconColor?: string;
 } & T;
 
 export type Node<T = {}> = ReactFlowNode<NodeData<T>>;
@@ -104,3 +106,26 @@ export type NodeCategoryProps =
   NodeCategoryToolsProps |
   NodeCategoryAIProps |
   NodeCategoryCoreProps;
+
+export enum VariableType {
+  string = 'string',
+  number = 'number',
+  boolean = 'boolean',
+  array = 'array',
+  object = 'object',
+  file = 'file',
+  any = 'any'
+}
+
+export type ParameterType = string | number | boolean | undefined | null;
+
+export interface Operator extends ComparisonOperator {
+  name: string; // e.g. "equals", "not equals", "greater than", "less than", "contains", "does not contain", "matches regex", "does not match regex", "is empty", "is not empty"
+}
+
+export interface OperatorGroup {
+  id: string;
+  label: OperatorType; // label: "string", "number", "boolean", "array", "object", "datetime", "file", "any"
+  operators: Operator[];
+  icon?: React.ReactNode;
+}

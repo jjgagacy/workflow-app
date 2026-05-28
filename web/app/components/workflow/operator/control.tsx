@@ -7,6 +7,7 @@ import { getThemeBgClass, getThemeHoverClass, ThemeType } from "@/types/theme";
 import { useWorkflowStore } from "../context";
 import { ShortcutTooltip } from "../../base/tooltip/shortcut";
 import { useTranslation } from "react-i18next";
+import { useAddNote } from "../hooks/use-addNote";
 
 export const Control = () => {
   const { t } = useTranslation();
@@ -15,6 +16,7 @@ export const Control = () => {
   const showSidebar = useWorkflowStore(s => s.showSidebar);
   const setShowNodeSelector = useWorkflowStore(s => s.setShowNodeSelector);
   const setShowCommandPalette = useWorkflowStore(s => s.setShowCommandPalette);
+  const { addNote } = useAddNote();
 
   return (
     <div className={cn('flex flex-col items-center rounded-md gap-2 bg-gray-100 dark:bg-gray-800 p-2')}>
@@ -34,13 +36,17 @@ export const Control = () => {
           <Search className="h-4 w-4" />
         </div>
       </ShortcutTooltip>
-      <Tooltip content={t('workflow.control.addNote')} placement="left">
+      <ShortcutTooltip label={t('workflow.control.addNote')} shortcut={{ keys: ['N'], shiftKey: true, metaKey: false }} placement="left">
         <div
           className={cn(`flex h-8 w-8 cursor-pointer items-center border border-[var(--border)] justify-center rounded-sm ${getThemeBgClass(activeColorTheme as ThemeType)} ${getThemeHoverClass(activeColorTheme as ThemeType)} transition-colors`)}
+          onClick={(event) => {
+            event.stopPropagation();
+            addNote();
+          }}
         >
           <Bookmark className="h-4 w-4" />
         </div>
-      </Tooltip>
+      </ShortcutTooltip>
       <Tooltip content={t('workflow.control.run')} placement="left">
         <div
           className={cn(`flex h-8 w-8 cursor-pointer items-center border border-[var(--border)] justify-center rounded-sm ${getThemeBgClass(activeColorTheme as ThemeType)} ${getThemeHoverClass(activeColorTheme as ThemeType)} transition-colors`)}

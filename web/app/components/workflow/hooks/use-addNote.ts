@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 import { useWorkflowContext, useWorkflowStore } from "../context"
 import { newCandidateNode } from "../utils/node";
-import { CUSTOM_NODE_NAME, CUSTOM_NOTE_NODE_NAME } from "../constants";
+import { CUSTOM_NODE_NAME, CUSTOM_NOTE_NODE_NAME, NODE_DEFAULT_HEIGHT, NODE_DEFAULT_WIDTH } from "../constants";
 import { NoteNodeData, NoteNodeTheme } from "../components/note-node/types";
 
 export const useAddNote = () => {
@@ -15,7 +15,7 @@ export const useAddNote = () => {
         description: "",
         type: '' as any,
         content: "",
-        size: { width: 200, height: 100 },
+        size: { width: NODE_DEFAULT_WIDTH, height: NODE_DEFAULT_HEIGHT },
         candidate: true,
         theme: NoteNodeTheme.gold,
       } as NoteNodeData,

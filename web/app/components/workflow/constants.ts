@@ -6,3 +6,6 @@ export const CUSTOM_SIMPLE_NODE_NAME = 'customSimpleNode';
 
 export const NODE_RESIZE_MIN_WIDTH = 200;
 export const NODE_RESIZE_MIN_HEIGHT = 90;
+
+export const NODE_DEFAULT_WIDTH = 200;
+export const NODE_DEFAULT_HEIGHT = 88;

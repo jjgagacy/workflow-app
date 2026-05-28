@@ -2,6 +2,7 @@ import { useCustomTheme } from "@/app/components/provider/customThemeProvider";
 import { NodeCatalog } from "../../types";
 import { useTranslation } from "react-i18next";
 import { getThemeHoverClass, ThemeType } from "@/types/theme";
+import { getCatalogNodeIconColor } from "../../utils/node";
 
 interface SearchResultProps {
   groupedNodes: Record<string, NodeCatalog[]>;
@@ -32,10 +33,10 @@ export function SearchResult({ groupedNodes, onSelectNode }: SearchResultProps) 
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer ${getThemeHoverClass(activeColorTheme as ThemeType)} transition-colors group`}
               >
                 {/* 节点图标 */}
-                <div className="flex-shrink-0 w-8 h-8 flex text-text-secondary items-center justify-center rounded-md transition-colors" >
+                <div className={`flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-md transition-colors ${getCatalogNodeIconColor(node)}`} >
                   {
                     node.icon || (
-                      <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
                     )

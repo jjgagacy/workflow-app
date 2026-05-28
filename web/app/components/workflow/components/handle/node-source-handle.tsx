@@ -1,19 +1,31 @@
-import { Handle, Position } from "@xyflow/react";
-import { NodeProps } from "@xyflow/react";
-import { Node, NodeData, NodeCatalog } from "../types";
-import { CUSTOM_NODE_NAME, CUSTOM_SIMPLE_NODE_NAME } from "../constants";
-import { NodeType } from "../types";
 import { cn } from "@/utils/classnames";
+import { Handle, Position } from "@xyflow/react";
+import { useWorkflowStore } from "../../context";
 
-type NodeTargetHandleProps = {
+type NodeSourceHandleProps = {
   nodeId: string;
   handleId: string;
-  type?: 'target';
+  type?: 'source';
   position?: Position;
   isConnectable?: boolean;
+  className?: string;
+  handleClassName?: string;
 }
 
-export const NodeTargetHandle = ({ nodeId, handleId, type = 'target', position = Position.Left, isConnectable = true }: NodeTargetHandleProps) => {
+export const NodeSourceHandle = ({
+  nodeId,
+  handleId,
+  type = 'source',
+  position = Position.Right,
+  isConnectable = true,
+  className = '',
+  handleClassName = '',
+}: NodeSourceHandleProps) => {
+  const setShowNodeSelector = useWorkflowStore(s => s.setShowNodeSelector);
+  const onHandleClick = () => {
+    setShowNodeSelector(true);
+  }
+
   return (
     <>
       <div
@@ -23,6 +35,7 @@ export const NodeTargetHandle = ({ nodeId, handleId, type = 'target', position =
           position === Position.Right && "-right-0 top-1/2 -translate-y-1/2",
           position === Position.Top && "top-0 left-1/2 -translate-x-1/2 -translate-y-0",
           position === Position.Bottom && "bottom-0 left-1/2 -translate-x-1/2 translate-y-0",
+          className
         )}
       >
         <Handle
@@ -36,10 +49,14 @@ export const NodeTargetHandle = ({ nodeId, handleId, type = 'target', position =
             "!h-4 !w-4 rounded-full !bg-background border !border-gray-400 dark:!border-gray-600 transition-opacity",
             "opacity-80 transition-transform origin-center",
             "group-hover:opacity-100 hover:scale-125",
+            handleClassName
           )}
+          onClick={(e) => {
+            e.stopPropagation();
+            onHandleClick();
+          }}
         />
       </div>
     </>
   );
 }
-
