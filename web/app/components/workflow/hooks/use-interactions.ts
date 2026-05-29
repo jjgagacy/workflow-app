@@ -3,8 +3,10 @@ import { useTranslation } from "react-i18next";
 import { useCallback } from "react";
 import { produce } from "immer";
 import { useWorkflow } from "./use-workflow";
-import { useWorkflowContext } from "../context";
-import { Node, NodeType } from "../types";
+import { useWorkflowContext, useWorkflowStore } from "../context";
+import { Node, NodeAddParams, NodeType } from "../types";
+import { newCandidateNode } from "../utils/node";
+import { NODE_DEFAULT_DATA } from "../constants";
 
 const PASTE_OFFSET = 32;
 
@@ -96,6 +98,8 @@ export const useWorkflowInteractions = () => {
   const handleNodeClick = useCallback<NodeMouseHandler>((_, node) => {
     if (workflowReadonly())
       return;
+    if (node.data.type === NodeType.Start)
+      return;
     onSelectNodes([node.id]);
   }, [store, workflowContext]);
 
@@ -110,8 +114,8 @@ export const useWorkflowInteractions = () => {
   }, [store, workflowContext]);
 
   const handleNodeDoubleClick = useCallback<NodeMouseHandler>((_, node) => {
-    if (workflowReadonly())
-      return;
+    const { openNodePanel } = workflowContext.getState();
+    openNodePanel(node as Node);
   }, [store, workflowContext]);
 
   const handleNodeDrag = useCallback<NodeMouseHandler>((_, node) => {
@@ -296,11 +300,41 @@ export const useWorkflowInteractions = () => {
     setNodes(newNodes);
   }, [reactFlow, store, workflowReadonly]);
 
+  const handleNodeAdd = useCallback<NodeAddParams>((params) => {
+    if (workflowReadonly())
+      return;
+
+    const { renderType, nodeType, label, description, icon, iconColor } = params;
+    const { nodeId, sourceHandle, targetHandle, previousNodeId, previousNodeSourceHandle, nextNodeId, nextNodeTargetHandle } = params;
+    const { setCandidateNode, setShowNodeSelector } = workflowContext.getState();
+
+    const newNode = newCandidateNode({
+      type: renderType,
+      data: {
+        ...NODE_DEFAULT_DATA[nodeType],
+        type: nodeType,
+        label,
+        description,
+        candidate: true,
+        icon,
+        iconColor,
+      },
+      position: {
+        x: 0,
+        y: 0
+      }
+    });
+    setCandidateNode(newNode);
+    setShowNodeSelector(false);
+
+  }, [reactFlow, workflowContext, t]);
+
   return {
     handleNodeMouseEnter,
     handleNodeMouseLeave,
     handleNodeMouseMove,
     handleNodeClick,
+    handleNodeAdd,
     handleConnectStart,
     handleConnectEnd,
     handleNodeDoubleClick,

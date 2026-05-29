@@ -51,10 +51,10 @@ export enum ConditionOperator {
 }
 
 export type ComparisonOperator = {
-  firstType: OperatorType;
+  leftType: OperatorType;
   operator: ConditionOperator;
-  secondType?: OperatorType;
-  singleValue?: boolean; // 是否为单值比较，如 "is empty"、"is not empty"
+  rightType?: OperatorType;
+  isUnary?: boolean; // 是否为单值比较，如 "is empty"、"is not empty"
 }
 
 export type Condition = {
@@ -64,19 +64,25 @@ export type Condition = {
   rightValue: ParameterType | ParameterType[];
 }
 
-export type ConditionOption = {
+export type ConditionEvaluationOptions = {
   caseSensitive: boolean;
   strictness: 'strict' | 'loose';
 }
 
 export type ConditionGroup = {
-  options: ConditionOption;
   conditions: Condition[];
   logicalOperator: LogicalOperator;
 }
 
+export type ConditionBranch = {
+  id: string;
+  conditionGroup: ConditionGroup;
+  logicalOperator: LogicalOperator;
+  isDefault?: boolean; // 是否为else分支
+}
+
 export type IfElseNodeData = NodeData & {
-  condition?: string;
-  operator?: ComparisonOperator;
-  value?: any;
+  evaluationOptions: ConditionEvaluationOptions;
+  branches?: ConditionBranch[];
+  inLoop?: boolean;
 }

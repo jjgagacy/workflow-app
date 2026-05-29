@@ -1,9 +1,9 @@
+import { WorkflowPanel } from "./workflow-panel";
+
 export const WorkflowContent = () => {
   return (
     <>
-      {/* <div className="p-4">
-        Workflow App Content
-      </div> */}
+      <WorkflowPanel />
     </>
   );
 }

@@ -3,11 +3,11 @@ import { NodeListPanel } from "./panel/nodeListPanel";
 import { NodeCatalog, NodeCategoryProps } from "../types";
 import { getCatalogNodeIconColor, isSupportedCatalogNode, newCandidateNode, resolveCatalogNode } from "../utils/node";
 import { useWorkflowStore } from "../context";
+import { useWorkflowInteractions } from "../hooks/use-interactions";
 
 export const NodeListSelector = () => {
   const nodes = useAvailableNodes().filter(isSupportedCatalogNode);
-  const setCandidateNode = useWorkflowStore(s => s.setCandidateNode);
-  const setShowNodeSelector = useWorkflowStore(s => s.setShowNodeSelector);
+  const { handleNodeAdd } = useWorkflowInteractions();
 
   const handleNode = (node: NodeCatalog, _props?: NodeCategoryProps) => {
     const resolvedNode = resolveCatalogNode(node);
@@ -16,24 +16,14 @@ export const NodeListSelector = () => {
       return;
     }
 
-    const newNode = newCandidateNode({
-      type: resolvedNode.renderType,
-      data: {
-        type: resolvedNode.nodeType,
-        label: node.name,
-        description: node.description,
-        candidate: true,
-        icon: node.icon,
-        iconColor: getCatalogNodeIconColor(node),
-      },
-      position: {
-        x: 0,
-        y: 0
-      }
+    handleNodeAdd({
+      nodeType: resolvedNode.nodeType,
+      renderType: resolvedNode.renderType,
+      label: node.name,
+      description: node.description,
+      icon: node.icon,
+      iconColor: getCatalogNodeIconColor(node),
     });
-
-    setCandidateNode(newNode);
-    setShowNodeSelector(false);
   };
 
   return (

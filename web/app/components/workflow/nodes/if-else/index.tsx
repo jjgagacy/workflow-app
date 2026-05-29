@@ -10,6 +10,8 @@ const IfElseNode = ({ id, data }: NodeProps<Node<IfElseNodeData>>) => {
   const iconColor = data.iconColor || getNodeTypeIconColor(data.type);
   const { getOperators } = useOperators();
 
+  console.log('branches:', data.branches);
+
   return (
     <div className="if-else-node">
       <div className="node-header mb-2 flex items-center gap-1 px-1 py-1.5">

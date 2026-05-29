@@ -129,3 +129,28 @@ export interface OperatorGroup {
   operators: Operator[];
   icon?: React.ReactNode;
 }
+
+export type NodeDefaultData<T> = {
+  value: Partial<T>;
+  runInputData?: Record<string, any>;
+}
+
+export type NodeAddParams = (params: {
+  nodeType: NodeType;
+  renderType?: string;
+
+  label?: string;
+  description?: string;
+  icon?: React.ReactNode;
+  iconColor?: string;
+
+  nodeId?: string;
+  sourceHandle?: string;
+  targetHandle?: string;
+
+  previousNodeId?: string;
+  previousNodeSourceHandle?: string;
+
+  nextNodeId?: string;
+  nextNodeTargetHandle?: string;
+}) => void;

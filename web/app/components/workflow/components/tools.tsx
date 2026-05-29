@@ -1,6 +1,6 @@
 import { type ReactNode, useCallback } from "react";
 import { useReactFlow } from "@xyflow/react";
-import { Hand, MousePointer2, PlusCircle, StickyNote, WandSparkles } from "lucide-react";
+import { Hand, MousePointer2, PlusCircle, Settings2, StickyNote, WandSparkles } from "lucide-react";
 import { cn } from "@/utils/classnames";
 import { ShortcutTooltip, type KeyboardShortcut } from "../../base/tooltip/shortcut";
 import { useWorkflowStore } from "../context";
@@ -25,6 +25,7 @@ export const Tools = () => {
   const setShowNodeSelector = useWorkflowStore(s => s.setShowNodeSelector);
   const interactionMode = useWorkflowStore(s => s.interactionMode);
   const setInteractionMode = useWorkflowStore(s => s.setInteractionMode);
+  const openEnvPanel = useWorkflowStore(s => s.openEnvPanel);
   const { addNote } = useAddNote();
 
   const handleAddNode = useCallback(() => {
@@ -48,11 +49,16 @@ export const Tools = () => {
     });
   }, [fitView, getEdges, getNodes, setNodes]);
 
+  const handleOpenEnvPanel = useCallback(() => {
+    openEnvPanel();
+  }, [openEnvPanel]);
+
   useKeyboardShortcut('n', handleAddNode);
   useKeyboardShortcut('n', handleAddNote, { shiftKey: true });
   useKeyboardShortcut('v', () => setInteractionMode('pointer'));
   useKeyboardShortcut('h', () => setInteractionMode('hand'));
   useKeyboardShortcut('o', handleTidyNodes);
+  useKeyboardShortcut('e', handleOpenEnvPanel);
 
   const tools: ToolItem[] = [
     {
@@ -91,6 +97,13 @@ export const Tools = () => {
       shortcut: { keys: ['O'] },
       icon: <WandSparkles className="h-4 w-4" />,
       onClick: handleTidyNodes,
+    },
+    {
+      id: 'env-panel',
+      label: 'Env',
+      shortcut: { keys: ['E'] },
+      icon: <Settings2 className="h-4 w-4" />,
+      onClick: handleOpenEnvPanel,
     },
   ];
 

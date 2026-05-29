@@ -171,9 +171,9 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   // console.log('render workflow body', { nodes, edges });
 
   return (
-    <div id="react-flow-body" className="flex w-full h-full">
-      {children}
+    <div id="react-flow-body" className="relative flex w-full h-full overflow-hidden">
       <div className="relative flex w-full h-full" ref={containerRef}>
+        {children}
         <ContextMenu containerRef={containerRef} />
         <NodeContextMenu containerRef={containerRef} />
         <SelectionContextMenu containerRef={containerRef} />
