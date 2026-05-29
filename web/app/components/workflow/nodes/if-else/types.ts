@@ -76,6 +76,7 @@ export type ConditionGroup = {
 
 export type ConditionBranch = {
   id: string;
+  name?: string;
   conditionGroup: ConditionGroup;
   logicalOperator: LogicalOperator;
   isDefault?: boolean; // 是否为else分支

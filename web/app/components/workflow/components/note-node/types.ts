@@ -16,5 +16,5 @@ export type NoteNodeData = NodeData & {
 
 export type UpdateNodeData = {
   id: string;
-  data: Record<string, string>;
+  data: Record<string, any>;
 }

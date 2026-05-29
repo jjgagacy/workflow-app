@@ -4,38 +4,7 @@ import { useWorkflowStore } from "../context";
 import { usePanelResize } from "./hooks/use-panel-resize";
 import { TitleInput } from "./components/title-input";
 import { useNodesUpdate } from "../hooks/use-nodesUpdate";
-
-const formatJson = (value: unknown) => {
-  const seen = new WeakSet<object>();
-
-  return JSON.stringify(
-    value,
-    (_, currentValue) => {
-      if (typeof currentValue === "function") {
-        return "[Function]";
-      }
-
-      if (typeof currentValue === "symbol") {
-        return currentValue.toString();
-      }
-
-      if (typeof currentValue === "object" && currentValue !== null) {
-        if ("$$typeof" in currentValue) {
-          return "[ReactNode]";
-        }
-
-        if (seen.has(currentValue)) {
-          return "[Circular]";
-        }
-
-        seen.add(currentValue);
-      }
-
-      return currentValue;
-    },
-    2,
-  );
-};
+import { NodePanels } from "../nodes/types";
 
 const DetailRow = ({ label, value }: { label: string; value: string }) => {
   return (
@@ -67,9 +36,9 @@ export const Panel = () => {
 
   const isNodePanel = activePanel.type === "node";
   const node = activePanel.node;
+  const NodePanelComponent = isNodePanel && node ? NodePanels[node.data.type] : null;
   const measuredWidth = node?.measured?.width ?? node?.width;
   const measuredHeight = node?.measured?.height ?? node?.height;
-  const serializedContent = formatJson(isNodePanel ? node?.data ?? {} : activePanel.payload ?? {});
   const resolvedWidth = panelMode === "side"
     ? panelWidth
     : Math.min(Math.max(panelWidth + 80, 420), 760);
@@ -147,16 +116,11 @@ export const Panel = () => {
       <div className="flex-1 overflow-y-auto px-4 py-3">
         {isNodePanel && node ? (
           <>
-            <div className="rounded-lg border border-[var(--border)] bg-muted/30 px-3 py-1.5 text-xs text-muted-foreground">
-              Double-click a node to refresh this panel.
-            </div>
-            <div className="mt-4 rounded-lg border border-[var(--border)] px-4">
-              <DetailRow label="Node ID" value={node.id} />
-              <DetailRow label="Type" value={node.data.type} />
-              <DetailRow label="Label" value={node.data.label || "-"} />
-              <DetailRow label="Position" value={`${Math.round(node.position.x)}, ${Math.round(node.position.y)}`} />
-              <DetailRow label="Size" value={`${Math.round(measuredWidth || 0)} x ${Math.round(measuredHeight || 0)}`} />
-            </div>
+            {NodePanelComponent ? (
+              <div className="mt-4">
+                <NodePanelComponent node={node} />
+              </div>
+            ) : null}
           </>
         ) : (
           <div className="rounded-lg border border-[var(--border)] bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
@@ -165,13 +129,6 @@ export const Panel = () => {
               : "No public environment variables are available in the client bundle."}
           </div>
         )}
-
-        <div className="mt-4">
-          <div className="mb-2 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">Payload</div>
-          <pre className="overflow-x-auto rounded-lg border border-[var(--border)] bg-muted/30 p-3 text-xs leading-5 text-foreground">
-            {serializedContent}
-          </pre>
-        </div>
       </div>
     </div>
   );
