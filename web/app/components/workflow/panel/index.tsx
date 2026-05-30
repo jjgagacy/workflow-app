@@ -33,7 +33,7 @@ export const Panel = () => {
   const NodePanelComponent = isNodePanel && node ? NodePanels[node.data.type] : null;
   const resolvedWidth = panelMode === "side"
     ? panelWidth
-    : Math.min(Math.max(panelWidth + 80, 420), 760);
+    : Math.min(Math.max(panelWidth + 160, 560), 880);
   const title = isNodePanel ? (node?.data.label || node?.id || activePanel.title) : activePanel.title;
 
   const handleTitleChange = (value: string) => {

@@ -2,6 +2,7 @@ import { type ReactNode, useCallback } from "react";
 import { useReactFlow } from "@xyflow/react";
 import { Hand, MessageSquare, MousePointer2, PlusCircle, Settings2, StickyNote, WandSparkles } from "lucide-react";
 import { cn } from "@/utils/classnames";
+import { Divider } from "../../base/divider";
 import { ShortcutTooltip, type KeyboardShortcut } from "../../base/tooltip/shortcut";
 import { useWorkflowStore } from "../context";
 import { useAddNote } from "../hooks/use-addNote";
@@ -9,6 +10,8 @@ import { useKeyboardShortcut } from "../hooks/use-keyboardShortcut";
 import type { Edge, Node } from "../types";
 import { useTranslation } from "react-i18next";
 import { getLayoutedNodes } from "../utils/layout";
+
+const toolIconClassName = 'h-[18px] w-[18px]';
 
 type ToolItem = {
   id: string;
@@ -71,21 +74,21 @@ export const Tools = () => {
       id: 'add-node',
       label: t('workflow.control.addNode'),
       shortcut: { keys: ['N'] },
-      icon: <PlusCircle className="h-4 w-4" />,
+      icon: <PlusCircle className={toolIconClassName} />,
       onClick: handleAddNode,
     },
     {
       id: 'add-note-node',
       label: t('workflow.control.addNote'),
       shortcut: { keys: ['N'], shiftKey: true },
-      icon: <StickyNote className="h-4 w-4" />,
+      icon: <StickyNote className={toolIconClassName} />,
       onClick: handleAddNote,
     },
     {
       id: 'pointer-mode',
       label: t('workflow.control.pointerMode'),
       shortcut: { keys: ['V'] },
-      icon: <MousePointer2 className="h-4 w-4" />,
+      icon: <MousePointer2 className={toolIconClassName} />,
       onClick: () => setInteractionMode('pointer'),
       active: interactionMode === 'pointer',
     },
@@ -93,7 +96,7 @@ export const Tools = () => {
       id: 'hand-mode',
       label: t('workflow.control.handMode'),
       shortcut: { keys: ['H'] },
-      icon: <Hand className="h-4 w-4" />,
+      icon: <Hand className={toolIconClassName} />,
       onClick: () => setInteractionMode('hand'),
       active: interactionMode === 'hand',
     },
@@ -101,47 +104,60 @@ export const Tools = () => {
       id: 'tidy-nodes',
       label: t('workflow.control.tidyNodes'),
       shortcut: { keys: ['O'] },
-      icon: <WandSparkles className="h-4 w-4" />,
+      icon: <WandSparkles className={toolIconClassName} />,
       onClick: handleTidyNodes,
     },
     {
       id: 'env-panel',
       label: 'Env',
       shortcut: { keys: ['E'] },
-      icon: <Settings2 className="h-4 w-4" />,
+      icon: <Settings2 className={toolIconClassName} />,
       onClick: handleOpenEnvPanel,
     },
     {
       id: 'chat-env-panel',
       label: 'Session',
       shortcut: { keys: ['E'], shiftKey: true },
-      icon: <MessageSquare className="h-4 w-4" />,
+      icon: <MessageSquare className={toolIconClassName} />,
       onClick: handleOpenChatEnvPanel,
     },
   ];
 
+  const toolGroups: ToolItem[][] = [
+    tools.slice(0, 2),
+    tools.slice(2, 5),
+    tools.slice(5, 7),
+  ];
+
   return (
     <div className="flex flex-row items-center gap-1 rounded-md border-[0.5px] border-[var(--border)] bg-background p-1 shadow-md">
-      {tools.map((tool) => (
-        <ShortcutTooltip
-          key={tool.id}
-          label={tool.label}
-          shortcut={tool.shortcut}
-          placement="bottom"
-        >
-          <button
-            type="button"
-            aria-label={tool.label}
-            onClick={tool.onClick}
-            className={cn(
-              'flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-foreground transition-colors',
-              'hover:border-[var(--border)] hover:bg-muted/70',
-              tool.active && 'border-[var(--border)] bg-muted text-foreground shadow-sm',
-            )}
-          >
-            {tool.icon}
-          </button>
-        </ShortcutTooltip>
+      {toolGroups.map((group, groupIndex) => (
+        <>
+          <div key={`group-${groupIndex}`} className="flex items-center gap-1">
+            {group.map((tool) => (
+              <ShortcutTooltip
+                key={tool.id}
+                label={tool.label}
+                shortcut={tool.shortcut}
+                placement="bottom"
+              >
+                <button
+                  type="button"
+                  aria-label={tool.label}
+                  onClick={tool.onClick}
+                  className={cn(
+                    'flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-foreground transition-colors',
+                    'hover:border-[var(--border)] hover:bg-muted/70',
+                    tool.active && 'border-[var(--border)] bg-muted text-foreground shadow-sm',
+                  )}
+                >
+                  {tool.icon}
+                </button>
+              </ShortcutTooltip>
+            ))}
+          </div>
+          {groupIndex < toolGroups.length - 1 ? <Divider type="vertical" className="mx-1 h-5" /> : null}
+        </>
       ))}
     </div>
   );

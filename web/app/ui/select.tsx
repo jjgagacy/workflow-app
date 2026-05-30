@@ -4,13 +4,14 @@ import { useAppearance } from "@/hooks/use-appearance";
 import { getThemeActiveClass, ThemeType } from "@/types/theme";
 import { cn } from "@/utils/classnames";
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions, Select as HeadlessSelect } from "@headlessui/react";
-import { IconCheck, IconChevronDown, IconChevronUp } from "@tabler/icons-react";
-import { ReactNode, useEffect, useRef, useState, type FC } from "react";
+import { IconCheck, IconChevronDown } from "@tabler/icons-react";
+import { useEffect, useMemo, useState, type FC } from "react";
 
 type Item = {
   value: number | string;
   name: string;
   description?: string;
+  group?: string;
 } & Record<string, any>;
 
 type SelectProps = {
@@ -44,19 +45,35 @@ export const SimpleSelect: FC<SelectProps> = ({
   defaultValue
 }) => {
   // 不能有open状态，让Combox自动管理
-  const { activeColorTheme = 'default', setActiveColorTheme: setTheme } = useAppearance();
+  const { activeColorTheme = 'default' } = useAppearance();
   const [query, setQuery] = useState('');
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
   useEffect(() => {
     const existed = items?.find(i => i.value === defaultValue) || null;
-    console.log('defaultValue changed', typeof defaultValue, existed);
     if (existed) {
       setSelectedItem(existed);
     }
   }, [defaultValue, items]);
 
   const filterItems: Item[] = query === '' ? (items || []) : (items || []).filter(i => i.name.toLowerCase().includes(query.toLowerCase()));
+  const groupedFilterItems = useMemo(() => {
+    return filterItems.reduce<Array<{ group?: string; items: Item[] }>>((accumulator, item) => {
+      const previousGroup = accumulator[accumulator.length - 1];
+
+      if (previousGroup && previousGroup.group === item.group) {
+        previousGroup.items.push(item);
+        return accumulator;
+      }
+
+      accumulator.push({
+        group: item.group,
+        items: [item],
+      });
+
+      return accumulator;
+    }, []);
+  }, [filterItems]);
 
   return (
     <Combobox
@@ -104,33 +121,42 @@ export const SimpleSelect: FC<SelectProps> = ({
           {(filterItems.length > 0 && open) && (
             <>
               <ComboboxOptions className={cn('absolute z-10 mt-1 w-full border border-[var(--border)] rounded-md max-h-60 overflow-auto focus:outline-none', overlayClassName)}>
-                {filterItems.map((item) => (
-                  <ComboboxOption
-                    key={item.value}
-                    value={item}
-                    className={({ active, selected }: { active: boolean, selected: boolean }) => cn(
-                      'cursor-pointer select-none relative py-2 pl-3 pr-9 bg-white dark:bg-gray-800 hover:bg-selection-hover',
-                      active ? 'bg-selection-hover' : '',
-                      selected ? 'font-semibold' : 'font-normal',
-                      optionWrapClassName
-                    )}
-                  >
-                    {({ selected }) => (
-                      <>
-                        {renderOption ? renderOption({ item, selected }) : (
-                          <div className="flex flex-col">
-                            <span className={cn('block truncate', selected ? 'font-semibold' : 'font-normal')}>{item.name}</span>
-                            {item.description && (<span className="text-xs text-text-tint-1 truncate">{item.description}</span>)}
-                          </div>
+                {groupedFilterItems.map((section) => (
+                  <div key={section.group ?? '__ungrouped'}>
+                    {section.group ? (
+                      <div className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground bg-background/95 sticky top-0">
+                        {section.group}
+                      </div>
+                    ) : null}
+                    {section.items.map((item) => (
+                      <ComboboxOption
+                        key={item.value}
+                        value={item}
+                        className={({ active, selected }: { active: boolean, selected: boolean }) => cn(
+                          'cursor-pointer select-none relative py-2 pl-3 pr-9 bg-white dark:bg-gray-800 hover:bg-selection-hover',
+                          active ? 'bg-selection-hover' : '',
+                          selected ? 'font-semibold' : 'font-normal',
+                          optionWrapClassName
                         )}
-                        {selected && (
-                          <span className={`absolute inset-y-0 right-0 flex items-center pr-4 ${getThemeActiveClass(activeColorTheme as ThemeType)}`}>
-                            <IconCheck className="h-5 w-5" />
-                          </span>
+                      >
+                        {({ selected }) => (
+                          <>
+                            {renderOption ? renderOption({ item, selected }) : (
+                              <div className="flex flex-col">
+                                <span className={cn('block truncate', selected ? 'font-semibold' : 'font-normal')}>{item.name}</span>
+                                {item.description && (<span className="text-xs text-text-tint-1 truncate">{item.description}</span>)}
+                              </div>
+                            )}
+                            {selected && (
+                              <span className={`absolute inset-y-0 right-0 flex items-center pr-4 ${getThemeActiveClass(activeColorTheme as ThemeType)}`}>
+                                <IconCheck className="h-5 w-5" />
+                              </span>
+                            )}
+                          </>
                         )}
-                      </>
-                    )}
-                  </ComboboxOption>
+                      </ComboboxOption>
+                    ))}
+                  </div>
                 ))}
               </ComboboxOptions>
             </>

@@ -3,12 +3,15 @@ import { usePlatformShortcut } from "./use-platformShortcut";
 import { isTargetInputArea } from "../utils/node";
 import { useWorkflowInteractions } from "./use-interactions";
 import { useReactFlow } from '@xyflow/react';
+import { useWorkflowContext } from "../context";
+import { Node, NodeType } from "../types";
 import { WORKFLOW_VIEWPORT_EVENT, type WorkflowViewportAction } from "../utils/viewport";
 
 export const useWorkflowShortcut = () => {
 
   const { handleNodesDelete, handleNodesCopy, handleNodesPaste, handleNodesDuplicate } = useWorkflowInteractions();
   const reactFlow = useReactFlow();
+  const workflowContext = useWorkflowContext();
 
   const isShortcutAllowed = useCallback((event: KeyboardEvent) => {
     return !isTargetInputArea(event.target as HTMLElement);
@@ -29,6 +32,27 @@ export const useWorkflowShortcut = () => {
   const handleResetZoom = useCallback(() => {
     void reactFlow.zoomTo(1, { duration: 180 });
   }, [reactFlow]);
+
+  const handleOpenSelectedNodePanel = useCallback(() => {
+    const { openNodePanel } = workflowContext.getState();
+    const selectedNodes = reactFlow.getNodes().filter((node) => node.selected && node.data.type !== NodeType.Start) as Node[];
+
+    if (selectedNodes.length !== 1) {
+      return;
+    }
+
+    openNodePanel(selectedNodes[0]);
+  }, [reactFlow, workflowContext]);
+
+  const handleClosePanel = useCallback(() => {
+    const { activePanel, closePanel } = workflowContext.getState();
+
+    if (!activePanel) {
+      return;
+    }
+
+    closePanel();
+  }, [workflowContext]);
 
   useEffect(() => {
     const handleViewportAction = (event: Event) => {
@@ -126,6 +150,18 @@ export const useWorkflowShortcut = () => {
       return;
     handleNodesDelete();
     event.preventDefault();
+  }, { metaKey: false, ctrlKey: false });
+
+  usePlatformShortcut('enter', (event) => {
+    if (!isShortcutAllowed(event))
+      return;
+    handleOpenSelectedNodePanel();
+  }, { metaKey: false, ctrlKey: false });
+
+  usePlatformShortcut('esc', (event) => {
+    if (!isShortcutAllowed(event))
+      return;
+    handleClosePanel();
   }, { metaKey: false, ctrlKey: false });
 
 };

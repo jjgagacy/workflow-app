@@ -169,7 +169,6 @@ const translation = {
     delete: '删除',
   },
   operator: {
-    xx: 'xxxx谢谢',
     'string eq': '等于',
     'string not_eq': '不等于',
     'string contains': '包含',
@@ -205,6 +204,49 @@ const translation = {
     'file name_contains': '文件名包含',
     'file is_empty': '为空',
     'file is_not_empty': '不为空'
+  },
+  conditions: {
+    branchLogic: '分支逻辑',
+    branchLogicDescription: '分支会从上到下执行，最后一个始终是兜底路径。',
+    decisionBranchCount_one: '{{count}} 个判断分支',
+    decisionBranchCount_other: '{{count}} 个判断分支',
+    outputHandleCount_one: '{{count}} 个输出句柄',
+    outputHandleCount_other: '{{count}} 个输出句柄',
+    addBranchBeforeElse: '在 else 前添加分支',
+    defaultBranchDescription: '当前面都不匹配时执行。',
+    branchDescription: '当前分支匹配时执行。',
+    moveBranchUp: '上移分支',
+    moveBranchDown: '下移分支',
+    removeBranch: '删除分支',
+    toggleBranchLogic: '切换分支逻辑，当前为 {{logic}}',
+    noConditionsYet: '暂无条件',
+    conditionCount_one: '{{count}} 个条件',
+    conditionCount_other: '{{count}} 个条件',
+    fallbackPath: '兜底路径。',
+    logicSummary: '{{logic}} 条件组。',
+    selectVariable: '选择变量',
+    currentValue: '当前值',
+    conditionLabel: '条件 {{index}}',
+    removeCondition: '删除条件',
+    type: '类型',
+    leftVariable: '左侧变量',
+    operator: '运算符',
+    rightValue: '右侧值',
+    rightValuePlaceholder: '例如：approved',
+    unaryOperatorHint: '这个运算符不需要右侧值。',
+    addCondition: '添加条件',
+    noConditionsFallback: '未命中上面分支时会走到这个输出。',
+    variableGroups: {
+      environment: '环境变量',
+      session: '会话变量',
+      builtIn: '内置',
+      nodeOutputs: '节点输出'
+    },
+    builtIns: {
+      workflowInput: '工作流输入',
+      currentUser: '当前用户',
+      currentTime: '当前时间'
+    }
   },
 };
 

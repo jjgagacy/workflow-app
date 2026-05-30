@@ -4,9 +4,11 @@ import { Node } from "../../types";
 import { NodeSourceHandle } from "../../components/handle/node-source-handle";
 import { getNodeTypeIconColor } from "../../utils/node";
 import { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { getIfElseBranchDefaultName, normalizeIfElseBranches } from "./data";
 
 const IfElseNode = ({ id, data }: NodeProps<Node<IfElseNodeData>>) => {
+  const { t } = useTranslation();
   const label = data.label?.trim() || "If-Else";
   const iconColor = data.iconColor || getNodeTypeIconColor(data.type);
   const updateNodeInternals = useUpdateNodeInternals();
@@ -35,9 +37,10 @@ const IfElseNode = ({ id, data }: NodeProps<Node<IfElseNodeData>>) => {
               const isDefault = Boolean(branch.isDefault);
               const conditionCount = branch.conditionGroup?.conditions?.length ?? 0;
               const conditionSummary = conditionCount === 0
-                ? 'No conditions yet'
-                : `${conditionCount} ${conditionCount === 1 ? 'condition' : 'conditions'}`;
+                ? t('workflow.conditions.noConditionsYet')
+                : t('workflow.conditions.conditionCount', { count: conditionCount });
               const branchTitle = branch.name?.trim() || getIfElseBranchDefaultName(index, isDefault);
+              const logicLabel = branch.conditionGroup.logicalOperator.toUpperCase();
 
               return (
                 <div
@@ -57,8 +60,8 @@ const IfElseNode = ({ id, data }: NodeProps<Node<IfElseNodeData>>) => {
                     </div>
                     <div className="mt-1 text-xs text-muted-foreground">
                       {isDefault
-                        ? 'Fallback path when no previous branch matches.'
-                        : `${branch.conditionGroup.logicalOperator.toUpperCase()} logic inside this branch.`}
+                        ? t('workflow.conditions.fallbackPath')
+                        : t('workflow.conditions.logicSummary', { logic: logicLabel })}
                     </div>
                   </div>
                   <NodeSourceHandle

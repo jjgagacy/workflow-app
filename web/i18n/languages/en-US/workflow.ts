@@ -204,6 +204,49 @@ const translation = {
     'file name_contains': 'File name contains',
     'file is_empty': 'Is empty',
     'file is_not_empty': 'Is not empty'
+  },
+  conditions: {
+    branchLogic: 'Branch logic',
+    branchLogicDescription: 'Branches run top to bottom. The last one is the fallback path.',
+    decisionBranchCount_one: '{{count}} decision branch',
+    decisionBranchCount_other: '{{count}} decision branches',
+    outputHandleCount_one: '{{count}} output handle',
+    outputHandleCount_other: '{{count}} output handles',
+    addBranchBeforeElse: 'Add branch before else',
+    defaultBranchDescription: 'Runs when nothing above matches.',
+    branchDescription: 'Runs when this branch matches.',
+    moveBranchUp: 'Move branch up',
+    moveBranchDown: 'Move branch down',
+    removeBranch: 'Remove branch',
+    toggleBranchLogic: 'Toggle branch logic, current {{logic}}',
+    noConditionsYet: 'No conditions',
+    conditionCount_one: '{{count}} condition',
+    conditionCount_other: '{{count}} conditions',
+    fallbackPath: 'Fallback path.',
+    logicSummary: '{{logic}} group.',
+    selectVariable: 'Select a variable',
+    currentValue: 'Current value',
+    conditionLabel: 'Condition {{index}}',
+    removeCondition: 'Remove condition',
+    type: 'Type',
+    leftVariable: 'Left variable',
+    operator: 'Operator',
+    rightValue: 'Right value',
+    rightValuePlaceholder: 'e.g. approved',
+    unaryOperatorHint: 'This operator does not need a right value.',
+    addCondition: 'Add condition',
+    noConditionsFallback: 'Anything unmatched above goes to this output.',
+    variableGroups: {
+      environment: 'Environment',
+      session: 'Session',
+      builtIn: 'Built-in',
+      nodeOutputs: 'Node outputs'
+    },
+    builtIns: {
+      workflowInput: 'Workflow input',
+      currentUser: 'Current user',
+      currentTime: 'Current time'
+    }
   }
 };
 
