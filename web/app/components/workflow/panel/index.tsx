@@ -5,15 +5,8 @@ import { usePanelResize } from "./hooks/use-panel-resize";
 import { TitleInput } from "./components/title-input";
 import { useNodesUpdate } from "../hooks/use-nodesUpdate";
 import { NodePanels } from "../nodes/types";
-
-const DetailRow = ({ label, value }: { label: string; value: string }) => {
-  return (
-    <div className="grid grid-cols-[96px_minmax(0,1fr)] gap-3 border-b border-[var(--border)] py-3 text-sm last:border-b-0">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="break-all text-foreground">{value}</span>
-    </div>
-  );
-};
+import { ChatEnvPanel } from "./chat-env";
+import { EnvPanel } from "./env";
 
 export const Panel = () => {
   const activePanel = useWorkflowStore((state) => state.activePanel);
@@ -35,10 +28,9 @@ export const Panel = () => {
   }
 
   const isNodePanel = activePanel.type === "node";
+  const isEnvPanel = activePanel.type === "env";
   const node = activePanel.node;
   const NodePanelComponent = isNodePanel && node ? NodePanels[node.data.type] : null;
-  const measuredWidth = node?.measured?.width ?? node?.width;
-  const measuredHeight = node?.measured?.height ?? node?.height;
   const resolvedWidth = panelMode === "side"
     ? panelWidth
     : Math.min(Math.max(panelWidth + 80, 420), 760);
@@ -71,7 +63,7 @@ export const Panel = () => {
       className={cn(
         "absolute z-[60] flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-background shadow-2xl",
         panelMode === "side"
-          ? "bottom-2 right-2 top-14"
+          ? "bottom-2 right-2 top-6"
           : "left-1/2 top-1/2 h-[min(80vh,720px)] -translate-x-1/2 -translate-y-1/2",
       )}
       style={{ width: resolvedWidth }}
@@ -90,7 +82,7 @@ export const Panel = () => {
             <div className="truncate text-sm font-semibold text-foreground">{title}</div>
           )}
           <div className="mt-1 text-xs text-muted-foreground">
-            {isNodePanel ? "Node properties" : "Environment variables"}
+            {isNodePanel ? "Node properties" : isEnvPanel ? "Environment variables" : "Session variables"}
           </div>
         </div>
         <div className="flex items-center gap-1">
@@ -123,11 +115,7 @@ export const Panel = () => {
             ) : null}
           </>
         ) : (
-          <div className="rounded-lg border border-[var(--border)] bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
-            {activePanel.payload && Object.keys(activePanel.payload).length
-              ? `Showing ${Object.keys(activePanel.payload).length} public environment values.`
-              : "No public environment variables are available in the client bundle."}
-          </div>
+          isEnvPanel ? <EnvPanel /> : <ChatEnvPanel />
         )}
       </div>
     </div>

@@ -4,7 +4,7 @@ import { Node } from "../../types";
 export type WorkflowPanelMode = "side" | "dialog";
 
 export type WorkflowPanelContent = {
-  type: "node" | "env";
+  type: "node" | "env" | "chat-env";
   title: string;
   node?: Node;
   payload?: Record<string, unknown>;
@@ -22,6 +22,7 @@ export type PanelState = {
   panelWidth: number;
   openNodePanel: (node: Node) => void;
   openEnvPanel: () => void;
+  openChatEnvPanel: () => void;
   updateActivePanelNode: (node: Node) => void;
   closePanel: () => void;
   togglePanelMode: () => void;
@@ -49,9 +50,12 @@ export const createPanelState: StateCreator<PanelState> = (set, get) => ({
     activePanel: {
       type: "env",
       title: "Env",
-      payload: Object.fromEntries(
-        Object.entries(process.env).filter(([key]) => key === "NODE_ENV" || key.startsWith("NEXT_PUBLIC_"))
-      ),
+    },
+  }),
+  openChatEnvPanel: () => set({
+    activePanel: {
+      type: "chat-env",
+      title: "Session",
     },
   }),
   updateActivePanelNode: (node: Node) => set((state) => {
