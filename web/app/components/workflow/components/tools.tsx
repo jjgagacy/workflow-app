@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback } from "react";
+import { Fragment, type ReactNode, useCallback } from "react";
 import { useReactFlow } from "@xyflow/react";
 import { Hand, MessageSquare, MousePointer2, PlusCircle, Settings2, StickyNote, WandSparkles } from "lucide-react";
 import { cn } from "@/utils/classnames";
@@ -132,8 +132,8 @@ export const Tools = () => {
   return (
     <div className="flex flex-row items-center gap-1 rounded-md border-[0.5px] border-[var(--border)] bg-background p-1 shadow-md">
       {toolGroups.map((group, groupIndex) => (
-        <>
-          <div key={`group-${groupIndex}`} className="flex items-center gap-1">
+        <Fragment key={`group-${groupIndex}`}>
+          <div className="flex items-center gap-1">
             {group.map((tool) => (
               <ShortcutTooltip
                 key={tool.id}
@@ -157,7 +157,7 @@ export const Tools = () => {
             ))}
           </div>
           {groupIndex < toolGroups.length - 1 ? <Divider type="vertical" className="mx-1 h-5" /> : null}
-        </>
+        </Fragment>
       ))}
     </div>
   );

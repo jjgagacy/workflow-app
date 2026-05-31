@@ -42,6 +42,7 @@ export type NodeData<T = {}> = {
 export type Node<T = {}> = ReactFlowNode<NodeData<T>>;
 
 export type Edge<T = {}> = ReactFlowEdge<{
+  hovering?: boolean;
   sourceType: NodeType;
   targetType: NodeType;
 } & T>;

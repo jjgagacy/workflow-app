@@ -1,4 +1,4 @@
-import { NodeMouseHandler, OnResize, ResizeParamsWithDirection, useReactFlow, useStoreApi } from "@xyflow/react";
+import { addEdge, Connection, EdgeMouseHandler, NodeMouseHandler, OnResize, ResizeParamsWithDirection, useReactFlow, useStoreApi } from "@xyflow/react";
 import { useTranslation } from "react-i18next";
 import { useCallback } from "react";
 import { produce } from "immer";
@@ -6,7 +6,7 @@ import { useWorkflow } from "./use-workflow";
 import { useWorkflowContext, useWorkflowStore } from "../context";
 import { Node, NodeAddParams, NodeType } from "../types";
 import { newCandidateNode } from "../utils/node";
-import { NODE_DEFAULT_DATA } from "../constants";
+import { CUSTOM_EDGE_NAME, NODE_DEFAULT_DATA } from "../constants";
 
 const PASTE_OFFSET = 32;
 
@@ -112,6 +112,56 @@ export const useWorkflowInteractions = () => {
     if (workflowReadonly())
       return;
   }, [store, workflowContext]);
+
+  const handleConnect = useCallback((params: Connection) => {
+    if (workflowReadonly())
+      return;
+    const { source, sourceHandle, target, targetHandle } = params;
+    if (source === target)
+      return;
+
+    const { edges, nodes } = store.getState();
+    const { setEdges } = reactFlow;
+
+    const sourceNode = nodes.find(n => n.id === source);
+    const targetNode = nodes.find(n => n.id === target);
+    if (!sourceNode || !targetNode)
+      return;
+
+    if (targetNode.parentId !== sourceNode.parentId)
+      return;
+
+    // 检查是否已存在相同的连线
+    if (edges.find(edge =>
+      edge.source === source &&
+      edge.sourceHandle === sourceHandle &&
+      edge.target === target &&
+      edge.targetHandle === targetHandle
+    )) {
+      return;
+    }
+
+    const parentNode = nodes.find(n => n.id === sourceNode.parentId);
+
+    const newEdge = {
+      ...params,
+      id: `${source}-${sourceHandle}-${target}-${targetHandle}`,
+      type: CUSTOM_EDGE_NAME,
+      source: source,
+      target: target,
+      sourceHandle: sourceHandle,
+      targetHandle: targetHandle,
+      data: {
+        hovering: false,
+        sourceType: nodes.find(n => n.id === source)?.data.type, // NodeType
+        targetType: nodes.find(n => n.id === target)?.data.type, // NodeType
+      }
+    };
+    const newEdges = produce(edges, draft => {
+      draft.push(newEdge);
+    });
+    setEdges(newEdges);
+  }, [reactFlow, store, workflowReadonly]);
 
   const handleNodeDoubleClick = useCallback<NodeMouseHandler>((_, node) => {
     const { openNodePanel } = workflowContext.getState();
@@ -329,12 +379,61 @@ export const useWorkflowInteractions = () => {
 
   }, [reactFlow, workflowContext, t]);
 
+  const handleEdgeEnter = useCallback<EdgeMouseHandler>((_, edge) => {
+    if (workflowReadonly())
+      return;
+
+    const { edges } = store.getState();
+    const { setEdges } = reactFlow;
+    const newEdges = produce(edges, draft => {
+      const currentEdge = draft.find(e => e.id === edge.id);
+      if (!currentEdge)
+        return;
+
+      currentEdge.data = {
+        ...currentEdge.data,
+        hovering: true,
+      };
+    });
+    setEdges(newEdges);
+  }, [reactFlow, store, workflowReadonly]);
+
+  const handleEdgeLeave = useCallback<EdgeMouseHandler>((_, edge) => {
+    if (workflowReadonly())
+      return;
+
+    const { edges } = store.getState();
+    const { setEdges } = reactFlow;
+    const newEdges = produce(edges, draft => {
+      const currentEdge = draft.find(e => e.id === edge.id);
+      if (!currentEdge)
+        return;
+
+      currentEdge.data = {
+        ...currentEdge.data,
+        hovering: false,
+      };
+    });
+    setEdges(newEdges);
+  }, [reactFlow, store, workflowReadonly]);
+
+  const handleEdgeDelete = useCallback(() => {
+    if (workflowReadonly())
+      return;
+  }, [store, workflowContext]);
+
+  const handleEdgesChange = useCallback(() => {
+    if (workflowReadonly())
+      return;
+  }, [store, workflowContext]);
+
   return {
     handleNodeMouseEnter,
     handleNodeMouseLeave,
     handleNodeMouseMove,
     handleNodeClick,
     handleNodeAdd,
+    handleConnect,
     handleConnectStart,
     handleConnectEnd,
     handleNodeDoubleClick,
@@ -355,5 +454,9 @@ export const useWorkflowInteractions = () => {
     handleNodesDuplicate,
     handleNodesSelectAll,
     handleNodesUnselectAll,
+    handleEdgeEnter,
+    handleEdgeLeave,
+    handleEdgeDelete,
+    handleEdgesChange
   }
 }

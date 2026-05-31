@@ -1,4 +1,4 @@
-import { addEdge, applyEdgeChanges, applyNodeChanges, Background, ConnectionMode, Controls, DefaultEdgeOptions, MiniMap, OnNodeDrag, Panel, ReactFlow, ReactFlowProvider, useNodesState, useReactFlow } from "@xyflow/react";
+import { applyEdgeChanges, applyNodeChanges, Background, ConnectionMode, Controls, DefaultEdgeOptions, MiniMap, OnNodeDrag, Panel, ReactFlow, ReactFlowProvider, useNodesState, useReactFlow } from "@xyflow/react";
 import { ViewportWithAnnotation } from "./components/annotation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TextUpdaterNode } from "./components/text-updater";
@@ -32,6 +32,7 @@ import { setAutoFreeze } from "immer";
 import { useWorkflowShortcut } from "./hooks/use-workflowShortcut";
 import { useWorkflowInteractions } from "./hooks/use-interactions";
 import { Tools } from "./components/tools";
+import { useWorkflow } from "./hooks/use-workflow";
 
 const customGetNodesBounds = (nodes: any[]) => {
   if (nodes.length === 0) return { minX: 0, minY: 0, maxX: 0, maxY: 0, width: 0, height: 0 };
@@ -64,14 +65,21 @@ export type WorkflowBodyProps = {
 
 export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: WorkflowBodyProps) => {
   const defaultEdgeOptions: DefaultEdgeOptions = {
+    type: CUSTOM_EDGE_NAME,
     animated: false,
   };
   const containerRef = useRef<HTMLDivElement>(null);
+  const { workflowReadonly } = useWorkflow();
 
   // 在这里使用 useReactFlow 是安全的，因为这个组件会被放在 ReactFlowProvider 内部
   const { setViewport } = useReactFlow();
   const [nodes, setNodes] = useNodesState(nodesData);
-  const [edges, setEdges] = useState<Edge[]>(edgesData);
+  const [edges, setEdges] = useState<Edge[]>(() =>
+    edgesData.map((edge) => ({
+      ...edge,
+      type: edge.type ?? CUSTOM_EDGE_NAME,
+    }))
+  );
   const { activeTheme } = useAppearance();
   const showSidebar = useWorkflowStore(s => s.showSidebar);
   const setShowSidebar = useWorkflowStore(s => s.setShowSidebar);
@@ -90,6 +98,9 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
     handleNodeMouseLeave,
     handleNodeMouseMove,
     handleNodeClick,
+    handleEdgeEnter,
+    handleEdgeLeave,
+    handleConnect,
     handleConnectStart,
     handleConnectEnd,
     handleNodeDoubleClick,
@@ -110,10 +121,6 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   );
   const onEdgesChange = useCallback(
     (changes: any) => setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
-    [],
-  );
-  const onConnect = useCallback(
-    (params: any) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
     [],
   );
 
@@ -182,20 +189,27 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
           <Control />
         </div>
         <ReactFlow
+          className={`w-full h-full relative z-0 ${interactionMode === 'hand' ? 'cursor-grab' : 'cursor-default'}`}
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           connectionMode={ConnectionMode.Loose}
           colorMode={activeTheme === 'dark' ? 'dark' : 'light'}
           defaultEdgeOptions={defaultEdgeOptions}
-          panOnDrag={interactionMode === 'hand'}
-          selectionOnDrag={interactionMode === 'pointer'}
-          nodesDraggable={interactionMode === 'pointer'}
-          elementsSelectable={interactionMode === 'pointer'}
+          panOnDrag={interactionMode === 'hand' && !workflowReadonly()}
+          selectionOnDrag={interactionMode === 'pointer' && !workflowReadonly()}
+          nodesDraggable={interactionMode === 'pointer' && !workflowReadonly()}
+          elementsSelectable={interactionMode === 'pointer' && !workflowReadonly()}
+          multiSelectionKeyCode={null}
+          nodesFocusable={!workflowReadonly()}
+          edgesFocusable={!workflowReadonly()}
+          zoomOnPinch={!workflowReadonly()}
+          zoomOnScroll={!workflowReadonly()}
+          zoomOnDoubleClick={!workflowReadonly()}
+          panOnScroll={!workflowReadonly()}
           onPaneContextMenu={handleContextMenu as any}
           onNodeContextMenu={handleNodeContextMenu as any}
           onSelectionContextMenu={handleSelectionContextMenu as any}
@@ -203,6 +217,7 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
           onNodeMouseLeave={handleNodeMouseLeave}
           onNodeMouseMove={handleNodeMouseMove}
           onNodeClick={handleNodeClick}
+          onConnect={handleConnect}
           onConnectStart={handleConnectStart}
           onConnectEnd={handleConnectEnd}
           onNodeDoubleClick={handleNodeDoubleClick}
@@ -215,7 +230,9 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
           onSelectionDragStop={handleNodeSelectionDragStop}
           onSelectionEnd={handleNodeSelectionEnd}
           onSelectionStart={handleNodeSelectionStart}
-          className={`w-full h-full relative z-0 ${interactionMode === 'hand' ? 'cursor-grab' : 'cursor-default'}`}
+          onEdgeMouseEnter={handleEdgeEnter}
+          onEdgeMouseLeave={handleEdgeLeave}
+          minZoom={0.25}
         >
           <Background
             gap={[14, 14]}
