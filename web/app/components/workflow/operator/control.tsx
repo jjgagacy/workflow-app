@@ -23,7 +23,9 @@ export const Control = () => {
       <ShortcutTooltip label={t('workflow.control.addNode')} shortcut={{ keys: ['N'], metaKey: false }} placement="left">
         <div
           className={cn(`flex h-8 w-8 cursor-pointer items-center border border-[var(--border)] justify-center rounded-sm ${getThemeBgClass(activeColorTheme as ThemeType)} ${getThemeHoverClass(activeColorTheme as ThemeType)} transition-colors`)}
-          onClick={() => setShowNodeSelector(true)}
+          onClick={() => {
+            setShowNodeSelector(true);
+          }}
         >
           <Plus className="h-4 w-4" />
         </div>

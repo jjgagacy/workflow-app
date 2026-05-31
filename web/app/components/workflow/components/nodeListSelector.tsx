@@ -8,6 +8,7 @@ import { useWorkflowInteractions } from "../hooks/use-interactions";
 export const NodeListSelector = () => {
   const nodes = useAvailableNodes().filter(isSupportedCatalogNode);
   const { handleNodeAdd } = useWorkflowInteractions();
+  const nodeSelectorContext = useWorkflowStore((state) => state.nodeSelectorContext);
 
   const handleNode = (node: NodeCatalog, _props?: NodeCategoryProps) => {
     const resolvedNode = resolveCatalogNode(node);
@@ -23,6 +24,10 @@ export const NodeListSelector = () => {
       description: node.description,
       icon: node.icon,
       iconColor: getCatalogNodeIconColor(node),
+      previousNodeId: nodeSelectorContext?.previousNodeId,
+      previousNodeSourceHandle: nodeSelectorContext?.previousNodeSourceHandle,
+      nextNodeId: nodeSelectorContext?.nextNodeId,
+      nextNodeTargetHandle: nodeSelectorContext?.nextNodeTargetHandle,
     });
   };
 

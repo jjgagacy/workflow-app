@@ -113,7 +113,6 @@ export const NodeListPanel = ({ nodes = [], onSelectNode }: NodeListPanelProps) 
           <SearchResult groupedNodes={groupedNodes} onSelectNode={onSelectNode} />
         )}
       </div>
-
     </div>
   );
 }

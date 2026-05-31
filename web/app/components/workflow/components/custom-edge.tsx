@@ -1,4 +1,4 @@
-import { BaseEdge, getStraightPath, EdgeLabelRenderer, useReactFlow, EdgeProps, Position, getBezierPath } from '@xyflow/react';
+import { BaseEdge, EdgeLabelRenderer, useReactFlow, EdgeProps, Position, getBezierPath } from '@xyflow/react';
 import { useMemo } from 'react';
 import { getEdgeStrokeColor } from '../utils/workflow';
 import { cn } from '@/utils/classnames';
@@ -62,7 +62,12 @@ export function CustomEdge({
             className="flex h-7 w-7 items-center justify-center rounded-full text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-muted)] hover:text-[var(--color-primary)]"
             onClick={(event) => {
               event.stopPropagation();
-              setShowNodeSelector(true)
+              setShowNodeSelector(true, {
+                previousNodeId: source,
+                previousNodeSourceHandle: sourceHandleId ?? undefined,
+                nextNodeId: target,
+                nextNodeTargetHandle: targetHandleId ?? undefined,
+              });
             }}
             aria-label="Add node"
           >
@@ -71,7 +76,10 @@ export function CustomEdge({
           <button
             type="button"
             className="flex h-7 w-7 items-center justify-center rounded-full text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-muted)] hover:text-[var(--color-destructive)]"
-            onClick={() => deleteElements({ edges: [{ id }] })}
+            onClick={(event) => {
+              event.stopPropagation();
+              deleteElements({ edges: [{ id }] });
+            }}
             aria-label="Delete edge"
           >
             <Trash2 className="h-4 w-4" />

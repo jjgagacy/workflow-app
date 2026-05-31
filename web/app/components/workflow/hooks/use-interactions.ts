@@ -1,4 +1,4 @@
-import { addEdge, Connection, EdgeMouseHandler, NodeMouseHandler, OnResize, ResizeParamsWithDirection, useReactFlow, useStoreApi } from "@xyflow/react";
+import { Connection, EdgeMouseHandler, NodeMouseHandler, OnResize, ResizeParamsWithDirection, useReactFlow, useStoreApi } from "@xyflow/react";
 import { useTranslation } from "react-i18next";
 import { useCallback } from "react";
 import { produce } from "immer";
@@ -6,7 +6,7 @@ import { useWorkflow } from "./use-workflow";
 import { useWorkflowContext, useWorkflowStore } from "../context";
 import { Node, NodeAddParams, NodeType } from "../types";
 import { newCandidateNode } from "../utils/node";
-import { CUSTOM_EDGE_NAME, NODE_DEFAULT_DATA } from "../constants";
+import { CUSTOM_EDGE_NAME, NODE_DEFAULT_DATA, NODE_DEFAULT_HEIGHT, NODE_DEFAULT_WIDTH } from "../constants";
 
 const PASTE_OFFSET = 32;
 
@@ -357,6 +357,96 @@ export const useWorkflowInteractions = () => {
     const { renderType, nodeType, label, description, icon, iconColor } = params;
     const { nodeId, sourceHandle, targetHandle, previousNodeId, previousNodeSourceHandle, nextNodeId, nextNodeTargetHandle } = params;
     const { setCandidateNode, setShowNodeSelector } = workflowContext.getState();
+
+    if (previousNodeId && nextNodeId) {
+      const { nodes, edges } = store.getState();
+      const { setNodes, setEdges } = reactFlow;
+      const previousNode = nodes.find((node) => node.id === previousNodeId);
+      const nextNode = nodes.find((node) => node.id === nextNodeId);
+
+      if (!previousNode || !nextNode) {
+        setShowNodeSelector(false);
+        return;
+      }
+
+      const previousWidth = previousNode.measured?.width ?? NODE_DEFAULT_WIDTH;
+      const previousHeight = previousNode.measured?.height ?? NODE_DEFAULT_HEIGHT;
+      const nextWidth = nextNode.measured?.width ?? NODE_DEFAULT_WIDTH;
+      const nextHeight = nextNode.measured?.height ?? NODE_DEFAULT_HEIGHT;
+      const centerX = (previousNode.position.x + previousWidth / 2 + nextNode.position.x + nextWidth / 2) / 2;
+      const centerY = (previousNode.position.y + previousHeight / 2 + nextNode.position.y + nextHeight / 2) / 2;
+
+      const newNode = newCandidateNode({
+        type: renderType,
+        parentId: previousNode.parentId,
+        selected: true,
+        data: {
+          ...NODE_DEFAULT_DATA[nodeType],
+          type: nodeType,
+          label,
+          description,
+          icon,
+          iconColor,
+        },
+        position: {
+          x: centerX - NODE_DEFAULT_WIDTH / 2,
+          y: centerY - NODE_DEFAULT_HEIGHT / 2,
+        }
+      });
+
+      const nextNodes = produce(nodes as Node[], (draft) => {
+        draft.forEach((node) => {
+          node.selected = false;
+        });
+
+        draft.push(newNode);
+      });
+
+      const nextEdges = produce(edges, (draft) => {
+        const oldEdgeIndex = draft.findIndex((edge) =>
+          edge.source === previousNodeId &&
+          edge.sourceHandle === previousNodeSourceHandle &&
+          edge.target === nextNodeId &&
+          edge.targetHandle === nextNodeTargetHandle
+        );
+
+        if (oldEdgeIndex >= 0) {
+          draft.splice(oldEdgeIndex, 1);
+        }
+
+        draft.push({
+          id: `${previousNodeId}-${previousNodeSourceHandle || 'source'}-${newNode.id}-target`,
+          type: CUSTOM_EDGE_NAME,
+          source: previousNodeId,
+          sourceHandle: previousNodeSourceHandle,
+          target: newNode.id,
+          data: {
+            hovering: false,
+            sourceType: previousNode.data.type,
+            targetType: nodeType,
+          }
+        });
+
+        draft.push({
+          id: `${newNode.id}-source-${nextNodeId}-${nextNodeTargetHandle || 'target'}`,
+          type: CUSTOM_EDGE_NAME,
+          source: newNode.id,
+          target: nextNodeId,
+          targetHandle: nextNodeTargetHandle,
+          data: {
+            hovering: false,
+            sourceType: nodeType,
+            targetType: nextNode.data.type,
+          }
+        });
+      });
+
+      setNodes(nextNodes);
+      setEdges(nextEdges);
+      setCandidateNode(undefined);
+      setShowNodeSelector(false);
+      return;
+    }
 
     const newNode = newCandidateNode({
       type: renderType,

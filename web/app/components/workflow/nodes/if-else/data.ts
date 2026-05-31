@@ -1,7 +1,7 @@
 import { NodeDefaultData } from "../../types";
 import { Condition, ConditionBranch, ConditionOperator, IfElseNodeData } from "./types";
 
-const createId = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+const createId = (prefix: string) => `${prefix}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
 
 export const getIfElseBranchDefaultName = (branchIndex: number, isDefault?: boolean) => {
   if (isDefault) {

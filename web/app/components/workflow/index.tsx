@@ -153,7 +153,9 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   };
 
   useNodeSelectorClose(showNodeSelector, setShowNodeSelector, nodeSelectorWrapperRef);
-  useKeyboardShortcut('n', () => setShowNodeSelector(true), { ctrlKey: false });
+  useKeyboardShortcut('n', () => {
+    setShowNodeSelector(true);
+  }, { ctrlKey: false });
   useKeyboardShortcut('k', () => setShowCommandPalette(!showCommandPalette), { ctrlKey: false });
 
   useEventListener('mousemove', (e) => {
