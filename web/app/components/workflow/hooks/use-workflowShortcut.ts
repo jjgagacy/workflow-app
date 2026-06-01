@@ -9,7 +9,14 @@ import { WORKFLOW_VIEWPORT_EVENT, type WorkflowViewportAction } from "../utils/v
 
 export const useWorkflowShortcut = () => {
 
-  const { handleNodesDelete, handleNodesCopy, handleNodesPaste, handleNodesDuplicate } = useWorkflowInteractions();
+  const {
+    handleNodesDelete,
+    handleNodesCopy,
+    handleNodesPaste,
+    handleNodesDuplicate,
+    handleHistoryRedo,
+    handleHistoryUndo
+  } = useWorkflowInteractions();
   const reactFlow = useReactFlow();
   const workflowContext = useWorkflowContext();
 
@@ -112,12 +119,12 @@ export const useWorkflowShortcut = () => {
 
   usePlatformShortcut('z', (event) => {
     event.preventDefault();
-    console.log('Workflow undo!');
+    handleHistoryRedo();
   }, { useCapture: true });
 
   usePlatformShortcut(['y', 'shift.z'], (event) => {
     event.preventDefault();
-    console.log('Workflow redo!');
+    handleHistoryUndo();
   }, { useCapture: true });
 
   usePlatformShortcut('o', (event) => {

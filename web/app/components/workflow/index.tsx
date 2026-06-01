@@ -33,6 +33,7 @@ import { useWorkflowShortcut } from "./hooks/use-workflowShortcut";
 import { useWorkflowInteractions } from "./hooks/use-interactions";
 import { Tools } from "./components/tools";
 import { useWorkflow } from "./hooks/use-workflow";
+import { Operator } from "./operator";
 
 const customGetNodesBounds = (nodes: any[]) => {
   if (nodes.length === 0) return { minX: 0, minY: 0, maxX: 0, maxY: 0, width: 0, height: 0 };
@@ -183,6 +184,7 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
     <div id="react-flow-body" className="relative flex w-full h-full overflow-hidden">
       <div className="relative flex w-full h-full" ref={containerRef}>
         {children}
+        <Operator />
         <ContextMenu containerRef={containerRef} />
         <NodeContextMenu containerRef={containerRef} />
         <SelectionContextMenu containerRef={containerRef} />

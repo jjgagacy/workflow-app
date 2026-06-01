@@ -1,12 +1,16 @@
 import { Connection, EdgeMouseHandler, NodeMouseHandler, OnResize, ResizeParamsWithDirection, useReactFlow, useStoreApi } from "@xyflow/react";
 import { useTranslation } from "react-i18next";
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
 import { produce } from "immer";
 import { useWorkflow } from "./use-workflow";
 import { useWorkflowContext, useWorkflowStore } from "../context";
 import { Node, NodeAddParams, NodeType } from "../types";
 import { newCandidateNode } from "../utils/node";
 import { CUSTOM_EDGE_NAME, NODE_DEFAULT_DATA, NODE_DEFAULT_HEIGHT, NODE_DEFAULT_WIDTH } from "../constants";
+import { WorkflowHistoryContext } from "../store/workflow-history-store";
+import { useStore } from "zustand";
+import { useWorkflowHistory } from "./use-workflow-history";
+// import { useWorkflowHistory } from "./use-workflow-history";
 
 const PASTE_OFFSET = 32;
 
@@ -15,6 +19,8 @@ export const useWorkflowInteractions = () => {
   const store = useStoreApi();
   const workflowContext = useWorkflowContext();
   const reactFlow = useReactFlow();
+  const historyStore = useContext(WorkflowHistoryContext);
+  const { handleUndo, handleRedo } = useWorkflowHistory();
   const {
     workflowReadonly
   } = useWorkflow();
@@ -517,6 +523,26 @@ export const useWorkflowInteractions = () => {
       return;
   }, [store, workflowContext]);
 
+  const handleHistoryUndo = useCallback(() => {
+    if (workflowReadonly())
+      return;
+
+    if (!historyStore) {
+      throw new Error("UndoRedo must be used within a WorkflowHistoryProvider");
+    }
+    handleRedo();
+  }, [store, workflowContext]);
+
+  const handleHistoryRedo = useCallback(() => {
+    if (workflowReadonly())
+      return;
+
+    if (!historyStore) {
+      throw new Error("UndoRedo must be used within a WorkflowHistoryProvider");
+    }
+    handleRedo();
+  }, [store, workflowContext]);
+
   return {
     handleNodeMouseEnter,
     handleNodeMouseLeave,
@@ -547,6 +573,8 @@ export const useWorkflowInteractions = () => {
     handleEdgeEnter,
     handleEdgeLeave,
     handleEdgeDelete,
-    handleEdgesChange
+    handleEdgesChange,
+    handleHistoryUndo,
+    handleHistoryRedo,
   }
 }
