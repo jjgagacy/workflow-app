@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { useWorkflowInteractions } from "../hooks/use-interactions";
 import type { Edge, Node } from "../types";
 import { getLayoutedNodes } from "../utils/layout";
+import { useWorkflowHistory, WorkflowHistoryEvent } from "../hooks/use-workflow-history";
 
 interface ContextMenuProps {
   containerRef?: React.RefObject<HTMLElement | null>;
@@ -49,6 +50,7 @@ export const ContextMenu = memo(({ containerRef }: ContextMenuProps) => {
   const { handleNodesPaste, handleNodesSelectAll, handleNodesUnselectAll } = useWorkflowInteractions();
   const { getNodes, getEdges, setNodes, fitView } = useReactFlow<Node, Edge>();
   const setShowNodeSelector = useWorkflowStore(s => s.setShowNodeSelector);
+  const { addHistoryState } = useWorkflowHistory();
 
   const handleTidyNodes = () => {
     const nodes = getNodes();
@@ -57,7 +59,11 @@ export const ContextMenu = memo(({ containerRef }: ContextMenuProps) => {
       return;
     }
 
-    setNodes(getLayoutedNodes(nodes, getEdges()));
+    const nextEdges = getEdges();
+    const nextNodes = getLayoutedNodes(nodes, nextEdges);
+
+    setNodes(nextNodes);
+    addHistoryState(WorkflowHistoryEvent.LayoutTidy, { nodes: nextNodes, edges: nextEdges });
     handleCancelContextMenu();
     requestAnimationFrame(() => {
       void fitView({ padding: 0.18, duration: 240 });

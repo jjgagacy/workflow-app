@@ -1,13 +1,10 @@
 import { applyEdgeChanges, applyNodeChanges, Background, ConnectionMode, Controls, DefaultEdgeOptions, MiniMap, OnNodeDrag, Panel, ReactFlow, ReactFlowProvider, useNodesState, useReactFlow } from "@xyflow/react";
-import { ViewportWithAnnotation } from "./components/annotation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TextUpdaterNode } from "./components/text-updater";
 import { CustomNode } from "./components/custom-node";
 import { CustomEdge } from "./components/custom-edge";
 import { useAppearance } from "@/hooks/use-appearance";
 import { CUSTOM_EDGE_NAME, CUSTOM_NODE_NAME, CUSTOM_NOTE_NODE_NAME } from "./constants";
-import { initialNodes } from "./node";
-import { initialEdges } from "./edge";
 import { Edge, Node } from "./types";
 import { WorkflowHistoryProvider } from "./store/workflow-history-store";
 import { Control } from "./operator/control";
@@ -91,6 +88,7 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   const interactionMode = useWorkflowStore(s => s.interactionMode);
   const setMousePosition = useWorkflowStore(s => s.setMousePosition);
   const nodeSelectorWrapperRef = useRef<HTMLDivElement>(null);
+  const pendingEdgeChangesRef = useRef<any[] | null>(null);
   const { handleContextMenu, handleCancelContextMenu } = usePanelContextMenu(containerRef);
   const { handleNodeContextMenu, handleCancelNodeContextMenu } = useNodeContextMenu(containerRef);
   const { handleSelectionContextMenu, handleCancelSelectionContextMenu } = useSelectionContextMenu(containerRef);
@@ -114,16 +112,31 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
     handleNodeSelectionDragStop,
     handleNodeSelectionStart,
     handleNodeSelectionEnd,
+    handleEdgesChange,
   } = useWorkflowInteractions();
 
   const onNodesChange = useCallback(
     (changes: any) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
     [],
   );
+
   const onEdgesChange = useCallback(
-    (changes: any) => setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
-    [],
+    (changes: any) => {
+      pendingEdgeChangesRef.current = changes;
+      const nextEdges = applyEdgeChanges(changes, edges);
+      setEdges(nextEdges);
+    },
+    [edges, handleEdgesChange],
   );
+
+  useEffect(() => {
+    const pendingChanges = pendingEdgeChangesRef.current;
+    if (!pendingChanges?.length)
+      return;
+
+    pendingEdgeChangesRef.current = null;
+    handleEdgesChange(pendingChanges, edges);
+  }, [edges, handleEdgesChange]);
 
   const nodeTypes = {
     [CUSTOM_NODE_NAME]: CustomNode,
@@ -170,7 +183,6 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
 
   useEffect(() => {
     setAutoFreeze(false);
-
     return () => {
       setAutoFreeze(true);
     };

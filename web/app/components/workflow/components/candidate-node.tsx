@@ -7,21 +7,23 @@ import { produce } from "immer";
 import { Node } from "../types";
 import { NoteNodeData } from "./note-node/types";
 import { CustomNode } from "./custom-node";
+import { useWorkflowHistory, WorkflowHistoryEvent } from "../hooks/use-workflow-history";
 
 export const CandidateNode = () => {
-  const store = useStoreApi();
-  const reactFlow = useReactFlow();
+  const store = useStoreApi<Node, import("../types").Edge>();
+  const reactFlow = useReactFlow<Node, import("../types").Edge>();
   const workflowStore = useWorkflowContext();
   const mousePosition = useWorkflowStore(s => s.mousePosition);
   const candidateNode = useWorkflowStore(s => s.candidateNode);
   const setCandidateNode = useWorkflowStore(s => s.setCandidateNode);
+  const { addHistoryState } = useWorkflowHistory();
   const zoom = useViewport();
 
   useEventListener('click', (e) => {
     const { candidateNode } = workflowStore.getState();
     if (candidateNode) {
       e.preventDefault();
-      const { nodes } = store.getState();
+      const { nodes, edges } = store.getState();
       const { screenToFlowPosition, setNodes } = reactFlow;
       const { x, y } = screenToFlowPosition({ x: mousePosition.x + mousePosition.offsetX, y: mousePosition.y + mousePosition.offsetY });
       const newNodes = produce(nodes, draft => {
@@ -37,6 +39,8 @@ export const CandidateNode = () => {
       });
       setNodes(newNodes);
       setCandidateNode(undefined);
+      const historyEvent = candidateNode.type === CUSTOM_NOTE_NODE_NAME ? WorkflowHistoryEvent.NoteAdd : WorkflowHistoryEvent.NodeAdd;
+      addHistoryState(historyEvent, { nodes: newNodes, edges });
     }
   });
 

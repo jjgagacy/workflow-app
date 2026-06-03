@@ -1,4 +1,6 @@
 import { Maximize2, Minimize2, X } from "lucide-react";
+import { useStoreApi } from "@xyflow/react";
+import { useEffect, useState } from "react";
 import { cn } from "@/utils/classnames";
 import { useWorkflowStore } from "../context";
 import { usePanelResize } from "./hooks/use-panel-resize";
@@ -7,8 +9,12 @@ import { useNodesUpdate } from "../hooks/use-nodesUpdate";
 import { NodePanels } from "../nodes/types";
 import { ChatEnvPanel } from "./chat-env";
 import { EnvPanel } from "./env";
+import { useWorkflowHistory, WorkflowHistoryEvent } from "../hooks/use-workflow-history";
+import { Edge, Node } from "../types";
 
 export const Panel = () => {
+  const [title, setTitle] = useState("");
+  const store = useStoreApi<Node, Edge>();
   const activePanel = useWorkflowStore((state) => state.activePanel);
   const panelMode = useWorkflowStore((state) => state.panelMode);
   const panelWidth = useWorkflowStore((state) => state.panelWidth);
@@ -17,29 +23,37 @@ export const Panel = () => {
   const setPanelWidth = useWorkflowStore((state) => state.setPanelWidth);
   const updateActivePanelNode = useWorkflowStore((state) => state.updateActivePanelNode);
   const { onNodeDataUpdate } = useNodesUpdate();
+  const { addHistoryState } = useWorkflowHistory();
   const { handleResizeStart } = usePanelResize({
     enabled: panelMode === "side",
     panelWidth,
     setPanelWidth,
   });
+  const isNodePanel = activePanel?.type === "node";
+  const isEnvPanel = activePanel?.type === "env";
+  const node = activePanel?.node;
 
-  if (!activePanel) {
-    return null;
-  }
+  useEffect(() => {
+    if (!activePanel)
+      return;
+    if (isNodePanel) {
+      setTitle(node?.data.label || node?.id || activePanel.title);
+      return;
+    }
+    setTitle(activePanel.title);
+  }, [activePanel?.title, isNodePanel, node?.data.label, node?.id]);
 
-  const isNodePanel = activePanel.type === "node";
-  const isEnvPanel = activePanel.type === "env";
-  const node = activePanel.node;
   const NodePanelComponent = isNodePanel && node ? NodePanels[node.data.type] : null;
   const resolvedWidth = panelMode === "side"
     ? panelWidth
     : Math.min(Math.max(panelWidth + 160, 560), 880);
-  const title = isNodePanel ? (node?.data.label || node?.id || activePanel.title) : activePanel.title;
 
   const handleTitleChange = (value: string) => {
     if (!node) {
       return;
     }
+    const { nodes, edges } = store.getState();
+    setTitle(value);
 
     const nextNode = {
       ...node,
@@ -48,6 +62,7 @@ export const Panel = () => {
         label: value,
       },
     };
+    const nextNodes = nodes.map(currentNode => currentNode.id === node.id ? nextNode : currentNode);
 
     updateActivePanelNode(nextNode);
     onNodeDataUpdate({
@@ -56,7 +71,11 @@ export const Panel = () => {
         label: value,
       },
     });
+    addHistoryState(WorkflowHistoryEvent.NodeTitleChange, { nodes: nextNodes, edges });
   };
+
+  if (!activePanel)
+    return null;
 
   return (
     <div

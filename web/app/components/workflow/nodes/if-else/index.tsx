@@ -67,7 +67,7 @@ const IfElseNode = ({ id, data }: NodeProps<Node<IfElseNodeData>>) => {
                   <NodeSourceHandle
                     nodeId={id}
                     handleId={branch.id}
-                    className="top-1/2 !-right-[8px] left-full ml-1"
+                    className="top-1/2 !-right-[12px] left-full ml-1"
                   />
                 </div>
               );

@@ -4,23 +4,23 @@ import { useCallback, useContext } from "react";
 import { produce } from "immer";
 import { useWorkflow } from "./use-workflow";
 import { useWorkflowContext, useWorkflowStore } from "../context";
-import { Node, NodeAddParams, NodeType } from "../types";
+import { Edge, Node, NodeAddParams, NodeType } from "../types";
 import { newCandidateNode } from "../utils/node";
-import { CUSTOM_EDGE_NAME, NODE_DEFAULT_DATA, NODE_DEFAULT_HEIGHT, NODE_DEFAULT_WIDTH } from "../constants";
+import { CUSTOM_EDGE_NAME, CUSTOM_NOTE_NODE_NAME, NODE_DEFAULT_DATA, NODE_DEFAULT_HEIGHT, NODE_DEFAULT_WIDTH } from "../constants";
 import { WorkflowHistoryContext } from "../store/workflow-history-store";
 import { useStore } from "zustand";
-import { useWorkflowHistory } from "./use-workflow-history";
+import { useWorkflowHistory, WorkflowHistoryEvent } from "./use-workflow-history";
 // import { useWorkflowHistory } from "./use-workflow-history";
 
 const PASTE_OFFSET = 32;
 
 export const useWorkflowInteractions = () => {
   const { t } = useTranslation();
-  const store = useStoreApi();
+  const store = useStoreApi<Node, Edge>();
   const workflowContext = useWorkflowContext();
-  const reactFlow = useReactFlow();
+  const reactFlow = useReactFlow<Node, Edge>();
   const historyStore = useContext(WorkflowHistoryContext);
-  const { handleUndo, handleRedo } = useWorkflowHistory();
+  const { handleUndo, handleRedo, addHistoryState } = useWorkflowHistory();
   const {
     workflowReadonly
   } = useWorkflow();
@@ -46,23 +46,21 @@ export const useWorkflowInteractions = () => {
     const idSeed = Date.now();
     const idMap = new Map(sourceNodes.map((node, index) => [node.id, `node-${idSeed}-${index}`]));
 
-    const clonedNodes = sourceNodes.map((node) => {
-      const nextNode = structuredClone(node) as Node;
-      nextNode.id = idMap.get(node.id) || `node-${Date.now()}`;
-      nextNode.position = {
+    const clonedNodes = sourceNodes.map(node => produce(node, (draft) => {
+      draft.id = idMap.get(node.id) || `node-${Date.now()}`;
+      draft.position = {
         x: targetX + (node.position.x - minX),
         y: targetY + (node.position.y - minY),
       };
-      nextNode.parentId = node.parentId ? idMap.get(node.parentId) : undefined;
-      nextNode.selected = true;
-      nextNode.dragging = false;
-      nextNode.data = {
-        ...nextNode.data,
+      // 如果原节点有父节点，则将其 parentId 更新为克隆后的父节点 ID；否则设为 undefined
+      draft.parentId = node.parentId ? idMap.get(node.parentId) : undefined;
+      draft.selected = true;
+      draft.dragging = false;
+      draft.data = {
+        ...draft.data,
         candidate: false,
       };
-
-      return nextNode;
-    });
+    }));
 
     const nextNodes = produce(nodes as Node[], (draft) => {
       draft.forEach((node) => {
@@ -73,6 +71,7 @@ export const useWorkflowInteractions = () => {
     });
 
     setNodes(nextNodes);
+    addHistoryState(WorkflowHistoryEvent.NodePaste, { nodes: nextNodes, edges: store.getState().edges });
 
     if (options?.updateClipboard) {
       setCopiedNodes(clonedNodes);
@@ -159,18 +158,21 @@ export const useWorkflowInteractions = () => {
       targetHandle: targetHandle,
       data: {
         hovering: false,
-        sourceType: nodes.find(n => n.id === source)?.data.type, // NodeType
-        targetType: nodes.find(n => n.id === target)?.data.type, // NodeType
+        sourceType: sourceNode.data.type,
+        targetType: targetNode.data.type,
       }
     };
     const newEdges = produce(edges, draft => {
       draft.push(newEdge);
     });
     setEdges(newEdges);
-  }, [reactFlow, store, workflowReadonly]);
+    addHistoryState(WorkflowHistoryEvent.NodeConnect, { nodes, edges: newEdges });
+  }, [addHistoryState, reactFlow, store, workflowReadonly]);
 
   const handleNodeDoubleClick = useCallback<NodeMouseHandler>((_, node) => {
     const { openNodePanel } = workflowContext.getState();
+    if (node.type === CUSTOM_NOTE_NODE_NAME)
+      return;
     openNodePanel(node as Node);
   }, [store, workflowContext]);
 
@@ -187,7 +189,20 @@ export const useWorkflowInteractions = () => {
   const handleNodeDragStop = useCallback<NodeMouseHandler>((_, node) => {
     if (workflowReadonly())
       return;
-  }, [store, workflowContext]);
+
+    const { nodes, edges } = store.getState();
+    const nextNodes = produce(nodes as Node[], (draft) => {
+      const currentNode = draft.find(item => item.id === node.id);
+      if (!currentNode)
+        return;
+
+      currentNode.position = { ...node.position };
+      currentNode.selected = node.selected;
+      currentNode.dragging = false;
+    });
+
+    addHistoryState(WorkflowHistoryEvent.NodeDragStop, { nodes: nextNodes, edges });
+  }, [addHistoryState, store, workflowReadonly]);
 
   const handleNodeSelectionChange = useCallback(() => {
     if (workflowReadonly())
@@ -223,7 +238,7 @@ export const useWorkflowInteractions = () => {
     if (workflowReadonly())
       return;
 
-    const { nodes } = store.getState();
+    const { nodes, edges } = store.getState();
     const { setNodes } = reactFlow;
     const { x, y, width, height } = params;
     const node = nodes.find(n => n.id === id);
@@ -239,9 +254,10 @@ export const useWorkflowInteractions = () => {
       }
     });
     setNodes(newNodes);
-  }, [store, workflowContext]);
+    addHistoryState(WorkflowHistoryEvent.NodeResize, { nodes: newNodes, edges }, { debounce: true });
+  }, [addHistoryState, reactFlow, store, workflowReadonly]);
 
-  const handleNodeDelete = useCallback((id: string) => {
+  const handleNodeDelete = useCallback((id: string, options?: { skipHistory?: boolean }) => {
     if (workflowReadonly())
       return;
     const { nodes, edges } = store.getState();
@@ -255,8 +271,13 @@ export const useWorkflowInteractions = () => {
     const newNodes = produce(nodes, draft => {
       draft.splice(index, 1);
     });
+    const newEdges = edges.filter(edge => edge.source !== id && edge.target !== id);
     setNodes(newNodes);
-  }, [store, workflowContext]);
+    setEdges(newEdges);
+    if (!options?.skipHistory) {
+      addHistoryState(WorkflowHistoryEvent.NodeDelete, { nodes: newNodes, edges: newEdges });
+    }
+  }, [addHistoryState, reactFlow, store, workflowReadonly]);
 
   const handleNodesDelete = useCallback(() => {
     if (workflowReadonly())
@@ -266,10 +287,16 @@ export const useWorkflowInteractions = () => {
 
     const selectedNodes = nodes.filter(n => n.selected && n.data.type != NodeType.Start);
 
-    selectedNodes.forEach(node => {
-      handleNodeDelete(node.id);
-    });
-  }, [store, workflowContext]);
+    if (!selectedNodes.length)
+      return;
+
+    const selectedNodeIds = new Set(selectedNodes.map(node => node.id));
+    const newNodes = nodes.filter(node => !selectedNodeIds.has(node.id));
+    const newEdges = edges.filter(edge => !selectedNodeIds.has(edge.source) && !selectedNodeIds.has(edge.target));
+    setNodes(newNodes);
+    setEdges(newEdges);
+    addHistoryState(WorkflowHistoryEvent.NodeDelete, { nodes: newNodes, edges: newEdges });
+  }, [addHistoryState, reactFlow, store, workflowReadonly]);
 
   const handleNodesCopy = useCallback((id?: string) => {
     if (workflowReadonly())
@@ -483,13 +510,10 @@ export const useWorkflowInteractions = () => {
     const { setEdges } = reactFlow;
     const newEdges = produce(edges, draft => {
       const currentEdge = draft.find(e => e.id === edge.id);
-      if (!currentEdge)
+      if (!currentEdge?.data)
         return;
 
-      currentEdge.data = {
-        ...currentEdge.data,
-        hovering: true,
-      };
+      currentEdge.data.hovering = true;
     });
     setEdges(newEdges);
   }, [reactFlow, store, workflowReadonly]);
@@ -502,13 +526,10 @@ export const useWorkflowInteractions = () => {
     const { setEdges } = reactFlow;
     const newEdges = produce(edges, draft => {
       const currentEdge = draft.find(e => e.id === edge.id);
-      if (!currentEdge)
+      if (!currentEdge?.data)
         return;
 
-      currentEdge.data = {
-        ...currentEdge.data,
-        hovering: false,
-      };
+      currentEdge.data.hovering = false;
     });
     setEdges(newEdges);
   }, [reactFlow, store, workflowReadonly]);
@@ -516,12 +537,25 @@ export const useWorkflowInteractions = () => {
   const handleEdgeDelete = useCallback(() => {
     if (workflowReadonly())
       return;
-  }, [store, workflowContext]);
+  }, [workflowReadonly]);
 
-  const handleEdgesChange = useCallback(() => {
+  const handleEdgesChange = useCallback((changes: Array<{ type?: string }>, nextEdges: Edge[]) => {
     if (workflowReadonly())
       return;
-  }, [store, workflowContext]);
+    if (!changes.length)
+      return;
+
+    const hasAdd = changes.some(change => change.type === 'add');
+    const hasRemove = changes.some(change => change.type === 'remove');
+
+    if (!hasAdd && !hasRemove)
+      return;
+
+    addHistoryState(hasRemove ? WorkflowHistoryEvent.EdgeDelete : WorkflowHistoryEvent.EdgeAdd, {
+      nodes: store.getState().nodes,
+      edges: nextEdges,
+    });
+  }, [addHistoryState, store, workflowReadonly]);
 
   const handleHistoryUndo = useCallback(() => {
     if (workflowReadonly())
@@ -530,7 +564,7 @@ export const useWorkflowInteractions = () => {
     if (!historyStore) {
       throw new Error("UndoRedo must be used within a WorkflowHistoryProvider");
     }
-    handleRedo();
+    handleUndo();
   }, [store, workflowContext]);
 
   const handleHistoryRedo = useCallback(() => {
