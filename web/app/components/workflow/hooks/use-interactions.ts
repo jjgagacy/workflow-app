@@ -543,7 +543,7 @@ export const useWorkflowInteractions = () => {
 
     if (parentNodeId) {
       const { nodes, edges } = store.getState();
-      const { setNodes } = reactFlow;
+      const { setNodes, setEdges } = reactFlow;
       const parentNode = nodes.find((node) => node.id === parentNodeId);
 
       if (!parentNode) {
@@ -552,6 +552,11 @@ export const useWorkflowInteractions = () => {
       }
 
       const childNodes = nodes.filter((node) => node.parentId === parentNodeId);
+      // 只在明确指定了 previousNodeId（来自 source handle 点击）时才自动连 edge
+      const edgeSourceNode = previousNodeId
+        ? nodes.find((node) => node.id === previousNodeId) ?? null
+        : null;
+
       const newNode = newCandidateNode({
         type: renderType,
         parentId: parentNodeId,
@@ -581,8 +586,28 @@ export const useWorkflowInteractions = () => {
         draft.push(newNode);
       });
 
+      // 有明确的前驱节点（来自 source handle 点击）才自动连 edge
+      const nextEdges = edgeSourceNode
+        ? produce(edges, (draft) => {
+          draft.push({
+            id: `${edgeSourceNode.id}-output-${newNode.id}-target`,
+            type: CUSTOM_EDGE_NAME,
+            source: edgeSourceNode.id,
+            sourceHandle: 'output',
+            target: newNode.id,
+            targetHandle: 'target',
+            data: {
+              hovering: false,
+              sourceType: edgeSourceNode.data.type,
+              targetType: nodeType,
+            },
+          });
+        })
+        : edges;
+
       setNodes(nextNodes);
-      addHistoryState(WorkflowHistoryEvent.NodeAdd, { nodes: nextNodes, edges });
+      if (nextEdges !== edges) setEdges(nextEdges);
+      addHistoryState(WorkflowHistoryEvent.NodeAdd, { nodes: nextNodes, edges: nextEdges });
       setCandidateNode(undefined);
       setShowNodeSelector(false);
       return;
@@ -707,10 +732,13 @@ export const useWorkflowInteractions = () => {
     const { setEdges } = reactFlow;
     const newEdges = produce(edges, draft => {
       const currentEdge = draft.find(e => e.id === edge.id);
-      if (!currentEdge?.data)
+      if (!currentEdge)
         return;
-
-      currentEdge.data.hovering = true;
+      if (!currentEdge.data) {
+        currentEdge.data = { hovering: true } as any;
+      } else {
+        currentEdge.data.hovering = true;
+      }
     });
     setEdges(newEdges);
   }, [reactFlow, store, workflowReadonly]);
@@ -725,7 +753,6 @@ export const useWorkflowInteractions = () => {
       const currentEdge = draft.find(e => e.id === edge.id);
       if (!currentEdge?.data)
         return;
-
       currentEdge.data.hovering = false;
     });
     setEdges(newEdges);

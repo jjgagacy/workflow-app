@@ -28,6 +28,7 @@ export const BaseNode = (props: NodeProps<Node<NodeData>> & { children?: React.R
       className={cn(
         "relative flex min-w-[200px] items-stretch gap-3 rounded-md border-1 border-[var(--border)] bg-background text-left shadow-sm transition-all",
         isIterationNode ? "max-w-none" : "max-w-[260px]",
+        isIterationNode && "pointer-events-none",
         !isDisabled && "hover:shadow-xl",
         isDisabled && "border-gray-300 bg-gray-100 text-gray-400 opacity-80 dark:border-gray-700 dark:bg-gray-800/80 dark:text-gray-500",
         selected && "ring-1 ring-primary/30 shadow-xl"
@@ -40,6 +41,7 @@ export const BaseNode = (props: NodeProps<Node<NodeData>> & { children?: React.R
       <div className={cn(
         'group relative',
         'w-full flex-col',
+        isIterationNode && 'pointer-events-none',
       )}>
         {
           !data.candidate && (

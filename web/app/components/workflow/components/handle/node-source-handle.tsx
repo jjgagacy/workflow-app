@@ -1,6 +1,7 @@
 import { cn } from "@/utils/classnames";
-import { Handle, Position } from "@xyflow/react";
+import { Handle, Position, useStore } from "@xyflow/react";
 import { useWorkflowStore } from "../../context";
+import type { Node } from "../../types";
 
 type NodeSourceHandleProps = {
   nodeId: string;
@@ -22,8 +23,12 @@ export const NodeSourceHandle = ({
   handleClassName = '',
 }: NodeSourceHandleProps) => {
   const setShowNodeSelector = useWorkflowStore(s => s.setShowNodeSelector);
+  const currentNode = useStore((s) => s.nodes.find((n) => n.id === nodeId) as Node | undefined);
+
   const onHandleClick = () => {
-    setShowNodeSelector(true);
+    setShowNodeSelector(true, currentNode?.parentId
+      ? { parentNodeId: currentNode.parentId, previousNodeId: nodeId }
+      : null);
   }
 
   return (

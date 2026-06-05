@@ -21,7 +21,7 @@ export const NodeResizer = ({ id, nodeData, icon }: NodeResizerProps) => {
   return (
     <div
       className={cn(
-        "hidden group-hover:block",
+        "pointer-events-auto hidden group-hover:block",
         node.selected && "block",
       )}
     >
