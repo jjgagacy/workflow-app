@@ -31,14 +31,14 @@ import { NodeCatalog, NodeCategory } from "./types";
 
 export const NODES_DATA: NodeCatalog[] = [
   // Flow 分类
-  {
-    id: 'base',
-    name: 'base',
-    icon: <InfoIcon />,
-    category: NodeCategory.FLOW,
-    section: 'basic',
-    description: ''
-  },
+  // {
+  //   id: 'base',
+  //   name: 'base',
+  //   icon: <InfoIcon />,
+  //   category: NodeCategory.FLOW,
+  //   section: 'basic',
+  //   description: ''
+  // },
   {
     id: 'if',
     name: 'if',

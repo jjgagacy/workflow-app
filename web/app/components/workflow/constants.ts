@@ -1,5 +1,8 @@
 import { ifElseNodeDefaultData } from "./nodes/if-else/data";
+import { filterNodeDefaultData } from "./nodes/filter/data";
 import type { IfElseNodeData } from "./nodes/if-else/types";
+import type { FilterNodeData } from "./nodes/filter/types";
+import type { IterationNodeData } from "./nodes/iteration/types";
 import type { NodeData } from "./types";
 import { NodeType } from "./types";
 
@@ -17,6 +20,8 @@ export const NODE_DEFAULT_HEIGHT = 88;
 
 type NodeDefaultDataByType = Partial<Record<NodeType, Partial<NodeData>>> & {
   [NodeType.IfElse]: Partial<IfElseNodeData>;
+  [NodeType.Filter]: Partial<FilterNodeData>;
+  [NodeType.Iteration]: Partial<IterationNodeData>;
 };
 
 export const NODE_DEFAULT_DATA: NodeDefaultDataByType = {
@@ -24,5 +29,21 @@ export const NODE_DEFAULT_DATA: NodeDefaultDataByType = {
     type: NodeType.IfElse,
     label: '',
     ...ifElseNodeDefaultData.value,
-  }
+  },
+  [NodeType.Filter]: {
+    type: NodeType.Filter,
+    label: '',
+    ...filterNodeDefaultData.value,
+  },
+  [NodeType.Iteration]: {
+    type: NodeType.Iteration,
+    label: '',
+    parallelCount: 1,
+    errorResponse: 'stop-workflow',
+    flat: false,
+    size: {
+      width: 320,
+      height: 220,
+    },
+  },
 };

@@ -87,6 +87,12 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   const setShowCommandPalette = useWorkflowStore(s => s.setShowCommandPalette);
   const interactionMode = useWorkflowStore(s => s.interactionMode);
   const setMousePosition = useWorkflowStore(s => s.setMousePosition);
+  const canEditWorkflow = !workflowReadonly();
+  const panOnDragButtons = !canEditWorkflow
+    ? false
+    : interactionMode === 'hand'
+      ? [0, 1]
+      : [1];
   const nodeSelectorWrapperRef = useRef<HTMLDivElement>(null);
   const pendingEdgeChangesRef = useRef<any[] | null>(null);
   const { handleContextMenu, handleCancelContextMenu } = usePanelContextMenu(containerRef);
@@ -215,17 +221,17 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
           connectionMode={ConnectionMode.Loose}
           colorMode={activeTheme === 'dark' ? 'dark' : 'light'}
           defaultEdgeOptions={defaultEdgeOptions}
-          panOnDrag={interactionMode === 'hand' && !workflowReadonly()}
-          selectionOnDrag={interactionMode === 'pointer' && !workflowReadonly()}
-          nodesDraggable={interactionMode === 'pointer' && !workflowReadonly()}
-          elementsSelectable={interactionMode === 'pointer' && !workflowReadonly()}
+          panOnDrag={panOnDragButtons}
+          selectionOnDrag={interactionMode === 'pointer' && canEditWorkflow}
+          nodesDraggable={interactionMode === 'pointer' && canEditWorkflow}
+          elementsSelectable={interactionMode === 'pointer' && canEditWorkflow}
           multiSelectionKeyCode={null}
-          nodesFocusable={!workflowReadonly()}
-          edgesFocusable={!workflowReadonly()}
-          zoomOnPinch={!workflowReadonly()}
-          zoomOnScroll={!workflowReadonly()}
-          zoomOnDoubleClick={!workflowReadonly()}
-          panOnScroll={!workflowReadonly()}
+          nodesFocusable={canEditWorkflow}
+          edgesFocusable={canEditWorkflow}
+          zoomOnPinch={canEditWorkflow}
+          zoomOnScroll={canEditWorkflow}
+          zoomOnDoubleClick={canEditWorkflow}
+          panOnScroll={canEditWorkflow}
           onPaneContextMenu={handleContextMenu as any}
           onNodeContextMenu={handleNodeContextMenu as any}
           onSelectionContextMenu={handleSelectionContextMenu as any}

@@ -13,6 +13,32 @@ import { useWorkflowHistory, WorkflowHistoryEvent } from "./use-workflow-history
 // import { useWorkflowHistory } from "./use-workflow-history";
 
 const PASTE_OFFSET = 32;
+const CHILD_NODE_OFFSET_X = 20;
+const CHILD_NODE_OFFSET_Y = 60;
+const CHILD_NODE_GAP_Y = 108;
+
+const collectNodeIdsWithDescendants = (nodes: Node[], rootNodeIds: string[]) => {
+  const collectedIds = new Set(rootNodeIds);
+  const queue = [...rootNodeIds];
+
+  while (queue.length) {
+    const currentNodeId = queue.shift();
+    if (!currentNodeId) {
+      continue;
+    }
+
+    nodes.forEach((node) => {
+      if (node.parentId !== currentNodeId || collectedIds.has(node.id)) {
+        return;
+      }
+
+      collectedIds.add(node.id);
+      queue.push(node.id);
+    });
+  }
+
+  return collectedIds;
+};
 
 export const useWorkflowInteractions = () => {
   const { t } = useTranslation();
@@ -105,8 +131,15 @@ export const useWorkflowInteractions = () => {
       return;
     if (node.data.type === NodeType.Start)
       return;
+
+    const { activePanel, openNodePanel } = workflowContext.getState();
+
     onSelectNodes([node.id]);
-  }, [store, workflowContext]);
+
+    if (activePanel) {
+      openNodePanel(node as Node);
+    }
+  }, [onSelectNodes, workflowContext, workflowReadonly]);
 
   const handleConnectStart = useCallback(() => {
     if (workflowReadonly())
@@ -263,20 +296,87 @@ export const useWorkflowInteractions = () => {
     const { nodes, edges } = store.getState();
     const { setNodes, setEdges } = reactFlow;
 
-    const index = nodes.findIndex(n => n.id === id);
-    const nodeToDelete = nodes[index];
+    const nodeToDelete = nodes.find(n => n.id === id);
     if (!nodeToDelete)
       return;
 
-    const newNodes = produce(nodes, draft => {
-      draft.splice(index, 1);
-    });
-    const newEdges = edges.filter(edge => edge.source !== id && edge.target !== id);
+    const deletedNodeIds = collectNodeIdsWithDescendants(nodes as Node[], [id]);
+
+    const newNodes = nodes.filter((node) => !deletedNodeIds.has(node.id));
+    const newEdges = edges.filter(edge => !deletedNodeIds.has(edge.source) && !deletedNodeIds.has(edge.target));
     setNodes(newNodes);
     setEdges(newEdges);
     if (!options?.skipHistory) {
       addHistoryState(WorkflowHistoryEvent.NodeDelete, { nodes: newNodes, edges: newEdges });
     }
+  }, [addHistoryState, reactFlow, store, workflowReadonly]);
+
+  const handleNodeToggleDisabled = useCallback((id: string) => {
+    if (workflowReadonly())
+      return;
+
+    const { nodes, edges } = store.getState();
+    const { setNodes } = reactFlow;
+    const { activePanel, updateActivePanelNode } = workflowContext.getState();
+
+    const targetNode = nodes.find((node) => node.id === id);
+    if (!targetNode) {
+      return;
+    }
+
+    const nextNodes = produce(nodes as Node[], (draft) => {
+      const currentNode = draft.find((node) => node.id === id);
+      if (!currentNode) {
+        return;
+      }
+
+      currentNode.data = {
+        ...currentNode.data,
+        disabled: !currentNode.data.disabled,
+      };
+    });
+
+    setNodes(nextNodes);
+
+    if (activePanel?.type === 'node' && activePanel.node?.id === id) {
+      const updatedNode = nextNodes.find((node) => node.id === id);
+      if (updatedNode) {
+        updateActivePanelNode(updatedNode);
+      }
+    }
+
+    addHistoryState(WorkflowHistoryEvent.NodeUpdate, { nodes: nextNodes, edges });
+  }, [addHistoryState, reactFlow, store, workflowContext, workflowReadonly]);
+
+  const handleSelectedNodesToggleDisabled = useCallback(() => {
+    if (workflowReadonly())
+      return;
+
+    const { nodes, edges } = store.getState();
+    const { setNodes } = reactFlow;
+    const selectedNodes = nodes.filter((node) => node.selected && node.data.type !== NodeType.Start);
+
+    if (!selectedNodes.length) {
+      return;
+    }
+
+    const shouldDisable = selectedNodes.some((node) => !node.data.disabled);
+    const selectedNodeIds = new Set(selectedNodes.map((node) => node.id));
+    const nextNodes = produce(nodes as Node[], (draft) => {
+      draft.forEach((node) => {
+        if (!selectedNodeIds.has(node.id)) {
+          return;
+        }
+
+        node.data = {
+          ...node.data,
+          disabled: shouldDisable,
+        };
+      });
+    });
+
+    setNodes(nextNodes);
+    addHistoryState(WorkflowHistoryEvent.NodeUpdate, { nodes: nextNodes, edges });
   }, [addHistoryState, reactFlow, store, workflowReadonly]);
 
   const handleNodesDelete = useCallback(() => {
@@ -290,7 +390,7 @@ export const useWorkflowInteractions = () => {
     if (!selectedNodes.length)
       return;
 
-    const selectedNodeIds = new Set(selectedNodes.map(node => node.id));
+    const selectedNodeIds = collectNodeIdsWithDescendants(nodes as Node[], selectedNodes.map(node => node.id));
     const newNodes = nodes.filter(node => !selectedNodeIds.has(node.id));
     const newEdges = edges.filter(edge => !selectedNodeIds.has(edge.source) && !selectedNodeIds.has(edge.target));
     setNodes(newNodes);
@@ -388,8 +488,105 @@ export const useWorkflowInteractions = () => {
       return;
 
     const { renderType, nodeType, label, description, icon, iconColor } = params;
-    const { nodeId, sourceHandle, targetHandle, previousNodeId, previousNodeSourceHandle, nextNodeId, nextNodeTargetHandle } = params;
+    const { nodeId, parentNodeId, sourceHandle, targetHandle, previousNodeId, previousNodeSourceHandle, nextNodeId, nextNodeTargetHandle } = params;
     const { setCandidateNode, setShowNodeSelector } = workflowContext.getState();
+
+    if (nodeId) {
+      const { nodes, edges } = store.getState();
+      const { setNodes } = reactFlow;
+      const { activePanel, updateActivePanelNode } = workflowContext.getState();
+      const targetNode = nodes.find((node) => node.id === nodeId);
+
+      if (!targetNode) {
+        setShowNodeSelector(false);
+        return;
+      }
+
+      const nextNodes = produce(nodes as Node[], (draft) => {
+        draft.forEach((node) => {
+          node.selected = node.id === nodeId;
+        });
+
+        const currentNode = draft.find((node) => node.id === nodeId);
+        if (!currentNode) {
+          return;
+        }
+
+        currentNode.type = renderType || currentNode.type;
+        currentNode.data = {
+          ...NODE_DEFAULT_DATA[nodeType],
+          type: nodeType,
+          label,
+          description,
+          icon,
+          iconColor,
+          disabled: currentNode.data.disabled,
+          size: currentNode.data.size,
+          candidate: false,
+        };
+      });
+
+      setNodes(nextNodes);
+
+      if (activePanel?.type === 'node' && activePanel.node?.id === nodeId) {
+        const updatedNode = nextNodes.find((node) => node.id === nodeId);
+        if (updatedNode) {
+          updateActivePanelNode(updatedNode);
+        }
+      }
+
+      addHistoryState(WorkflowHistoryEvent.NodeUpdate, { nodes: nextNodes, edges });
+      setCandidateNode(undefined);
+      setShowNodeSelector(false);
+      return;
+    }
+
+    if (parentNodeId) {
+      const { nodes, edges } = store.getState();
+      const { setNodes } = reactFlow;
+      const parentNode = nodes.find((node) => node.id === parentNodeId);
+
+      if (!parentNode) {
+        setShowNodeSelector(false);
+        return;
+      }
+
+      const childNodes = nodes.filter((node) => node.parentId === parentNodeId);
+      const newNode = newCandidateNode({
+        type: renderType,
+        parentId: parentNodeId,
+        extent: 'parent',
+        draggable: true,
+        selected: true,
+        data: {
+          ...NODE_DEFAULT_DATA[nodeType],
+          type: nodeType,
+          label,
+          description,
+          icon,
+          iconColor,
+          candidate: false,
+        },
+        position: {
+          x: CHILD_NODE_OFFSET_X,
+          y: CHILD_NODE_OFFSET_Y + childNodes.length * CHILD_NODE_GAP_Y,
+        }
+      });
+
+      const nextNodes = produce(nodes as Node[], (draft) => {
+        draft.forEach((node) => {
+          node.selected = false;
+        });
+
+        draft.push(newNode);
+      });
+
+      setNodes(nextNodes);
+      addHistoryState(WorkflowHistoryEvent.NodeAdd, { nodes: nextNodes, edges });
+      setCandidateNode(undefined);
+      setShowNodeSelector(false);
+      return;
+    }
 
     if (previousNodeId && nextNodeId) {
       const { nodes, edges } = store.getState();
@@ -598,7 +795,9 @@ export const useWorkflowInteractions = () => {
     handleNodeSelectionEnd,
     handleNodeResize,
     handleNodeDelete,
+    handleNodeToggleDisabled,
     handleNodesDelete,
+    handleSelectedNodesToggleDisabled,
     handleNodesCopy,
     handleNodesPaste,
     handleNodesDuplicate,

@@ -6,6 +6,7 @@ import { getNodeTypeIconColor } from "../../utils/node";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { getIfElseBranchDefaultName, normalizeIfElseBranches } from "./data";
+import { BranchItem, NodeHeader } from "../../components/nodes-shared";
 
 const IfElseNode = ({ id, data }: NodeProps<Node<IfElseNodeData>>) => {
   const { t } = useTranslation();
@@ -20,19 +21,10 @@ const IfElseNode = ({ id, data }: NodeProps<Node<IfElseNodeData>>) => {
 
   return (
     <div className="if-else-node">
-      <div className="node-header mb-2 flex items-center gap-1 px-1 py-1.5">
-        {data.icon && (
-          <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${iconColor} [&>svg]:h-5 [&>svg]:w-5`}>
-            {data.icon}
-          </span>
-        )}
-        <span className="truncate text-sm font-medium tracking-[0.01em] text-[var(--color-text-primary)]">
-          {label}
-        </span>
-      </div>
+      <NodeHeader icon={data.icon} iconColor={iconColor} title={label} />
       {!data.candidate && (
         <>
-          <div className="space-y-2 px-1 pb-1">
+          <div className="space-y-2 p-4">
             {branches.map((branch, index) => {
               const isDefault = Boolean(branch.isDefault);
               const conditionCount = branch.conditionGroup?.conditions?.length ?? 0;
@@ -43,13 +35,10 @@ const IfElseNode = ({ id, data }: NodeProps<Node<IfElseNodeData>>) => {
               const logicLabel = branch.conditionGroup.logicalOperator.toUpperCase();
 
               return (
-                <div
-                  key={branch.id}
-                  className="relative flex min-h-11 items-center rounded-lg border border-[var(--border)] bg-muted/20 px-3 py-2 pr-8"
-                >
+                <BranchItem key={branch.id} id={branch.id}>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="rounded-md bg-background px-2 py-0.5 text-[11px] font-semibold tracking-[0.02em] text-foreground">
+                      <span className="rounded-md bg-background pr-2 py-0.5 text-[11px] font-semibold tracking-[0.02em] text-foreground">
                         {branchTitle}
                       </span>
                       {!isDefault && (
@@ -67,9 +56,9 @@ const IfElseNode = ({ id, data }: NodeProps<Node<IfElseNodeData>>) => {
                   <NodeSourceHandle
                     nodeId={id}
                     handleId={branch.id}
-                    className="top-1/2 !-right-[12px] left-full ml-1"
+                    className="top-1/2 !-right-[16px] left-full ml-1"
                   />
-                </div>
+                </BranchItem>
               );
             })}
           </div>

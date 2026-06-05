@@ -25,6 +25,7 @@ export const CustomNoteNode = ({ id, data }: NodeProps<Node<NoteNodeData>>) => {
   const store = useStoreApi();
   const { nodes } = store.getState();
   const node = nodes.find(n => n.id === id);
+  const isDisabled = Boolean(data.disabled);
 
   return (
     <div
@@ -32,6 +33,7 @@ export const CustomNoteNode = ({ id, data }: NodeProps<Node<NoteNodeData>>) => {
         'relative flex flex-col items-start border border-[var(--border)] rounded-md hover:shadow-lg hover:ring-1 hover:ring-gray-200 hover:dark:ring-gray-700 transition-colors',
         THEME_COLORS[theme]?.bg,
         THEME_COLORS[theme]?.border,
+        isDisabled && 'border-gray-300 bg-gray-100 text-gray-400 opacity-80 dark:border-gray-700 dark:bg-gray-800/80 dark:text-gray-500',
         // node?.selected && 'ring-2 ring-primary',
       )}
       style={{

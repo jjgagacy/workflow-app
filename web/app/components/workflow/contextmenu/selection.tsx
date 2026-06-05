@@ -22,7 +22,7 @@ export const SelectionContextMenu = memo(({ containerRef }: SelectionContextMenu
   const { handleSelectionContextMenu, handleCancelSelectionContextMenu } = useSelectionContextMenu(containerRef || ref);
   const { handleCancelContextMenu } = usePanelContextMenu(containerRef || ref);
   const { handleNodeContextMenu, handleCancelNodeContextMenu } = useNodeContextMenu(containerRef || ref);
-  const { handleNodesCopy, handleNodesSelectAll, handleNodesUnselectAll } = useWorkflowInteractions();
+  const { handleNodesCopy, handleNodesDelete, handleNodesSelectAll, handleNodesUnselectAll, handleSelectedNodesToggleDisabled } = useWorkflowInteractions();
 
   useEffect(() => {
     if (selectionMenu.visible) {
@@ -86,13 +86,16 @@ export const SelectionContextMenu = memo(({ containerRef }: SelectionContextMenu
         icon={<PowerSquare />}
         shortcut={{ keys: ['D'] }}
         onClick={() => {
+          handleSelectedNodesToggleDisabled();
+          handleCancelSelectionContextMenu();
         }}
       />
       <ContextMenuItem
         label={t('workflow.selectionMenu.delete')}
         icon={<X />}
         onClick={() => {
-
+          handleNodesDelete();
+          handleCancelSelectionContextMenu();
         }}
       />
     </MenuContainer>

@@ -17,8 +17,9 @@ export enum NodeType {
   VariableAggregator = 'variable-aggregator',
   ParameterExtractor = 'parameter-extractor',
   Iteration = 'iteration',
+  Filter = 'filter',
   DocExtractor = 'document-extractor',
-  ListFilter = 'list-operator',
+  ListOperator = 'list-operator',
   IterationStart = 'iteration-start',
   Agent = 'agent',
   Loop = 'loop',
@@ -31,6 +32,7 @@ export type NodeData<T = {}> = {
   value?: any;
   description?: string;
   type: NodeType;
+  disabled?: boolean;
   // selected?: boolean;
   size?: Dimensions;
   position?: XYPosition;
@@ -146,6 +148,7 @@ export type NodeAddParams = (params: {
   iconColor?: string;
 
   nodeId?: string;
+  parentNodeId?: string;
   sourceHandle?: string;
   targetHandle?: string;
 

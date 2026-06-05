@@ -23,10 +23,14 @@ export const NodeContextMenu = memo(({ containerRef }: NodeContextMenuProps) => 
   const { t } = useTranslation();
   const nodeMenu = useWorkflowStore(s => s.nodeMenu);
   const openNodePanel = useWorkflowStore(s => s.openNodePanel);
+  const setShowNodeSelector = useWorkflowStore(s => s.setShowNodeSelector);
   const { handleNodeContextMenu, handleCancelNodeContextMenu } = useNodeContextMenu(containerRef || ref);
   const { handleCancelContextMenu } = usePanelContextMenu(containerRef || ref);
   const { handleCancelSelectionContextMenu } = useSelectionContextMenu(containerRef || ref);
-  const { handleNodesCopy } = useWorkflowInteractions();
+  const { handleNodeDelete, handleNodeToggleDisabled, handleNodesCopy } = useWorkflowInteractions();
+
+  const nodes = store.getState().nodes as Node[];
+  const currentNode = nodes.find((item) => item.id === nodeMenu.nodeId);
 
   useEffect(() => {
     if (nodeMenu.visible) {
@@ -57,10 +61,8 @@ export const NodeContextMenu = memo(({ containerRef }: NodeContextMenuProps) => 
         icon={<FolderOpen />}
         shortcut={{ keys: ['enter'] }}
         onClick={() => {
-          const nodes = store.getState().nodes as Node[];
-          const node = nodes.find((item) => item.id === nodeMenu.nodeId);
-          if (node) {
-            openNodePanel(node);
+          if (currentNode) {
+            openNodePanel(currentNode);
           }
           handleCancelNodeContextMenu();
         }}
@@ -70,7 +72,12 @@ export const NodeContextMenu = memo(({ containerRef }: NodeContextMenuProps) => 
         icon={<Replace />}
         shortcut={{ keys: ['R'] }}
         onClick={() => {
+          if (!nodeMenu.nodeId) {
+            return;
+          }
 
+          setShowNodeSelector(true, { nodeId: nodeMenu.nodeId });
+          handleCancelNodeContextMenu();
         }}
       />
       <ContextMenuItem
@@ -90,14 +97,20 @@ export const NodeContextMenu = memo(({ containerRef }: NodeContextMenuProps) => 
         icon={<PowerSquare />}
         shortcut={{ keys: ['D'] }}
         onClick={() => {
-
+          if (nodeMenu.nodeId) {
+            handleNodeToggleDisabled(nodeMenu.nodeId);
+          }
+          handleCancelNodeContextMenu();
         }}
       />
       <ContextMenuItem
         label={t('workflow.nodeMenu.delete')}
         icon={<X />}
         onClick={() => {
-
+          if (nodeMenu.nodeId) {
+            handleNodeDelete(nodeMenu.nodeId);
+          }
+          handleCancelNodeContextMenu();
         }}
       />
     </MenuContainer>

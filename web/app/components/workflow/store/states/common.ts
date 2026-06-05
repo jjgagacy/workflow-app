@@ -4,6 +4,8 @@ import { StateCreator } from "zustand";
 export type WorkflowInteractionMode = 'pointer' | 'hand';
 
 export type NodeSelectorContext = {
+  nodeId?: string;
+  parentNodeId?: string;
   previousNodeId?: string;
   previousNodeSourceHandle?: string;
   nextNodeId?: string;

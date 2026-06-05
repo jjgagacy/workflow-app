@@ -80,7 +80,7 @@ export const Panel = () => {
   return (
     <div
       className={cn(
-        "absolute z-[60] flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-background shadow-2xl",
+        "absolute z-[60] flex flex-col overflow-hidden rounded-md border border-[var(--border)] bg-background shadow-2xl",
         panelMode === "side"
           ? "bottom-2 right-2 top-6"
           : "left-1/2 top-1/2 h-[min(80vh,720px)] -translate-x-1/2 -translate-y-1/2",
