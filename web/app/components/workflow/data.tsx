@@ -63,14 +63,14 @@ export const NODES_DATA: NodeCatalog[] = [
     section: 'flow-control',
     description: ''
   },
-  {
-    id: 'loop',
-    name: 'loop',
-    icon: <Repeat2 />,
-    category: NodeCategory.FLOW,
-    section: 'flow-control',
-    description: ''
-  },
+  // {
+  //   id: 'loop',
+  //   name: 'loop',
+  //   icon: <Repeat2 />,
+  //   category: NodeCategory.FLOW,
+  //   section: 'flow-control',
+  //   description: ''
+  // },
   {
     id: 'merge',
     name: 'merge',
@@ -95,22 +95,22 @@ export const NODES_DATA: NodeCatalog[] = [
     section: 'data',
     description: ''
   },
-  {
-    id: 'template-transform',
-    name: 'template-transform',
-    icon: <Braces />,
-    category: NodeCategory.FLOW,
-    section: 'data',
-    description: ''
-  },
-  {
-    id: 'variable-assigner',
-    name: 'variable-assigner',
-    icon: <Variable />,
-    category: NodeCategory.FLOW,
-    section: 'data',
-    description: ''
-  },
+  // {
+  //   id: 'template-transform',
+  //   name: 'template-transform',
+  //   icon: <Braces />,
+  //   category: NodeCategory.FLOW,
+  //   section: 'data',
+  //   description: ''
+  // },
+  // {
+  //   id: 'variable-assigner',
+  //   name: 'variable-assigner',
+  //   icon: <Variable />,
+  //   category: NodeCategory.FLOW,
+  //   section: 'data',
+  //   description: ''
+  // },
   {
     id: 'variable-aggregator',
     name: 'variable-aggregator',
