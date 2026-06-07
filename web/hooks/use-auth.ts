@@ -112,7 +112,6 @@ export function useAuth() {
     localStorage.removeItem('session:token');
   }, [setAccessToken]);
 
-
   const isSuperUser = (user: any): boolean => {
     if (!user.roles) return false;
 

@@ -158,3 +158,8 @@ export type NodeAddParams = (params: {
   nextNodeId?: string;
   nextNodeTargetHandle?: string;
 }) => void;
+
+export enum CodeLanguage {
+  python = 'python',
+  javascript = 'javascript',
+}

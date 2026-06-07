@@ -19,7 +19,7 @@ export const Control = () => {
   const { addNote } = useAddNote();
 
   return (
-    <div className={cn('flex flex-col items-center rounded-md gap-2 bg-gray-100 dark:bg-gray-800 p-2')}>
+    <div className={cn('flex flex-col items-center rounded-md gap-2 bg-muted/15 p-2')}>
       <ShortcutTooltip label={t('workflow.control.addNode')} shortcut={{ keys: ['N'], metaKey: false }} placement="left">
         <div
           className={cn(`flex h-8 w-8 cursor-pointer items-center border border-[var(--border)] justify-center rounded-sm ${getThemeBgClass(activeColorTheme as ThemeType)} ${getThemeHoverClass(activeColorTheme as ThemeType)} transition-colors`)}

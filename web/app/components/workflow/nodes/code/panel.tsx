@@ -7,7 +7,7 @@ import { SimpleSelect } from "@/app/ui/select";
 import { buildVariableSelectItems, buildWorkflowVariableOptions } from "../../components/nodes-shared/variable-select";
 import { useNodesUpdate } from "../../hooks/use-nodesUpdate";
 import { useWorkflowStore } from "../../context";
-import { Node, VariableType } from "../../types";
+import { CodeLanguage, Node, VariableType } from "../../types";
 import { createCodeInputParameter, createCodeOutputVariable } from "./data";
 import type {
   CodeExceptionStrategy,
@@ -15,6 +15,7 @@ import type {
   CodeNodeData,
   CodeOutputVariable,
 } from "./types";
+import { CodeEditor } from "../../components/code-editor";
 
 type CodePanelProps = {
   node: Node<CodeNodeData>;
@@ -224,9 +225,16 @@ const CodePanel = ({ node }: CodePanelProps) => {
 
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">
         <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">代码</div>
-        <div className="rounded-lg border border-dashed border-[var(--border)] bg-background px-3 py-4 text-sm text-muted-foreground">
-          代码输入框暂未实现（保留区域）。
-        </div>
+        <CodeEditor
+          language={CodeLanguage.javascript}
+          title="coding..."
+          value={`function main({arg1, arg2}) {
+    return {
+        result: arg1 + arg2
+    }
+}`}
+          onChange={(value) => syncNodeData({ code: value })}
+        />
       </section>
 
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">

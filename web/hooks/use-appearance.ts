@@ -6,6 +6,9 @@ import { Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { usePersistentState } from "./use-persistent-state";
+import { APPEARANCE_DEFAULT_STORAGE_KEY } from "@/config/storage";
+import React from "react";
 
 // Constants
 const APPEARANCE_VALUES = {
@@ -111,8 +114,11 @@ export function useAppearance() {
   const [resolvedTheme, setResolvedTheme] = useState<AppearanceType>('system');
   const [mounted, setMounted] = useState(false);
   const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>('light');
+  const [storageTheme, setStorageTheme] = usePersistentState<AppearanceType>(APPEARANCE_DEFAULT_STORAGE_KEY, APPEARANCE_VALUES.SYSTEM);
   const { activeColorTheme, setActiveTheme, setActiveColorTheme, activeTheme } = useCustomTheme();
-  const { themes, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  // 使用 ref 防止重复初始化
+  const isInitialized = React.useRef(false);
 
   // 监听系统主题变化
   useEffect(() => {
@@ -136,7 +142,8 @@ export function useAppearance() {
     setResolvedTheme(appearance);
     setActiveTheme(appearance);
     setTheme(appearance);
-  }, [setResolvedTheme, setTheme]);
+    setStorageTheme(appearance);
+  }, [setResolvedTheme, setTheme, setStorageTheme, setActiveTheme]);
 
   /**
    * 外观选项列表（使用 useMemo 优化性能）
@@ -159,17 +166,37 @@ export function useAppearance() {
   const initializeTheme = useCallback(() => {
     if (!mounted) return;
 
-    const initialTheme = (activeTheme || APPEARANCE_VALUES.SYSTEM) as AppearanceType;
-    setActiveTheme(initialTheme);
-  }, [mounted, activeTheme]);
+    const initialTheme = (storageTheme || activeTheme || APPEARANCE_VALUES.SYSTEM) as AppearanceType;
+    if (initialTheme !== activeTheme) {
+      setActiveTheme(initialTheme);
+      setTheme(initialTheme);
+      setResolvedTheme(initialTheme);
+    }
+  }, [mounted, activeTheme, storageTheme, setActiveTheme]);
 
   /**
    * 组件挂载和主题初始化
    */
   useEffect(() => {
     setMounted(true);
-    initializeTheme();
-  }, [initializeTheme]);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && !isInitialized.current) {
+      initializeTheme();
+      isInitialized.current = true;
+    }
+  }, [mounted, initializeTheme]);
+
+  // 将 next-themes 的主题值同步到自定义主题上下文，避免两个状态源出现短暂不一致。
+  useEffect(() => {
+    if (!mounted || !theme) return;
+
+    const normalizedTheme = theme as AppearanceType;
+    if (normalizedTheme !== activeTheme) {
+      setActiveTheme(normalizedTheme);
+    }
+  }, [mounted, theme, activeTheme, setActiveTheme]);
 
   /**
    * 监听系统主题偏好变化（仅当使用系统主题时）
@@ -236,16 +263,22 @@ export function useAppearance() {
 
     // 切换函数
     toggleTheme: () => {
-      // 确定当前应该基于哪个主题进行切换
-      const baseTheme = activeTheme === APPEARANCE_VALUES.SYSTEM
-        ? (getThemeFromDataset() === 'dark' ? APPEARANCE_VALUES.DARK : APPEARANCE_VALUES.LIGHT)
-        : activeTheme;
+      // 获取当前实际使用的主题（考虑系统主题的情况）
+      let currentTheme: AppearanceType;
+
+      if (activeTheme === APPEARANCE_VALUES.SYSTEM) {
+        // 如果是系统主题，基于系统偏好判断
+        currentTheme = systemTheme === 'dark' ? APPEARANCE_VALUES.DARK : APPEARANCE_VALUES.LIGHT;
+      } else {
+        currentTheme = activeTheme;
+      }
 
       // 计算新主题
-      const newTheme = baseTheme === APPEARANCE_VALUES.LIGHT
+      const newTheme = currentTheme === APPEARANCE_VALUES.LIGHT
         ? APPEARANCE_VALUES.DARK
         : APPEARANCE_VALUES.LIGHT;
 
+      // 选择新主题
       selectAppearance(newTheme);
     },
 

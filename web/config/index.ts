@@ -4,3 +4,5 @@ export const ALLOW_FILE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'webp', 'gif']
 
 export const API_PREFIX = process.env.NEXT_PUBLIC_API_PREFIX || 'http://localhost:3001/api';
 export const PUBLIC_API_PREFIX = process.env.NEXT_PUBLIC_PUBLIC_API_PREFIX || 'http://localhost:3001/open/api';
+export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+export const ASSETS_URL = process.env.NEXT_PUBLIC_ASSETS_URL || `${BASE_URL}/assets`;

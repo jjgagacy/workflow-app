@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { usePersistentState } from '@/hooks/use-persistent-state';
+import { ADMIN_SIDEBAR_DEFAULT_STORAGE_KEY } from '@/config/storage';
 
 interface UseSidebarOptions {
   /** 默认是否折叠 */
@@ -17,7 +18,7 @@ export function useSidebar(options: UseSidebarOptions = {}) {
   const {
     defaultCollapsed = false,
     persist = true,
-    storageKey = 'adminSidebarExpanded'
+    storageKey = ADMIN_SIDEBAR_DEFAULT_STORAGE_KEY
   } = options;
 
   const isMobile = useIsMobile();

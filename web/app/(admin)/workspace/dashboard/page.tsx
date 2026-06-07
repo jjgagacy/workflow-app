@@ -27,6 +27,7 @@ import { Switch } from "@/app/ui/switch";
 import { Textarea } from "@/app/ui/textarea";
 import { toast } from "@/app/ui/toast";
 import { TreeNode, TreeSelect } from "@/app/ui/tree-select";
+import { useAppearance } from "@/hooks/use-appearance";
 import { arrayToTree, treeToFlatten } from "@/utils/trees";
 import { AlertTriangleIcon, BellIcon, HomeIcon, SettingsIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
