@@ -2,7 +2,7 @@ import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/r
 import { Fragment } from "react";
 import { IconCheck } from "@tabler/icons-react";
 import { Palette } from "lucide-react";
-import { getActiveThemeClass, getThemeHoverClass, ThemeType } from "@/types/theme";
+import { getThemeHoverClass, ThemeType } from "@/types/theme";
 import { useAppearance } from "@/hooks/use-appearance";
 
 const DEFAULT_THEMES = [

@@ -1,6 +1,6 @@
 import { cn } from "@/utils/classnames";
 import { NodeData } from "../types";
-import { NodeResizeControl, useReactFlow, useStoreApi } from "@xyflow/react";
+import { NodeResizeControl, useStoreApi } from "@xyflow/react";
 import { NODE_RESIZE_MIN_HEIGHT, NODE_RESIZE_MIN_WIDTH } from "../constants";
 import { useWorkflowInteractions } from "../hooks/use-interactions";
 

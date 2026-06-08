@@ -1,4 +1,3 @@
-import { CUSTOM_EDGE_NAME } from "./constants";
 import { Edge } from "./types";
 
 export const initialEdges: Edge[] = [

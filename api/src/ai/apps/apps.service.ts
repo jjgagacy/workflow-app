@@ -26,6 +26,15 @@ export class AppsService {
     return await this.appRepository.findOne({ where: { id } });
   }
 
+  async getAppByIdAndTenant(appId: string, tenantId: string): Promise<AppEntity | null> {
+    return await this.appRepository.findOne({
+      where: {
+        id: appId,
+        tenant: { id: tenantId },
+      },
+    });
+  }
+
   async query(queryDto: QueryAppDto) {
     const where: FindOptionsWhere<AppEntity> = {
       tenant: { id: queryDto.tenantId },

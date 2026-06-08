@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { getClientLocale } from "@/i18n";
 import api from "@/api";
 import { getErrorMessage } from "@/utils/errors";
-import { useAuth } from "../use-auth";
 
 export type AuthMode = 'signup' | 'login' | 'forgot-password';
 

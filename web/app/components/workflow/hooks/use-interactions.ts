@@ -8,7 +8,6 @@ import { Edge, Node, NodeAddParams, NodeType } from "../types";
 import { newCandidateNode } from "../utils/node";
 import { CUSTOM_EDGE_NAME, CUSTOM_NOTE_NODE_NAME, NODE_DEFAULT_DATA, NODE_DEFAULT_HEIGHT, NODE_DEFAULT_WIDTH } from "../constants";
 import { WorkflowHistoryContext } from "../store/workflow-history-store";
-import { useStore } from "zustand";
 import { useWorkflowHistory, WorkflowHistoryEvent } from "./use-workflow-history";
 // import { useWorkflowHistory } from "./use-workflow-history";
 

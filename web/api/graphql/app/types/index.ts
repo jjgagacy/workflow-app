@@ -11,3 +11,21 @@ export type CreateAppInput = {
 export type CreateAppResponse = {
   id: string;
 }
+
+export type AppInfo = {
+  id: string;
+  name: string;
+  description: string;
+  mode: string;
+  icon: string;
+  iconType: string;
+  enableSite: boolean;
+  enableApi: boolean;
+  isPublic: boolean;
+  createdAt: string;
+  createdBy: string;
+}
+
+export interface GetAppInfoResponse {
+  appInfo: AppInfo;
+}

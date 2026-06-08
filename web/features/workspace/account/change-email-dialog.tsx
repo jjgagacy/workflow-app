@@ -4,7 +4,6 @@ import Countdown, { CountdownRef } from "@/app/components/base/countdown";
 import { Dialog } from "@/app/ui/dialog";
 import { Input } from "@/app/ui/input";
 import { getErrorMessage } from "@/utils/errors";
-import { DialogTitle } from "@headlessui/react";
 import { CheckCircleIcon, MailIcon, ShieldCheck, ShieldCheckIcon, XIcon } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";

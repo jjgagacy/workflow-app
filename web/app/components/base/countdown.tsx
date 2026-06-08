@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "./button";
 import { useCountDown } from "../hooks/use-countdown";

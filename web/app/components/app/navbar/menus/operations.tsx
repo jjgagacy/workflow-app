@@ -1,29 +1,38 @@
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { AppMenuItem, Apps } from "../../app.type";
-import { ChevronDownIcon, Copy, Edit, Edit2, Pencil, Settings, Trash2 } from "lucide-react";
+import { ChevronDownIcon, Edit, Settings, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { getThemeHoverClass, ThemeType } from "@/types/theme";
 import { useCustomTheme } from "../../../provider/customThemeProvider";
-import { Tabs } from "@/app/components/base/tabs";
-import Button from "@/app/components/base/button";
+import AppIcon from "@/app/components/base/app-icon";
 
 interface AppActionsProps {
   appInfo: Apps,
   menuItems: AppMenuItem[],
 }
 
-export function Operations({ appInfo: apps, menuItems }: AppActionsProps) {
+export function Operations({ appInfo, menuItems }: AppActionsProps) {
   const [isRenaming, setIsRenaming] = useState(false);
-  const [newName, setNewName] = useState(apps.name);
+  const [newName, setNewName] = useState(appInfo.name);
   const { t } = useTranslation();
   const { activeColorTheme } = useCustomTheme();
+  const menuButtonRef = React.useRef<HTMLButtonElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   const handleRename = () => {
     setIsRenaming(false);
   }
 
-  const handleKeyPress = () => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleRename();
+    } else if (e.key === 'Escape') {
+      setNewName(appInfo.name);
+      setIsRenaming(false);
+    }
+    // 阻止事件冒泡
+    e.stopPropagation();
   }
 
   const onDuplicate = () => {
@@ -32,6 +41,24 @@ export function Operations({ appInfo: apps, menuItems }: AppActionsProps) {
   const onDelete = () => {
   }
 
+  // 当 input 显示时自动聚焦
+  useEffect(() => {
+    if (isRenaming && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isRenaming]);
+
+  const handleInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+
+  const handleInputMouseDown = (e: React.MouseEvent) => {
+    // 阻止默认行为和冒泡，防止 Menu 关闭
+    e.stopPropagation();
+    e.preventDefault();
+  }
 
   const TAB_VALUES = [...menuItems.map(item => item.id)] as const;
   type TabValue = (typeof TAB_VALUES)[number];
@@ -45,24 +72,36 @@ export function Operations({ appInfo: apps, menuItems }: AppActionsProps) {
   return (
     <>
       <Menu as="div" className="relative">
-        <MenuButton className="flex items-center gap-1 px-2 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-          <span className="text-xl"><Edit className="w-4 h-4 text-text-primary" /></span>
-          {isRenaming ? (
+        {isRenaming ? (
+          <div className="flex items-center gap-1 px-2 py-1.5">
+            <AppIcon
+              iconType={appInfo.iconType}
+              icon={appInfo.icon}
+              className="h-7 w-7"
+            />
             <input
-              type="text"
+              ref={inputRef}
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               onBlur={handleRename}
               onKeyDown={handleKeyPress}
               className="px-1 py-0.5 text-sm border rounded-md bg-white dark:bg-gray-800 text-text-primary border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              autoFocus
-              onClick={(e) => e.stopPropagation()}
             />
-          ) : (
-            <span className="font-medium text-text-primary">{apps.name}</span>
-          )}
-          <ChevronDownIcon className="h-4 w-4 text-text-secondary" aria-hidden="true" />
-        </MenuButton>
+          </div>
+        ) : (
+          <MenuButton
+            ref={menuButtonRef}
+            className="flex items-center gap-1 px-2 py-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          >
+            <AppIcon
+              iconType={appInfo.iconType}
+              icon={appInfo.icon}
+              className="h-7 w-7"
+            />
+            <span className="font-medium text-text-primary">{appInfo.name}</span>
+            <ChevronDownIcon className="h-4 w-4 text-text-secondary" aria-hidden="true" />
+          </MenuButton>
+        )}
 
         <Transition
           as={Fragment}
@@ -108,7 +147,7 @@ export function Operations({ appInfo: apps, menuItems }: AppActionsProps) {
               {({ close }) => (
                 <button
                   onClick={() => {
-                    onDelete?.();
+                    onDelete();
                     close();
                   }}
                   className={`flex font-semibold text-13 items-center px-4 py-2 text-red-600 rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}
@@ -120,6 +159,7 @@ export function Operations({ appInfo: apps, menuItems }: AppActionsProps) {
             </MenuItem>
           </MenuItems>
         </Transition>
+
       </Menu>
       {menuItems.map((item) => (
         <div key={item.id}>

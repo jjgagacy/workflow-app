@@ -1,4 +1,4 @@
-import { applyEdgeChanges, applyNodeChanges, Background, ConnectionMode, Controls, DefaultEdgeOptions, MiniMap, OnNodeDrag, Panel, ReactFlow, ReactFlowProvider, useNodesState, useReactFlow } from "@xyflow/react";
+import { applyEdgeChanges, applyNodeChanges, Background, ConnectionMode, DefaultEdgeOptions, MiniMap, OnNodeDrag, Panel, ReactFlow, ReactFlowProvider, useNodesState, useReactFlow } from "@xyflow/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TextUpdaterNode } from "./components/text-updater";
 import { CustomNode } from "./components/custom-node";

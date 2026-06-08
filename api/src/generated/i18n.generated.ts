@@ -31,6 +31,9 @@ export type I18nTranslations = {
             "CLOSED": string;
         };
     };
+    "app": {
+        "APP_NOT_FOUND": string;
+    };
     "auth": {
         "PASSWORD_INVALID": string;
         "PASSWORD_RESET_RATE_LIMIT_EXCEEDED": string;

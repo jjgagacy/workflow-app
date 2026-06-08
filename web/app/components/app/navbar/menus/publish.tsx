@@ -1,7 +1,7 @@
 import { useCustomTheme } from "@/app/components/provider/customThemeProvider";
 import { getThemeHoverClass, ThemeType } from "@/types/theme";
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
-import { Archive, ChevronDownIcon, EyeOff, Maximize, Rocket, Star, XCircle, ZoomIn, ZoomOut } from "lucide-react";
+import { ChevronDownIcon, EyeOff, Rocket } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Fragment } from "react/jsx-runtime";
 

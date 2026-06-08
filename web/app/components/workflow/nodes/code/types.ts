@@ -1,13 +1,6 @@
-import type { NodeData, VariableType } from "../../types";
+import type { NodeData, Variable, VariableType } from "../../types";
 
-export type CodeInputValueSourceType = 'input' | 'env' | 'session' | 'node-output' | 'system';
-
-export type CodeInputParameter = {
-  id: string;
-  name: string;
-  valueSourceType?: CodeInputValueSourceType;
-  valueSource: string;
-};
+export type CodeInputParameter = Variable;
 
 export type CodeOutputVariable = {
   id: string;

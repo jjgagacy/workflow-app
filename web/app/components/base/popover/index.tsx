@@ -1,6 +1,6 @@
-import { forwardRef, ReactNode, useState } from "react";
+import { forwardRef, ReactNode } from "react";
 import { PopoverDirection } from "./types";
-import { Popover as HeadlessPopover, PopoverButton, PopoverPanel, PopoverPanelProps } from '@headlessui/react';
+import { Popover as HeadlessPopover, PopoverButton, PopoverPanel } from '@headlessui/react';
 import { cn } from "@/utils/classnames";
 
 export interface PopoverProps {

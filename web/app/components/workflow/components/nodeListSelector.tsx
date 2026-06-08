@@ -1,7 +1,7 @@
 import { useAvailableNodes } from "../hooks/use-nodesData";
 import { NodeListPanel } from "./panel/nodeListPanel";
 import { NodeCatalog, NodeCategoryProps } from "../types";
-import { getCatalogNodeIconColor, isSupportedCatalogNode, newCandidateNode, resolveCatalogNode } from "../utils/node";
+import { getCatalogNodeIconColor, isSupportedCatalogNode, resolveCatalogNode } from "../utils/node";
 import { useWorkflowStore } from "../context";
 import { useWorkflowInteractions } from "../hooks/use-interactions";
 

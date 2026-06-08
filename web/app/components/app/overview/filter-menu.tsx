@@ -1,7 +1,7 @@
 import { useAppearance } from "@/hooks/use-appearance";
 import { getThemeHoverClass, ThemeType } from "@/types/theme";
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
-import { ChevronDown, Filter, Palette } from "lucide-react";
+import { ChevronDown, Filter } from "lucide-react";
 import { Fragment } from "react/jsx-runtime";
 import { useAppModes } from "../hooks/use-appModes";
 

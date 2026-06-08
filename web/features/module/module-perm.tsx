@@ -6,7 +6,6 @@ import { toast } from "@/app/ui/toast";
 import api from "@/api";
 import { Dialog } from "@/app/ui/dialog";
 import Button from "@/app/components/base/button";
-import { Input } from "@/app/ui/input";
 import { useModalContext } from "@/hooks/use-modal";
 import { useTranslation } from "react-i18next";
 

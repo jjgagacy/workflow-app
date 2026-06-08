@@ -43,6 +43,25 @@ type AccountResponse {
   id: Int!
 }
 
+type AppInfo {
+  accountId: String!
+  createdAt: String!
+  createdBy: String!
+  description: String
+  enableApi: Boolean!
+  enableSite: Boolean!
+  icon: String
+  iconType: String
+  id: String!
+  isPublic: Boolean!
+  mode: String!
+  name: String!
+  tenantId: String!
+  updatedAt: String
+  updatedBy: String
+  workflowId: String
+}
+
 input ChangeEmailSendInput {
   language: String
 }
@@ -448,6 +467,7 @@ type ProviderCredentialSchema {
 type Query {
   accountInfo: Account!
   accounts(email: String, id: Int, limit: Int, mobile: String, page: Int, realName: String, roleId: Int, username: String): AccountList!
+  appInfo(appId: String!): AppInfo!
   currentUser: UserInfoResponse!
   depInfo(key: String!): Dep!
   deps(key: String, name: String, parent: String): [Dep!]!

@@ -1,4 +1,3 @@
-import { int } from "zod";
 import { Operations } from "./menus/operations";
 import { AppMenuItem, Apps } from "../app.type";
 import { ZoomControlsMenu } from "./menus/zoom";

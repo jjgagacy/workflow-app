@@ -120,6 +120,29 @@ export enum VariableType {
   any = 'any'
 }
 
+export enum ValueType {
+  variable = 'variable',
+  constant = 'constant',
+  custom = 'custom',
+}
+
+export type CodeInputValueSourceType = 'input' | 'env' | 'session' | 'node-output' | 'system';
+
+export type Variable = {
+  id: string;
+  name: string;
+  variableType: ValueType;
+  customType?: string;
+  label?: string;
+  valueSelector?: string[];
+  valueType?: VariableType;
+  value?: string;
+  options?: { label: string; value: string }[];
+  required?: boolean;
+  valueSourceType?: CodeInputValueSourceType;
+  valueSource: string;
+}
+
 export type ParameterType = string | number | boolean | undefined | null;
 
 export interface Operator extends ComparisonOperator {
@@ -163,3 +186,5 @@ export enum CodeLanguage {
   python = 'python',
   javascript = 'javascript',
 }
+
+

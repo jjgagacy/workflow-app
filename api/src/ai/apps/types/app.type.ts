@@ -8,4 +8,3 @@ export enum IconType {
   ICON = 'icon',
   EMOJI = 'emoji',
 }
-

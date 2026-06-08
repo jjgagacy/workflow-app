@@ -16,6 +16,7 @@ import type {
   CodeOutputVariable,
 } from "./types";
 import { CodeEditor } from "../../components/code-editor";
+import { useVariable } from "./hooks/use-variable";
 
 type CodePanelProps = {
   node: Node<CodeNodeData>;
@@ -37,6 +38,7 @@ const CodePanel = ({ node }: CodePanelProps) => {
   const chatEnvVariables = useWorkflowStore((state) => state.chatEnvVariables);
   const envVariables = useWorkflowStore((state) => state.envVariables);
   const { onNodeDataUpdate } = useNodesUpdate();
+  const xx = useVariable(node.id, node.data);
 
   const syncNodeData = (patch: Partial<CodeNodeData>) => {
     const nextNode = {
@@ -227,7 +229,6 @@ const CodePanel = ({ node }: CodePanelProps) => {
         <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">代码</div>
         <CodeEditor
           language={CodeLanguage.javascript}
-          title="coding..."
           value={`function main({arg1, arg2}) {
     return {
         result: arg1 + arg2

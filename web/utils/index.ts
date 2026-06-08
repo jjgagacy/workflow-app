@@ -1,5 +1,3 @@
-import { searchParams } from "./search-params";
-
 export const sleep = (ms: number) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 }

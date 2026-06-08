@@ -1,5 +1,5 @@
 import { LucideIcon, MessageSquare } from 'lucide-react';
-import { AppMode } from './constants/appModes';
+import { AppIconType, AppMode } from './constants/appModes';
 
 export interface AppTypeConfig {
   value: AppMode;
@@ -16,15 +16,22 @@ export type IconColor = 'blue' | 'green' | 'red' | 'yellow' | 'purple' | 'gray' 
 
 // Application 接口
 export interface Apps {
-  id: number;
+  id: string;
   name: string;
   type: string;
   status: ApplicationStatus;
+  mode: AppMode,
   statusText: string;
   statusColor: StatusColor;
-  icon: LucideIcon;
+  icon?: string;
+  iconType: AppIconType;
   iconColor: IconColor;
   knowledgeBases: number;
+  enableSite?: boolean;
+  enableApi?: boolean;
+  isPublic?: boolean;
+  createdAt?: string;
+  createdBy?: string;
   visits: string | null;
   lastEdited: string | null;
   embedAvailable: boolean;
@@ -35,13 +42,15 @@ export interface Apps {
 }
 
 export const testAppInfo: Apps = {
-  id: 1,
+  id: '1',
   name: '智能客服',
   type: 'chat',
+  mode: AppMode.WORKFLOW,
   status: 'published',
   statusText: '已发布',
   statusColor: 'green',
-  icon: MessageSquare,
+  icon: "MessageSquare",
+  iconType: 'icon',
   iconColor: 'blue',
   knowledgeBases: 3,
   visits: '1.2K',

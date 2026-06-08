@@ -7,7 +7,7 @@ import { DataTableToolbar } from "@/app/ui/table/data-table-toolbar";
 import { DEBOUNCE_MS, useDataTable } from "@/hooks/use-data-table";
 import { PER_PAGE } from "@/utils/search-params";
 import { ColumnDef } from "@tanstack/react-table";
-import { parseAsInteger, parseAsString, useQueryState, useQueryStates } from "nuqs";
+import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 import { useCallback, useEffect, useState } from "react";
 import { Module } from "./data";
 import { columnHelper, createColumns } from "./columns";

@@ -11,10 +11,12 @@ import { Tabs } from "@/app/components/base/tabs";
 import { Tooltip } from "@/app/components/base/tooltip";
 import { KeyboardShortcutDisplay } from "@/app/components/base/tooltip/keyboard";
 import { useDialog } from "@/app/components/hooks/use-dialog";
+import { CodeEditor } from "@/app/components/workflow/components/code-editor";
+import { CodeEditorWrapper } from "@/app/components/workflow/components/code-editor/components/wrapper";
 import { CustomNoteNode } from "@/app/components/workflow/components/note-node";
 import { CUSTOM_NOTE_NODE_NAME } from "@/app/components/workflow/constants";
 import { WorkflowContextProvider } from "@/app/components/workflow/context";
-import { NodeType } from "@/app/components/workflow/types";
+import { CodeLanguage, NodeType } from "@/app/components/workflow/types";
 import { Accordion } from "@/app/ui/accordion";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/ui/card";
 import { Checkbox } from "@/app/ui/checkbox";
@@ -185,6 +187,20 @@ export default function Page() {
   return (
     <div>
       <h1 className="mt-4">Dashboard</h1>
+      <div className="p-2">
+        <div className="w-128 h-64 border rounded flex items-center justify-center">
+          <CodeEditorWrapper className="flex-1">
+            <CodeEditor
+              language={CodeLanguage.python}
+              value={`def main(arg1: str, arg2: str):
+    return {
+        "result": arg1 + arg2,
+    }
+`}
+            />
+          </CodeEditorWrapper>
+        </div>
+      </div>
       <div className="p-2">
         <Popover
           trigger={<Button variant={'ghost'}>Open Popover</Button>}

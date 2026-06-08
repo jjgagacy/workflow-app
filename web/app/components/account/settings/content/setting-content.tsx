@@ -5,14 +5,12 @@ import { useEffect, useRef, useState } from "react";
 import { languages, LanguageType } from "@/types/language";
 import { ThemeType } from "@/types/theme";
 import { AppearanceType } from "@/types/appearance";
-import Button from "@/app/components/base/button";
 import { TIME_ZONES } from "@/i18n/timezone";
 import { useAppearance } from "@/hooks/use-appearance";
 import api from "@/api";
 import { toast } from "@/app/ui/toast";
 import { getErrorMessage } from "@/utils/errors";
 import { useAppContext } from "@/context/app-context";
-import { delayed } from "@/utils/time";
 import { setClientLocale } from "@/i18n";
 
 export default function SettingContent() {

@@ -5,7 +5,7 @@ import { AppsBillingGuard } from "@/common/guards/billing.guard";
 import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 import { AppManagerService } from "@/service/app-manager.service";
 import { BadRequestException, UseGuards } from "@nestjs/common";
-import { Args, Mutation, Resolver } from "@nestjs/graphql";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { CreateAppInput, CreateAppResponse } from "../types/app-input.type";
 import { CurrentUser } from "@/common/decorators/current-user";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
@@ -13,6 +13,9 @@ import { AccountService } from "@/account/account.service";
 import { AccountNotFoundError } from "@/service/exceptions/account.error";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { I18nService } from "nestjs-i18n";
+import { AppInfo } from "../types/app-info.type";
+import { AppEntity } from "@/account/entities/app.entity";
+import { formatDate } from "@/common/utils/time";
 
 @Resolver()
 export class AppResolver {
@@ -39,5 +42,38 @@ export class AppResolver {
     }
     const app = await this.appManagerService.createApp(tenant.id, input, account);
     return { id: app.id };
+  }
+
+  @Query(() => AppInfo)
+  @UseGuards(LoginRequiredGuard)
+  @UseGuards(TenantContextGuard)
+  @UseGuards(AccountInitializedGuard)
+  async appInfo(
+    @CurrentTenent() tenant: any,
+    @Args('appId', { type: () => String, nullable: false }) appId: string,
+  ): Promise<AppInfo> {
+    const app = await this.appsService.getAppByIdAndTenant(appId, tenant.id);
+    if (!app) {
+      throw new BadRequestException(this.i18n.t('app.APP_NOT_FOUND'));
+    }
+    return this.transformAppToAppInfo(app);
+  }
+
+  private transformAppToAppInfo(app: AppEntity): AppInfo {
+    return {
+      id: app.id,
+      name: app.name,
+      description: app.description,
+      mode: app.mode,
+      icon: app.icon,
+      iconType: app.iconType,
+      enableSite: app.enableSite,
+      enableApi: app.enableApi,
+      isPublic: app.isPublic,
+      createdAt: formatDate(new Date(app.createdAt)),
+      createdBy: app.createdBy,
+      updatedAt: app.updatedAt ? formatDate(new Date(app.updatedAt)) : undefined,
+      updatedBy: app.updatedBy,
+    } as AppInfo;
   }
 }

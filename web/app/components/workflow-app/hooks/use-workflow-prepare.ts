@@ -3,7 +3,7 @@ import { useWorkflowContext } from "../../workflow/context"
 
 export const useWorkflowPrepare = () => {
   const workflowStore = useWorkflowContext();
-  const appInfo = useAppStore(state => state.apps);
+  const appInfo = useAppStore(state => state.appInfo);
 
 
 
