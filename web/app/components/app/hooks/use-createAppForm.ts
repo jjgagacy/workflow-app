@@ -2,13 +2,14 @@ import { DEBOUNCE_MS } from "@/hooks/use-data-table";
 import { AppIconSource } from "../../base/app-icon";
 import { AppMode } from '../constants/appModes';
 import { useCallback, useEffect, useRef, useState } from "react";
-import { defaultIconSet } from "../../base/app-icon/icons";
+import { defaultIconSet, getDefaultIcon } from "../../base/app-icon/icons";
 import { createApp } from "@/services/apps";
 import { toast } from "@/app/ui/toast";
 import { getErrorMessage } from "@/utils/errors";
 import { useDebounceCallback } from "@/hooks/use-debounce-callback";
+import { usePlatformShortcut } from "../../workflow/hooks/use-platformShortcut";
 
-interface CreateAppData {
+export interface CreateAppData {
   name: string;
   description: string;
   icon: string;
@@ -17,30 +18,35 @@ interface CreateAppData {
 }
 
 interface UseCreateAppOptions {
-  onSuccess?: (id: string) => void;
+  name?: string;
+  description?: string;
+  icon?: string;
+  iconType?: AppIconSource['type'];
+  mode?: AppMode;
+  onSuccess?: () => void;
   onError?: (error: Error) => void;
   onClose?: () => void;
+  onConfirm?: (data: CreateAppData) => void;
   debounceDelay?: number;
 }
 
 export function useCreateAppForm(options: UseCreateAppOptions) {
-  const { onSuccess, onClose, onError, debounceDelay = DEBOUNCE_MS } = options;
-
+  const { onSuccess, onClose, onError, onConfirm, debounceDelay = DEBOUNCE_MS } = options;
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const createAppMutation = createApp();
 
+  const defaultIcon = getDefaultIcon(options.iconType || 'icon', options.icon);
   const [formData, setFormData] = useState<CreateAppData>({
-    name: "",
-    description: "",
-    icon: defaultIconSet,
-    iconType: "icon" as AppIconSource['type'],
-    mode: AppMode.WORKFLOW,
+    name: options.name || "",
+    description: options.description || "",
+    icon: defaultIcon,
+    iconType: (options.iconType || "icon") as AppIconSource['type'],
+    mode: options.mode || AppMode.WORKFLOW,
   });
 
   const [iconSource, setIconSource] = useState<AppIconSource>({
-    type: 'icon',
-    icon: defaultIconSet
+    type: options.iconType === 'emoji' ? 'emoji' : 'icon',
+    icon: defaultIcon
   });
 
   const [showIconPicker, setShowIconPicker] = useState(false);
@@ -67,7 +73,7 @@ export function useCreateAppForm(options: UseCreateAppOptions) {
   }, [updateField]);
 
   // 创建 App 的核心逻辑
-  const createAppCore = useCallback(async () => {
+  const createAppCore = useCallback(() => {
     if (!formData.name.trim()) {
       const error = new Error("App name is required");
       setError(error);
@@ -79,18 +85,9 @@ export function useCreateAppForm(options: UseCreateAppOptions) {
     setError(null);
 
     try {
-      const app = await createAppMutation({
-        input: {
-          name: formData.name,
-          description: formData.description,
-          icon: formData.icon,
-          iconType: formData.iconType,
-          mode: formData.mode,
-        }
-      });
-      onSuccess?.(app);
+      onConfirm?.(formData);
+      onSuccess?.();
       onClose?.();
-      return app;
     } catch (err) {
       const error = err instanceof Error ? err : new Error("Failed to create app");
       setError(error);
@@ -100,6 +97,11 @@ export function useCreateAppForm(options: UseCreateAppOptions) {
       setIsCreating(false);
     }
   }, [formData, onSuccess, onError]);
+
+  usePlatformShortcut(['enter'], () => {
+    if (showIconPicker) return; // 如果图标选择器打开，按 Enter 不提交表单
+    createAppCore();
+  }, { metaKey: true });
 
   // 防抖创建
   const debouncedCreate = useDebounceCallback(createAppCore, debounceDelay);

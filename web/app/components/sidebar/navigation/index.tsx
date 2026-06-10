@@ -5,8 +5,8 @@ import { MenuItem } from '@/types/menu';
 import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
 import { AppWindow, GitBranch, Library, List, PlusIcon, Table } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { HoverSubmenu } from './hover-submenu';
 import { useTranslation } from 'react-i18next';
 import { useCustomTheme } from '../../provider/customThemeProvider';
@@ -14,6 +14,9 @@ import { getThemeActiveClass, getThemeBgClass, getThemeHoverClass, getThemeSelec
 import { useMenus } from '../../hooks/use-menus';
 import Button from '../../base/button';
 import CreateAppDialog from '../model/create-app-dialog';
+import { CreateAppData } from '../../app/hooks/use-createAppForm';
+import { createApp } from '@/services/apps';
+import { appRedirect, getAppRedirectUrl } from '../../app/utils';
 
 interface NavigationProps {
   collapsed: boolean;
@@ -25,6 +28,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
   const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({});
   const [hoveredItem, setHoveredItem] = useState('');
   const [menuPosition, setMenuPosition] = useState(0);
+  const { push } = useRouter();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const { t } = useTranslation();
 
@@ -34,6 +38,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
   const hoverRef = useRef<{ key: string; timeout: NodeJS.Timeout | null }>({ key: '', timeout: null });
   const { activeColorTheme } = useCustomTheme();
   const { defaultMenuItems, appMenuItems } = useMenus();
+  const createAppMutation = createApp();
 
   const defaultMenus: MenuItem[] = [
     ...appMenuItems,
@@ -155,6 +160,22 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
     }, 500);
   };
 
+  const handleCreateApp = useCallback(async (formData: CreateAppData) => {
+    const appId = await createAppMutation({
+      input: {
+        name: formData.name,
+        description: formData.description,
+        icon: formData.icon,
+        iconType: formData.iconType,
+        mode: formData.mode,
+      }
+    });
+    if (appId) {
+      const url = getAppRedirectUrl(appId, formData.mode);
+      appRedirect(url, push);
+    }
+  }, [createAppMutation, push]);
+
   return (
     <div className={`py-2 px-2 pt-6 gap-y-1 grid navigation-menu__root space-y-0 relative z-10 text-component`}>
       <div className='relative mb-4'>
@@ -264,6 +285,10 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
       <CreateAppDialog
         isOpen={showCreateDialog}
         onClose={() => setShowCreateDialog(false)}
+        name=""
+        icon=""
+        iconType={null}
+        onConfirm={handleCreateApp}
       />
     </div>
   );

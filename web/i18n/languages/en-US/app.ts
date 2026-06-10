@@ -73,6 +73,8 @@ const translation = {
     workflowDescription: 'Workflow apps automate tasks and processes',
     chatDescription: 'Chat Bot apps interact with users through natural language',
     editName: 'Edit App Name',
+    editAppTitle: 'Edit App Info',
+    editAppDetails: 'App Details',
   },
   appType: 'App Type',
   types: {

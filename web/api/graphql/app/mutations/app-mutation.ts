@@ -6,4 +6,10 @@ export const CREATE_APP = gql`
       id
     }
   }
-`
+`;
+
+export const UPDATE_APP = gql`
+  mutation($appId: String!, $input: UpdateAppInput!) {
+    updateApp(appId: $appId, input: $input)
+  }
+`;

@@ -1,3 +1,4 @@
+import { AppIconSource } from '.';
 import { BoltFilled, FilledSquare, Json, Lovable, NodePin, NodePlay, NodePower, NodeSuccess, NodeTrash, NodeValidationError, PopOut, Retry, StatusCanceled, StatusCompleted, StatusError, StatusNew, StatusUnknown, StatusWaiting, StatusWarning, Toolbox, Triangle, VectorSquare } from './custom-generated';
 import {
   AlignRight,
@@ -517,3 +518,13 @@ export type IconName = keyof typeof iconSets;
 export function isIconName(iconName?: string): iconName is IconName {
   return iconName !== undefined && iconName in iconSets;
 }
+
+export const getDefaultIcon = (iconType: AppIconSource['type'], customIcon?: string): string => {
+  if (iconType === 'emoji') {
+    // emoji 类型：返回自定义 emoji 或默认 emoji
+    return customIcon || '🐤'; // 默认 emoji
+  } else {
+    // icon 类型：返回自定义图标集或默认图标集
+    return customIcon || defaultIconSet;
+  }
+};

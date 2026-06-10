@@ -406,6 +406,7 @@ type Mutation {
   updateAccountPassword(newPassword: String!, password: String!): Boolean!
   updateAccountTheme(input: UpdateAccountThemeInput!): Boolean!
   updateAccountTimezone(timezone: String!): Boolean!
+  updateApp(appId: String!, input: UpdateAppInput!): Boolean!
   updateDep(input: DepInput!): DepResponse!
   updateMenu(input: MenuInput!): MenuResponse!
   updateModule(input: ModuleInput!): ModuleResponse!
@@ -606,6 +607,13 @@ input UpdateAccountNewEmailInput {
 
 input UpdateAccountThemeInput {
   theme: String!
+}
+
+input UpdateAppInput {
+  description: String
+  icon: String
+  iconType: String
+  name: String
 }
 
 type UserInfoResponse {

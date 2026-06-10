@@ -74,6 +74,8 @@ const translation = {
     workflowDescription: '工作流应用用于自动化任务和流程',
     chatDescription: '聊天机器人应用通过自然语言与用户互动',
     editName: '编辑应用名称',
+    editAppTitle: '编辑应用信息',
+    editAppDetails: '应用详情',
   },
   appType: '应用类型',
   types: {

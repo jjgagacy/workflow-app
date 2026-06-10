@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import { getThemeHoverClass, ThemeType } from "@/types/theme";
 import { useCustomTheme } from "../../../provider/customThemeProvider";
 import AppIcon from "@/app/components/base/app-icon";
+import { useAppStore } from "../../store";
+import { useShallow } from 'zustand/react/shallow';
 
 interface AppActionsProps {
   appInfo: Apps,
@@ -19,6 +21,12 @@ export function Operations({ appInfo, menuItems }: AppActionsProps) {
   const { activeColorTheme } = useCustomTheme();
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const { showEditApp, setShowEditApp } = useAppStore(useShallow(
+    state => ({
+      showEditApp: state.showEditApp,
+      setShowEditApp: state.setShowEditApp,
+    })
+  ));
 
   const handleRename = () => {
     setIsRenaming(false);
@@ -131,7 +139,7 @@ export function Operations({ appInfo, menuItems }: AppActionsProps) {
               {({ close }) => (
                 <button
                   onClick={() => {
-                    setIsRenaming(true);
+                    setShowEditApp(true);
                     close();
                   }}
                   className={`flex font-semibold text-13 items-center px-4 py-2 text-text-secondary rounded-md w-full text-left ${getThemeHoverClass(activeColorTheme as ThemeType)}`}

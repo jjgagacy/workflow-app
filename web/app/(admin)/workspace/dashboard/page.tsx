@@ -2,6 +2,7 @@
 
 import AppIconPicker from "@/app/components/app/app-icon-picker";
 import CreateApp from "@/app/components/app/create-app";
+import { CreateAppData } from "@/app/components/app/hooks/use-createAppForm";
 import { Badge } from "@/app/components/base/badge";
 import Button from "@/app/components/base/button";
 import Countdown, { CountdownRef } from "@/app/components/base/countdown";
@@ -184,6 +185,10 @@ export default function Page() {
       // }
     ];
 
+  const handleCreateApp = (data: CreateAppData): string | undefined => {
+    return undefined;
+  }
+
   return (
     <div>
       <h1 className="mt-4">Dashboard</h1>
@@ -254,6 +259,7 @@ export default function Page() {
           <CreateApp
             onClose={() => { }}
             onSuccess={() => { }}
+            onConfirm={handleCreateApp}
           />
         </div>
       </div>

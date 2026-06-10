@@ -1,15 +1,22 @@
 import { AppIconType, AppMode } from '@/app/components/app/constants/appModes';
 
-export type CreateAppInput = {
+export type BaseAppInput = {
   name: string;
   description?: string;
   iconType: AppIconType;
   icon: string;
-  mode: AppMode;
 }
 
+export type CreateAppInput = {
+  mode: AppMode;
+} & BaseAppInput;
+
+export type UpdateAppInput = BaseAppInput;
+
 export type CreateAppResponse = {
-  id: string;
+  createApp: {
+    id: string;
+  };
 }
 
 export type AppInfo = {

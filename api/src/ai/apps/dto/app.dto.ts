@@ -37,6 +37,7 @@ export class CreateAppDto extends BaseAppDto {
 }
 
 export class UpdateAppDto extends BaseAppDto {
+  name?: string;
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   updatedBy!: string;
   updatedAt?: Date;

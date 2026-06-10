@@ -102,7 +102,6 @@ export class AppsService {
   @Transactional()
   async update(app: AppEntity, dto: UpdateAppDto, entityManager?: EntityManager): Promise<AppEntity> {
     const appRepository = entityManager ? entityManager.getRepository(AppEntity) : this.appRepository;
-
     const dtoInstance = await validateDto(UpdateAppDto, dto, this.i18n);
 
     const updateFields = {
@@ -122,8 +121,9 @@ export class AppsService {
   }
 
   private mapBaseFields(dto: CreateAppDto | UpdateAppDto) {
-    const { description, icon, iconType, enableSite, enableApi, isPublic, workflowId } = dto;
+    const { name, description, icon, iconType, enableSite, enableApi, isPublic, workflowId } = dto;
     return {
+      ...(dto.name && { name }),
       ...(dto.description && { description }),
       ...(dto.icon && { icon }),
       ...(dto.iconType && { iconType }),

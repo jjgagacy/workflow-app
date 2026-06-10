@@ -6,7 +6,7 @@ import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 import { AppManagerService } from "@/service/app-manager.service";
 import { BadRequestException, UseGuards } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { CreateAppInput, CreateAppResponse } from "../types/app-input.type";
+import { CreateAppInput, CreateAppResponse, UpdateAppInput } from "../types/app-input.type";
 import { CurrentUser } from "@/common/decorators/current-user";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
 import { AccountService } from "@/account/account.service";
@@ -42,6 +42,29 @@ export class AppResolver {
     }
     const app = await this.appManagerService.createApp(tenant.id, input, account);
     return { id: app.id };
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(LoginRequiredGuard)
+  @UseGuards(TenantContextGuard)
+  @UseGuards(AccountInitializedGuard)
+  @UseGuards(AppsBillingGuard)
+  async updateApp(
+    @Args('appId', { type: () => String, nullable: false }) appId: string,
+    @Args('input') input: UpdateAppInput,
+    @CurrentUser() user: any,
+    @CurrentTenent() tenant: any
+  ): Promise<boolean> {
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw AccountNotFoundError.create(this.i18n);
+    }
+    const app = await this.appsService.getAppByIdAndTenant(appId, tenant.id);
+    if (!app) {
+      throw new BadRequestException(this.i18n.t('app.APP_NOT_FOUND'));
+    }
+    await this.appManagerService.updateApp(app, input, account);
+    return true;
   }
 
   @Query(() => AppInfo)

@@ -27,9 +27,6 @@ export class UpdateAppInput {
   description?: string;
 
   @Field({ nullable: true })
-  mode?: string;
-
-  @Field({ nullable: true })
   icon?: string;
 
   @Field({ nullable: true })

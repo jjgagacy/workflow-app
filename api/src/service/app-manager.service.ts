@@ -51,7 +51,6 @@ export class AppManagerService {
     Object.assign(updateAppDto, updateData, {
       updatedBy: account.username,
     });
-
     return await this.appsService.update(app, updateAppDto, workManager);
   }
 }
