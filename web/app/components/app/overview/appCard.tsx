@@ -1,18 +1,26 @@
 import { useState } from 'react';
-import { MoreVertical, Database, Sparkles, Link2, Users, Clock, Star, StarOff, Eye, Share, Settings, BarChart3 } from "lucide-react";
+import { MoreVertical, Database, Sparkles, Link2, Users, Clock, Star, StarOff, Eye, Share, Settings, BarChart3, Bot, Workflow } from "lucide-react";
+
+const iconMap: Record<string, any> = {
+  Bot,
+  Eye,
+  Sparkles,
+  Workflow,
+  Database,
+};
 
 // 应用卡片组件
 export const AppCard = ({ app, onMenuClick }: { app: any; onMenuClick: (id: number) => void }) => {
-  const Icon = app.icon;
+  const Icon = typeof app.icon === 'string' ? (iconMap[app.icon] || Bot) : app.icon;
   const [isStarred, setIsStarred] = useState(app.isStarred);
 
-  const statusColors = {
+  const statusColors: Record<string, string> = {
     green: 'bg-green-50 text-green-700 border-green-200 dark:bg-gray-800 dark:text-text-secondary dark:border-[var(--border-light)]',
     yellow: 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-gray-800 dark:text-text-secondary dark:border-[var(--border-light)]',
     blue: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-gray-800 dark:text-text-secondary dark:border-[var(--border-light)]',
   };
 
-  const iconColors = {
+  const iconColors: Record<string, string> = {
     blue: 'bg-blue-50 text-blue-600',
     purple: 'bg-purple-50 text-purple-600',
     indigo: 'bg-indigo-50 text-indigo-600',

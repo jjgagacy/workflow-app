@@ -8,6 +8,12 @@ import { useCustomTheme } from "../../../provider/customThemeProvider";
 import AppIcon from "@/app/components/base/app-icon";
 import { useAppStore } from "../../store";
 import { useShallow } from 'zustand/react/shallow';
+import { deleteApp, updateAppName } from "@/services/apps";
+import { toast } from "@/app/ui/toast";
+import { getErrorMessage } from "@/utils/errors";
+import { BASE_URL } from "@/config";
+import { useRouter } from "next/navigation";
+import { useDialog } from "@/app/components/hooks/use-dialog";
 
 interface AppActionsProps {
   appInfo: Apps,
@@ -21,15 +27,37 @@ export function Operations({ appInfo, menuItems }: AppActionsProps) {
   const { activeColorTheme } = useCustomTheme();
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const { showConfirm } = useDialog();
+  const { replace } = useRouter();
+  const { setAppInfo } = useAppStore(useShallow(
+    state => ({
+      setAppInfo: state.setAppInfo,
+    })
+  ));
   const { showEditApp, setShowEditApp } = useAppStore(useShallow(
     state => ({
       showEditApp: state.showEditApp,
       setShowEditApp: state.setShowEditApp,
     })
   ));
+  const updateAppNameMutation = updateAppName();
+  const deleteAppMutation = deleteApp();
 
   const handleRename = () => {
-    setIsRenaming(false);
+    if (newName.trim() === "" || newName === appInfo.name) {
+      setNewName(appInfo.name);
+      setIsRenaming(false);
+      return;
+    }
+    try {
+      updateAppNameMutation(appInfo.id, newName)
+      setIsRenaming(false);
+      setAppInfo({ ...appInfo, name: newName });
+    } catch (error: any) {
+      toast.error(getErrorMessage(error));
+      setNewName(appInfo.name);
+      setIsRenaming(false);
+    }
   }
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -46,7 +74,16 @@ export function Operations({ appInfo, menuItems }: AppActionsProps) {
   const onDuplicate = () => {
   }
 
-  const onDelete = () => {
+  const onDelete = async () => {
+    const confirmed = await showConfirm(t('app.appOperations.deleteAppTitle'), t('app.appOperations.deleteAppMessage'));
+    if (!confirmed) return;
+    try {
+      deleteAppMutation(appInfo.id);
+      setAppInfo();
+      replace(`${BASE_URL}/apps`);
+    } catch (error: any) {
+      toast.error(getErrorMessage(error));
+    }
   }
 
   // 当 input 显示时自动聚焦

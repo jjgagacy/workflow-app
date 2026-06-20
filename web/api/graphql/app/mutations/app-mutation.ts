@@ -13,3 +13,15 @@ export const UPDATE_APP = gql`
     updateApp(appId: $appId, input: $input)
   }
 `;
+
+export const DELETE_APP = gql`
+  mutation($appId: String!) {
+    deleteApp(appId: $appId)
+  }
+`;
+
+export const UPDATE_APP_NAME = gql`
+  mutation($appId: String!, $name: String!) {
+    updateAppName(appId: $appId, name: $name)
+  }
+`;

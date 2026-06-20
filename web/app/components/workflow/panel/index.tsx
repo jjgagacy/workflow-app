@@ -22,6 +22,7 @@ export const Panel = () => {
   const togglePanelMode = useWorkflowStore((state) => state.togglePanelMode);
   const setPanelWidth = useWorkflowStore((state) => state.setPanelWidth);
   const updateActivePanelNode = useWorkflowStore((state) => state.updateActivePanelNode);
+  const showNodeSelector = useWorkflowStore((state) => state.showNodeSelector);
   const { onNodeDataUpdate } = useNodesUpdate();
   const { addHistoryState } = useWorkflowHistory();
   const { handleResizeStart } = usePanelResize({
@@ -82,14 +83,14 @@ export const Panel = () => {
       className={cn(
         "absolute z-[60] flex flex-col overflow-hidden rounded-md border border-[var(--border)] bg-background shadow-2xl",
         panelMode === "side"
-          ? "bottom-2 right-2 top-6"
+          ? (showNodeSelector ? "bottom-2 right-80 top-2" : "bottom-2 right-2 top-2")
           : "left-1/2 top-1/2 h-[min(80vh,720px)] -translate-x-1/2 -translate-y-1/2",
       )}
-      style={{ width: resolvedWidth }}
+      style={{ width: resolvedWidth, ...(panelMode === "side" && showNodeSelector ? { right: 'calc(20rem + 10px)' } : {}) }}
     >
       {panelMode === "side" && (
         <div
-          className="absolute bottom-0 left-0 top-0 z-10 w-2 -translate-x-1/2 cursor-col-resize"
+          className="absolute bottom-0 left-0 top-0 z-10 w-2 -translate-x-1/2 cursor-col-resize hover:w-3 hover:bg-green-400/40 dark:hover:bg-green-600/40 transition-all duration-200 hover:shadow-[0_0_12px_rgba(59,130,246,0.5)]"
           onPointerDown={handleResizeStart}
         />
       )}

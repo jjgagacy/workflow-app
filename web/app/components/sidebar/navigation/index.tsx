@@ -121,7 +121,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
       setHoveredItem(key);
       const target = e.currentTarget as HTMLElement;
       const rect = target.getBoundingClientRect();
-      console.log(target, rect.top);
+      // console.log(target, rect.top);
       // setMenuPosition(target.getBoundingClientRect().top);
       setMenuPosition(rect.top + rect.height / 2 - 30);
     }

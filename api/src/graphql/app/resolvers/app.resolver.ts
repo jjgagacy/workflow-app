@@ -67,6 +67,51 @@ export class AppResolver {
     return true;
   }
 
+  @Mutation(() => Boolean)
+  @UseGuards(LoginRequiredGuard)
+  @UseGuards(TenantContextGuard)
+  @UseGuards(AccountInitializedGuard)
+  @UseGuards(AppsBillingGuard)
+  async deleteApp(
+    @Args('appId', { type: () => String, nullable: false }) appId: string,
+    @CurrentUser() user: any,
+    @CurrentTenent() tenant: any
+  ): Promise<boolean> {
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw AccountNotFoundError.create(this.i18n);
+    }
+    const app = await this.appsService.getAppByIdAndTenant(appId, tenant.id);
+    if (!app) {
+      throw new BadRequestException(this.i18n.t('app.APP_NOT_FOUND'));
+    }
+    await this.appManagerService.deleteApp(app.id, tenant.id);
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(LoginRequiredGuard)
+  @UseGuards(TenantContextGuard)
+  @UseGuards(AccountInitializedGuard)
+  @UseGuards(AppsBillingGuard)
+  async updateAppName(
+    @Args('appId', { type: () => String, nullable: false }) appId: string,
+    @Args('name', { type: () => String, nullable: false }) name: string,
+    @CurrentUser() user: any,
+    @CurrentTenent() tenant: any
+  ): Promise<boolean> {
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw AccountNotFoundError.create(this.i18n);
+    }
+    const app = await this.appsService.getAppByIdAndTenant(appId, tenant.id);
+    if (!app) {
+      throw new BadRequestException(this.i18n.t('app.APP_NOT_FOUND'));
+    }
+    await this.appManagerService.updateApp(app, { name }, account);
+    return true;
+  }
+
   @Query(() => AppInfo)
   @UseGuards(LoginRequiredGuard)
   @UseGuards(TenantContextGuard)

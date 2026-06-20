@@ -119,3 +119,5 @@ export const NODE_DEFAULT_DATA: NodeDefaultDataByType = {
     ...httpRequestNodeDefaultData.value,
   },
 };
+
+export const NODE_PANEL_DEFAULT_WIDTH = 410;

@@ -1,5 +1,6 @@
 import { StateCreator } from "zustand";
 import { Node } from "../../types";
+import { NODE_PANEL_DEFAULT_WIDTH } from "../../constants";
 
 export type WorkflowPanelMode = "side" | "dialog";
 
@@ -38,7 +39,7 @@ export const createPanelState: StateCreator<PanelState> = (set, get) => ({
   setSelectionMenu: (position: { y: number; x: number; visible?: boolean }) => set({ selectionMenu: position }),
   activePanel: null,
   panelMode: "side",
-  panelWidth: 360,
+  panelWidth: NODE_PANEL_DEFAULT_WIDTH,
   openNodePanel: (node: Node) => set({
     activePanel: {
       type: "node",

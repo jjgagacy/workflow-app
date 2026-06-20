@@ -1,6 +1,6 @@
 import { createMutationHook } from "@/hooks/use-graphql"
 import { CreateAppInput, CreateAppResponse, UpdateAppInput } from "./types"
-import { CREATE_APP, UPDATE_APP } from "./mutations/app-mutation";
+import { CREATE_APP, DELETE_APP, UPDATE_APP, UPDATE_APP_NAME } from "./mutations/app-mutation";
 
 export const useCreateApp = createMutationHook<
   CreateAppResponse,
@@ -21,5 +21,27 @@ export const useUpdateApp = createMutationHook<
   UPDATE_APP,
   {
     transform: (data) => data.updateApp,
+  }
+);
+
+export const useDeleteApp = createMutationHook<
+  { deleteApp: boolean },
+  { appId: string },
+  boolean
+>(
+  DELETE_APP,
+  {
+    transform: (data) => data.deleteApp,
+  }
+);
+
+export const useUpdateAppName = createMutationHook<
+  { updateAppName: boolean },
+  { appId: string, name: string },
+  boolean
+>(
+  UPDATE_APP_NAME,
+  {
+    transform: (data) => data.updateAppName,
   }
 );

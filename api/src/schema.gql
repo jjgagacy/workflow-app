@@ -374,6 +374,7 @@ type Mutation {
   currentTenant: TenantResponse!
   deleteAccount(input: DeleteAccountInput!): Boolean!
   deleteAccountEmailSend(input: DeleteAccountEmailSendInput!): String!
+  deleteApp(appId: String!): Boolean!
   deleteDep(id: Int!): Boolean!
   deleteMenu(id: Int!): Boolean!
   deleteModule(id: Int!): Boolean!
@@ -407,6 +408,7 @@ type Mutation {
   updateAccountTheme(input: UpdateAccountThemeInput!): Boolean!
   updateAccountTimezone(timezone: String!): Boolean!
   updateApp(appId: String!, input: UpdateAppInput!): Boolean!
+  updateAppName(appId: String!, name: String!): Boolean!
   updateDep(input: DepInput!): DepResponse!
   updateMenu(input: MenuInput!): MenuResponse!
   updateModule(input: ModuleInput!): ModuleResponse!

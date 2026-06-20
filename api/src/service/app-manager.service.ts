@@ -8,6 +8,7 @@ import { Transactional } from "@/common/decorators/transaction.decorator";
 import { EnumConverter } from "@/common/utils/enums";
 import { AppCreatedEvent } from "@/events/app.event";
 import { CreateAppInput, UpdateAppInput } from "@/graphql/app/types/app-input.type";
+import { MonieEvent } from "@/monie/constants/events";
 import { Injectable } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { DataSource, EntityManager } from "typeorm";
@@ -39,7 +40,7 @@ export class AppManagerService {
 
     // event dispatch
     const event = new AppCreatedEvent(app.id, tenantId);
-    this.eventEmitter.emit('app.created', event);
+    this.eventEmitter.emit(MonieEvent.APP_CREATED, event);
 
     return app;
   }
@@ -52,5 +53,14 @@ export class AppManagerService {
       updatedBy: account.username,
     });
     return await this.appsService.update(app, updateAppDto, workManager);
+  }
+
+  @Transactional()
+  async deleteApp(appId: string, tenantId: string, entityManager?: EntityManager): Promise<void> {
+    const workManager = entityManager || this.dataSource.manager;
+    await this.appsService.delete(appId, tenantId, workManager);
+
+    // event dispatch
+    this.eventEmitter.emit(MonieEvent.APP_DELETED, { appId, tenantId });
   }
 }

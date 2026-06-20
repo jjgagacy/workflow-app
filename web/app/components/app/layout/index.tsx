@@ -26,7 +26,7 @@ type AppLayoutProps = {
 }
 
 const AppLayout = ({ children, appId, appType, menuItems }: AppLayoutProps) => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   const router = useRouter();
   // const pathname = usePathname();
   const { appInfo, setAppInfo, showEditApp, setShowEditApp } = useAppStore(useShallow(

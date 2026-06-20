@@ -1,6 +1,7 @@
 import { InstalledAppEntity } from "@/account/entities/installed-app.entity";
 import { CreateInstalledAppDto } from "@/ai/apps/dto/installed-app.dto";
 import { InstalledAppService } from "@/ai/apps/installed-app.service";
+import { MonieEvent } from "@/monie/constants/events";
 import { Injectable } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -14,7 +15,7 @@ export class AppListener {
     private readonly installedAppService: InstalledAppService
   ) { }
 
-  @OnEvent('app.created')
+  @OnEvent(MonieEvent.APP_CREATED)
   handleAppCreatedEvent(event: any) {
     // 处理应用创建事件，例如记录日志、发送通知等
     const installedAppDto = new CreateInstalledAppDto();
@@ -22,5 +23,11 @@ export class AppListener {
     installedAppDto.ownerTenantId = event.tenantId;
     installedAppDto.tenantId = event.tenantId;
     this.installedAppService.createInstalledApp(installedAppDto);
+  }
+
+  @OnEvent(MonieEvent.APP_DELETED)
+  handleAppDeletedEvent(event: any) {
+    // 处理应用删除事件，例如记录日志、发送通知等
+    // this.installedAppService.deleteInstalledAppsByAppId(event.appId);
   }
 }

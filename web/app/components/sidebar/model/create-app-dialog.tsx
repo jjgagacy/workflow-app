@@ -38,7 +38,6 @@ export default function CreateAppDialog({
   };
 
   usePlatformShortcut('esc', () => {
-    console.log('aa');
     if (isOpen) {
       onClose();
     }

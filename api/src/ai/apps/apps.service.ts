@@ -116,6 +116,12 @@ export class AppsService {
     return app;
   }
 
+  @Transactional()
+  async delete(appId: string, tenantId: string, entityManager?: EntityManager): Promise<void> {
+    const appRepository = entityManager ? entityManager.getRepository(AppEntity) : this.appRepository;
+    await appRepository.delete({ id: appId, tenant: { id: tenantId } });
+  }
+
   validateAppMode(mode: string): void {
     EnumUtils.isEnumValue(AppMode, mode);
   }

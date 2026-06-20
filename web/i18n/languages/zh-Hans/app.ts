@@ -105,6 +105,10 @@ const translation = {
   },
   nodeList: {
     searchPlaceholder: '搜索节点和工具...',
+  },
+  appOperations: {
+    deleteAppTitle: '删除应用',
+    deleteAppMessage: '您确定要删除此应用吗？此操作无法撤销。',
   }
 };
 export default translation;

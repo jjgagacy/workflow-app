@@ -104,6 +104,10 @@ const translation = {
   },
   nodeList: {
     searchPlaceholder: 'Search nodes and tools...',
+  },
+  appOperations: {
+    deleteAppTitle: 'Delete App',
+    deleteAppMessage: 'Are you sure you want to delete this app? This action cannot be undone.',
   }
 };
 
