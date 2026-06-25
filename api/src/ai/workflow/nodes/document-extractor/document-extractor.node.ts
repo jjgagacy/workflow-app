@@ -1,15 +1,11 @@
 import { BaseNode } from "../../entities/base-node.class";
 import { NodeType } from "../../types/node-type.enum";
-import { CodeNodeData } from "./code-node.data";
+import { DocumentExtractorNodeData } from "./document-extractor-node.data";
 
-export class CodeNode extends BaseNode<CodeNodeData> {
-  protected nodeType: NodeType = NodeType.Code;
-
+export class DocumentExtractorNode extends BaseNode<DocumentExtractorNodeData> {
+  protected nodeType: NodeType = NodeType.DocumentExtractor;
   async run(): Promise<void> {
-    if (this.disabled()) {
-      return;
-    }
-    // Execute node logic here
+    throw new Error("Method not implemented.");
   }
 
   static version(): string {
@@ -19,5 +15,4 @@ export class CodeNode extends BaseNode<CodeNodeData> {
   static getDefaultConfig(filters?: Record<string, any>): Record<string, any> {
     return {};
   }
-
 }

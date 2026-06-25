@@ -9,6 +9,7 @@ import { AccountService } from "@/account/account.service";
 import { I18nTranslations } from "@/generated/i18n.generated";
 import { I18nService } from "nestjs-i18n";
 import { GraphQLJSON } from "graphql-type-json";
+import { WorkflowService } from "@/ai/workflow/workflow.service";
 
 @Resolver()
 export class WorkflowResolver {
@@ -16,6 +17,7 @@ export class WorkflowResolver {
     private readonly appsService: AppsService,
     private readonly appManagerService: AppManagerService,
     private readonly accountService: AccountService,
+    private readonly workflowService: WorkflowService,
     private readonly i18n: I18nService<I18nTranslations>
   ) { }
 
@@ -26,8 +28,11 @@ export class WorkflowResolver {
     @CurrentTenent() tenant: any,
     @Args('nodeType', { type: () => String, nullable: false }) nodeType: string,
   ): Promise<object> {
-    return {
-      foo: 'bar',
-    };
+    const defaultConfig = this.workflowService.getNodeDefaultConfig(nodeType);
+    if (!defaultConfig) {
+      return {};
+      // throw new Error(`Default config not found for node type: ${nodeType}`);
+    }
+    return defaultConfig;
   }
 }

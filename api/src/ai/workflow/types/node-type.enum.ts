@@ -1,5 +1,4 @@
 export enum NodeType {
-  Base = 'base',
   Start = 'start',
   End = 'end',
   Answer = 'answer',
@@ -15,7 +14,7 @@ export enum NodeType {
   ParameterExtractor = 'parameter-extractor',
   Iteration = 'iteration',
   Filter = 'filter',
-  DocExtractor = 'document-extractor',
+  DocumentExtractor = 'document-extractor',
   ListOperator = 'list-operator',
   IterationStart = 'iteration-start',
   Agent = 'agent',

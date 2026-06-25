@@ -1,15 +1,12 @@
 import { BaseNode } from "../../entities/base-node.class";
 import { NodeType } from "../../types/node-type.enum";
-import { CodeNodeData } from "./code-node.data";
+import { KnowledgeRetrievalNodeData } from "./knowledge-retrieval-node.data";
 
-export class CodeNode extends BaseNode<CodeNodeData> {
-  protected nodeType: NodeType = NodeType.Code;
 
+export class KnowledgeRetrievalNode extends BaseNode<KnowledgeRetrievalNodeData> {
+  protected nodeType: NodeType = NodeType.KnowledgeRetrieval;
   async run(): Promise<void> {
-    if (this.disabled()) {
-      return;
-    }
-    // Execute node logic here
+    throw new Error("Method not implemented.");
   }
 
   static version(): string {
@@ -19,5 +16,4 @@ export class CodeNode extends BaseNode<CodeNodeData> {
   static getDefaultConfig(filters?: Record<string, any>): Record<string, any> {
     return {};
   }
-
 }

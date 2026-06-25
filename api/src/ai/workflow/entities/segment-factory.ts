@@ -40,7 +40,6 @@ export function buildSegment(value: unknown): Segment {
     default:
       throw new Error(`unsupported value type: ${typeof value}`);
   }
-  console.log('value:', value, isFileObject(value), isPlainObject(value));
 
   if (isFileObject(value)) {
     return { type: SegmentType.FILE, value };
