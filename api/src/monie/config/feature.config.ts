@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { toBoolean } from "../helpers/to-boolean";
 
 @Injectable()
 export class FeatureConfig {
@@ -9,5 +8,10 @@ export class FeatureConfig {
 
   mailType(): string {
     return this.configService.get<string>('MAIL_TYPE', '');
+  }
+
+  // multiModalTransfer: 'base64' | 'url'
+  multiModalTransfer(): string {
+    return this.configService.get<string>('MULTI_MODAL_TRANSFER', 'base64');
   }
 }

@@ -78,6 +78,7 @@
     "@typescript-eslint/parser": "^8.52.0",
     "eslint": "^9.39.2",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "imurmurhash": "^0.1.4",
     "tailwindcss": "^4",
     "typescript": "5.8"
   }

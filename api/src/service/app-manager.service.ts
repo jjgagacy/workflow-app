@@ -4,6 +4,7 @@ import { AppsService } from "@/ai/apps/apps.service";
 import { CreateAppDto, UpdateAppDto } from "@/ai/apps/dto/app.dto";
 import { getAppTemplate } from "@/ai/apps/entities/default-app-template";
 import { AppMode } from "@/ai/apps/types/app.type";
+import { WorkflowService } from "@/ai/workflow/workflow.service";
 import { Transactional } from "@/common/decorators/transaction.decorator";
 import { EnumConverter } from "@/common/utils/enums";
 import { AppCreatedEvent } from "@/events/app.event";
@@ -19,6 +20,7 @@ export class AppManagerService {
     private readonly dataSource: DataSource,
     private readonly appsService: AppsService,
     private readonly eventEmitter: EventEmitter2,
+    private readonly workflowService: WorkflowService,
   ) { }
 
   @Transactional()

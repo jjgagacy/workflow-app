@@ -6,6 +6,8 @@ import { I18nService } from "nestjs-i18n";
 import * as path from "path";
 import * as crypto from 'crypto';
 import { MonieConfig } from "@/monie/monie.config";
+import { FileAttribute } from "../file/file.enum";
+import { File } from "../file/file";
 
 export interface FileSignature {
   timestamp: string;
@@ -112,5 +114,28 @@ export class FileHelper {
       `timestamp=${signature.timestamp}&` +
       `nonce=${signature.nonce}&` +
       `sign=${signature.sign}`;
+  }
+
+  static getAttr(file: File, attr: FileAttribute): any {
+    switch (attr) {
+      case FileAttribute.TYPE:
+        return file.extension || null;
+      case FileAttribute.NAME:
+        return file.filename || null;
+      case FileAttribute.EXTENSION:
+        return file.extension || null;
+      case FileAttribute.SIZE:
+        return file.size !== undefined ? Number(file.size) : 0;
+      case FileAttribute.MIME_TYPE:
+        return file.mimeType || null;
+      case FileAttribute.URL:
+        return file.remoteUrl || null;
+      case FileAttribute.TRANSFER_METHOD:
+        return file.transferMethod || null;
+      case FileAttribute.RELATE_ID:
+        return file.relatedId || null;
+      default:
+        return null;
+    }
   }
 }

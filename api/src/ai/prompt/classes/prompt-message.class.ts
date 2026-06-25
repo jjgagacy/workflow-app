@@ -1,6 +1,6 @@
 import { IsOptional } from "class-validator";
 import { PromptMessageRole } from "../enums/prompt-message.enum";
-import { CONTENT_TYPE_MAPPING, MultiModelPromptMessageContent, PromptMessageContentUnionTypes, TextPromptMessageContent } from "./message-types.class";
+import { CONTENT_TYPE_MAPPING, MultiModalPromptMessageContent, PromptContent, TextPromptMessageContent } from "./message-types.class";
 import { PromptMessageContent } from "./abstract.class";
 import { safeForOf } from "@/common/utils/for-of";
 
@@ -28,7 +28,8 @@ export abstract class PromptMessage {
   role!: PromptMessageRole;
 
   @IsOptional()
-  content?: string | PromptMessageContentUnionTypes[];
+  content?: string | PromptContent[];
+
   @IsOptional()
   name?: string;
 
@@ -54,20 +55,20 @@ export abstract class PromptMessage {
 
   static validateContent(content: any): any {
     if (Array.isArray(content)) {
-      const prompts: PromptMessageContentUnionTypes[] = [];
+      const prompts: PromptContent[] = [];
       safeForOf(content, function (prompt: any) {
-        let validatedPrompt: PromptMessageContentUnionTypes;
+        let validatedPrompt: PromptContent;
 
         if (prompt instanceof PromptMessageContent) {
-          if (!(prompt instanceof TextPromptMessageContent || prompt instanceof MultiModelPromptMessageContent)) {
+          if (!(prompt instanceof TextPromptMessageContent || prompt instanceof MultiModalPromptMessageContent)) {
             const ContentClass = CONTENT_TYPE_MAPPING[prompt.type];
-            validatedPrompt = Object.assign(new ContentClass(), prompt) as PromptMessageContentUnionTypes;
+            validatedPrompt = Object.assign(new ContentClass(), prompt) as PromptContent;
           } else {
-            validatedPrompt = prompt as PromptMessageContentUnionTypes;
+            validatedPrompt = prompt as PromptContent;
           }
         } else if (typeof prompt === 'object' && prompt !== null) {
           const ContentClass = CONTENT_TYPE_MAPPING[prompt.type];
-          validatedPrompt = Object.assign(new ContentClass(), prompt) as PromptMessageContentUnionTypes;
+          validatedPrompt = Object.assign(new ContentClass(), prompt) as PromptContent;
         } else {
           throw new Error(`Invalid prompt message: ${prompt}`);
         }

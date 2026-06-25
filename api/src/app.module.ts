@@ -276,6 +276,7 @@ import { InstalledAppService } from './ai/apps/installed-app.service';
     PluginResolver,
     AppResolver,
     AppsService,
+    InstalledAppService,
     AppManagerService,
   ],
 })

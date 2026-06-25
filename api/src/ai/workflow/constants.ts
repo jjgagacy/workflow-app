@@ -1,0 +1,1 @@
+export const VARIABLE_SELECTOR_MIN_LENGTH = 2;

@@ -33,10 +33,12 @@ import { AppService } from "@/app.service";
 import { AppsModule } from "@/ai/apps/apps.module";
 import { AppsService } from "@/ai/apps/apps.service";
 import { AppManagerService } from "./app-manager.service";
+import { WorkflowModule } from "@/ai/workflow/workflow.module";
+import { WorkflowService } from "@/ai/workflow/workflow.service";
 
 @Global()
 @Module({
-  imports: [EncryptionModule, StorageModule, MailModule, ModelRuntimeModule, PluginModule, AppsModule],
+  imports: [EncryptionModule, StorageModule, MailModule, ModelRuntimeModule, PluginModule, AppsModule, WorkflowModule],
   providers: [
     AuthAccountService,
     GeneralCacheService,
@@ -66,6 +68,7 @@ import { AppManagerService } from "./app-manager.service";
     PluginService,
     AppsService,
     AppManagerService,
+    WorkflowService,
   ],
   exports: [
     AuthAccountService,

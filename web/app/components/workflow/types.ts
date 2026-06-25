@@ -186,5 +186,3 @@ export enum CodeLanguage {
   python = 'python',
   javascript = 'javascript',
 }
-
-
