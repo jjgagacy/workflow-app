@@ -1,4 +1,6 @@
 import { BaseNode } from "../../entities/base-node.class";
+import { getCodeProviderClass } from "../../executor/utils";
+import { CodeLanguage } from "../../types/code-language.enum";
 import { NodeType } from "../../types/node-type.enum";
 import { CodeNodeData } from "./code-node.data";
 
@@ -17,7 +19,11 @@ export class CodeNode extends BaseNode<CodeNodeData> {
   }
 
   static getDefaultConfig(filters?: Record<string, any>): Record<string, any> {
-    return {};
+    const language = filters?.language ? filters.language.toLowerCase() : CodeLanguage.JavaScript;
+    const codeProviderClass = getCodeProviderClass(language);
+    if (!codeProviderClass) {
+      return {};
+    }
+    return codeProviderClass.getDefaultConfig();
   }
-
 }

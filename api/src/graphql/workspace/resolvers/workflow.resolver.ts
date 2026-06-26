@@ -24,13 +24,14 @@ export class WorkflowResolver {
   @Query(() => GraphQLJSON)
   @UseGuards(AccountInitializedGuard)
   @UseGuards(TenantContextGuard)
-  async nodeDefaultValues(
+  async nodeTypeDefaultConfig(
     @CurrentTenent() tenant: any,
     @Args('nodeType', { type: () => String, nullable: false }) nodeType: string,
+    @Args('codeLanguage', { type: () => String, nullable: true }) codeLanguage?: string
   ): Promise<object> {
-    const defaultConfig = this.workflowService.getNodeDefaultConfig(nodeType);
+    const defaultConfig = this.workflowService.getNodeDefaultConfig(nodeType, codeLanguage ? { language: codeLanguage } : undefined);
     if (!defaultConfig) {
-      return {};
+      return { type: nodeType, config: {} };
       // throw new Error(`Default config not found for node type: ${nodeType}`);
     }
     return defaultConfig;

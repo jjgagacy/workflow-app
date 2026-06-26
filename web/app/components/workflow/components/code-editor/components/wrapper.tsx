@@ -26,6 +26,7 @@ export const CodeEditorWrapper = ({
       !expanded ? '' : 'absolute top-[40px] left-4 w-full z-10 bg-muted/15 p-4',
       className
     )}>
+      <h1>123</h1>
       <div ref={ref} className={cn(
         'relative h-full',
         !expanded ? `min-h-[${height}px]` : `min-h-[${expandedHeight}px]`,

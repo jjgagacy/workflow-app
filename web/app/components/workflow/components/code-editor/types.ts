@@ -1,8 +1,10 @@
 import { CodeLanguage } from "../../types";
 
+export const codeLanguageDefault = 'JavaScript';
+
 export const codeLanguages = {
-  [CodeLanguage.python]: 'python',
-  [CodeLanguage.javascript]: 'javascript',
+  [CodeLanguage.python]: 'Python',
+  [CodeLanguage.javascript]: 'JavaScript',
 }
 
 export const codeLanguageDefaultValues = {

@@ -488,6 +488,7 @@ type Query {
     excludes: [String!]
   ): ModelProvidersList!
   modules(key: String, limit: Int, name: String, page: Int): ModuleList!
+  nodeTypeDefaultConfig(codeLanguage: String, nodeType: String!): JSON!
   providerCredentials(providerName: String!): ProviderCredentialResponse!
   roles(hasMenus: Boolean, hasRolePerms: Boolean, id: Int, key: String, limit: Int, name: String, page: Int, parent: String, status: Int): RoleList!
   routes: [Route!]!

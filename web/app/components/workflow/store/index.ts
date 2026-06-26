@@ -5,6 +5,7 @@ import { createEnvState, EnvState } from './states/env';
 import { createCommonState, CommonState } from './states/common';
 import { createPanelState, PanelState } from './states/panel';
 import { createNodeState, NodeState } from './states/node';
+import { createWorkflowSlice, WorkflowConfigState } from './states/workflow';
 
 interface WorkflowStoreProps {
 }
@@ -15,7 +16,8 @@ export type WorkflowState
   & EnvState
   & PanelState
   & NodeState
-  & CommonState;
+  & CommonState
+  & WorkflowConfigState;
 
 export const createWorkflowStore = (props: WorkflowStoreProps) => {
   return createStore<WorkflowState>((...args) => ({
@@ -25,5 +27,6 @@ export const createWorkflowStore = (props: WorkflowStoreProps) => {
     ...createCommonState(...args),
     ...createPanelState(...args),
     ...createNodeState(...args),
+    ...createWorkflowSlice(...args),
   }));
 }

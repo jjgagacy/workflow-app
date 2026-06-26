@@ -525,8 +525,11 @@ export const useWorkflowInteractions = () => {
         };
       });
 
+      // If the node type has changed, we need to update the edges connected to this node to ensure compatibility 
+      // with the new node type. This may involve removing incompatible edges or updating edge data.
       setNodes(nextNodes);
 
+      // Update the node in the active panel if it is currently open
       if (activePanel?.type === 'node' && activePanel.node?.id === nodeId) {
         const updatedNode = nextNodes.find((node) => node.id === nodeId);
         if (updatedNode) {

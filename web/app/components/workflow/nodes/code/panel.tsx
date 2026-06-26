@@ -7,7 +7,7 @@ import { SimpleSelect } from "@/app/ui/select";
 import { buildVariableSelectItems, buildWorkflowVariableOptions } from "../../components/nodes-shared/variable-select";
 import { useNodesUpdate } from "../../hooks/use-nodesUpdate";
 import { useWorkflowStore } from "../../context";
-import { CodeLanguage, Node, VariableType } from "../../types";
+import { CodeLanguage, Node, VariableDataType } from "../../types";
 import { createCodeInputParameter, createCodeOutputVariable } from "./data";
 import type {
   CodeExceptionStrategy,
@@ -16,7 +16,7 @@ import type {
   CodeOutputVariable,
 } from "./types";
 import { CodeEditor } from "../../components/code-editor";
-import { useVariable } from "./hooks/use-variable";
+import { useConfig } from "./hooks/use-config";
 
 type CodePanelProps = {
   node: Node<CodeNodeData>;
@@ -38,7 +38,7 @@ const CodePanel = ({ node }: CodePanelProps) => {
   const chatEnvVariables = useWorkflowStore((state) => state.chatEnvVariables);
   const envVariables = useWorkflowStore((state) => state.envVariables);
   const { onNodeDataUpdate } = useNodesUpdate();
-  const xx = useVariable(node.id, node.data);
+  const xx = useConfig(node.id, node.data);
 
   const syncNodeData = (patch: Partial<CodeNodeData>) => {
     const nextNode = {
@@ -56,8 +56,11 @@ const CodePanel = ({ node }: CodePanelProps) => {
     });
   };
 
-  const inputParameters = node.data.inputParameters ?? [];
-  const outputVariables = node.data.outputVariables ?? [];
+  const nodeData = node.data;
+  // console.log('nodeData:', nodeData);
+
+  const inputParameters = node.data.inputs ?? [];
+  const outputVariables = node.data.outputs ?? [];
   const retryOnFailure = Boolean(node.data.retryOnFailure);
   const retryCount = Math.max(1, Number(node.data.retryCount) || 1);
   const exceptionStrategy = node.data.exceptionStrategy || 'stop-execution';
@@ -88,7 +91,7 @@ const CodePanel = ({ node }: CodePanelProps) => {
     },
   ];
 
-  const outputTypeItems: SelectItem[] = Object.values(VariableType).map((value) => ({
+  const outputTypeItems: SelectItem[] = Object.values(VariableDataType).map((value) => ({
     value,
     name: value,
   }));
@@ -105,43 +108,49 @@ const CodePanel = ({ node }: CodePanelProps) => {
       };
     });
 
-    syncNodeData({ inputParameters: nextInputParameters });
+    syncNodeData({ inputs: nextInputParameters });
   };
 
   const removeInputParameter = (parameterId: string) => {
     const nextInputParameters = inputParameters.filter((item) => item.id !== parameterId);
-    syncNodeData({ inputParameters: nextInputParameters });
+    syncNodeData({ inputs: nextInputParameters });
   };
 
   const addInputParameter = () => {
     syncNodeData({
-      inputParameters: [...inputParameters, createCodeInputParameter()],
+      inputs: [...inputParameters, createCodeInputParameter()],
     });
   };
 
   const upsertOutputVariable = (outputId: string, patch: Partial<CodeOutputVariable>) => {
-    const nextOutputVariables = outputVariables.map((item) => {
-      if (item.id !== outputId) {
-        return item;
+    const nextOutputVariablesMap: Record<string, CodeOutputVariable> = {};
+    Object.entries(outputVariables).forEach(([key, item]) => {
+      if (item.id === outputId) {
+        nextOutputVariablesMap[key] = {
+          ...item,
+          ...patch,
+        };
+      } else {
+        nextOutputVariablesMap[key] = item;
       }
-
-      return {
-        ...item,
-        ...patch,
-      };
     });
-
-    syncNodeData({ outputVariables: nextOutputVariables });
+    const nextOutputVariables = nextOutputVariablesMap;
+    syncNodeData({ outputs: nextOutputVariables });
   };
 
   const removeOutputVariable = (outputId: string) => {
-    const nextOutputVariables = outputVariables.filter((item) => item.id !== outputId);
-    syncNodeData({ outputVariables: nextOutputVariables });
+    const nextOutputVariables = Object.fromEntries(
+      Object.entries(outputVariables).filter(([key, item]) => item.id !== outputId)
+    );
+    syncNodeData({ outputs: nextOutputVariables });
   };
 
   const addOutputVariable = () => {
     syncNodeData({
-      outputVariables: [...outputVariables, createCodeOutputVariable()],
+      outputs: {
+        ...outputVariables,
+        ...createCodeOutputVariable(),
+      },
     });
   };
 
@@ -251,13 +260,13 @@ const CodePanel = ({ node }: CodePanelProps) => {
           </button>
         </div>
 
-        {outputVariables.length === 0 ? (
+        {Object.keys(outputVariables).length === 0 ? (
           <div className="rounded-md border border-dashed border-[var(--border)] bg-background px-3 py-2 text-xs text-muted-foreground">
             暂无输出变量，可点击上方按钮添加。
           </div>
         ) : (
           <div className="space-y-2">
-            {outputVariables.map((output, index) => (
+            {Object.values(outputVariables).map((output, index) => (
               <div key={output.id} className="rounded-lg border border-[var(--border)] bg-background px-3 py-3">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
@@ -290,7 +299,7 @@ const CodePanel = ({ node }: CodePanelProps) => {
                       defaultValue={output.type}
                       allowSearch={false}
                       className="w-full"
-                      onSelect={(item) => upsertOutputVariable(output.id, { type: item.value as VariableType })}
+                      onSelect={(item) => upsertOutputVariable(output.id, { type: item.value as VariableDataType })}
                     />
                   </div>
                 </div>

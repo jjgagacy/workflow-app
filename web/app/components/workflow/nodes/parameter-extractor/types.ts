@@ -1,9 +1,9 @@
-import type { NodeData, VariableType } from "../../types";
+import type { NodeData, VariableDataType } from "../../types";
 
 export type ParameterExtractorItem = {
   id: string;
   name: string;
-  type: VariableType;
+  type: VariableDataType;
   description: string;
 };
 

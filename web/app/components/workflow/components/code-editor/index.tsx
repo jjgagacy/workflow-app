@@ -2,7 +2,7 @@
 import { ASSETS_URL } from '@/config';
 import Editor, { loader } from '@monaco-editor/react'
 import { CodeLanguage } from '../../types';
-import { codeLanguages } from './types';
+import { codeLanguageDefault, codeLanguages } from './types';
 import { cn } from '@/utils/classnames';
 import { CodeEditorWrapper } from './components/wrapper';
 import React, { useEffect, useMemo, useRef } from 'react';
@@ -114,7 +114,7 @@ export const CodeEditor = ({
       <CodeEditorWrapper className="flex-1">
         <Editor
           value={value}
-          language={codeLanguages[language] || 'javascript'}
+          language={(codeLanguages[language] || codeLanguageDefault).toLowerCase()}
           theme={currentTheme}
           loading={<div className="p-4">Loading editor...</div>}
           onChange={handleChange}

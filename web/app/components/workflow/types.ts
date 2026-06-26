@@ -110,7 +110,7 @@ export type NodeCategoryProps =
   NodeCategoryAIProps |
   NodeCategoryCoreProps;
 
-export enum VariableType {
+export enum VariableDataType {
   string = 'string',
   number = 'number',
   boolean = 'boolean',
@@ -120,7 +120,7 @@ export enum VariableType {
   any = 'any'
 }
 
-export enum ValueType {
+export enum ValueSourceMode {
   variable = 'variable',
   constant = 'constant',
   custom = 'custom',
@@ -131,16 +131,20 @@ export type CodeInputValueSourceType = 'input' | 'env' | 'session' | 'node-outpu
 export type Variable = {
   id: string;
   name: string;
-  variableType: ValueType;
-  customType?: string;
+
+  sourceType: ValueSourceMode; // 这个变量的值是“怎么来的”（引用、常量、自定义）
+  dataType?: VariableDataType; // 这个变量的物理数据结构是什么（string, number, file）
+
   label?: string;
-  valueSelector?: string[];
-  valueType?: VariableType;
-  value?: string;
+  valueSelector?: string[]; // 当 sourceMode === 'variable' 时，用来追踪上游节点路径的 Selector
+  value?: string;           // 当 sourceMode === 'constant' 或 'custom' 时的具象值
+
   options?: { label: string; value: string }[];
   required?: boolean;
   valueSourceType?: CodeInputValueSourceType;
-  valueSource: string;
+  valueSource?: string;
+
+  customType?: string;
 }
 
 export type ParameterType = string | number | boolean | undefined | null;

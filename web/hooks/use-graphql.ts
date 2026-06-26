@@ -17,12 +17,13 @@ export const useGraphQLQuery = <
 ) => {
   const client = useGraphQLClient();
   const fetcher = () => client.request<TData>(query, variables);
+  const { enabled = true, ...restOptions } = options || {};
   const swrResponse = useSWR<TData>(
-    [query, variables],
+    enabled ? [query, variables] : null,
     fetcher,
     {
       revalidateOnFocus: false,
-      ...options
+      ...restOptions
     }
   );
   if (typeof swrResponse.error !== 'undefined' && swrResponse.error instanceof ClientError) {
@@ -54,7 +55,8 @@ export function createQueryHook<
       staleTime?: number;
       cacheTime?: number;
       refetchOnWindowFocus?: boolean;
-    }
+    },
+    enabled?: boolean
   }
 ) {
   const {

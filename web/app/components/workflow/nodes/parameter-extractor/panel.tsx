@@ -15,7 +15,7 @@ import {
 } from "../../components/nodes-shared/model-options";
 import { useWorkflowStore } from "../../context";
 import { useNodesUpdate } from "../../hooks/use-nodesUpdate";
-import { VariableType } from "../../types";
+import { VariableDataType } from "../../types";
 import type { Node } from "../../types";
 import {
   createParameterExtractorItem,
@@ -37,13 +37,13 @@ type SelectItem = {
 const inputClassName = 'w-full rounded-md border border-[var(--border)] bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary/60';
 
 const PARAMETER_TYPE_OPTIONS: SelectItem[] = [
-  { value: VariableType.string, name: 'string' },
-  { value: VariableType.number, name: 'number' },
-  { value: VariableType.boolean, name: 'boolean' },
-  { value: VariableType.array, name: 'array' },
-  { value: VariableType.object, name: 'object' },
-  { value: VariableType.file, name: 'file' },
-  { value: VariableType.any, name: 'any' },
+  { value: VariableDataType.string, name: 'string' },
+  { value: VariableDataType.number, name: 'number' },
+  { value: VariableDataType.boolean, name: 'boolean' },
+  { value: VariableDataType.array, name: 'array' },
+  { value: VariableDataType.object, name: 'object' },
+  { value: VariableDataType.file, name: 'file' },
+  { value: VariableDataType.any, name: 'any' },
 ];
 
 const ParameterExtractorPanel = ({ node }: ParameterExtractorPanelProps) => {
@@ -228,7 +228,7 @@ const ParameterExtractorPanel = ({ node }: ParameterExtractorPanelProps) => {
                       defaultValue={item.type}
                       allowSearch={false}
                       className="w-full"
-                      onSelect={(selected) => upsertParameter(item.id, { type: selected.value as VariableType })}
+                      onSelect={(selected) => upsertParameter(item.id, { type: selected.value as VariableDataType })}
                     />
                   </div>
                 </div>

@@ -10,8 +10,8 @@ const CodeNode = ({ id, data }: NodeProps<Node<CodeNodeData>>) => {
   const { t } = useTranslation();
   const label = data.label?.trim() || 'Code';
   const iconColor = data.iconColor || getNodeTypeIconColor(data.type);
-  const inputCount = data.inputParameters?.length ?? 0;
-  const outputCount = data.outputVariables?.length ?? 0;
+  const inputCount = data.inputs?.length ?? 0;
+  const outputCount = Object.keys(data.outputs ?? {}).length;
   const retryOnFailure = Boolean(data.retryOnFailure);
   const exceptionStrategy = data.exceptionStrategy || 'stop-execution';
 

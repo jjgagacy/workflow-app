@@ -113,6 +113,7 @@ import { AppsModule } from './ai/apps/apps.module';
 import { AppsService } from './ai/apps/apps.service';
 import { AppManagerService } from './service/app-manager.service';
 import { InstalledAppService } from './ai/apps/installed-app.service';
+import { WorkflowResolver } from './graphql/workspace/resolvers/workflow.resolver';
 
 // const isWorkerThread = !require.main?.filename.includes('worker');
 // console.log(`AppModule loaded in ${isWorkerThread ? 'main thread' : 'worker thread'}`);
@@ -278,6 +279,7 @@ import { InstalledAppService } from './ai/apps/installed-app.service';
     AppsService,
     InstalledAppService,
     AppManagerService,
+    WorkflowResolver,
   ],
 })
 export class AppModule implements NestModule {
