@@ -28,12 +28,14 @@ export enum NodeType {
 }
 
 export type NodeData<T = {}> = {
+  type: NodeType;
+
   label?: string;
   value?: any;
   description?: string;
-  type: NodeType;
   disabled?: boolean;
   // selected?: boolean;
+
   size?: Dimensions;
   position?: XYPosition;
   candidate?: boolean;

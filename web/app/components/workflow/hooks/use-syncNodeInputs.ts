@@ -1,10 +1,10 @@
-import { NodeData, NodeDefaultData } from "../types";
+import { NodeData } from "../types";
 import { useNodesUpdate } from "./use-nodesUpdate";
 
 export const useSyncNodeInputs = <T>(nodeId: string, data: NodeData<T>) => {
   const { onNodeDataUpdate } = useNodesUpdate();
 
-  const syncNodeInputs = (newData: NodeDefaultData<T>) => {
+  const syncNodeInputs = (newData: Partial<NodeData<T>>) => {
     onNodeDataUpdate({ id: nodeId, data: newData });
   };
 

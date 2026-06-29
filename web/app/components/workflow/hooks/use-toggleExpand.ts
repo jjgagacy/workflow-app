@@ -14,10 +14,25 @@ export const useToggleExpanded = ({ ref }: Props) => {
   };
 
   useEffect(() => {
-    if (ref?.current) {
-      setExpandedHeight(ref.current.clientHeight);
+    if (!expanded || !ref?.current) {
+      return;
     }
-  }, [expanded]);
+
+    const updateHeight = () => {
+      if (ref.current) {
+        setExpandedHeight(ref.current.clientHeight);
+      }
+    };
+
+    updateHeight();
+
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(ref.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [expanded, ref]);
 
   return {
     toggleExpand,

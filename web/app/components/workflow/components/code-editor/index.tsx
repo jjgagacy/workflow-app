@@ -18,7 +18,7 @@ loader.config({ paths: { vs: `${ASSETS_URL}/editor/vs` } });
 
 export type Props = {
   value?: string;
-  title?: string;
+  title?: string | React.ReactNode;
   readonly?: boolean;
   language: CodeLanguage;
   className?: string;
@@ -105,13 +105,8 @@ export const CodeEditor = ({
   }, [resolvedTheme, theme]);
 
   return (
-    <div className={cn('flex h-full flex-col bg-background', className)}>
-      {title && (
-        <div className="mb-2 text-sm font-medium text-muted-foreground">
-          {title}
-        </div>
-      )}
-      <CodeEditorWrapper className="flex-1">
+    <div className={cn('flex h-full flex-col', className)}>
+      <CodeEditorWrapper title={title}>
         <Editor
           value={value}
           language={(codeLanguages[language] || codeLanguageDefault).toLowerCase()}

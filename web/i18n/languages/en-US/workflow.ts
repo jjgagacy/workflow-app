@@ -247,6 +247,15 @@ const translation = {
       currentUser: 'Current user',
       currentTime: 'Current time'
     }
+  },
+  errorHandler: {
+    exceptionStrategy: 'Exception Strategy',
+    exceptionStrategyDescription: 'Choose how to handle exceptions during code execution.',
+    stopExecution: 'Stop Execution',
+    stopExecutionDesc: 'Immediately stop the current execution when an exception occurs.',
+    returnDefault: 'Return Default Value',
+    returnDefaultDesc: 'Return a default value when an exception occurs.',
+    placeholder: 'e.g. {} or null'
   }
 };
 

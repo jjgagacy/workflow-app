@@ -248,6 +248,15 @@ const translation = {
       currentTime: '当前时间'
     }
   },
+  errorHandler: {
+    exceptionStrategy: '异常处理策略',
+    exceptionStrategyDescription: '选择在代码执行过程中如何处理异常。',
+    stopExecution: '停止执行',
+    stopExecutionDesc: '当发生异常时立即停止当前执行。',
+    returnDefault: '返回默认值',
+    returnDefaultDesc: '当发生异常时返回默认值。',
+    placeholder: '请输入默认值，例如：{} 或 null'
+  }
 };
 
 export default translation;
