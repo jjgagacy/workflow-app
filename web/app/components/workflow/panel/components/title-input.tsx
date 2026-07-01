@@ -5,9 +5,11 @@ import { cn } from "@/utils/classnames";
 type TitleInputProps = {
   title: string;
   onChange: (value: string) => void;
+  className?: string;
+  placeholder?: string;
 };
 
-export const TitleInput = ({ title, onChange }: TitleInputProps) => {
+export const TitleInput = ({ title, onChange, className }: TitleInputProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -23,6 +25,7 @@ export const TitleInput = ({ title, onChange }: TitleInputProps) => {
       className={cn(
         "flex min-w-0 items-center gap-2 rounded-md px-1 py-0.5 transition-shadow",
         isEditing && "shadow-sm ring-1 ring-[var(--border)]",
+        className
       )}
       onClick={handleActivate}
     >

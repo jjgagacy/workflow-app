@@ -10,6 +10,13 @@ export type OperatorOption = {
   isUnary: boolean;
 };
 
+export type OperatorTypeItem = {
+  value: OperatorType;
+  name: string;
+};
+
+const toDisplayLabel = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+
 export const useIfElseOperatorOptions = () => {
   const { operatorGroups } = useOperators();
 
@@ -17,7 +24,6 @@ export const useIfElseOperatorOptions = () => {
     return operatorGroups.reduce((accumulator, group) => {
       accumulator[group.label] = group.operators.map((operator) => {
         const operatorRecord = operator as unknown as Record<string, any>;
-
         return {
           label: operator.name,
           value: operator.operator,
@@ -25,12 +31,19 @@ export const useIfElseOperatorOptions = () => {
           isUnary: readOperatorUnary(operatorRecord),
         };
       });
-
       return accumulator;
     }, {} as Record<OperatorType, OperatorOption[]>);
   }, [operatorGroups]);
 
+  const typeItems = useMemo<OperatorTypeItem[]>(() => {
+    return (Object.keys(operatorOptionsByType) as OperatorType[]).map((option) => ({
+      value: option,
+      name: toDisplayLabel(option),
+    }));
+  }, [operatorOptionsByType]);
+
   return {
     operatorOptionsByType,
+    typeItems,
   };
 };

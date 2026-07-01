@@ -22,7 +22,6 @@ type CodePanelProps = {
   node: Node<CodeNodeData>;
 };
 
-
 const CodePanel = ({ node }: CodePanelProps) => {
   const { t } = useTranslation();
   const store = useStoreApi();
@@ -98,7 +97,7 @@ const CodePanel = ({ node }: CodePanelProps) => {
   };
 
   return (
-    <div className="space-y-4" ref={panelRef}>
+    <div className="space-y-0" ref={panelRef}>
       <div className="rounded-lg bg-muted/20 px-4 py-3">
         <div className="text-sm font-semibold text-foreground">{node.data.label?.trim() || 'Code'}</div>
         <div className="mt-1 text-xs leading-5 text-muted-foreground">
@@ -118,7 +117,7 @@ const CodePanel = ({ node }: CodePanelProps) => {
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">
         <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">代码</div>
         <CodeEditor
-          language={CodeLanguage.javascript}
+          language={nodeData.language || CodeLanguage.javascript}
           title={
             <div className="flex items-center justify-between gap-2">
               <SimpleSelect

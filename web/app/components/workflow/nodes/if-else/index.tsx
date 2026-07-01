@@ -37,20 +37,18 @@ const IfElseNode = ({ id, data }: NodeProps<Node<IfElseNodeData>>) => {
               return (
                 <BranchItem key={branch.id} id={branch.id}>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="rounded-md bg-background pr-2 py-0.5 text-[11px] font-semibold tracking-[0.02em] text-foreground">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="truncate text-[11px] font-semibold text-foreground">
                         {branchTitle}
                       </span>
                       {!isDefault && (
-                        <span className="text-xs text-muted-foreground">
+                        <span className="shrink-0 rounded-full bg-muted/50 px-2 py-0.5 text-[10px] text-muted-foreground">
                           {conditionSummary}
                         </span>
                       )}
-                    </div>
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      {isDefault
-                        ? t('workflow.conditions.fallbackPath')
-                        : t('workflow.conditions.logicSummary', { logic: logicLabel })}
+                      <span className="shrink-0 ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                        {isDefault ? 'Fallback' : logicLabel}
+                      </span>
                     </div>
                   </div>
                   <NodeSourceHandle

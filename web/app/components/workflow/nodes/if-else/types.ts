@@ -82,8 +82,8 @@ export type ConditionBranch = {
   isDefault?: boolean; // 是否为else分支
 }
 
-export type IfElseNodeData = NodeData & {
+export type IfElseNodeData = NodeData<{
   evaluationOptions: ConditionEvaluationOptions;
   branches?: ConditionBranch[];
   inLoop?: boolean;
-}
+}>;

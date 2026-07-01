@@ -6,6 +6,7 @@ import { AppType } from "../constants/appTypes";
 import { useAppTypes } from "../hooks/use-appTypes";
 import { AppTypeInfo } from "./app-type-info";
 import { PublishMenu } from "./menus/publish";
+import { ThemeToggleButton } from "../../header/navbar/theme-toggle-button";
 
 interface AppNavBarProps {
   appInfo: Apps
@@ -32,6 +33,7 @@ export function AppNavbar({ appInfo, appType, menuItems }: AppNavBarProps) {
         <PublishMenu />
         <ZoomControlsMenu />
         <HelpMenu />
+        <ThemeToggleButton />
       </div>
     </div>
   );

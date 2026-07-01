@@ -246,7 +246,20 @@ const translation = {
       workflowInput: '工作流输入',
       currentUser: '当前用户',
       currentTime: '当前时间'
-    }
+    },
+    default: '默认',
+    condition: '条件',
+  },
+  iteration: {
+    parallel: '并行',
+    stop: '停止',
+    flat: 'Flat',
+    nested: '嵌套',
+    parallelCount: '并行数量',
+    parallelCountDescription: '控制同时执行的迭代任务数量，默认 1。',
+    errorResponse: '错误响应',
+    errorResponseDescription: '选择迭代过程中某一项失败时的处理方式。',
+    flatDescription: '启用后会将每次迭代的结果合并为扁平数组输出。',
   },
   errorHandler: {
     exceptionStrategy: '异常处理策略',

@@ -4,34 +4,44 @@
   background: var(--background);
 }
 
-.react-flow {
+#react-flow-body .react-flow {
   --xy-background-color: #f7f9fb;
-  /* Custom Variables */
-  --xy-theme-selected: #f57dbd;
-  --xy-theme-hover: #c5c5c5;
-  --xy-theme-edge-hover: black;
-  --xy-theme-color-focus: #e8e8e8;
-
+  /* Custom Variables - 绿色主题 */
+  --xy-theme-selected: #2e7d32;
+  --xy-theme-hover: #66bb6a;
+  --xy-theme-edge-hover: #2e7d32;
+  --xy-theme-color-focus: #a5d6a7;
   /* Built-in Variables see https://reactflow.dev/learn/customization/theming */
-  --xy-node-border-default: 1px solid #ededed;
-
+  --xy-node-border-default: 1px solid #e0e0e0;
   --xy-node-boxshadow-default:
     0px 3.54px 4.55px 4px #28282805,
     0px 0.51px 1.01px 4px #2424241a;
-
-  --xy-node-border-radius-default: 8px;
-
+  --xy-node-border-radius-default: var(--radius-lg);
   --xy-handle-background-color-default: transparent;
   --xy-handle-border-color-default: transparent;
-
   --xy-edge-label-color-default: #505050;
+  --color-workflow-bg: var(--background);
+  --xy-theme-selected-shadow: rgba(46, 125, 50, 0.2);
+  --node-resize-bg: #2e7d32;
+  --node-resize-border: #2e7d32;
+  --node-resize-hover-bg: #66bb6a;
+  --node-resize-hover-border: #66bb6a;
+  --node-resize-size: 12px;
+  --node-resize-border-radius: 4px;
 }
 
-html[data-theme="dark"] {
+html[data-theme="dark"] #react-flow-body .react-flow {
   --xy-node-boxshadow-dark:
     0px 3.54px 4.55px 4px #ffffff08,
     0px 3.54px 4.55px 4px #ffffff12,
     0px 0.51px 1.01px 4px #ffffff20;
+
+  --xy-node-border-default: 1px solid var(--border);
+  --xy-theme-selected-shadow: rgba(102, 187, 106, 0.3);
+  --node-resize-bg: #1b5e20;
+  --node-resize-border: #1b5e20;
+  --node-resize-hover-bg: #4caf50;
+  --node-resize-hover-border: #4caf50;
 }
 
 .react-flow.dark {
@@ -45,127 +55,149 @@ html[data-theme="dark"] {
   --xy-theme-color-focus: #535353;
 }
 
-.react-flow.dark {
-  --xy-node-boxshadow-default:
-    0px 3.54px 4.55px 0px rgba(255, 255, 255, 0.05),
-    /* light shadow */
-    0px 3.54px 4.55px 0px rgba(255, 255, 255, 0.13),
-    /* medium shadow */
-    0px 0.51px 1.01px 0px rgba(255, 255, 255, 0.2);
-  /* smallest shadow */
-  --xy-theme-color-focus: #535353;
-}
-
-/* Customizing Default Theming */
-
+/* 节点基础样式 */
 .react-flow__node {
   box-shadow: none;
-  border-radius: var(--xy-node-border-radius-default);
   background-color: var(--xy-node-background-color-default);
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: left;
   flex-direction: column;
-  /* border: var(--xy-node-border-default); */
+  border: var(--xy-node-border-default) !important;
+  border-radius: var(--radius-lg);
   color: var(--xy-node-color, var(--xy-node-color-default));
+  transition: all 0.2s ease;
 }
 
+/* 节点聚焦样式 - 绿色主题 */
 .react-flow__node.selectable:focus {
-  box-shadow: 0px 0px 0px 4px var(--xy-theme-color-focus);
-  border-color: #d9d9d9;
+  border-color: #66bb6a;
+  box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.15);
 }
 
-.react-flow__node.selectable:focus:active {
-  box-shadow: var(--xy-node-boxshadow-default);
-}
-
+/* 节点 hover 样式 - 绿色主题 */
 .react-flow__node.selectable:hover,
 .react-flow__node.draggable:hover {
   border-color: var(--xy-theme-hover);
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+  transform: translateY(-2px);
 }
 
+/* 节点 selected 样式 - 绿色主题 */
 .react-flow__node.selectable.selected {
-  border-width: 0;
+  border-width: 2px;
   border-color: var(--xy-theme-selected);
-  box-shadow: var(--xy-node-boxshadow-default);
+  border-radius: var(--xy-node-border-radius-default);
+  box-shadow: 0 0 0 4px var(--xy-theme-selected-shadow), var(--xy-node-boxshadow-default);
 }
 
+/* 节点禁用样式 */
+.react-flow__node.disabled,
+.react-flow__node:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.3);
+}
+
+.react-flow__node.disabled:hover,
+.react-flow__node:disabled:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--border);
+}
+
+/* 节点组样式 */
 .react-flow__node-group {
-  background-color: rgba(207, 182, 255, 0.4);
-  border-color: #9e86ed;
+  background-color: rgba(46, 125, 50, 0.1);
+  border-color: #66bb6a;
+  border-style: dashed;
+}
+
+.react-flow__node-group.selectable.selected {
+  border-color: var(--xy-theme-selected);
+  border-style: solid;
+}
+
+/* 边的样式 - 绿色主题 */
+.react-flow__edge-path {
+  stroke-width: 2;
 }
 
 .react-flow__edge.selectable:hover .react-flow__edge-path,
 .react-flow__edge.selectable.selected .react-flow__edge-path {
   stroke: var(--xy-theme-edge-hover);
+  stroke-width: 3;
 }
 
+/* 边的禁用样式 */
+.react-flow__edge.disabled .react-flow__edge-path {
+  opacity: 0.3;
+  stroke-dasharray: 5, 5;
+}
+
+/* Handle 样式 - 绿色主题 */
 .react-flow__handle {
   background-color: var(--xy-handle-background-color-default);
+  width: 12px;
+  height: 12px;
+  border: 2px solid #66bb6a;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.react-flow__handle:hover {
+  background-color: #2e7d32;
+  border-color: #2e7d32;
 }
 
 .react-flow__handle.connectionindicator:hover {
   pointer-events: all;
   border-color: var(--xy-theme-edge-hover);
-  background-color: white;
+  background-color: #a5d6a7;
 }
 
 .react-flow__handle.connectionindicator:focus,
 .react-flow__handle.connectingfrom,
 .react-flow__handle.connectingto {
   border-color: var(--xy-theme-edge-hover);
+  background-color: #2e7d32;
 }
 
+/* Handle 禁用样式 */
+.react-flow__handle.disabled,
+.react-flow__handle:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.react-flow__handle.disabled:hover,
+.react-flow__handle:disabled:hover {
+  transform: none;
+  background-color: transparent;
+}
+
+/* 节点缩放控制器 */
 .react-flow__node-resizer {
   border-radius: 0;
   border: none;
 }
 
 .react-flow__resize-control.handle {
-  background-color: transparent;
-  border-color: transparent;
-  border-radius: 0;
-  width: 0px !important;
-  height: 0px !important;
+  background-color: #66bb6a;
+  border: 2px solid #2e7d32;
+  border-radius: 50%;
+  width: 10px !important;
+  height: 10px !important;
+  transition: all 0.2s ease;
 }
 
-/* 
-  Custom Example CSS  - This CSS is to improve the example experience.
-  You can remove it if you want to use the default styles.
- 
-  New Theme Classes:
-    .xy-theme__button   - Styles for buttons.
-    .xy-theme__input    - Styles for text inputs.
-    .xy-theme__checkbox - Styles for checkboxes.
-    .xy-theme__select   - Styles for dropdown selects.
-    .xy-theme__label    - Styles for labels.
-  
-  Use these classes to apply consistent theming across your components.
-*/
-
-:root {
-  --color-primary: #ff0073;
-  --color-background: #fefefe;
-  --color-hover-bg: #f6f6f6;
-  --color-disabled: #76797e;
+.react-flow__resize-control.handle:hover {
+  transform: scale(1.3);
+  background-color: #2e7d32;
 }
 
-.xy-theme__button-group {
-  display: flex;
-  align-items: center;
-
-  .xy-theme__button:first-child {
-    border-radius: 100px 0 0 100px;
-  }
-
-  .xy-theme__button:last-child {
-    border-radius: 0 100px 100px 0;
-    margin: 0;
-  }
-}
-
-/* Custom Button Styling */
+/* 绿色主题的 Controls 样式 */
 .xy-theme__button {
   display: inline-flex;
   align-items: center;
@@ -173,122 +205,187 @@ html[data-theme="dark"] {
   height: 2.5rem;
   padding: 0 1rem;
   border-radius: 100px;
-  border: 1px solid var(--color-primary);
+  border: 1px solid #2e7d32;
   background-color: var(--color-background);
-  color: var(--color-primary);
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease;
+  color: #2e7d32;
+  transition: all 0.2s ease;
   box-shadow: var(--xy-node-boxshadow-default);
   cursor: pointer;
 }
 
 .xy-theme__button.active {
-  background-color: var(--color-primary);
+  background-color: #2e7d32;
   color: white;
-  border-color: var(--color-primary);
+  border-color: #2e7d32;
 }
 
 .xy-theme__button.active:hover,
 .xy-theme__button.active:active {
-  background-color: var(--color-primary);
+  background-color: #1b5e20;
   opacity: 0.9;
 }
 
 .xy-theme__button:hover {
-  background-color: var(--xy-controls-button-background-color-hover-default);
+  background-color: #e8f5e9;
+  border-color: #66bb6a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
 }
 
 .xy-theme__button:active {
-  background-color: var(--color-hover-bg);
+  background-color: #c8e6c9;
 }
 
 .xy-theme__button:disabled {
-  color: var(--color-disabled);
-  opacity: 0.8;
+  color: #a5d6a7;
+  opacity: 0.6;
   cursor: not-allowed;
-  border: 1px solid var(--color-disabled);
+  border: 1px solid #a5d6a7;
+  transform: none;
+  box-shadow: none;
 }
 
-.xy-theme__button>span {
-  margin-right: 0.2rem;
-}
-
-/* Add gap between adjacent buttons */
-.xy-theme__button+.xy-theme__button {
-  margin-left: 0.3rem;
-}
-
-/* Example Input Styling */
+/* 输入框样式 - 绿色主题 */
 .xy-theme__input {
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--color-primary);
+  border: 1px solid #66bb6a;
   border-radius: 7px;
   background-color: var(--color-background);
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease;
+  transition: all 0.2s ease;
   font-size: 1rem;
   color: inherit;
 }
 
-.xy-theme__input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(255, 0, 115, 0.3);
+.xy-theme__input:hover {
+  border-color: #2e7d32;
 }
 
-/* Specific Checkbox Styling */
+.xy-theme__input:focus {
+  outline: none;
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+}
+
+.xy-theme__input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #a5d6a7;
+}
+
+/* 复选框样式 - 绿色主题 */
 .xy-theme__checkbox {
   appearance: none;
   -webkit-appearance: none;
   width: 1.25rem;
   height: 1.25rem;
-  border-radius: 7px;
-  border: 2px solid var(--color-primary);
+  border-radius: 4px;
+  border: 2px solid #66bb6a;
   background-color: var(--color-background);
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease;
+  transition: all 0.2s ease;
   cursor: pointer;
   display: inline-block;
   vertical-align: middle;
   margin-right: 0.5rem;
 }
 
+.xy-theme__checkbox:hover {
+  border-color: #2e7d32;
+}
+
 .xy-theme__checkbox:checked {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+  background-color: #2e7d32;
+  border-color: #2e7d32;
 }
 
 .xy-theme__checkbox:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(255, 0, 115, 0.3);
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
 }
 
-/* Dropdown Styling */
+.xy-theme__checkbox:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #a5d6a7;
+}
+
+/* 下拉菜单样式 - 绿色主题 */
 .xy-theme__select {
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--color-primary);
+  border: 1px solid #66bb6a;
   border-radius: 50px;
   background-color: var(--color-background);
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease;
+  transition: all 0.2s ease;
   font-size: 1rem;
   color: inherit;
   margin-right: 0.5rem;
   box-shadow: var(--xy-node-boxshadow-default);
 }
 
-.xy-theme__select:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(255, 0, 115, 0.3);
+.xy-theme__select:hover {
+  border-color: #2e7d32;
 }
 
+.xy-theme__select:focus {
+  outline: none;
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+}
+
+.xy-theme__select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #a5d6a7;
+}
+
+/* 标签样式 */
 .xy-theme__label {
   margin-top: 10px;
   margin-bottom: 3px;
   display: inline-block;
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+.xy-theme__label:disabled {
+  opacity: 0.5;
+}
+
+/* 迷你地图绿色主题（如果使用） */
+.react-flow__minimap {
+  border-color: #66bb6a !important;
+}
+
+.react-flow__minimap-node {
+  fill: #2e7d32 !important;
+  stroke: #1b5e20 !important;
+}
+
+/* 背景网格绿色主题（如果使用） */
+.react-flow__background {
+  /* stroke: rgba(46, 125, 50, 0.1) !important; */
+}
+
+/* 边标签样式 */
+.react-flow__edge-label {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid #a5d6a7;
+  color: #2e7d32;
+  font-size: 12px;
+}
+
+.react-flow__resize-control {
+  background-color: var(--node-resize-bg) !important;
+  border-color: var(--node-resize-border) !important;
+  width: var(--node-resize-size, 12px) !important;
+  height: var(--node-resize-size, 12px) !important;
+  border-radius: var(--node-resize-border-radius, 4px) !important;
+  transition: all 0.2s ease !important;
+}
+
+.react-flow__resize-control:hover {
+  background-color: var(--node-resize-hover-bg) !important;
+  border-color: var(--node-resize-hover-border) !important;
+  transform: scale(1.2) !important;
 }

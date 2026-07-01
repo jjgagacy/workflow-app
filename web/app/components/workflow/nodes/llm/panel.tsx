@@ -97,7 +97,7 @@ const LLMPanel = ({ node }: LLMPanelProps) => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-0">
       <div className="rounded-lg bg-muted/20 px-4 py-3">
         <div className="text-sm font-semibold text-foreground">{node.data.label?.trim() || 'LLM'}</div>
         <div className="mt-1 text-xs leading-5 text-muted-foreground">

@@ -1,7 +1,5 @@
 import { NodeProps } from "@xyflow/react";
 import { cn } from "@/utils/classnames";
-import { FileText } from "lucide-react";
-import { NoteNodeData } from "../components/note-node/types";
 import { Node, NodeData, NodeType } from "../types";
 import { useMemo } from "react";
 import { CUSTOM_NODE_NAME, NODE_DEFAULT_HEIGHT, NODE_DEFAULT_WIDTH } from "../constants";
@@ -26,12 +24,13 @@ export const BaseNode = (props: NodeProps<Node<NodeData>> & { children?: React.R
   return (
     <div
       className={cn(
-        "relative flex min-w-[200px] items-stretch gap-3 rounded-md border-1 border-[var(--border)] bg-background text-left shadow-sm transition-all",
+        "relative flex min-w-[200px] items-stretch gap-3 text-left transition-all",
         isIterationNode ? "max-w-none" : "max-w-[260px]",
         isIterationNode && "pointer-events-none",
         !isDisabled && "hover:shadow-xl",
-        isDisabled && "border-gray-300 bg-gray-100 text-gray-400 opacity-80 dark:border-gray-700 dark:bg-gray-800/80 dark:text-gray-500",
-        selected && "ring-1 ring-primary/30 shadow-xl"
+        isDisabled && "bg-gray-100 text-gray-400 opacity-80 dark:bg-gray-800/80 dark:text-gray-500",
+        selected && "ring-primary/30 shadow-xl",
+        data.candidate && "bg-background rounded-lg"
       )}
       style={{
         width: data?.size?.width || NODE_DEFAULT_WIDTH,

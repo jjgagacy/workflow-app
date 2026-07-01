@@ -6,11 +6,11 @@ import { useWorkflowInteractions } from "../hooks/use-interactions";
 
 export type NodeResizerProps = {
   id: string;
-  nodeData: NodeData;
+  nodeData?: NodeData;
   icon?: React.ReactNode;
 };
 
-export const NodeResizer = ({ id, nodeData, icon }: NodeResizerProps) => {
+export const NodeResizer = ({ id, icon }: NodeResizerProps) => {
   const { handleNodeResize } = useWorkflowInteractions();
   const store = useStoreApi();
   const { nodes } = store.getState();

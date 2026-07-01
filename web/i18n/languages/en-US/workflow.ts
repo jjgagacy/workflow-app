@@ -246,7 +246,20 @@ const translation = {
       workflowInput: 'Workflow input',
       currentUser: 'Current user',
       currentTime: 'Current time'
-    }
+    },
+    default: 'Default',
+    condition: 'Condition',
+  },
+  iteration: {
+    parallel: 'Parallel',
+    stop: 'Stop',
+    flat: 'Flat',
+    nested: 'Nested',
+    parallelCount: 'Parallel Count',
+    parallelCountDescription: 'Controls the number of iterations that can run simultaneously. Default is 1.',
+    errorResponse: 'Error Response',
+    errorResponseDescription: 'Choose how to handle errors during iteration execution.',
+    flatDescription: 'When enabled, the results of each iteration will be merged into a flat array output.',
   },
   errorHandler: {
     exceptionStrategy: 'Exception Strategy',

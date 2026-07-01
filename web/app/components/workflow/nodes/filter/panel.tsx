@@ -37,7 +37,7 @@ const FilterPanel = ({ node }: FilterPanelProps) => {
   const store = useStoreApi();
   const chatEnvVariables = useWorkflowStore((state) => state.chatEnvVariables);
   const envVariables = useWorkflowStore((state) => state.envVariables);
-  const { operatorOptionsByType } = useIfElseOperatorOptions();
+  const { operatorOptionsByType, typeItems } = useIfElseOperatorOptions();
   const {
     branch,
     handleConditionGroupOperatorToggle,
@@ -49,10 +49,6 @@ const FilterPanel = ({ node }: FilterPanelProps) => {
   } = useFilterConditionHandlers({ node });
   const nodes = store.getState().nodes as Node[];
   const conditions = branch.conditionGroup.conditions ?? [];
-  const typeItems: SelectItem[] = Object.keys(operatorOptionsByType).map((option) => ({
-    value: option,
-    name: option,
-  }));
 
   const variableOptions = useMemo<VariableOption[]>(() => {
     const environmentOptions = envVariables.map((envVariable) => ({
@@ -88,7 +84,7 @@ const FilterPanel = ({ node }: FilterPanelProps) => {
   }, [chatEnvVariables, envVariables, node.id, nodes, t]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-0">
       <div className="rounded-lg bg-muted/20 px-4 py-3">
         <div className="text-sm font-semibold text-foreground">{t('workflow.nodes.filter.name')}</div>
         <div className="mt-1 text-xs leading-5 text-muted-foreground">

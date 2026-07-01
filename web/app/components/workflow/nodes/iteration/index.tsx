@@ -1,10 +1,11 @@
 import { NodeProps, useReactFlow, useStore, useStoreApi } from "@xyflow/react";
 import { Grip, PlusCircle } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { produce } from "immer";
 import { useWorkflowStore } from "../../context";
 import { Node } from "../../types";
+import { useIterationRequiredSize } from "../../hooks/use-iteration-required-size";
 import { getNodeTypeIconColor } from "../../utils/node";
 import { NodeHeader } from "../../components/nodes-shared";
 import { NodeSourceHandle } from "../../components/handle/node-source-handle";
@@ -12,13 +13,9 @@ import type { IterationNodeData } from "./types";
 import { NodeResizer } from "../../components/node-resizer";
 import { NODE_DEFAULT_HEIGHT, NODE_DEFAULT_WIDTH, NODE_RESIZE_MIN_HEIGHT, NODE_RESIZE_MIN_WIDTH } from "../../constants";
 
-const ITERATION_HEADER_HEIGHT = 48;
-const ITERATION_HORIZONTAL_PADDING = 20;
-const ITERATION_BOTTOM_PADDING = 20;
-
 const IterationNode = ({ id, data }: NodeProps<Node<IterationNodeData>>) => {
   const { t } = useTranslation();
-  const store = useStoreApi();
+  const storeApi = useStoreApi();
   const { setNodes } = useReactFlow();
   const setShowNodeSelector = useWorkflowStore((state) => state.setShowNodeSelector);
   const childNodes = useStore((state) => state.nodes.filter((node) => node.parentId === id) as Node[]);
@@ -28,45 +25,21 @@ const IterationNode = ({ id, data }: NodeProps<Node<IterationNodeData>>) => {
   const hasChildren = childNodeCount > 0;
   const size = data.size;
 
-  const requiredSize = useMemo(() => {
-    const baseWidth = Math.max(size?.width || NODE_DEFAULT_WIDTH, NODE_RESIZE_MIN_WIDTH);
-    const baseHeight = Math.max(size?.height || NODE_DEFAULT_HEIGHT, NODE_RESIZE_MIN_HEIGHT);
-
-    if (!childNodes.length) {
-      return { width: baseWidth, height: baseHeight };
-    }
-
-    const contentWidth = childNodes.reduce((maxWidth, childNode) => {
-      const childWidth = childNode.measured?.width ?? childNode.width ?? childNode.data?.size?.width ?? NODE_DEFAULT_WIDTH;
-      return Math.max(maxWidth, childNode.position.x + childWidth + ITERATION_HORIZONTAL_PADDING);
-    }, NODE_RESIZE_MIN_WIDTH);
-
-    const contentHeight = childNodes.reduce((maxHeight, childNode) => {
-      const childHeight = childNode.measured?.height ?? childNode.height ?? childNode.data?.size?.height ?? NODE_DEFAULT_HEIGHT;
-      return Math.max(maxHeight, childNode.position.y + childHeight + ITERATION_BOTTOM_PADDING);
-    }, ITERATION_HEADER_HEIGHT + NODE_RESIZE_MIN_HEIGHT);
-
-    return {
-      width: Math.max(baseWidth, contentWidth),
-      height: Math.max(baseHeight, contentHeight),
-    };
-  }, [childNodes, size?.height, size?.width]);
+  const requiredSize = useIterationRequiredSize({ childNodes, size });
 
   useEffect(() => {
     const currentWidth = size?.width || NODE_DEFAULT_WIDTH;
     const currentHeight = size?.height || NODE_DEFAULT_HEIGHT;
-
     if (requiredSize.width <= currentWidth && requiredSize.height <= currentHeight) {
       return;
     }
 
-    const { nodes } = store.getState();
+    const { nodes } = storeApi.getState();
     const nextNodes = produce(nodes as Node[], (draft) => {
       const currentNode = draft.find((node) => node.id === id);
       if (!currentNode) {
         return;
       }
-
       currentNode.data = {
         ...currentNode.data,
         size: {
@@ -75,9 +48,8 @@ const IterationNode = ({ id, data }: NodeProps<Node<IterationNodeData>>) => {
         },
       };
     });
-
     setNodes(nextNodes);
-  }, [id, requiredSize.height, requiredSize.width, setNodes, size?.height, size?.width, store]);
+  }, [id, requiredSize.height, requiredSize.width, setNodes, size?.height, size?.width, storeApi]);
 
   return (
     <div
@@ -97,7 +69,6 @@ const IterationNode = ({ id, data }: NodeProps<Node<IterationNodeData>>) => {
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-slate-100/60 via-transparent to-sky-100/50 dark:from-slate-900/60 dark:to-slate-800/50" />
       <NodeResizer
         id={id}
-        nodeData={data}
         icon={<Grip className="h-3 w-3 text-gray-400 dark:text-gray-600" />}
       />
       <div className="pointer-events-none relative flex min-h-[90px] flex-col">

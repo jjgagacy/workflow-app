@@ -6,7 +6,7 @@ export const NodeHeader = ({ title, icon, iconColor }: { title: string; icon?: R
           {icon}
         </span>
       )}
-      <span className="truncate text-sm font-medium tracking-[0.01em] text-[var(--color-text-primary)]">
+      <span className="truncate text-sm font-medium tracking-[0.01em] text-[var(--color-card-foreground)]">
         {title}
       </span>
     </div>

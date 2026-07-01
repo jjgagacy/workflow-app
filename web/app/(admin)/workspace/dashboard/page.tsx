@@ -193,18 +193,6 @@ export default function Page() {
     <div>
       <h1 className="mt-4">Dashboard</h1>
       <div className="p-2">
-        <div className="w-128 h-64 border rounded flex items-center justify-center">
-          <CodeEditorWrapper className="flex-1">
-            <CodeEditor
-              language={CodeLanguage.python}
-              value={`def main(arg1: str, arg2: str):
-    return {
-        "result": arg1 + arg2,
-    }
-`}
-            />
-          </CodeEditorWrapper>
-        </div>
       </div>
       <div className="p-2">
         <Popover
@@ -389,6 +377,6 @@ export default function Page() {
       </Dialog>
 
       <Countdown ref={countdownRef} />
-    </div>
+    </div >
   );
 }

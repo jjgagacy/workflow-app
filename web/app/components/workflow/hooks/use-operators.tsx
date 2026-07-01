@@ -4,9 +4,7 @@ import { Operator, OperatorGroup } from "../types";
 import { ConditionOperator } from "../nodes/if-else/types";
 
 type OperatorGroupLabel = OperatorGroup['label'];
-
 type OperatorDefinition = Omit<Operator, 'name'>;
-
 type OperatorGroupDefinition = Omit<OperatorGroup, 'operators'> & {
   operators: OperatorDefinition[];
 };

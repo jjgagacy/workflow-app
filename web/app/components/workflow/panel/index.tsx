@@ -14,7 +14,7 @@ import { Edge, Node } from "../types";
 
 export const Panel = () => {
   const [title, setTitle] = useState("");
-  const store = useStoreApi<Node, Edge>();
+  const storeApi = useStoreApi<Node, Edge>();
   const activePanel = useWorkflowStore((state) => state.activePanel);
   const panelMode = useWorkflowStore((state) => state.panelMode);
   const panelWidth = useWorkflowStore((state) => state.panelWidth);
@@ -53,7 +53,7 @@ export const Panel = () => {
     if (!node) {
       return;
     }
-    const { nodes, edges } = store.getState();
+    const { nodes, edges } = storeApi.getState();
     setTitle(value);
 
     const nextNode = {

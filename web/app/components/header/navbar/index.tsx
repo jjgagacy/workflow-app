@@ -4,12 +4,11 @@ import { Route } from "@/types/route";
 import { ThemeSelector } from "./selector/theme-selector";
 import { UserSelector } from "./selector/user-selector";
 import { LanguageSelector } from "./selector/language-selector";
-import { useAppearance } from "@/hooks/use-appearance";
-import { SunMoon } from "lucide-react";
 import { SearchInput } from "./search-input";
 import { useCallback, useState } from "react";
 import { mockSearchData } from "../../hooks/use-searchInput";
 import { useSidebar } from "../../hooks/use-sidebar";
+import { ThemeToggleButton } from "./theme-toggle-button";
 
 interface NavbarProps {
   routes: Route[];
@@ -17,7 +16,6 @@ interface NavbarProps {
 }
 
 export function Navbar({ routes, onMenuClick }: NavbarProps) {
-  const { toggleTheme } = useAppearance();
   const [searchValue, setSearchValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
@@ -65,14 +63,7 @@ export function Navbar({ routes, onMenuClick }: NavbarProps) {
             <div className={`flex items-center text-component ${isMobile ? 'flex-1 justify-end' : ''}`}>
               <LanguageSelector reloadPage={true} />
               <ThemeSelector />
-              <button
-                type="button"
-                className="p-1 mx-2 rounded-full focus:outline-none text-text-primary"
-                onClick={toggleTheme}
-              >
-                <span className="sr-only">View notifications</span>
-                <SunMoon className="h-5 w-5" aria-hidden="true" />
-              </button>
+              <ThemeToggleButton />
               <UserSelector />
             </div>
           </div>
