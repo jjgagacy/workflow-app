@@ -24,7 +24,7 @@ export const NodeContextMenu = memo(({ containerRef }: NodeContextMenuProps) => 
   const nodeMenu = useWorkflowStore(s => s.nodeMenu);
   const openNodePanel = useWorkflowStore(s => s.openNodePanel);
   const setShowNodeSelector = useWorkflowStore(s => s.setShowNodeSelector);
-  const { handleNodeContextMenu, handleCancelNodeContextMenu } = useNodeContextMenu(containerRef || ref);
+  const { handleCancelNodeContextMenu } = useNodeContextMenu(containerRef || ref);
   const { handleCancelContextMenu } = usePanelContextMenu(containerRef || ref);
   const { handleCancelSelectionContextMenu } = useSelectionContextMenu(containerRef || ref);
   const { handleNodeDelete, handleNodeToggleDisabled, handleNodesCopy } = useWorkflowInteractions();

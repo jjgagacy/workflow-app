@@ -17,18 +17,15 @@ export const useToggleExpanded = ({ ref }: Props) => {
     if (!expanded || !ref?.current) {
       return;
     }
-
     const updateHeight = () => {
       if (ref.current) {
         setExpandedHeight(ref.current.clientHeight);
       }
     };
-
     updateHeight();
 
     const observer = new ResizeObserver(updateHeight);
     observer.observe(ref.current);
-
     return () => {
       observer.disconnect();
     };

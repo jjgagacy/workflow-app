@@ -3,6 +3,8 @@ import type { ListOperatorCondition, ListOperatorNodeData } from "./types";
 
 const createId = (prefix: string) => `${prefix}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
 
+export const DEFAULT_LIST_OPERATOR_OUTPUT_VARIABLE_NAME = 'result';
+
 export const createListOperatorCondition = (): ListOperatorCondition => ({
   id: createId('list-operator-condition'),
   operator: 'contains',
@@ -27,6 +29,6 @@ export const listOperatorNodeDefaultData: NodeDefaultData<ListOperatorNodeData> 
     lastN: 0,
     enableSort: false,
     sortOrder: 'asc',
-    outputVariableName: 'listResult',
+    outputVariableName: DEFAULT_LIST_OPERATOR_OUTPUT_VARIABLE_NAME,
   },
 };

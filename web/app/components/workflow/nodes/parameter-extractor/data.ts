@@ -4,6 +4,8 @@ import type { ParameterExtractorItem, ParameterExtractorNodeData } from "./types
 
 const createId = (prefix: string) => `${prefix}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
 
+export const DEFAULT_PARAMETER_EXTRACTOR_NAME = 'result';
+
 export const createParameterExtractorItem = (): ParameterExtractorItem => ({
   id: createId('parameter-extractor-item'),
   name: '',
@@ -26,6 +28,6 @@ export const parameterExtractorNodeDefaultData: NodeDefaultData<ParameterExtract
     inputVariable: 'input',
     enableVision: false,
     parameters: normalizeParameterExtractorItems(),
-    outputVariableName: 'extractedParameters',
+    outputVariableName: DEFAULT_PARAMETER_EXTRACTOR_NAME,
   },
 };

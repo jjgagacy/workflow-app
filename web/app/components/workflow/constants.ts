@@ -121,3 +121,62 @@ export const NODE_DEFAULT_DATA: NodeDefaultDataByType = {
 };
 
 export const NODE_PANEL_DEFAULT_WIDTH = 410;
+
+export const CATALOG_NODE_TYPE_MAP: Record<string, NodeType> = {
+  base: NodeType.Base,
+  if: NodeType.IfElse,
+  iteration: NodeType.Iteration,
+  loop: NodeType.Loop,
+  filter: NodeType.Filter,
+  code: NodeType.Code,
+  'template-transform': NodeType.TemplateTransform,
+  'variable-assigner': NodeType.VariableAssigner,
+  'variable-aggregator': NodeType.VariableAggregator,
+  'parameter-extractor': NodeType.ParameterExtractor,
+  'question-classifier': NodeType.QuestionClassifier,
+  'document-extractor': NodeType.DocExtractor,
+  'list-operator': NodeType.ListOperator,
+  agent: NodeType.Agent,
+  llm: NodeType.LLM,
+  'http-request': NodeType.HttpRequest,
+  'knowledge-retrieval': NodeType.KnowledgeRetrieval,
+};
+
+export const ICON_COLORS = {
+  neutral: "text-indigo-600 dark:text-indigo-400",
+  flow: "text-violet-600 dark:text-violet-400",
+  data: "text-cyan-600 dark:text-cyan-400",
+  ai: "text-fuchsia-600 dark:text-fuchsia-400",
+  logic: "text-purple-600 dark:text-purple-400",
+  transform: "text-sky-600 dark:text-sky-400",
+  variables: "text-blue-600 dark:text-blue-400",
+  analysis: "text-lime-600 dark:text-lime-400",
+  communication: "text-emerald-600 dark:text-emerald-400",
+  development: "text-rose-600 dark:text-rose-400",
+  productivity: "text-orange-600 dark:text-orange-400",
+  trigger: "text-amber-600 dark:text-amber-400",
+  network: "text-teal-600 dark:text-teal-400",
+  knowledge: "text-blue-600 dark:text-blue-400",
+} as const;
+
+
+export const NODE_TYPE_ICON_COLOR_MAP: Partial<Record<NodeType, string>> = {
+  [NodeType.Base]: ICON_COLORS.neutral,
+  [NodeType.IfElse]: ICON_COLORS.logic,
+  [NodeType.Iteration]: ICON_COLORS.flow,
+  [NodeType.Loop]: ICON_COLORS.flow,
+  [NodeType.Code]: ICON_COLORS.data,
+  [NodeType.TemplateTransform]: ICON_COLORS.transform,
+  [NodeType.VariableAssigner]: ICON_COLORS.variables,
+  [NodeType.VariableAggregator]: ICON_COLORS.variables,
+  [NodeType.ParameterExtractor]: ICON_COLORS.analysis,
+  [NodeType.QuestionClassifier]: ICON_COLORS.analysis,
+  [NodeType.Filter]: ICON_COLORS.data,
+  [NodeType.DocExtractor]: ICON_COLORS.transform,
+  [NodeType.ListOperator]: ICON_COLORS.data,
+  [NodeType.Agent]: ICON_COLORS.ai,
+  [NodeType.LLM]: ICON_COLORS.ai,
+  [NodeType.HttpRequest]: ICON_COLORS.network,
+  [NodeType.KnowledgeRetrieval]: ICON_COLORS.knowledge,
+};
+

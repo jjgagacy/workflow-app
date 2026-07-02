@@ -5,19 +5,20 @@ import { BranchItem, NodeHeader } from "../../components/nodes-shared";
 import { getWorkflowModelById } from "../../components/nodes-shared/model-options";
 import type { Node } from "../../types";
 import { getNodeTypeIconColor } from "../../utils/node";
-import {
-  getQuestionClassifierCategoryDefaultName,
-  normalizeQuestionClassifierCategories,
-} from "./data";
 import type { QuestionClassifierNodeData } from "./types";
+import { useTranslation } from "react-i18next";
+import { useQuestionClassifier } from "./hooks";
 
 const QuestionClassifierNode = ({ id, data }: NodeProps<Node<QuestionClassifierNodeData>>) => {
-  const label = data.label?.trim() || 'Question Classifier';
+  const { t } = useTranslation();
+  const label = data.label?.trim() || t('workflow.nodes.question-classifier.name');
   const iconColor = data.iconColor || getNodeTypeIconColor(data.type);
   const updateNodeInternals = useUpdateNodeInternals();
-  const categories = useMemo(() => normalizeQuestionClassifierCategories(data.categories), [data.categories]);
+  const { normalizeCategories, getDefaultCategoryName } = useQuestionClassifier();
+
+  const categories = useMemo(() => normalizeCategories(data.categories), [data.categories]);
   const model = getWorkflowModelById(data.modelId);
-  const modelLabel = model ? `${model.provider} / ${model.name}` : '未选择模型';
+  const modelLabel = model ? `${model.provider} / ${model.name}` : t('workflow.nodes.base.no-select-model');
 
   useEffect(() => {
     updateNodeInternals(id);
@@ -26,15 +27,16 @@ const QuestionClassifierNode = ({ id, data }: NodeProps<Node<QuestionClassifierN
   return (
     <div className="question-classifier-node">
       <NodeHeader icon={data.icon} iconColor={iconColor} title={label} />
+
       {!data.candidate && (
         <>
           <div className="space-y-2 p-4">
-            <div className="rounded-lg border border-[var(--border)] bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
-              <span className="rounded-full bg-background px-2.5 py-1">{modelLabel}</span>
+            <div className="flex items-center gap-1 text-xs">
+              <span className="truncate text-foreground">{modelLabel}</span>
             </div>
 
             {categories.map((category, index) => {
-              const categoryName = category.name?.trim() || getQuestionClassifierCategoryDefaultName(index);
+              const categoryName = category.name?.trim() || getDefaultCategoryName(index);
 
               return (
                 <BranchItem key={category.id} id={category.id}>
@@ -45,7 +47,7 @@ const QuestionClassifierNode = ({ id, data }: NodeProps<Node<QuestionClassifierN
                       </span>
                     </div>
                     <div className="mt-1 truncate text-xs text-muted-foreground">
-                      {category.prompt?.trim() || '未设置分类提示词'}
+                      {category.prompt?.trim() || t('workflow.nodes.question-classifier.no-setting-category-prompt')}
                     </div>
                   </div>
                   <NodeSourceHandle

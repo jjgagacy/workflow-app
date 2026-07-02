@@ -1,6 +1,8 @@
 import type { NodeDefaultData } from "../../types";
 import type { DocumentExtractorNodeData } from "./types";
 
+export const DEFAULT_OUTPUT_VARIABLE_NAME = 'text';
+
 export const DOCUMENT_EXTRACTOR_SUPPORTED_FORMATS = [
   'pdf',
   'doc',
@@ -17,6 +19,7 @@ export const DOCUMENT_EXTRACTOR_SUPPORTED_FORMATS = [
 export const documentExtractorNodeDefaultData: NodeDefaultData<DocumentExtractorNodeData> = {
   value: {
     inputVariable: '',
-    outputVariableName: 'documentText',
+    outputVariableName: DEFAULT_OUTPUT_VARIABLE_NAME,
   },
 };
+

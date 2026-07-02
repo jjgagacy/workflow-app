@@ -7,7 +7,7 @@
 #react-flow-body .react-flow {
   --xy-background-color: #f7f9fb;
   /* Custom Variables - 绿色主题 */
-  --xy-theme-selected: #2e7d32;
+  --xy-theme-selected: #622a2a;
   --xy-theme-hover: #66bb6a;
   --xy-theme-edge-hover: #2e7d32;
   --xy-theme-color-focus: #a5d6a7;
@@ -21,7 +21,7 @@
   --xy-handle-border-color-default: transparent;
   --xy-edge-label-color-default: #505050;
   --color-workflow-bg: var(--background);
-  --xy-theme-selected-shadow: rgba(46, 125, 50, 0.2);
+  --xy-theme-selected-shadow: rgba(0, 0, 0, 0.02);
   --node-resize-bg: #2e7d32;
   --node-resize-border: #2e7d32;
   --node-resize-hover-bg: #66bb6a;
@@ -37,7 +37,7 @@ html[data-theme="dark"] #react-flow-body .react-flow {
     0px 0.51px 1.01px 4px #ffffff20;
 
   --xy-node-border-default: 1px solid var(--border);
-  --xy-theme-selected-shadow: rgba(102, 187, 106, 0.3);
+  --xy-theme-selected-shadow: rgba(255, 255, 255, 0.06);
   --node-resize-bg: #1b5e20;
   --node-resize-border: #1b5e20;
   --node-resize-hover-bg: #4caf50;

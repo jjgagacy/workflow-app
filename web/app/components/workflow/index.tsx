@@ -80,7 +80,6 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   );
   const { activeTheme } = useAppearance();
   const showSidebar = useWorkflowStore(s => s.showSidebar);
-  const setShowSidebar = useWorkflowStore(s => s.setShowSidebar);
   const showNodeSelector = useWorkflowStore(s => s.showNodeSelector);
   const setShowNodeSelector = useWorkflowStore(s => s.setShowNodeSelector);
   const showCommandPalette = useWorkflowStore(s => s.showCommandPalette);
@@ -254,6 +253,7 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
           onSelectionStart={handleNodeSelectionStart}
           onEdgeMouseEnter={handleEdgeEnter}
           onEdgeMouseLeave={handleEdgeLeave}
+          deleteKeyCode={null}
           minZoom={0.25}
         >
           <Background

@@ -3,6 +3,7 @@ import { SimpleSelect } from "@/app/ui/select";
 import { CodeExceptionStrategy } from "../../nodes/code/types";
 import { useExceptionStrategyItems } from "../../hooks/use-exception-strategy";
 import { useTranslation } from "react-i18next";
+import { NodeInput } from "../base/node-input";
 
 type ExceptionHandlerProps = {
   exceptionStrategy: CodeExceptionStrategy;
@@ -35,11 +36,10 @@ export const ExceptionHandler = ({
       {exceptionStrategy === 'return-default' && (
         <label className="block">
           <div className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.errorHandler.returnDefault')}</div>
-          <input
+          <NodeInput
             value={exceptionDefaultValue}
             onChange={(event) => onExceptionConfigChange({ exceptionDefaultValue: event.target.value })}
             placeholder={t('workflow.errorHandler.placeholder')}
-            className={`w-full rounded-md border border-[var(--border)] bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary/60`}
           />
         </label>
       )}

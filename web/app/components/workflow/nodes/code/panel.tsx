@@ -101,7 +101,7 @@ const CodePanel = ({ node }: CodePanelProps) => {
       <div className="rounded-lg bg-muted/20 px-4 py-3">
         <div className="text-sm font-semibold text-foreground">{node.data.label?.trim() || 'Code'}</div>
         <div className="mt-1 text-xs leading-5 text-muted-foreground">
-          管理输入变量映射、输出变量定义，以及代码异常处理策略。
+          {t('workflow.nodes.code.description2')}
         </div>
       </div>
 
@@ -138,6 +138,7 @@ const CodePanel = ({ node }: CodePanelProps) => {
         retryCount={retryCount}
         onRetryConfigChange={syncNodeData}
       />
+
       <ExceptionHandler
         exceptionStrategy={exceptionStrategy}
         exceptionDefaultValue={exceptionDefaultValue}

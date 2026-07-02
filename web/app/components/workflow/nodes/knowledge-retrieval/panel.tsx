@@ -1,8 +1,10 @@
 import { useMemo } from "react";
-import { CirclePlus, Trash2 } from "lucide-react";
+import { CirclePlus } from "lucide-react";
 import { useStoreApi } from "@xyflow/react";
 import { useTranslation } from "react-i18next";
 import { SimpleSelect } from "@/app/ui/select";
+import DeleteButton from "../../components/base/delete-button";
+import { NodeInput } from "../../components/base/node-input";
 import {
   buildVariableSelectItems,
   buildWorkflowVariableOptions,
@@ -10,12 +12,8 @@ import {
 import { useWorkflowStore } from "../../context";
 import { useNodesUpdate } from "../../hooks/use-nodesUpdate";
 import type { Node } from "../../types";
-import {
-  createKnowledgeBaseSelection,
-  KNOWLEDGE_BASE_OPTIONS,
-  normalizeKnowledgeBaseSelections,
-} from "./data";
 import type { KnowledgeBaseSelection, KnowledgeRetrievalNodeData } from "./types";
+import { useKnowledgeRetrieval } from "./hooks";
 
 type KnowledgeRetrievalPanelProps = {
   node: Node<KnowledgeRetrievalNodeData>;
@@ -28,8 +26,6 @@ type SelectItem = {
   group?: string;
 };
 
-const inputClassName = 'w-full rounded-md border border-[var(--border)] bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary/60';
-
 const KnowledgeRetrievalPanel = ({ node }: KnowledgeRetrievalPanelProps) => {
   const { t } = useTranslation();
   const store = useStoreApi();
@@ -37,6 +33,7 @@ const KnowledgeRetrievalPanel = ({ node }: KnowledgeRetrievalPanelProps) => {
   const chatEnvVariables = useWorkflowStore((state) => state.chatEnvVariables);
   const envVariables = useWorkflowStore((state) => state.envVariables);
   const { onNodeDataUpdate } = useNodesUpdate();
+  const { normalizeKnowledgeBaseSelections, createKnowledgeBaseSelection, knowledgeBaseOptions } = useKnowledgeRetrieval();
 
   const inputVariable = node.data.inputVariable ?? '';
   const knowledgeBases = normalizeKnowledgeBaseSelections(node.data.knowledgeBases);
@@ -75,7 +72,7 @@ const KnowledgeRetrievalPanel = ({ node }: KnowledgeRetrievalPanelProps) => {
     });
   }, [chatEnvVariables, envVariables, inputVariable, node.id, store, t]);
 
-  const knowledgeBaseItems: SelectItem[] = KNOWLEDGE_BASE_OPTIONS.map((option) => ({
+  const knowledgeBaseItems: SelectItem[] = knowledgeBaseOptions.map((option) => ({
     value: option.id,
     name: option.name,
     description: option.description,
@@ -110,19 +107,14 @@ const KnowledgeRetrievalPanel = ({ node }: KnowledgeRetrievalPanelProps) => {
   return (
     <div className="space-y-0">
       <div className="rounded-lg bg-muted/20 px-4 py-3">
-        <div className="text-sm font-semibold text-foreground">{node.data.label?.trim() || 'Knowledge Retrieval'}</div>
+        <div className="text-sm font-semibold text-foreground">{node.data.label?.trim() || t('workflow.nodes.knowledge-retrieval.name')}</div>
         <div className="mt-1 text-xs leading-5 text-muted-foreground">
-          从一个或多个知识库检索相关内容，输出检索结果供后续节点使用。
-        </div>
-        <div className="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
-          <span className="rounded-full bg-background px-2.5 py-1">输入 {inputVariable || '未选择'}</span>
-          <span className="rounded-full bg-background px-2.5 py-1">知识库 {knowledgeBases.length}</span>
-          <span className="rounded-full bg-background px-2.5 py-1">输出 {outputVariableName}</span>
+          {t('workflow.nodes.knowledge-retrieval.description2')}
         </div>
       </div>
 
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">
-        <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">输入变量</div>
+        <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.knowledge-retrieval.input')}</div>
         <SimpleSelect
           items={variableItems}
           defaultValue={inputVariable}
@@ -134,14 +126,14 @@ const KnowledgeRetrievalPanel = ({ node }: KnowledgeRetrievalPanelProps) => {
 
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">
         <div className="flex items-center justify-between gap-2">
-          <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">知识库列表</div>
+          <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.knowledge-retrieval.knowledgeBases')}</div>
           <button
             type="button"
             onClick={addKnowledgeBase}
             className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border)] bg-background px-2.5 py-1.5 text-xs text-foreground transition-colors hover:bg-muted/70"
           >
             <CirclePlus className="h-3.5 w-3.5" />
-            添加知识库
+            {t('workflow.nodes.knowledge-retrieval.addKnowledgeBase')}
           </button>
         </div>
 
@@ -149,17 +141,12 @@ const KnowledgeRetrievalPanel = ({ node }: KnowledgeRetrievalPanelProps) => {
           {knowledgeBases.map((selection, index) => (
             <div key={selection.id} className="rounded-lg border border-[var(--border)] bg-background px-3 py-3">
               <div className="mb-3 flex items-center justify-between gap-3">
-                <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">知识库 {index + 1}</div>
-                <button
-                  type="button"
+                <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.knowledge-retrieval.knowledgeBase')} {index + 1}</div>
+                <DeleteButton
                   onClick={() => removeKnowledgeBase(selection.id)}
-                  className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
-                  aria-label="删除知识库"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
+                  ariaLabel={t('workflow.nodes.knowledge-retrieval.removeKnowledgeBase')}
+                />
               </div>
-
               <SimpleSelect
                 items={knowledgeBaseItems}
                 defaultValue={selection.knowledgeBaseId}
@@ -174,12 +161,11 @@ const KnowledgeRetrievalPanel = ({ node }: KnowledgeRetrievalPanelProps) => {
 
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">
         <label className="block">
-          <div className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">输出变量名</div>
-          <input
+          <div className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.knowledge-retrieval.outputVariableName')}</div>
+          <NodeInput
             value={outputVariableName}
             onChange={(event) => syncNodeData({ outputVariableName: event.target.value })}
-            placeholder="例如: knowledgeResults"
-            className={inputClassName}
+            placeholder="text"
           />
         </label>
       </section>

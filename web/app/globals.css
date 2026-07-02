@@ -236,3 +236,29 @@ html[data-changing-theme] * {
 .note-editor-theme_text-underline {
   text-decoration: underline;
 }
+
+.backdrop-enter {
+  opacity: 0;
+  backdrop-filter: blur(0px);
+}
+
+.backdrop-enter-active {
+  opacity: 1;
+  backdrop-filter: blur(4px);
+  transition:
+    opacity 200ms ease,
+    backdrop-filter 200ms ease;
+}
+
+.backdrop-exit {
+  opacity: 1;
+  backdrop-filter: blur(4px);
+}
+
+.backdrop-exit-active {
+  opacity: 0;
+  backdrop-filter: blur(0px);
+  transition:
+    opacity 200ms ease,
+    backdrop-filter 200ms ease;
+}

@@ -105,6 +105,7 @@ const translation = {
   },
   nodeList: {
     searchPlaceholder: '搜索节点和工具...',
+    noNodes: '未找到节点',
   },
   appOperations: {
     deleteAppTitle: '删除应用',

@@ -1,6 +1,7 @@
-import { ArrowDown, ArrowUp, Trash2, GripVertical, Shield } from "lucide-react";
+import { ArrowDown, ArrowUp, GripVertical, Shield } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { TitleInput } from "../../../panel/components/title-input";
+import DeleteButton from "../../../components/base/delete-button";
 
 type BranchHeaderProps = {
   branchId: string;
@@ -83,15 +84,12 @@ export const BranchHeader = ({
             <div className="h-5 w-px bg-muted" />
           </>
         )}
-        <button
-          type="button"
+        <DeleteButton
           disabled={disableRemoveBranch}
           onClick={() => onRemoveBranch(branchId)}
-          className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-all hover:bg-destructive/10 hover:text-destructive disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground"
-          aria-label={t("workflow.conditions.removeBranch")}
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-        </button>
+          ariaLabel={t("workflow.conditions.removeBranch")}
+          className="text-muted-foreground disabled:opacity-30"
+        />
       </div>
     </div>
   );

@@ -1,4 +1,6 @@
 export const EDITOR_MIN_HEIGHT = 150;
+export const EDITOR_MAX_HEIGHT = 600;
+export const EDITOR_DEFAULT_HEIGHT = 150;
 
 export const CUSTOM_THEMES = {
   light: {

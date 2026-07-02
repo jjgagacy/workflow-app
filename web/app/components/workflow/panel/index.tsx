@@ -11,6 +11,7 @@ import { ChatEnvPanel } from "./chat-env";
 import { EnvPanel } from "./env";
 import { useWorkflowHistory, WorkflowHistoryEvent } from "../hooks/use-workflow-history";
 import { Edge, Node } from "../types";
+import { SlideTransition } from "../../base/transition/slide-transition";
 
 export const Panel = () => {
   const [title, setTitle] = useState("");
@@ -79,66 +80,75 @@ export const Panel = () => {
     return null;
 
   return (
-    <div
-      className={cn(
-        "absolute z-[60] flex flex-col overflow-hidden rounded-md border border-[var(--border)] bg-background shadow-2xl",
-        panelMode === "side"
-          ? (showNodeSelector ? "bottom-2 right-80 top-2" : "bottom-2 right-2 top-2")
-          : "left-1/2 top-1/2 h-[min(80vh,720px)] -translate-x-1/2 -translate-y-1/2",
-      )}
-      style={{ width: resolvedWidth, ...(panelMode === "side" && showNodeSelector ? { right: 'calc(20rem + 10px)' } : {}) }}
-    >
-      {panelMode === "side" && (
-        <div
-          className="absolute bottom-0 left-0 top-0 z-10 w-2 -translate-x-1/2 cursor-col-resize hover:w-3 hover:bg-green-400/40 dark:hover:bg-green-600/40 transition-all duration-200 hover:shadow-[0_0_12px_rgba(59,130,246,0.5)]"
-          onPointerDown={handleResizeStart}
-        />
-      )}
-      <div className="flex items-start justify-between gap-3 border-b border-[var(--border)] px-4 py-3">
-        <div className="min-w-0">
-          {isNodePanel && node ? (
-            <TitleInput title={title} onChange={handleTitleChange} />
-          ) : (
-            <div className="truncate text-sm font-semibold text-foreground">{title}</div>
-          )}
-          <div className="mt-1 text-xs text-muted-foreground">
-            {isNodePanel ? "Node properties" : isEnvPanel ? "Environment variables" : "Session variables"}
+    <>
+      <SlideTransition
+        show={panelMode === "dialog"}
+        classNames="backdrop"
+        timeout={200}
+      >
+        <div className="fixed inset-0 z-50 bg-black/25 backdrop-blur-sm" />
+      </SlideTransition>
+      <div
+        className={cn(
+          "absolute z-[60] flex flex-col overflow-hidden rounded-md border border-[var(--border)] bg-background shadow-2xl transition-all duration-200 ease-out",
+          panelMode === "side"
+            ? (showNodeSelector ? "bottom-2 right-80 top-2" : "bottom-2 right-2 top-2")
+            : "left-1/2 top-1/2 h-[min(80vh,720px)] -translate-x-1/2 -translate-y-1/2 rounded-2xl shadow-[0_30px_90px_-20px_rgb(0_0_0_/_35%)]",
+        )}
+        style={{ width: resolvedWidth, ...(panelMode === "side" && showNodeSelector ? { right: 'calc(20rem + 10px)' } : {}) }}
+      >
+        {panelMode === "side" && (
+          <div
+            className="absolute bottom-0 left-0 top-0 z-10 w-2 -translate-x-1/2 cursor-col-resize hover:w-3 hover:bg-green-400/40 dark:hover:bg-green-600/40 transition-all duration-200 hover:shadow-[0_0_12px_rgba(59,130,246,0.5)]"
+            onPointerDown={handleResizeStart}
+          />
+        )}
+        <div className="flex items-start justify-between gap-3 border-b border-[var(--border)] px-4 py-3">
+          <div className="min-w-0">
+            {isNodePanel && node ? (
+              <TitleInput title={title} onChange={handleTitleChange} />
+            ) : (
+              <div className="truncate text-sm font-semibold text-foreground">{title}</div>
+            )}
+            <div className="mt-1 text-xs text-muted-foreground">
+              {isNodePanel ? "Node properties" : isEnvPanel ? "Environment variables" : "Session variables"}
+            </div>
+          </div>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              aria-label={panelMode === "side" ? "Open dialog panel" : "Dock side panel"}
+              onClick={togglePanelMode}
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-muted-foreground transition-colors hover:border-[var(--border)] hover:bg-muted/70 hover:text-foreground"
+            >
+              {panelMode === "side" ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+            </button>
+            <button
+              type="button"
+              aria-label="Close panel"
+              onClick={closePanel}
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-muted-foreground transition-colors hover:border-[var(--border)] hover:bg-muted/70 hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
         </div>
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            aria-label={panelMode === "side" ? "Open dialog panel" : "Dock side panel"}
-            onClick={togglePanelMode}
-            className="flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-muted-foreground transition-colors hover:border-[var(--border)] hover:bg-muted/70 hover:text-foreground"
-          >
-            {panelMode === "side" ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
-          </button>
-          <button
-            type="button"
-            aria-label="Close panel"
-            onClick={closePanel}
-            className="flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-muted-foreground transition-colors hover:border-[var(--border)] hover:bg-muted/70 hover:text-foreground"
-          >
-            <X className="h-4 w-4" />
-          </button>
+
+        <div className="flex-1 overflow-y-auto px-4 py-3">
+          {isNodePanel && node ? (
+            <>
+              {NodePanelComponent ? (
+                <div className="mt-4">
+                  <NodePanelComponent node={node} />
+                </div>
+              ) : null}
+            </>
+          ) : (
+            isEnvPanel ? <EnvPanel /> : <ChatEnvPanel />
+          )}
         </div>
       </div>
-
-      <div className="flex-1 overflow-y-auto px-4 py-3">
-        {isNodePanel && node ? (
-          <>
-            {NodePanelComponent ? (
-              <div className="mt-4">
-                <NodePanelComponent node={node} />
-              </div>
-            ) : null}
-          </>
-        ) : (
-          isEnvPanel ? <EnvPanel /> : <ChatEnvPanel />
-        )}
-      </div>
-    </div>
+    </>
   );
 }
 

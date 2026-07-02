@@ -5,17 +5,20 @@ import { getWorkflowModelById } from "../../components/nodes-shared/model-option
 import type { Node } from "../../types";
 import { getNodeTypeIconColor } from "../../utils/node";
 import type { LLMNodeData } from "./types";
+import { useTranslation } from "react-i18next";
+import { LLM_DEFAULT_EXCEPTION_STRATEGY } from "./data";
 
 const LLMNode = ({ id, data }: NodeProps<Node<LLMNodeData>>) => {
+  const { t } = useTranslation();
   const label = data.label?.trim() || 'LLM';
   const iconColor = data.iconColor || getNodeTypeIconColor(data.type);
   const model = getWorkflowModelById(data.modelId);
-  const modelLabel = model ? `${model.provider} / ${model.name}` : '未选择模型';
+  const modelLabel = model ? `${model.provider} / ${model.name}` : t('workflow.nodes.no-selected-model');
   const enableVision = Boolean(data.enableVision);
   const retryOnFailure = Boolean(data.retryOnFailure);
   const retryCount = Math.max(1, Number(data.retryCount) || 1);
   const retryIntervalMs = Math.max(0, Number(data.retryIntervalMs) || 0);
-  const exceptionStrategy = data.exceptionStrategy || 'stop-execution';
+  const exceptionStrategy = data.exceptionStrategy || LLM_DEFAULT_EXCEPTION_STRATEGY;
 
   return (
     <div className="llm-node relative">
@@ -26,13 +29,13 @@ const LLMNode = ({ id, data }: NodeProps<Node<LLMNodeData>>) => {
             <div className="rounded-lg border border-[var(--border)] bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
               <div className="flex flex-wrap gap-2">
                 <span className="rounded-full bg-background px-2.5 py-1">{modelLabel}</span>
-                <span className="rounded-full bg-background px-2.5 py-1">{enableVision ? '视觉已启用' : '视觉未启用'}</span>
+                <span className="rounded-full bg-background px-2.5 py-1">{enableVision ? t('workflow.nodes.llm.visionEnabled') : t('workflow.nodes.llm.visionDisabled')}</span>
                 <span className="rounded-full bg-background px-2.5 py-1">
-                  {retryOnFailure ? `失败重试 ${retryCount} 次 / ${retryIntervalMs}ms` : '失败不重试'}
+                  {retryOnFailure ? t('workflow.nodes.llm.retryOnFailure', { count: retryCount, interval: retryIntervalMs }) : t('workflow.nodes.llm.retryOnFailure', { count: 0, interval: 0 })}
                 </span>
               </div>
               <div className="mt-2 truncate">
-                {exceptionStrategy === 'return-default' ? '异常处理: 返回默认值' : '异常处理: 停止执行'}
+                {exceptionStrategy === 'return-default' ? t('workflow.nodes.llm.exceptionReturnDefault') : t('workflow.nodes.llm.exceptionStopExecution')}
               </div>
             </div>
           </div>

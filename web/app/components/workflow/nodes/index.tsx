@@ -30,7 +30,7 @@ export const BaseNode = (props: NodeProps<Node<NodeData>> & { children?: React.R
         !isDisabled && "hover:shadow-xl",
         isDisabled && "bg-gray-100 text-gray-400 opacity-80 dark:bg-gray-800/80 dark:text-gray-500",
         selected && "ring-primary/30 shadow-xl",
-        data.candidate && "bg-background rounded-lg"
+        data.candidate && "bg-background rounded-lg border border-[var(--border)]"
       )}
       style={{
         width: data?.size?.width || NODE_DEFAULT_WIDTH,

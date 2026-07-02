@@ -104,6 +104,7 @@ const translation = {
   },
   nodeList: {
     searchPlaceholder: 'Search nodes and tools...',
+    noNodes: 'No nodes found',
   },
   appOperations: {
     deleteAppTitle: 'Delete App',

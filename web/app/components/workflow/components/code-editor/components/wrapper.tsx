@@ -30,7 +30,7 @@ export const CodeEditorWrapper = ({
   return (
     <div
       className={cn(
-        'relative flex h-full min-h-16 flex-col rounded-md border border-[var(--border)] bg-background',
+        'relative flex h-full min-h-8 flex-col rounded-md border border-[var(--border)] bg-background',
         expanded && 'z-[100] bg-background m-0 rounded-none border-0',
         className
       )}

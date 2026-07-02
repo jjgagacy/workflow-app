@@ -3,6 +3,8 @@ import type { HttpKeyValueItem, HttpRequestNodeData } from "./types";
 
 const createId = (prefix: string) => `${prefix}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
 
+export const DEFAULT_HTTP_RESPONSE_VARIABLE_NAME = 'response';
+
 export const createHttpKeyValueItem = (): HttpKeyValueItem => ({
   id: createId('http-kv'),
   key: '',
@@ -29,6 +31,6 @@ export const httpRequestNodeDefaultData: NodeDefaultData<HttpRequestNodeData> = 
     retryIntervalMs: 1000,
     exceptionStrategy: 'stop-execution',
     exceptionDefaultValue: '',
-    outputVariableName: 'httpResponse',
+    outputVariableName: DEFAULT_HTTP_RESPONSE_VARIABLE_NAME,
   },
 };

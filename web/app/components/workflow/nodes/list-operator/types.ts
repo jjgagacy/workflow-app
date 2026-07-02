@@ -28,3 +28,10 @@ export type ListOperatorNodeData = NodeData<{
   sortOrder?: 'asc' | 'desc';
   outputVariableName?: string;
 }>;
+
+export type SelectItem = {
+  value: string;
+  name: string;
+  description?: string;
+  group?: string;
+};

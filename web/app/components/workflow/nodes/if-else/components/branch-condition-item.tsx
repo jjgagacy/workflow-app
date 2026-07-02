@@ -1,6 +1,7 @@
 import { SimpleSelect } from "@/app/ui/select";
 import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { NodeInput } from "../../../components/base/node-input";
 import type { OperatorOption } from "../hooks/use-if-else-operator-options";
 import type { Condition, ConditionOperator, OperatorType } from "../types";
 import type { SelectItem, VariableOption } from "./branch-list.types";
@@ -116,11 +117,11 @@ export const BranchConditionItem = ({
         {/* 右侧值（非一元操作符）- 占满一行 */}
         {!isUnary ? (
           <div className="col-span-3">
-            <input
+            <NodeInput
               value={String(condition.rightValue ?? "")}
               onChange={(event) => onConditionFieldChange(branchId, condition.id, "rightValue", event.target.value)}
               placeholder={t("workflow.conditions.rightValuePlaceholder")}
-              className={'w-full rounded-md border border-[var(--border)] bg-background px-3 py-1.5 text-sm text-foreground transition-colors placeholder:text-muted-foreground/40  focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-border dark:bg-background dark:hover:border-muted-foreground/40 dark:focus:border-primary'}
+              className="py-1.5"
             />
           </div>
         ) : (

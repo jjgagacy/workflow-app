@@ -1,5 +1,11 @@
 import type { NodeData } from "../../types";
 
+export type SelectItem = {
+  value: string;
+  name: string;
+  description?: string;
+};
+
 export type LLMExceptionStrategy = 'stop-execution' | 'return-default';
 
 export type LLMNodeData = NodeData<{

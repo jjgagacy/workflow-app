@@ -1,7 +1,7 @@
 import { useResizeHeight } from "../../../hooks/use-resizeHeight";
 import { GripHorizontal } from "lucide-react";
 import { cn } from "@/utils/classnames";
-import { EDITOR_MIN_HEIGHT } from "../data";
+import { EDITOR_DEFAULT_HEIGHT, EDITOR_MAX_HEIGHT, EDITOR_MIN_HEIGHT } from "../data";
 
 type Props = {
   defaultHeight?: number;
@@ -16,9 +16,9 @@ type Props = {
 }
 
 export const EditorResizeHeight = ({
-  defaultHeight = 300,
+  defaultHeight = EDITOR_DEFAULT_HEIGHT,
   minHeight = EDITOR_MIN_HEIGHT,
-  maxHeight = 600,
+  maxHeight = EDITOR_MAX_HEIGHT,
   onHeightChange,
   enabled = true,
   showIcon = true,

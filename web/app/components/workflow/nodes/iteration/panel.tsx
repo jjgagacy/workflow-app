@@ -8,6 +8,7 @@ import type { WorkflowNodeErrorResponse } from "../../components/nodes-shared/ex
 import type { IterationNodeData } from "./types";
 import IterationSummary from "./summary";
 import { useTranslation } from "react-i18next";
+import { NodeInput } from "../../components/base/node-input";
 
 type IterationPanelProps = {
   node: Node<IterationNodeData>;
@@ -62,13 +63,12 @@ const IterationPanel = ({ node }: IterationPanelProps) => {
       <section className="space-y-4 rounded-xl bg-muted/15 px-4 py-4">
         <label className="block">
           <div className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.iteration.parallelCount')}</div>
-          <input
+          <NodeInput
             type="number"
             min={1}
             step={1}
             value={parallelCount}
             onChange={(event) => handleParallelCountChange(event.target.value)}
-            className="w-full rounded-md border border-[var(--border)] bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary/60"
           />
           <div className="mt-1 text-xs text-muted-foreground">
             {t('workflow.iteration.parallelCountDescription')}

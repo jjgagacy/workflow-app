@@ -4,24 +4,30 @@ interface BranchLogicInfoProps {
   decisionBranchCount: number;
   resolvedOutputHandleCount: number;
   className?: string;
+  title?: string;
+  description?: string;
 }
 
 const BranchLogicInfo = ({
   decisionBranchCount,
   resolvedOutputHandleCount,
-  className = ""
+  className = "",
+  title,
+  description,
 }: BranchLogicInfoProps) => {
   const { t } = useTranslation();
+  const resolvedTitle = title ?? t('workflow.conditions.branchLogic');
+  const resolvedDescription = description ?? t('workflow.conditions.branchLogicDescription');
 
   return (
     <div className={`rounded-lg bg-muted/20 px-4 py-3 ${className}`}>
       <div className="flex items-center justify-between gap-4">
         <div>
           <div className="text-sm font-semibold text-foreground">
-            {t('workflow.conditions.branchLogic')}
+            {resolvedTitle}
           </div>
           <div className="text-xs text-muted-foreground">
-            {t('workflow.conditions.branchLogicDescription')}
+            {resolvedDescription}
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">

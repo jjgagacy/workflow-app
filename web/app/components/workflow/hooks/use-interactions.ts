@@ -53,6 +53,19 @@ export const useWorkflowInteractions = () => {
     onSelectNodes
   } = useWorkflow();
 
+  const closeNodePanelIfDeleted = useCallback((deletedNodeIds: Set<string>) => {
+    const { activePanel, closePanel } = workflowContext.getState();
+
+    console.log('--', activePanel, deletedNodeIds);
+    if (activePanel?.type !== 'node' || !activePanel.node) {
+      return;
+    }
+
+    if (deletedNodeIds.has(activePanel.node.id)) {
+      closePanel();
+    }
+  }, [workflowContext]);
+
   const cloneNodes = useCallback((sourceNodes: Node[], options?: {
     targetPosition?: { x: number; y: number };
     updateClipboard?: boolean;
@@ -305,10 +318,11 @@ export const useWorkflowInteractions = () => {
     const newEdges = edges.filter(edge => !deletedNodeIds.has(edge.source) && !deletedNodeIds.has(edge.target));
     setNodes(newNodes);
     setEdges(newEdges);
+    closeNodePanelIfDeleted(deletedNodeIds);
     if (!options?.skipHistory) {
       addHistoryState(WorkflowHistoryEvent.NodeDelete, { nodes: newNodes, edges: newEdges });
     }
-  }, [addHistoryState, reactFlow, storeApi, workflowReadonly]);
+  }, [addHistoryState, closeNodePanelIfDeleted, reactFlow, storeApi, workflowReadonly]);
 
   const handleNodeToggleDisabled = useCallback((id: string) => {
     if (workflowReadonly())
@@ -394,8 +408,9 @@ export const useWorkflowInteractions = () => {
     const newEdges = edges.filter(edge => !selectedNodeIds.has(edge.source) && !selectedNodeIds.has(edge.target));
     setNodes(newNodes);
     setEdges(newEdges);
+    closeNodePanelIfDeleted(selectedNodeIds);
     addHistoryState(WorkflowHistoryEvent.NodeDelete, { nodes: newNodes, edges: newEdges });
-  }, [addHistoryState, reactFlow, storeApi, workflowReadonly]);
+  }, [addHistoryState, closeNodePanelIfDeleted, reactFlow, storeApi, workflowReadonly]);
 
   const handleNodesCopy = useCallback((id?: string) => {
     if (workflowReadonly())

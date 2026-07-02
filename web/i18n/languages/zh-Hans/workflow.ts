@@ -2,7 +2,10 @@ const translation = {
   nodes: {
     base: {
       name: '基础节点',
-      description: '没有特定功能的基础节点'
+      description: '没有特定功能的基础节点',
+      'no-select-model': '未选择模型',
+      'llm-select-label': '大模型',
+      'input-variable-label': '输入变量',
     },
     if: {
       name: '条件判断',
@@ -30,7 +33,14 @@ const translation = {
     },
     code: {
       name: '代码节点',
-      description: '执行自定义代码'
+      description: '执行自定义代码',
+      in: '输入',
+      out: '输出',
+      description2: '管理输入变量映射、输出变量定义，以及代码异常处理策略。',
+      input_variable: '输入变量',
+      add: '添加',
+      no_input_parameters: '暂无输入参数',
+      delete_input_parameter: '删除输入参数',
     },
     'template-transform': {
       name: '模板转换',
@@ -41,32 +51,132 @@ const translation = {
       description: '给变量赋值'
     },
     'variable-aggregator': {
+      variable: '变量',
       name: '变量聚合',
-      description: '聚合多个变量为一个'
+      description: '聚合多个变量为一个',
+      merged: '已合并',
+      output: '输出',
+      variable_list: '变量列表',
+      output_variable: '输出变量',
+      add_variable: '添加变量',
+      no_variables: '暂无聚合变量，可点击上方按钮添加。',
+      delete_variable: '删除聚合变量'
     },
     'parameter-extractor': {
       name: '参数提取器',
-      description: '从输入中提取参数'
+      description: '从输入中提取参数',
+      parameters: '参数',
+      output_variable: '输出变量',
+      add_parameter: '添加参数',
+      no_parameters: '暂无参数，可点击上方按钮添加。',
+      delete_parameter: '删除参数',
+      vision: '视觉',
+      no_vision: '无视觉',
+      no_modal: '未选择模型',
+      parameter_label: '参数 {{index}}',
+      parameter_name: '参数名称',
+      parameter_name_placeholder: '请输入参数名称',
+      parameter_type: '参数类型',
+      parameter_description: '参数描述',
+      parameter_description_placeholder: '请输入参数描述',
+      parameter_description_required: '参数描述为必填项',
     },
     'question-classifier': {
       name: '问题分类器',
-      description: '将问题分类到不同类别'
+      description: '将问题分类到不同类别',
+      'no-setting-category-prompt': '未设置分类提示词',
+      description2: '使用大模型对输入问题进行分类，并将结果路由到对应类别分支。',
+      'category-count': '分类 {{count}}',
+      'category-list': '分类列表',
+      'add-category': '添加分类',
+      'category-name': '分类名称',
+      'category-prompt': '分类提示词',
+      'category': '分类 {{index}}',
+      'category-prompt-placeholder': '请输入分类提示词，例如：当用户问题包含退款、退货、取消订单相关意图时，归类到此类别。',
+      'remove-category-aria-label': '删除分类 {{index}}'
     },
     'document-extractor': {
       name: '文档提取器',
-      description: '从文档中提取信息'
+      description: '从文档中提取信息',
+      'no-input': '无输入变量',
+      'input-variable-description': '仅可选择文件或文件数组类型变量（file / file[]）。',
+      'output-variable': '输出变量',
+      'input-variable': '输入变量'
     },
     'list-operator': {
       name: '列表操作器',
-      description: '对列表执行操作'
+      description: '对列表执行操作',
+      'no-input-variable': '未选择变量',
+      input: '输入',
+      output: '输出',
+      description2: '对数组变量执行过滤、截取前后 N 项与排序操作。',
+      operators: {
+        contains: '包含',
+        not_contains: '不包含',
+        equals: '等于',
+        not_equals: '不等于',
+        starts_with: '开头是',
+        ends_with: '结尾是',
+        is_empty: '为空',
+        is_not_empty: '不为空'
+      },
+      logical: {
+        and: '且',
+        or: '或'
+      },
+      sort: {
+        asc: '升序',
+        desc: '降序'
+      },
+      toggleBranchLogic: '切换分支逻辑，当前为 {{logic}}',
+      noConditions: '暂无条件',
+      addCondition: '添加条件',
+      filterConditions: '过滤条件',
+      condition: '条件',
+      arrayVariable: '数组变量',
+      removeCondition: '删除条件',
+      rightValuePlaceholder: '例如：approved',
+      unaryOperatorHint: '这个运算符不需要右侧值。',
+      firstN: '前 N 项',
+      lastN: '后 N 项',
+      enableSort: '启用排序',
+      sortOrder: '排序顺序',
+      noConditionsFallback: '未命中上面分支时会走到这个输出。',
     },
     agent: {
-      name: '智能代理',
+      name: '智能体',
       description: '用于决策的代理节点'
     },
     llm: {
       name: '大语言模型',
-      description: '大语言模型节点'
+      description: '大语言模型节点',
+      visionEnabled: '视觉已启用',
+      visionDisabled: '视觉未启用',
+      retryOnFailure: '失败重试 {{count}} 次 / {{interval}}ms',
+      exceptionReturnDefault: '异常处理: 返回默认值',
+      exceptionStopExecution: '异常处理: 停止执行',
+      description2: '选择模型并配置提示词，生成文本结果供后续节点使用。',
+      model: '大模型',
+      prompt: '提示词',
+      systemPrompt: '系统提示词',
+      systemPromptPlaceholder: '定义助手的角色、边界和风格。',
+      userPrompt: '用户提示词',
+      userPromptPlaceholder: '输入用户提示词模板，可引用上方选择的变量。',
+      assistantPrompt: '助手提示词',
+      assistantPromptPlaceholder: '可选，用于提供示例回答或额外引导。',
+      retryOnFailure2: '失败重试',
+      retryOnFailureDescription: '开启后，当 LLM 调用失败会按配置次数与间隔重试。',
+      maxRetryCount: '最大重试次数',
+      retryInterval: '重试间隔 (ms)',
+      exceptionStrategy: '异常处理策略',
+      visionAbility: '视觉能力',
+      visionEnable: '启用视觉',
+      visionDescription: '开启后可处理包含图片内容的输入场景。',
+      exceptionHandling: '异常处理',
+      exceptionStrategyDescription: '选择在 LLM 调用过程中如何处理异常。',
+      defaultReturnValue: '默认返回值',
+      returnDefaultValueDescription: '当发生异常时返回默认值。',
+      defaultReturnValuePlaceholder: '请输入默认值，例如：{} 或 null'
     },
     openai: {
       name: 'OpenAI',
@@ -102,11 +212,76 @@ const translation = {
     },
     'http-request': {
       name: 'HTTP 请求',
-      description: '发起 HTTP 请求'
+      description: '发起 HTTP 请求',
+      output: '输出',
+      retry: '重试',
+      noRetry: '不重试',
+      bodyType: {
+        none: '无',
+        formData: '表单数据',
+        urlencoded: 'URL 编码',
+        json: 'JSON',
+        raw: '原始文本',
+        binary: '二进制'
+      },
+      exceptionStrategy: {
+        stopExecution: {
+          name: '停止执行',
+          description: '请求异常时立即停止当前执行。'
+        },
+        returnDefault: {
+          name: '返回默认值',
+          description: '请求异常时返回默认值。'
+        }
+      },
+      description2: '配置请求地址、请求体与超时策略，发起 HTTP 调用并输出结果。',
+      requestConfig: '请求配置',
+      url: 'URL',
+      method: '方法',
+      headers: 'Headers',
+      addHeader: '添加 Header',
+      params: 'Params',
+      addParam: '添加 Param',
+      deleteHeader: '删除 Header',
+      deleteParam: '删除 Param',
+      requestBody: '请求 Body',
+      formData: 'Form Data',
+      urlEncoded: 'Url Encoded',
+      addField: '添加字段',
+      bodyContent: 'Body 内容',
+      binaryVariable: '二进制变量',
+      timeoutSettings: '超时设置 (ms)',
+      timeoutConnect: '连接超时',
+      timeoutRead: '读取超时',
+      retrySettings: '重试设置',
+      retrySettingsDescription: '配置任务失败时的重试策略',
+      retryOnFailure: '失败后重试',
+      retryOnFailureDescription: '开启后，当请求失败时会按配置进行重试。',
+      maxRetryCount: '最大重试次数',
+      retryCountUnit: '次',
+      retryInterval: '重试间隔',
+      retryIntervalUnit: 'ms',
+      exceptionHandler: '异常处理',
+      returnDefaultValue: '默认返回值',
+      outputVariableName: '输出变量名',
     },
     'knowledge-retrieval': {
       name: '知识检索',
-      description: '从知识库中检索信息'
+      description: '从知识库中检索信息',
+      input: '输入',
+      knowledgeBases: '知识库',
+      output: '输出',
+      noInputVariable: '未选择输入变量',
+      noKnowledgeBase: '未选择知识库',
+      noOutputVariable: '未设置输出变量名',
+      inputVariable: '输入变量',
+      knowledgeBasesCount: '知识库数量',
+      outputVariableName: '输出变量名',
+      outputVariableNamePlaceholder: '请输入输出变量名，例如：knowledgeResults',
+      description2: '从一个或多个知识库检索相关内容，输出检索结果供后续节点使用。',
+      addKnowledgeBase: '添加知识库',
+      removeKnowledgeBase: '删除知识库',
+      knowledgeBase: '知识库',
     }
   },
   sections: {
@@ -269,6 +444,14 @@ const translation = {
     returnDefault: '返回默认值',
     returnDefaultDesc: '当发生异常时返回默认值。',
     placeholder: '请输入默认值，例如：{} 或 null'
+  },
+  retryConfig: {
+    enable: '启用重试',
+    times: '次',
+    retryOnFailure: '失败后重试',
+    retryOnFailureDesc: '开启后，当代码执行失败时会自动重试。',
+    maxRetryCount: '最大重试',
+    maxRetryCountDesc: '当代码执行失败时，最大重试次数。',
   }
 };
 
