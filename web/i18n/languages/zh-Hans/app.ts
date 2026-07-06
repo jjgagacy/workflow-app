@@ -106,6 +106,8 @@ const translation = {
   nodeList: {
     searchPlaceholder: '搜索节点和工具...',
     noNodes: '未找到节点',
+    noSearchResults: '未找到搜索结果',
+    clearSearch: '清除搜索',
   },
   appOperations: {
     deleteAppTitle: '删除应用',

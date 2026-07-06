@@ -18,12 +18,12 @@ import {
 import { createHttpKeyValueItem, DEFAULT_HTTP_RESPONSE_VARIABLE_NAME } from "./data";
 import { useHttpRequestSelectItems } from "./hooks";
 import type {
-  HttpBodyType,
   HttpExceptionStrategy,
   HttpKeyValueItem,
-  HttpMethod,
   HttpRequestNodeData,
 } from "./types";
+import type { HttpBodyType } from "../../types";
+import type { HttpMethod } from "../../types";
 
 type HttpRequestPanelProps = {
   node: Node<HttpRequestNodeData>;

@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
-import type { HttpBodyType, HttpMethod } from "../types";
+import type { HttpBodyType } from "../../../types";
+import type { HttpMethod } from "../../../types";
 
 type SummaryCardProps = {
   label?: string;

@@ -8,9 +8,10 @@ import { SearchResult } from "./search-result";
 interface NodeListPanelProps {
   nodes?: NodeCatalog[];
   onSelectNode?: (node: NodeCatalog, nodeTypeValue?: NodeCategoryProps) => void;
+  forceStartOnly?: boolean;
 }
 
-export const NodeListPanel = ({ nodes = [], onSelectNode }: NodeListPanelProps) => {
+export const NodeListPanel = ({ nodes = [], onSelectNode, forceStartOnly = false }: NodeListPanelProps) => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<NodeCategoryType>(NodeCategory.FLOW);
   const [searchValue, setSearchValue] = useState("");
@@ -36,6 +37,19 @@ export const NodeListPanel = ({ nodes = [], onSelectNode }: NodeListPanelProps) 
 
   // 根据搜索词和当前 Tab 过滤节点
   const filteredNodes = useMemo(() => {
+    if (forceStartOnly) {
+      const startNodes = nodes.filter((node) => node.category === NodeCategory.START);
+      if (!searchValue) {
+        return startNodes;
+      }
+
+      const lowerSearch = searchValue.toLowerCase();
+      return startNodes.filter(node =>
+        node.name.toLowerCase().includes(lowerSearch) ||
+        (node.description && node.description.toLowerCase().includes(lowerSearch))
+      );
+    }
+
     if (!searchValue) {
       // 无搜索：显示当前 Tab 分类下的节点
       return nodes.filter(node => node.category === activeTab);
@@ -76,7 +90,7 @@ export const NodeListPanel = ({ nodes = [], onSelectNode }: NodeListPanelProps) 
         />
       </div>
       {/* Tabs - 仅在无搜索时显示 */}
-      {!hasSearch && (
+      {!hasSearch && !forceStartOnly && (
         <div className="px-3 pt-2 border-b border-gray-200 dark:border-gray-700">
           <Tabs
             value={activeTab}

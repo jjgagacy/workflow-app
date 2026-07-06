@@ -1,6 +1,6 @@
 import { SimpleSelect } from "@/app/ui/select";
 import { NodeInput } from "../../../components/base/node-input";
-import type { HttpMethod } from "../types";
+import type { HttpMethod } from "../../../types";
 import type { SelectItem } from "./types";
 import { useTranslation } from "react-i18next";
 

@@ -25,6 +25,8 @@ export enum NodeType {
   Loop = 'loop',
   LoopStart = 'loop-start',
   LoopEnd = 'loop-end',
+  Webhook = 'webhook',
+  Schedule = 'schedule',
 }
 
 export type NodeData<T = {}> = {
@@ -52,6 +54,7 @@ export type Edge<T = {}> = ReactFlowEdge<{
 } & T>;
 
 export enum NodeCategory {
+  START = 'start',
   FLOW = 'flow',
   TOOLS = 'tools',
   AI = 'ai',
@@ -59,6 +62,7 @@ export enum NodeCategory {
 }
 
 export type NodeCategoryType =
+  NodeCategory.START |
   NodeCategory.FLOW |
   NodeCategory.TOOLS |
   NodeCategory.AI |
@@ -192,3 +196,70 @@ export enum CodeLanguage {
   python = 'python',
   javascript = 'javascript',
 }
+
+export interface FormVariableSelector {
+  nodeId: string;
+  path: string[];
+}
+
+export enum FormVariableType {
+  textInput = 'textInput',
+  textArea = 'textArea',
+  number = 'number',
+  select = 'select',
+  multiSelect = 'multiSelect',
+  checkbox = 'checkbox',
+  radio = 'radio',
+  file = 'file',
+  fileList = 'fileList',
+  boolean = 'boolean',
+  object = 'object',
+  json = 'json',
+}
+
+export type FormVariableOption = {
+  id: string;
+  label: string;
+  value: string;
+};
+
+export enum FileAcceptType {
+  document = 'document',
+  image = 'image',
+  audio = 'audio',
+  video = 'video',
+}
+
+export enum FileSourceType {
+  local = 'local',
+  url = 'url',
+  both = 'both',
+}
+
+export type FormVariable = {
+  id: string;
+  name: string; // 变量名
+  type: FormVariableType;
+  label: string; // 表单上的显示名称
+
+  value?: any;
+  valueSelector?: FormVariableSelector;
+  isFile?: boolean;
+  required?: boolean;
+  hide?: boolean;
+  default?: string;
+  maxLength?: number;
+  options?: FormVariableOption[]; // 当是 select、multiSelect、radio 类型时，提供选项
+  fileAcceptTypes?: FileAcceptType[];
+  fileSourceType?: FileSourceType;
+  maxFiles?: number;
+}
+
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS';
+
+export type HttpBodyType = 'none' | 'form-data' | 'x-www-form-urlencoded' | 'json' | 'raw' | 'binary';
+
+export type WebhookResponseMode =
+  | 'onReceived'
+  | 'lastNode'
+  | 'streaming';

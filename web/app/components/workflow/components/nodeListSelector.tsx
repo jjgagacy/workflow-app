@@ -1,12 +1,22 @@
 import { useAvailableNodes } from "../hooks/use-nodesData";
 import { NodeListPanel } from "./panel/nodeListPanel";
-import { NodeCatalog, NodeCategoryProps } from "../types";
+import { Node, NodeCatalog, NodeCategoryProps, NodeType } from "../types";
 import { getCatalogNodeIconColor, isSupportedCatalogNode, resolveCatalogNode } from "../utils/node";
 import { useWorkflowStore } from "../context";
 import { useWorkflowInteractions } from "../hooks/use-interactions";
+import { useStoreApi } from "@xyflow/react";
 
 export const NodeListSelector = () => {
+  const storeApi = useStoreApi<Node>();
   const nodeSelectorContext = useWorkflowStore((state) => state.nodeSelectorContext);
+  const workflowNodes = storeApi.getState().nodes as Node[];
+  const selectedNode = nodeSelectorContext?.nodeId
+    ? workflowNodes.find((item) => item.id === nodeSelectorContext.nodeId)
+    : undefined;
+  const isReplacingStartNode = selectedNode?.data.type === NodeType.Start;
+  const isCanvasEmpty = workflowNodes.length === 0;
+  const forceStartOnly = isCanvasEmpty || isReplacingStartNode;
+
   const nodes = useAvailableNodes()
     .filter(isSupportedCatalogNode)
     .filter((node) => {
@@ -43,7 +53,7 @@ export const NodeListSelector = () => {
 
   return (
     <div className="absolute right-0 top-0 bottom-0 z-50 w-80 bg-background border-l border-[var(--border)]">
-      <NodeListPanel nodes={nodes} onSelectNode={handleNode} />
+      <NodeListPanel nodes={nodes} onSelectNode={handleNode} forceStartOnly={forceStartOnly} />
     </div>
   );
 }

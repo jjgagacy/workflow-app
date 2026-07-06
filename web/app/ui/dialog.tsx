@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { Dialog as HeadlessDialog, DialogPanel, DialogTitle, Description } from '@headlessui/react'
 import Button from "../components/base/button";
 import Spinner from "../components/base/spinner";
+import { cn } from "@/utils/classnames";
 
 interface DialogProps {
   isOpen: boolean;
@@ -41,7 +42,7 @@ export function Dialog(props: DialogProps) {
       <DialogPanel className="fixed inset-0 flex items-center justify-center">
         <div className="fixed inset-0 bg-black/50 z-70"></div>
         <div className="fixed inset-0 z-70 flex items-center justify-center">
-          <div className={`bg-background flex flex-col rounded-lg px-2 w-full max-w-md shadow-lg outline-none border border-[var(--border)] ${className}`}>
+          <div className={cn(`bg-background flex flex-col rounded-lg px-2 w-full max-w-md shadow-lg outline-none border border-[var(--border)]`, className)}>
             <DialogTitle>
               <div className={`flex justify-between items-center ${description && 'border-b border-[var(--border)]'}  px-4 py-4`}>
                 <h3 className="text-lg font-medium">
@@ -100,7 +101,7 @@ type ConfirmButtonProps = {
 
 export const DialogActions = ({ children, className }: { children: ReactNode, className?: string }) => {
   return (
-    <div className={`flex justify-end gap-4 py-4 px-4 ${className}`}>
+    <div className={cn(`flex justify-end gap-4 py-4 px-4`, className)}>
       {children}
     </div>
   );

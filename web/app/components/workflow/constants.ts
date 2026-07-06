@@ -23,6 +23,7 @@ import type { KnowledgeRetrievalNodeData } from "./nodes/knowledge-retrieval/typ
 import type { HttpRequestNodeData } from "./nodes/http-request/types";
 import type { NodeData } from "./types";
 import { NodeType } from "./types";
+import { webhookNodeDefaultData } from "./nodes/webhook/data";
 
 export const CUSTOM_NODE_NAME = 'customNode';
 export const CUSTOM_EDGE_NAME = 'customEdge';
@@ -35,6 +36,8 @@ export const NODE_RESIZE_MIN_HEIGHT = 90;
 
 export const NODE_DEFAULT_WIDTH = 200;
 export const NODE_DEFAULT_HEIGHT = 88;
+
+export const DEFAULT_MAX_FILE_UPLOAD_COUNT = 5;
 
 type NodeDefaultDataByType = Partial<Record<NodeType, Partial<NodeData>>> & {
   [NodeType.IfElse]: Partial<IfElseNodeData>;
@@ -118,6 +121,15 @@ export const NODE_DEFAULT_DATA: NodeDefaultDataByType = {
     label: '',
     ...httpRequestNodeDefaultData.value,
   },
+  [NodeType.Webhook]: {
+    type: NodeType.Webhook,
+    label: '',
+    ...webhookNodeDefaultData.value,
+  },
+  [NodeType.Schedule]: {
+    type: NodeType.Schedule,
+    label: '',
+  }
 };
 
 export const NODE_PANEL_DEFAULT_WIDTH = 410;
@@ -140,6 +152,9 @@ export const CATALOG_NODE_TYPE_MAP: Record<string, NodeType> = {
   llm: NodeType.LLM,
   'http-request': NodeType.HttpRequest,
   'knowledge-retrieval': NodeType.KnowledgeRetrieval,
+  'start': NodeType.Start,
+  'webhook': NodeType.Webhook,
+  'schedule': NodeType.Schedule,
 };
 
 export const ICON_COLORS = {
@@ -178,5 +193,6 @@ export const NODE_TYPE_ICON_COLOR_MAP: Partial<Record<NodeType, string>> = {
   [NodeType.LLM]: ICON_COLORS.ai,
   [NodeType.HttpRequest]: ICON_COLORS.network,
   [NodeType.KnowledgeRetrieval]: ICON_COLORS.knowledge,
+  [NodeType.Start]: ICON_COLORS.trigger,
 };
 

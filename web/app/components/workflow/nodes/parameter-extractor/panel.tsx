@@ -115,7 +115,7 @@ const ParameterExtractorPanel = ({ node }: ParameterExtractorPanelProps) => {
       />
 
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-1">
-        <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">大模型</div>
+        <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.parameter-extractor.model')}</div>
         <SimpleSelect
           items={modelItems}
           defaultValue={modelId}
@@ -126,7 +126,7 @@ const ParameterExtractorPanel = ({ node }: ParameterExtractorPanelProps) => {
       </section>
 
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-1">
-        <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">输入变量</div>
+        <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.parameter-extractor.inputVariable')}</div>
         <SimpleSelect
           items={variableItems}
           defaultValue={inputVariable}
@@ -137,7 +137,7 @@ const ParameterExtractorPanel = ({ node }: ParameterExtractorPanelProps) => {
       </section>
 
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">
-        <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">视觉能力</div>
+        <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.parameter-extractor.visionAbility')}</div>
         <label className="flex items-start gap-3 rounded-lg border border-[var(--border)] bg-background px-3 py-3">
           <Checkbox
             checked={enableVision}
@@ -145,9 +145,9 @@ const ParameterExtractorPanel = ({ node }: ParameterExtractorPanelProps) => {
             className="mt-0.5"
           />
           <span className="min-w-0">
-            <span className="block text-sm font-medium text-foreground">启用视觉</span>
+            <span className="block text-sm font-medium text-foreground">{t('workflow.nodes.parameter-extractor.enableVision')}</span>
             <span className="mt-1 block text-xs leading-5 text-muted-foreground">
-              开启后可在输入包含图片时辅助参数提取。
+              {t('workflow.nodes.parameter-extractor.visionAbilityDescription')}
             </span>
           </span>
         </label>
@@ -162,11 +162,11 @@ const ParameterExtractorPanel = ({ node }: ParameterExtractorPanelProps) => {
 
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">
         <label className="block">
-          <div className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">输出变量名</div>
+          <div className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.parameter-extractor.outputVariable')}</div>
           <NodeInput
             value={outputVariableName}
             onChange={(event) => syncNodeData({ outputVariableName: event.target.value })}
-            placeholder="例如: extractedParameters"
+            placeholder=""
           />
         </label>
       </section>

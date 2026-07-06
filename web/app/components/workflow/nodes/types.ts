@@ -22,6 +22,12 @@ import KnowledgeRetrievalNode from "./knowledge-retrieval";
 import KnowledgeRetrievalPanel from "./knowledge-retrieval/panel";
 import HttpRequestNode from "./http-request";
 import HttpRequestPanel from "./http-request/panel";
+import StartNode from "./start";
+import StartNodePanel from "./start/panel";
+import ScheduleNode from "./schedule";
+import WebhookNode from "./webhook";
+import WebhookNodePanel from "./webhook/panel";
+import ScheduleNodePanel from "./schedule/panel";
 
 export const NodeComponents: Record<string, React.FC<any>> = {
   iteration: IterationNode,
@@ -36,8 +42,9 @@ export const NodeComponents: Record<string, React.FC<any>> = {
   'list-operator': ListOperatorNode,
   'knowledge-retrieval': KnowledgeRetrievalNode,
   'http-request': HttpRequestNode,
-  // 'custom-node': CustomNode,
-  // 'note-node': NoteNode,
+  'start': StartNode,
+  'webhook': WebhookNode,
+  'schedule': ScheduleNode,
 };
 
 export const NodePanels: Record<string, React.FC<any>> = {
@@ -53,4 +60,7 @@ export const NodePanels: Record<string, React.FC<any>> = {
   'list-operator': ListOperatorPanel,
   'knowledge-retrieval': KnowledgeRetrievalPanel,
   'http-request': HttpRequestPanel,
+  'start': StartNodePanel,
+  'webhook': WebhookNodePanel,
+  'schedule': ScheduleNodePanel,
 };

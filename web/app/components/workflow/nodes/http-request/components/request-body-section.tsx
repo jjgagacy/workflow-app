@@ -1,6 +1,7 @@
 import { SimpleSelect } from "@/app/ui/select";
 import { NodeTextarea } from "../../../components/base/node-textarea";
-import type { HttpBodyType, HttpKeyValueItem } from "../types";
+import type { HttpKeyValueItem } from "../types";
+import type { HttpBodyType } from "../../../types";
 import KeyValueEditor from "./key-value-editor";
 import type { SelectItem } from "./types";
 import { useTranslation } from "react-i18next";

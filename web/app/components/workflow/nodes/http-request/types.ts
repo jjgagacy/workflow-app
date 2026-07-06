@@ -1,8 +1,4 @@
-import type { NodeData } from "../../types";
-
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS';
-
-export type HttpBodyType = 'none' | 'form-data' | 'x-www-form-urlencoded' | 'json' | 'raw' | 'binary';
+import type { HttpBodyType, HttpMethod, NodeData } from "../../types";
 
 export type HttpKeyValueItem = {
   id: string;

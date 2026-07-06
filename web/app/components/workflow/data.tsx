@@ -1,6 +1,5 @@
 import {
   BookOpenIcon,
-  Braces,
   Brain,
   CircuitBoard,
   Code2,
@@ -12,18 +11,16 @@ import {
   Globe,
   Hash,
   HelpCircle,
-  InfoIcon,
   ListChecks,
   MergeIcon,
+  Play,
   Repeat,
-  Repeat2,
   Search,
   Send,
   SlackIcon,
   Split,
   SquareStack,
   Timer,
-  Variable,
   WebhookIcon,
   Zap
 } from "lucide-react";
@@ -222,10 +219,18 @@ export const NODES_DATA: NodeCatalog[] = [
 
   // Core 分类
   {
+    id: 'start',
+    name: 'start',
+    icon: <Play />,
+    category: NodeCategory.START,
+    section: 'start',
+    description: ''
+  },
+  {
     id: 'webhook',
     name: 'webhook',
     icon: <WebhookIcon />,
-    category: NodeCategory.CORE,
+    category: NodeCategory.START,
     section: 'triggers',
     description: ''
   },
@@ -233,7 +238,7 @@ export const NODES_DATA: NodeCatalog[] = [
     id: 'schedule',
     name: 'schedule',
     icon: <Timer />,
-    category: NodeCategory.CORE,
+    category: NodeCategory.START,
     section: 'triggers',
     description: ''
   },
@@ -252,5 +257,5 @@ export const NODES_DATA: NodeCatalog[] = [
     category: NodeCategory.CORE,
     section: 'knowledge',
     description: ''
-  }
+  },
 ];
