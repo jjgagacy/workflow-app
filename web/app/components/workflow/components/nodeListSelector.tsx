@@ -5,6 +5,7 @@ import { getCatalogNodeIconColor, isSupportedCatalogNode, resolveCatalogNode } f
 import { useWorkflowStore } from "../context";
 import { useWorkflowInteractions } from "../hooks/use-interactions";
 import { useStoreApi } from "@xyflow/react";
+import { isStartNodeType } from "../node";
 
 export const NodeListSelector = () => {
   const storeApi = useStoreApi<Node>();
@@ -13,9 +14,9 @@ export const NodeListSelector = () => {
   const selectedNode = nodeSelectorContext?.nodeId
     ? workflowNodes.find((item) => item.id === nodeSelectorContext.nodeId)
     : undefined;
-  const isReplacingStartNode = selectedNode?.data.type === NodeType.Start;
+  const isReplacingStartNode = selectedNode ? isStartNodeType(selectedNode.data.type) : false;
   const isCanvasEmpty = workflowNodes.length === 0;
-  const forceStartOnly = isCanvasEmpty || isReplacingStartNode;
+  const forceStartOnly = Boolean(nodeSelectorContext?.forceStartOnly) || isCanvasEmpty || isReplacingStartNode;
 
   const nodes = useAvailableNodes()
     .filter(isSupportedCatalogNode)

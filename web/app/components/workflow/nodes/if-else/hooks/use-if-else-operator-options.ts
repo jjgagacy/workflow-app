@@ -35,12 +35,16 @@ export const useIfElseOperatorOptions = () => {
     }, {} as Record<OperatorType, OperatorOption[]>);
   }, [operatorGroups]);
 
+  // operatorOptionsByType: { string: [{ label: '等于', value: 'string:eq', type: 'string', isUnary: false }, ...], number: [...], boolean: [...], object: [...], any: [...], file: [...]  }
+
   const typeItems = useMemo<OperatorTypeItem[]>(() => {
     return (Object.keys(operatorOptionsByType) as OperatorType[]).map((option) => ({
       value: option,
       name: toDisplayLabel(option),
     }));
   }, [operatorOptionsByType]);
+
+  // typeItems: [{ value: 'string', name: 'String' }, { value: 'number', name: 'Number' }, { value: 'boolean', name: 'Boolean' }, { value: 'object', name: 'Object' }, { value: 'any', name: 'Any' }, { value: 'file', name: 'File' }]
 
   return {
     operatorOptionsByType,

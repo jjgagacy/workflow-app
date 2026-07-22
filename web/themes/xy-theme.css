@@ -67,7 +67,12 @@ html[data-theme="dark"] #react-flow-body .react-flow {
   border: var(--xy-node-border-default) !important;
   border-radius: var(--radius-lg);
   color: var(--xy-node-color, var(--xy-node-color-default));
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  /* ✅ 启用 GPU 加速 */
+  will-change: transform;
+  /* ✅ 防止拖动时文本选择 */
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* 节点聚焦样式 - 绿色主题 */
@@ -143,7 +148,13 @@ html[data-theme="dark"] #react-flow-body .react-flow {
   height: 12px;
   border: 2px solid #66bb6a;
   border-radius: 50%;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  /* ✅ 启用硬件加速 */
+  transform: translateZ(0);
+}
+
+.react-flow__handle.connectionindicator {
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
 .react-flow__handle:hover {
@@ -163,6 +174,7 @@ html[data-theme="dark"] #react-flow-body .react-flow {
   border-color: var(--xy-theme-edge-hover);
   background-color: #2e7d32;
 }
+
 
 /* Handle 禁用样式 */
 .react-flow__handle.disabled,
@@ -388,4 +400,69 @@ html[data-theme="dark"] #react-flow-body .react-flow {
   background-color: var(--node-resize-hover-bg) !important;
   border-color: var(--node-resize-hover-border) !important;
   transform: scale(1.2) !important;
+}
+
+/* ✅ 拖动时禁用过渡，提高性能 */
+.react-flow__node.dragging {
+  transition: none !important;
+  cursor: grabbing;
+  will-change: transform;
+}
+
+/* ✅ 节点进入/退出动画 */
+.react-flow__node-enter {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.react-flow__node-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.react-flow__node-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.react-flow__node-exit-active {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ✅ 连接动画 - 流动效果 */
+.react-flow__edge.animated .react-flow__edge-path {
+  stroke-dasharray: 5 10;
+  animation: dashdraw 0.5s linear infinite;
+}
+
+.react-flow__edge-path {
+  stroke-width: 2;
+  /* ✅ 路径平滑动画 */
+  transition: stroke 0.2s ease, stroke-width 0.2s ease;
+}
+
+/* ✅ 边进入动画 */
+.react-flow__edge-enter {
+  opacity: 0;
+  stroke-dashoffset: 1000;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.4);
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }

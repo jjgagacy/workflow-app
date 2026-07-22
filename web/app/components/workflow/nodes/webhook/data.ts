@@ -1,4 +1,5 @@
 import type { NodeDefaultData } from "../../types";
+import { SelectItem } from "./panel";
 import type { WebhookFieldItem, WebhookNodeData } from "./type";
 import { BASE_URL } from "@/config";
 
@@ -68,3 +69,21 @@ export const webhookNodeDefaultData: NodeDefaultData<WebhookNodeData> = ({
     body: [createWebhookFieldItem()],
   }
 });
+export type WebhookListField = 'headers' | 'params' | 'body';
+export type UrlTabValue = 'test' | 'production'; export const CONTENT_TYPE_OPTIONS: SelectItem[] = [
+  { value: 'application/json', name: 'application/json' },
+  { value: 'application/x-www-form-urlencoded', name: 'application/x-www-form-urlencoded' },
+  { value: 'multipart/form-data', name: 'multipart/form-data' },
+  { value: 'text/plain', name: 'text/plain' },
+  { value: 'application/octet-stream', name: 'application/octet-stream' },
+];
+export const METHOD_OPTIONS: SelectItem[] = [
+  { value: 'GET', name: 'GET' },
+  { value: 'POST', name: 'POST' },
+  { value: 'PUT', name: 'PUT' },
+  { value: 'PATCH', name: 'PATCH' },
+  { value: 'DELETE', name: 'DELETE' },
+  { value: 'HEAD', name: 'HEAD' },
+  { value: 'OPTIONS', name: 'OPTIONS' },
+];
+

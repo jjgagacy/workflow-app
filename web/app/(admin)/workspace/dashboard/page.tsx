@@ -34,6 +34,7 @@ import { useAppearance } from "@/hooks/use-appearance";
 import { arrayToTree, treeToFlatten } from "@/utils/trees";
 import { AlertTriangleIcon, BellIcon, HomeIcon, SettingsIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import CascadeFilterMenu from "./menu2";
 // import Loading from "../../loading";
 
 export default function Page() {
@@ -193,6 +194,7 @@ export default function Page() {
     <div>
       <h1 className="mt-4">Dashboard</h1>
       <div className="p-2">
+        <CascadeFilterMenu />
       </div>
       <div className="p-2">
         <Popover

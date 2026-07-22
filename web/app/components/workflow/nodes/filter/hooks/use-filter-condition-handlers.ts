@@ -23,6 +23,14 @@ export const useFilterConditionHandlers = ({ node }: UseFilterConditionHandlersP
   const { operatorOptionsByType } = useIfElseOperatorOptions();
   const [branch] = normalizeFilterBranches(node.data.branches);
 
+  const readTypeFromOperator = (operator: ConditionOperator): OperatorType | null => {
+    const [rawType] = String(operator).split(':');
+    if (rawType && rawType in operatorOptionsByType) {
+      return rawType as OperatorType;
+    }
+    return null;
+  };
+
   const syncBranch = (nextBranch: typeof branch) => {
     const normalizedBranches = normalizeFilterBranches([nextBranch]);
     const nextNode = {
@@ -112,8 +120,10 @@ export const useFilterConditionHandlers = ({ node }: UseFilterConditionHandlersP
   const handleConditionOperatorChange = (conditionId: string, value: ConditionOperator) => {
     updateCondition(conditionId, (condition) => {
       const currentType = (condition.operator.leftType ?? 'string') as OperatorType;
-      const nextOperator = operatorOptionsByType[currentType]?.find((operator) => operator.value === value);
+      const inferredType = readTypeFromOperator(value) ?? currentType;
+      const nextOperator = operatorOptionsByType[inferredType]?.find((operator) => operator.value === value);
 
+      condition.operator.leftType = inferredType;
       condition.operator.operator = value;
       condition.operator.rightType = nextOperator?.isUnary ? undefined : currentType;
       condition.operator.isUnary = nextOperator?.isUnary;

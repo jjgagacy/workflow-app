@@ -1,12 +1,8 @@
-// var-list.tsx
-import React from "react";
-import { CirclePlus, Trash2, GripVertical } from "lucide-react";
+import { CirclePlus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { SimpleSelect } from "@/app/ui/select";
 import { Node } from "../../types";
-import { useStoreApi } from "@xyflow/react";
 import { buildVariableSelectItems, buildWorkflowVariableOptions } from "../../components/nodes-shared/variable-select";
-import { useWorkflowStore } from "../../context";
 import { CodeInputParameter, CodeNodeData } from "../../nodes/code/types";
 
 type VarListProps = {

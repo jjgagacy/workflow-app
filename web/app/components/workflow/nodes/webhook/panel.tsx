@@ -17,131 +17,22 @@ import {
   normalizeWebhookFieldItems,
   normalizeWebhookPath,
   createWebhookFieldItem,
+  UrlTabValue,
+  WebhookListField,
+  CONTENT_TYPE_OPTIONS,
+  METHOD_OPTIONS,
 } from "./data";
 import { WebhookNodeData } from "./type";
 import { NodeTextarea } from "../../components/base/node-textarea";
+import { WebhookFieldSection } from "./section";
 
 type WebhookPanelProps = {
   node: Node<WebhookNodeData>;
 };
 
-type SelectItem = {
+export type SelectItem = {
   value: string;
   name: string;
-};
-
-type WebhookListField = 'headers' | 'params' | 'body';
-type UrlTabValue = 'test' | 'production';
-
-const CONTENT_TYPE_OPTIONS: SelectItem[] = [
-  { value: 'application/json', name: 'application/json' },
-  { value: 'application/x-www-form-urlencoded', name: 'application/x-www-form-urlencoded' },
-  { value: 'multipart/form-data', name: 'multipart/form-data' },
-  { value: 'text/plain', name: 'text/plain' },
-  { value: 'application/octet-stream', name: 'application/octet-stream' },
-];
-
-const METHOD_OPTIONS: SelectItem[] = [
-  { value: 'GET', name: 'GET' },
-  { value: 'POST', name: 'POST' },
-  { value: 'PUT', name: 'PUT' },
-  { value: 'PATCH', name: 'PATCH' },
-  { value: 'DELETE', name: 'DELETE' },
-  { value: 'HEAD', name: 'HEAD' },
-  { value: 'OPTIONS', name: 'OPTIONS' },
-];
-
-type WebhookFieldSectionProps = {
-  title: string;
-  addLabel: string;
-  deleteLabel: string;
-  nameLabel: string;
-  requiredLabel: string;
-  namePlaceholder: string;
-  items: ReturnType<typeof normalizeWebhookFieldItems>;
-  onAdd: () => void;
-  onRemove: (id: string) => void;
-  onChange: (id: string, patch: { name?: string; required?: boolean }) => void;
-};
-const WebhookFieldSection = ({
-  title,
-  addLabel,
-  deleteLabel,
-  nameLabel,
-  requiredLabel,
-  namePlaceholder,
-  items,
-  onAdd,
-  onRemove,
-  onChange,
-}: WebhookFieldSectionProps) => {
-  return (
-    // 外层容器：去掉边框，收紧内边距 (py-2)
-    <section className="space-y-2 rounded-xl bg-muted/10 px-3 py-2.5">
-      {/* 头部区域：保持标题与添加按钮同行 */}
-      <div className="flex items-center justify-between">
-        <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/80">
-          {title}
-        </div>
-        <button
-          type="button"
-          onClick={onAdd}
-          className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/5"
-        >
-          <CirclePlus className="h-3.5 w-3.5" />
-          {addLabel}
-        </button>
-      </div>
-
-      {/* 列表区域 */}
-      <div className="space-y-1.5">
-        {items.map((item, index) => (
-          <div
-            key={item.id}
-            // 彻底移除单个 item 的 border 和 bg，仅在非首项顶部留出 padding
-            className={`pt-2.5 first:pt-0 flex items-end gap-3`}
-          >
-            {/* 左侧：字段输入核心区域（在一行内紧凑排列） */}
-            <div className="flex-1 grid grid-cols-12 gap-2">
-              {/* 名称输入框占 8 列 */}
-              <label className="col-span-8 block">
-                <div className="mb-0.5 text-[10px] font-medium uppercase tracking-wide ">
-                  {nameLabel} {items.length > 1 && `#${index + 1}`}
-                </div>
-                <NodeInput
-                  value={item.name}
-                  onChange={(event) => onChange(item.id, { name: event.target.value })}
-                  placeholder={namePlaceholder}
-                  className="h-8 text-sm" // 建议在 NodeInput 内部或通过 className 压低高度
-                />
-              </label>
-
-              {/* 必填勾选框占 4 列：移除背景和边框，变成纯文字+Checkbox */}
-              <label className="col-span-4 flex h-8 items-center gap-1.5 self-end pb-1.5 pl-1 cursor-pointer select-none">
-                <Checkbox
-                  checked={item.required}
-                  onChange={(event) => onChange(item.id, { required: event.target.checked })}
-                />
-                <span className="text-xs ">{requiredLabel}</span>
-              </label>
-            </div>
-
-            {/* 右侧：删除按钮（与输入框底边对齐，不再单独占一行） */}
-            <div className="pb-1">
-              <button
-                type="button"
-                onClick={() => onRemove(item.id)}
-                aria-label={deleteLabel}
-                className="rounded-md p-1.5 hover:bg-destructive/10 hover:text-destructive transition-colors"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
 };
 
 const WebhookNodePanel = ({ node }: WebhookPanelProps) => {
@@ -272,6 +163,21 @@ const WebhookNodePanel = ({ node }: WebhookPanelProps) => {
     };
   }, [node.id]);
 
+  const handleStatusCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = event.target.value.trim();
+    if (!raw) {
+      syncNodeData({ statusCode: undefined });
+      return;
+    }
+
+    const numeric = Number(raw);
+    if (Number.isNaN(numeric)) {
+      return;
+    }
+
+    syncNodeData({ statusCode: Math.max(100, Math.min(599, Math.floor(numeric))) });
+  };
+
   return (
     <div className="space-y-4">
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">
@@ -387,20 +293,7 @@ const WebhookNodePanel = ({ node }: WebhookPanelProps) => {
             <div className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.webhook.statusCode')}</div>
             <NodeInput
               value={statusCodeInput}
-              onChange={(event) => {
-                const raw = event.target.value.trim();
-                if (!raw) {
-                  syncNodeData({ statusCode: undefined });
-                  return;
-                }
-
-                const numeric = Number(raw);
-                if (Number.isNaN(numeric)) {
-                  return;
-                }
-
-                syncNodeData({ statusCode: Math.max(100, Math.min(599, Math.floor(numeric))) });
-              }}
+              onChange={handleStatusCodeChange}
               placeholder="200"
               inputMode="numeric"
             />

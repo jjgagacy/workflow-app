@@ -29,6 +29,7 @@ export enum NodeType {
   Schedule = 'schedule',
 }
 
+
 export type NodeData<T = {}> = {
   type: NodeType;
 

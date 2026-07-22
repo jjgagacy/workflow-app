@@ -1,12 +1,24 @@
+import CascadeFilterMenu from "@/app/components/base/menu/cascade-filter-menu";
+import type { CascadeFilterOption } from "@/app/components/base/menu/cascade-filter-menu/types";
 import { SimpleSelect } from "@/app/ui/select";
-import { X } from "lucide-react";
+import { Box, Calendar, CheckSquare, File, Hash, List, Type, X } from "lucide-react";
+import type { ComponentType } from "react";
 import { useTranslation } from "react-i18next";
 import { NodeInput } from "../../../components/base/node-input";
 import type { OperatorOption } from "../hooks/use-if-else-operator-options";
 import type { Condition, ConditionOperator, OperatorType } from "../types";
 import type { SelectItem, VariableOption } from "./branch-list.types";
 
-const SELECT_CLASS_NAME = "w-full";
+const TYPE_ICON_MAP: Record<OperatorType, ComponentType<{ className?: string }>> = {
+  string: Type,
+  number: Hash,
+  datetime: Calendar,
+  boolean: CheckSquare,
+  array: List,
+  object: Box,
+  file: File,
+  any: Box,
+};
 
 type BranchConditionItemProps = {
   branchId: string;
@@ -36,10 +48,18 @@ export const BranchConditionItem = ({
   const { t } = useTranslation();
   const conditionType = (condition.operator.leftType ?? "string") as OperatorType;
   const operatorOptions = operatorOptionsByType[conditionType] ?? [];
-  const operatorItems: SelectItem[] = operatorOptions.map((option) => ({
-    value: option.value,
-    name: option.label,
-  }));
+
+  const cascadeOptions: CascadeFilterOption[] = typeItems.map((item) => {
+    const type = item.value as OperatorType;
+    const optionsOfType = operatorOptionsByType[type] ?? [];
+
+    return {
+      key: type,
+      name: item.name,
+      icon: TYPE_ICON_MAP[type],
+      operators: optionsOfType.map((option) => option.label),
+    };
+  });
 
   const leftValue = String(condition.leftValue ?? "");
   const variableItems: SelectItem[] = [
@@ -57,9 +77,14 @@ export const BranchConditionItem = ({
 
   const selectedOperator = operatorOptions.find((operator) => operator.value === condition.operator.operator);
   const isUnary = selectedOperator?.isUnary ?? Boolean(condition.operator.isUnary);
+  const cascadeValue = {
+    type: conditionType,
+    operator: selectedOperator?.label || String(condition.operator.operator),
+  };
 
   return (
     <div className="group relative rounded-lg border border-gray-200/80 p-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-all hover:border-gray-300 hover:shadow-[0_2px_8px_rgba(0,0,0,0.08)] dark:border-gray-700/60 dark:shadow-[0_1px_2px_rgba(0,0,0,0.2)] dark:hover:border-gray-600 dark:hover:shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
+      {/* 头部：条件序号与删除 */}
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[10px] font-medium text-primary">
@@ -79,54 +104,44 @@ export const BranchConditionItem = ({
         </button>
       </div>
 
-      {/* 表单 - 三列布局 */}
-      <div className="grid grid-cols-3 gap-2">
-        {/* 类型 */}
-        <div>
-          <SimpleSelect
-            items={typeItems}
-            defaultValue={conditionType}
-            allowSearch={false}
-            className={SELECT_CLASS_NAME}
-            onSelect={(item) => onConditionTypeChange(branchId, condition.id, item.value as OperatorType)}
-          />
-        </div>
-
-        {/* 左侧变量 */}
-        <div>
+      {/* 表单垂直排布 */}
+      <div className="flex flex-col gap-2.5">
+        {/* 第一行：选择变量 和 类型操作符 并排平分 */}
+        <div className="grid grid-cols-2 gap-2 w-full">
           <SimpleSelect
             items={variableItems}
             defaultValue={leftValue}
             allowSearch={false}
-            className={SELECT_CLASS_NAME}
+            className="w-full"
             onSelect={(item) => onConditionFieldChange(branchId, condition.id, "leftValue", String(item.value))}
           />
-        </div>
+          <CascadeFilterMenu
+            value={cascadeValue}
+            options={cascadeOptions}
+            className="w-full"
+            onChange={({ type, operator }) => {
+              const nextType = type as OperatorType;
+              const nextOperator = (operatorOptionsByType[nextType] ?? []).find((item) => item.label === operator);
 
-        {/* 操作符 */}
-        <div>
-          <SimpleSelect
-            items={operatorItems}
-            defaultValue={condition.operator.operator}
-            allowSearch={false}
-            className={SELECT_CLASS_NAME}
-            onSelect={(item) => onConditionOperatorChange(branchId, condition.id, item.value as ConditionOperator)}
+              if (nextOperator) {
+                onConditionOperatorChange(branchId, condition.id, nextOperator.value as ConditionOperator);
+                return;
+              }
+
+              onConditionTypeChange(branchId, condition.id, nextType);
+            }}
           />
         </div>
 
-        {/* 右侧值（非一元操作符）- 占满一行 */}
-        {!isUnary ? (
-          <div className="col-span-3">
+        {/* 第二行：输入值（仅非一元操作符时显示，独占整行并撑满） */}
+        {!isUnary && (
+          <div className="w-full">
             <NodeInput
               value={String(condition.rightValue ?? "")}
               onChange={(event) => onConditionFieldChange(branchId, condition.id, "rightValue", event.target.value)}
               placeholder={t("workflow.conditions.rightValuePlaceholder")}
-              className="py-1.5"
+              className="w-full py-1.5"
             />
-          </div>
-        ) : (
-          <div className="col-span-3 rounded-md bg-muted/30 px-3 py-1.5 text-xs text-muted-foreground">
-            {t("workflow.conditions.unaryOperatorHint")}
           </div>
         )}
       </div>

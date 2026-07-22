@@ -5,6 +5,7 @@ export type WorkflowInteractionMode = 'pointer' | 'hand';
 
 export type NodeSelectorContext = {
   nodeId?: string;
+  forceStartOnly?: boolean;
   parentNodeId?: string;
   previousNodeId?: string;
   previousNodeSourceHandle?: string;

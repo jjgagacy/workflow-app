@@ -28,6 +28,14 @@ export const useIfElseBranchHandlers = ({ node, branches }: UseIfElseBranchHandl
   const { onNodeDataUpdate } = useNodesUpdate();
   const { operatorOptionsByType } = useIfElseOperatorOptions();
 
+  const readTypeFromOperator = (operator: ConditionOperator): OperatorType | null => {
+    const [rawType] = String(operator).split(':');
+    if (rawType && rawType in operatorOptionsByType) {
+      return rawType as OperatorType;
+    }
+    return null;
+  };
+
   const syncBranches = (nextBranches: ConditionBranch[]) => {
     const normalizedBranches = normalizeIfElseBranches(nextBranches);
     const nextNode = {
@@ -176,10 +184,12 @@ export const useIfElseBranchHandlers = ({ node, branches }: UseIfElseBranchHandl
   const handleConditionOperatorChange = (branchId: string, conditionId: string, value: ConditionOperator) => {
     updateCondition(branchId, conditionId, (condition) => {
       const currentType = (condition.operator.leftType ?? 'string') as OperatorType;
-      const nextOperator = operatorOptionsByType[currentType]?.find((operator) => operator.value === value);
+      const inferredType = readTypeFromOperator(value) ?? currentType;
+      const nextOperator = operatorOptionsByType[inferredType]?.find((operator) => operator.value === value);
 
+      condition.operator.leftType = inferredType;
       condition.operator.operator = value;
-      condition.operator.rightType = nextOperator?.isUnary ? undefined : currentType;
+      condition.operator.rightType = nextOperator?.isUnary ? undefined : inferredType;
       condition.operator.isUnary = nextOperator?.isUnary;
       condition.rightValue = nextOperator?.isUnary ? undefined : condition.rightValue;
     });

@@ -24,6 +24,7 @@ import type { HttpRequestNodeData } from "./nodes/http-request/types";
 import type { NodeData } from "./types";
 import { NodeType } from "./types";
 import { webhookNodeDefaultData } from "./nodes/webhook/data";
+import { scheduleNodeDefaultData } from "./nodes/schedule/data";
 
 export const CUSTOM_NODE_NAME = 'customNode';
 export const CUSTOM_EDGE_NAME = 'customEdge';
@@ -129,6 +130,7 @@ export const NODE_DEFAULT_DATA: NodeDefaultDataByType = {
   [NodeType.Schedule]: {
     type: NodeType.Schedule,
     label: '',
+    ...scheduleNodeDefaultData.value,
   }
 };
 
@@ -194,5 +196,6 @@ export const NODE_TYPE_ICON_COLOR_MAP: Partial<Record<NodeType, string>> = {
   [NodeType.HttpRequest]: ICON_COLORS.network,
   [NodeType.KnowledgeRetrieval]: ICON_COLORS.knowledge,
   [NodeType.Start]: ICON_COLORS.trigger,
+  [NodeType.Schedule]: ICON_COLORS.trigger,
 };
 

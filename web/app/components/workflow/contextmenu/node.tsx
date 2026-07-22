@@ -12,6 +12,7 @@ import { Divider } from "../../base/divider";
 import { useTranslation } from "react-i18next";
 import { useWorkflowInteractions } from "../hooks/use-interactions";
 import { Node } from "../types";
+import { isStartNodeType } from "../node";
 
 interface NodeContextMenuProps {
   containerRef?: React.RefObject<HTMLElement | null>;
@@ -31,6 +32,9 @@ export const NodeContextMenu = memo(({ containerRef }: NodeContextMenuProps) => 
 
   const nodes = store.getState().nodes as Node[];
   const currentNode = nodes.find((item) => item.id === nodeMenu.nodeId);
+  const toggleDisabledLabel = currentNode?.data.disabled
+    ? t('workflow.nodeMenu.activate')
+    : t('workflow.nodeMenu.deactivate');
 
   useEffect(() => {
     if (nodeMenu.visible) {
@@ -76,7 +80,12 @@ export const NodeContextMenu = memo(({ containerRef }: NodeContextMenuProps) => 
             return;
           }
 
-          setShowNodeSelector(true, { nodeId: nodeMenu.nodeId });
+          const forceStartOnly = currentNode ? isStartNodeType(currentNode.data.type) : false;
+
+          setShowNodeSelector(true, {
+            nodeId: nodeMenu.nodeId,
+            forceStartOnly,
+          });
           handleCancelNodeContextMenu();
         }}
       />
@@ -93,7 +102,7 @@ export const NodeContextMenu = memo(({ containerRef }: NodeContextMenuProps) => 
       />
       <Divider />
       <ContextMenuItem
-        label={t('workflow.nodeMenu.deactivate')}
+        label={toggleDisabledLabel}
         icon={<PowerSquare />}
         shortcut={{ keys: ['D'] }}
         onClick={() => {
