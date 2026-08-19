@@ -3,11 +3,14 @@ import type { CascadeFilterOption } from "@/app/components/base/menu/cascade-fil
 import { SimpleSelect } from "@/app/ui/select";
 import { Box, Calendar, CheckSquare, File, Hash, List, Type, X } from "lucide-react";
 import type { ComponentType } from "react";
+import type { Node } from "../../types";
 import { useTranslation } from "react-i18next";
-import { NodeInput } from "../../../components/base/node-input";
-import type { OperatorOption } from "../hooks/use-operatorOptions";
-import type { Condition, ConditionOperator, OperatorType } from "../types";
-import type { SelectItem, VariableOption } from "./branch-list.types";
+import { NodeInput } from "../base/node-input";
+import type { OperatorOption } from "../../nodes/if-else/hooks/use-operatorOptions";
+import type { Condition, ConditionOperator, OperatorType } from "../../nodes/if-else/types";
+import type { SelectItem, VariableOption } from "../../nodes/if-else/components/branch-list.types";
+import { VarPicker } from "../variable/var-picker";
+import { NodeOutputVariable, Variable, VariableSelector } from "../../types";
 
 const TYPE_ICON_MAP: Record<OperatorType, ComponentType<{ className?: string }>> = {
   string: Type,
@@ -21,6 +24,7 @@ const TYPE_ICON_MAP: Record<OperatorType, ComponentType<{ className?: string }>>
 };
 
 type BranchConditionItemProps = {
+  nodeId: string;
   branchId: string;
   condition: Condition;
   conditionIndex: number;
@@ -31,9 +35,12 @@ type BranchConditionItemProps = {
   onConditionTypeChange: (branchId: string, conditionId: string, value: OperatorType) => void;
   onConditionFieldChange: (branchId: string, conditionId: string, key: "leftValue" | "rightValue", value: string) => void;
   onConditionOperatorChange: (branchId: string, conditionId: string, value: ConditionOperator) => void;
+  nodeOutputVariables: NodeOutputVariable[];
+  availableNodes: Node[];
 };
 
 export const BranchConditionItem = ({
+  nodeId,
   branchId,
   condition,
   conditionIndex,
@@ -44,6 +51,8 @@ export const BranchConditionItem = ({
   onConditionTypeChange,
   onConditionFieldChange,
   onConditionOperatorChange,
+  nodeOutputVariables,
+  availableNodes,
 }: BranchConditionItemProps) => {
   const { t } = useTranslation();
   const conditionType = (condition.operator.leftType ?? "string") as OperatorType;
@@ -82,6 +91,9 @@ export const BranchConditionItem = ({
     operator: selectedOperator?.label || String(condition.operator.operator),
   };
 
+  const handleVarChange = (variable: Variable, selector: VariableSelector) => {
+  }
+
   return (
     <div className="group relative rounded-lg border border-gray-200/80 p-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-all hover:border-gray-300 hover:shadow-[0_2px_8px_rgba(0,0,0,0.08)] dark:border-gray-700/60 dark:shadow-[0_1px_2px_rgba(0,0,0,0.2)] dark:hover:border-gray-600 dark:hover:shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
       {/* 头部：条件序号与删除 */}
@@ -108,12 +120,12 @@ export const BranchConditionItem = ({
       <div className="flex flex-col gap-2.5">
         {/* 第一行：选择变量 和 类型操作符 并排平分 */}
         <div className="grid grid-cols-2 gap-2 w-full">
-          <SimpleSelect
-            items={variableItems}
-            defaultValue={leftValue}
-            allowSearch={false}
-            className="w-full"
-            onSelect={(item) => onConditionFieldChange(branchId, condition.id, "leftValue", String(item.value))}
+          <VarPicker
+            nodeId={nodeId}
+            value={''}
+            onChange={handleVarChange}
+            availableNodes={availableNodes}
+            nodeOutputVariables={nodeOutputVariables}
           />
           <CascadeFilterMenu
             value={cascadeValue}
@@ -122,12 +134,10 @@ export const BranchConditionItem = ({
             onChange={({ type, operator }) => {
               const nextType = type as OperatorType;
               const nextOperator = (operatorOptionsByType[nextType] ?? []).find((item) => item.label === operator);
-
               if (nextOperator) {
                 onConditionOperatorChange(branchId, condition.id, nextOperator.value as ConditionOperator);
                 return;
               }
-
               onConditionTypeChange(branchId, condition.id, nextType);
             }}
           />

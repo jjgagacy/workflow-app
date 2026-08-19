@@ -1,13 +1,13 @@
 import type { Node } from "../../types";
 import type { IfElseNodeData } from "./types";
-import { SharedConditionPanel } from "../../components/nodes-shared/condition-panel";
+import { ConditionPanel } from "../../components/branch/condition-panel";
 
 type IfElsePanelProps = {
   node: Node<IfElseNodeData>;
 };
 
 const IfElsePanel = ({ node }: IfElsePanelProps) => {
-  return <SharedConditionPanel node={node} />;
+  return <ConditionPanel node={node} />;
 };
 
 export default IfElsePanel;

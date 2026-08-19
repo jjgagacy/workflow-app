@@ -1,15 +1,19 @@
 import { CirclePlus } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import type { ConditionBranch, ConditionOperator, OperatorType } from "../types";
-import type { OperatorOption } from "../hooks/use-operatorOptions";
-import type { SelectItem, VariableOption } from "./branch-list.types";
+import type { ConditionBranch, ConditionOperator, OperatorType } from "../../nodes/if-else/types";
+import type { OperatorOption } from "../../nodes/if-else/hooks/use-operatorOptions";
+import type { SelectItem, VariableOption } from "../../nodes/if-else/components/branch-list.types";
 import { BranchConditionItem } from "./branch-condition-item";
+import type { NodeOutputVariable, Node } from "../../types";
 
 type BranchDecisionContentProps = {
+  nodeId: string;
   branch: ConditionBranch;
   typeItems: SelectItem[];
   operatorOptionsByType: Record<OperatorType, OperatorOption[]>;
   variableOptions: VariableOption[];
+  nodeOutputVariables: NodeOutputVariable[];
+  availableNodes: Node[];
   onConditionGroupOperatorToggle: (branchId: string, currentValue: ConditionBranch["conditionGroup"]["logicalOperator"]) => void;
   onRemoveCondition: (branchId: string, conditionId: string) => void;
   onConditionTypeChange: (branchId: string, conditionId: string, value: OperatorType) => void;
@@ -19,6 +23,7 @@ type BranchDecisionContentProps = {
 };
 
 export const BranchDecisionContent = ({
+  nodeId,
   branch,
   typeItems,
   operatorOptionsByType,
@@ -29,6 +34,8 @@ export const BranchDecisionContent = ({
   onConditionFieldChange,
   onConditionOperatorChange,
   onAddCondition,
+  nodeOutputVariables,
+  availableNodes,
 }: BranchDecisionContentProps) => {
   const { t } = useTranslation();
   const conditions = branch.conditionGroup.conditions ?? [];
@@ -53,6 +60,7 @@ export const BranchDecisionContent = ({
           {conditions.map((condition, conditionIndex) => (
             <BranchConditionItem
               key={condition.id}
+              nodeId={nodeId}
               branchId={branch.id}
               condition={condition}
               conditionIndex={conditionIndex}
@@ -63,6 +71,8 @@ export const BranchDecisionContent = ({
               onConditionTypeChange={onConditionTypeChange}
               onConditionFieldChange={onConditionFieldChange}
               onConditionOperatorChange={onConditionOperatorChange}
+              nodeOutputVariables={nodeOutputVariables}
+              availableNodes={availableNodes}
             />
           ))}
         </div>

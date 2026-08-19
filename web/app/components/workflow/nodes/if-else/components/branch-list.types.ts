@@ -1,3 +1,4 @@
+import { Node, NodeOutputVariable } from "../../../types";
 import type { OperatorOption } from "../hooks/use-operatorOptions";
 import type { ConditionBranch, ConditionOperator, OperatorType } from "../types";
 
@@ -16,8 +17,11 @@ export type SelectItem = {
 };
 
 export type IfElseBranchListProps = {
+  nodeId: string;
   branches: ConditionBranch[];
   decisionBranchCount: number;
+  nodeOutputVariables: NodeOutputVariable[];
+  availableNodes: Node[];
   operatorOptionsByType: Record<OperatorType, OperatorOption[]>;
   typeItems: SelectItem[];
   variableOptions: VariableOption[];

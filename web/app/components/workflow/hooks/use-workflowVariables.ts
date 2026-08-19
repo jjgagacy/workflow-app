@@ -16,7 +16,15 @@ type NodeVariableListParams = {
   hiddenEnv?: boolean;
 };
 
-export const useWorkflowVariables = () => {
+export const useWorkflowVariables = (nodeId: string, {
+  filterVariable,
+  availableNodes = [],
+  onlyLeafNodeVars,
+  hiddenEnv,
+}: NodeVariableListParams = {
+    onlyLeafNodeVars: false,
+    filterVariable: () => true,
+  }) => {
   const storeApi = useStoreApi();
   const workflowContext = useWorkflowContext();
   const reactFlow = useReactFlow();
@@ -128,36 +136,20 @@ export const useWorkflowVariables = () => {
   }, [storeApi]);
 
   /// 获取节点可用变量列表
-  const getNodeVariableList = useCallback((nodeId: string, {
+  const { getLeafNodes, getUpstreamNodesWithParent, getNodeInfo } = useWorkflow();
+  const usingNodes = availableNodes && availableNodes.length > 0 ? availableNodes : (onlyLeafNodeVars ? getLeafNodes(nodeId) : getUpstreamNodesWithParent(nodeId)) as Node[];
+  const nodeInfo = getNodeInfo(nodeId);
+  const parentNode = nodeInfo?.parentNode as any;
+
+  const nodeVariableList = getNodeAvailableVariableList({
+    parentNode,
+    availableNodes: usingNodes as any,
     filterVariable,
-    availableNodes = [],
-    onlyLeafNodeVars,
     hiddenEnv,
-  }: NodeVariableListParams = {
-      filterVariable: () => true,
-      availableNodes: [],
-      onlyLeafNodeVars: false,
-      hiddenEnv: false,
-    }) => {
-    const { nodes } = storeApi.getState();
-    const node = nodes.find(node => node.id === nodeId);
-    const { getLeafNodes, getUpstreamNodesWithParent, getNodeInfo } = useWorkflow();
-
-    const usingNodes = availableNodes.length > 0 ? availableNodes : (onlyLeafNodeVars ? getLeafNodes(nodeId) : getUpstreamNodesWithParent(nodeId));
-    const nodeInfo = getNodeInfo(nodeId);
-    const parentNode = nodeInfo?.parentNode as any;
-
-    const availableVariables = getNodeAvailableVariableList({
-      parentNode,
-      availableNodes: usingNodes as any,
-      filterVariable,
-      hiddenEnv,
-    });
-
-    return availableVariables;
-  }, []);
+  });
 
   return {
-    getNodeVariableList,
+    nodeVariableList,
+    availableNodes: usingNodes,
   }
 }

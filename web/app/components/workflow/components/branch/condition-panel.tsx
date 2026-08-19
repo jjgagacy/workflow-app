@@ -5,17 +5,17 @@ import { useIfElseBranchHandlers, useIfElseOperatorOptions } from "@/app/compone
 import { IfElseBranchList } from "@/app/components/workflow/nodes/if-else/components";
 import { normalizeIfElseBranches } from "@/app/components/workflow/nodes/if-else/data";
 import type { IfElseNodeData } from "@/app/components/workflow/nodes/if-else/types";
-import { useConditionVariableOptions } from "../../hooks/use-condition-variable-options";
+import { useNodeConfig } from "../../hooks/use-node-config";
 import { Node } from "../../types";
 import BranchLogicInfo from "./branch-logic-info";
 import { useVariableList } from "../../nodes/if-else/hooks/use-variableList";
 
-type SharedConditionPanelProps = {
+type ConditionPanelProps = {
   node: Node<IfElseNodeData>;
   outputHandleCount?: number;
 };
 
-export const SharedConditionPanel = ({ node, outputHandleCount }: SharedConditionPanelProps) => {
+export const ConditionPanel = ({ node, outputHandleCount }: ConditionPanelProps) => {
   const { t } = useTranslation();
   const { operatorOptionsByType, typeItems } = useIfElseOperatorOptions();
   const branches = useMemo(() => normalizeIfElseBranches(node.data.branches), [node.data.branches]);
@@ -31,10 +31,10 @@ export const SharedConditionPanel = ({ node, outputHandleCount }: SharedConditio
     handleConditionOperatorChange,
     handleConditionFieldChange,
   } = useIfElseBranchHandlers({ node, branches });
-  const { nodesOutputList } = useVariableList(node.id);
+  const { nodeVariableList, availableNodes } = useNodeConfig(node.id);
   const decisionBranchCount = branches.filter((branch) => !branch.isDefault).length;
   const resolvedOutputHandleCount = outputHandleCount ?? branches.length;
-  const { variableOptions, variableOptionGroups } = useConditionVariableOptions(node.id);
+  const { variableOptions, variableOptionGroups } = useNodeConfig(node.id);
 
   return (
     <div className="space-y-0">
@@ -44,12 +44,15 @@ export const SharedConditionPanel = ({ node, outputHandleCount }: SharedConditio
       />
 
       <IfElseBranchList
+        nodeId={node.id}
         branches={branches}
         decisionBranchCount={decisionBranchCount}
         operatorOptionsByType={operatorOptionsByType}
         typeItems={typeItems}
         variableOptions={variableOptions}
         variableOptionGroups={variableOptionGroups}
+        nodeOutputVariables={nodeVariableList}
+        availableNodes={availableNodes}
         handleBranchNameChange={handleBranchNameChange}
         handleMoveBranch={handleMoveBranch}
         handleRemoveBranch={handleRemoveBranch}

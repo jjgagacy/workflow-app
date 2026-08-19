@@ -3,9 +3,9 @@ import { useIfElseOperatorOptions } from "../if-else/hooks";
 import { Node } from "../../types";
 import { useFilterConditionHandlers } from "./hooks/use-filter-condition-handlers";
 import type { FilterNodeData } from "./types";
-import { useConditionVariableOptions } from "../../hooks/use-condition-variable-options";
-import BranchLogicInfo from "../../components/nodes-shared/branch-logic-info";
-import { BranchDecisionContent } from "../if-else/components/branch-decision-content";
+import { useNodeConfig } from "../../hooks/use-node-config";
+import BranchLogicInfo from "../../components/branch/branch-logic-info";
+import { BranchDecisionContent } from "../../components/branch/branch-decision-content";
 
 type FilterPanelProps = {
   node: Node<FilterNodeData>;
@@ -14,7 +14,7 @@ type FilterPanelProps = {
 const FilterPanel = ({ node }: FilterPanelProps) => {
   const { t } = useTranslation();
   const { operatorOptionsByType, typeItems } = useIfElseOperatorOptions();
-  const { variableOptions } = useConditionVariableOptions(node.id);
+  const { variableOptions, nodeVariableList, availableNodes } = useNodeConfig(node.id);
   const {
     branch,
     handleConditionGroupOperatorToggle,
@@ -48,10 +48,13 @@ const FilterPanel = ({ node }: FilterPanelProps) => {
         </div>
 
         <BranchDecisionContent
+          nodeId={node.id}
           branch={branch}
           typeItems={typeItems}
           operatorOptionsByType={operatorOptionsByType}
           variableOptions={variableOptions}
+          nodeOutputVariables={nodeVariableList}
+          availableNodes={availableNodes}
           onConditionGroupOperatorToggle={(branchId, currentValue) => {
             void branchId;
             handleConditionGroupOperatorToggle(currentValue);

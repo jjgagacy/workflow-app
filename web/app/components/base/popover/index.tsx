@@ -71,7 +71,7 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(({
               style={anchorStyles}
               portal={portal}
               className={cn(
-                'z-20',
+                'z-100',
                 sameWidth && 'w-[--button-width]',
                 panelClassName,
               )}

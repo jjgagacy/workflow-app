@@ -1,17 +1,20 @@
 import { cn } from "@/utils/classnames";
 import { useTranslation } from "react-i18next";
 import { getBranchTitle } from "../utils";
-import { BranchDecisionContent } from "./branch-decision-content";
+import { BranchDecisionContent } from "../../../components/branch/branch-decision-content";
 import { BranchHeader } from "./branch-header";
 import type { IfElseBranchListProps } from "./branch-list.types";
 
 export const IfElseBranchList = ({
+  nodeId,
   branches,
   decisionBranchCount,
   operatorOptionsByType,
   typeItems,
   variableOptions,
   variableOptionGroups,
+  nodeOutputVariables,
+  availableNodes,
   handleBranchNameChange,
   handleMoveBranch,
   handleRemoveBranch,
@@ -58,10 +61,13 @@ export const IfElseBranchList = ({
 
             {!isDefault ? (
               <BranchDecisionContent
+                nodeId={nodeId}
                 branch={branch}
                 typeItems={typeItems}
                 operatorOptionsByType={operatorOptionsByType}
                 variableOptions={variableOptions}
+                nodeOutputVariables={nodeOutputVariables}
+                availableNodes={availableNodes}
                 onConditionGroupOperatorToggle={handleConditionGroupOperatorToggle}
                 onRemoveCondition={handleRemoveCondition}
                 onConditionTypeChange={handleConditionTypeChange}

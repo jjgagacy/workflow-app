@@ -16,17 +16,14 @@ export type VariableOption = {
 
 const formatVariableType = (type?: string) => type ?? "any";
 
-export const useConditionVariableOptions = (nodeId: string) => {
+export const useNodeConfig = (nodeId: string) => {
   const { t } = useTranslation();
   const store = useStoreApi();
   const chatEnvVariables = useWorkflowStore((state) => state.chatEnvVariables);
   const envVariables = useWorkflowStore((state) => state.envVariables);
   const nodes = store.getState().nodes as Node[];
   const { getSystemVariables } = useVariables();
-  const { getNodeVariableList } = useWorkflowVariables();
-
-  // test
-  console.log('list', getNodeVariableList(nodeId))
+  const { availableNodes, nodeVariableList } = useWorkflowVariables(nodeId);
 
   const variableOptions = useMemo<VariableOption[]>(() => {
     const environmentOptions = envVariables.map((envVariable) => ({
@@ -76,5 +73,7 @@ export const useConditionVariableOptions = (nodeId: string) => {
   return {
     variableOptions,
     variableOptionGroups,
+    availableNodes,
+    nodeVariableList
   };
 };
