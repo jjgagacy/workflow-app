@@ -4,6 +4,7 @@ import { useReactFlow, useStoreApi } from "@xyflow/react";
 import { cn } from "@/utils/classnames";
 import { Popover } from "@/app/components/base/popover";
 import Button from "@/app/components/base/button";
+import { VarPopList } from "./var-popList";
 
 type PickerProps = {
   nodeId: string;
@@ -53,10 +54,13 @@ export const VarPicker = ({
         portal={true}
       >
         {({ close }) => (
-          <div className="p-4 z-[1000] w-80 h-60 ">
-            <p>This is the content of the popover.</p>
-            <Button variant={'primary'} onClick={() => close()}>Action</Button>
-          </div>
+          <VarPopList
+            variables={nodeOutputVariables || []}
+            onChange={(variable, selector) => {
+              onChange(variable, selector);
+              close();
+            }}
+          />
         )}
       </Popover>
     </div>

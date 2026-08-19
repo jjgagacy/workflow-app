@@ -1,6 +1,6 @@
 import { Fragment, type ReactNode, useCallback } from "react";
 import { useReactFlow } from "@xyflow/react";
-import { Hand, MessageSquare, MousePointer2, PlusCircle, Settings2, StickyNote, WandSparkles } from "lucide-react";
+import { Cloud, Hand, MessageSquare, MonitorSmartphone, MousePointer2, PlusCircle, Settings2, StickyNote, WandSparkles } from "lucide-react";
 import { cn } from "@/utils/classnames";
 import { Divider } from "../../base/divider";
 import { ShortcutTooltip, type KeyboardShortcut } from "../../base/tooltip/shortcut";
@@ -117,14 +117,14 @@ export const Tools = () => {
       id: 'env-panel',
       label: 'Env',
       shortcut: { keys: ['E'] },
-      icon: <Settings2 className={toolIconClassName} />,
+      icon: <Cloud className={toolIconClassName} />,
       onClick: handleOpenEnvPanel,
     },
     {
       id: 'chat-env-panel',
       label: 'Session',
       shortcut: { keys: ['E'], shiftKey: true },
-      icon: <MessageSquare className={toolIconClassName} />,
+      icon: <MonitorSmartphone className={toolIconClassName} />,
       onClick: handleOpenChatEnvPanel,
     },
   ];

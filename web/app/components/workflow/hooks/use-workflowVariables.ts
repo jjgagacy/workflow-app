@@ -124,9 +124,13 @@ export const useWorkflowVariables = (nodeId: string, {
       chatEnvVariables
     } = workflowContext.getState();
 
-    const variables = availableNodes && availableNodes.length > 0 ?
-      getNodeOutputVariables(availableNodes, isChatMode || false, filterVariable, envVariables, chatEnvVariables)
-      : [];
+    const variables = getNodeOutputVariables(
+      availableNodes || [],
+      isChatMode || false,
+      filterVariable,
+      envVariables,
+      chatEnvVariables,
+    );
     // 
     const isInIteration = parentNode ? (parentNode.data.type === NodeType.Iteration || parentNode.data.type === NodeType.Loop) : false;
     if (isInIteration) {

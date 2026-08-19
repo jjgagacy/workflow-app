@@ -222,7 +222,7 @@ export const SUPPORT_OUTPUT_VARIABLE_NODE_TYPES: NodeType[] = [
 
 export const dialogueCountVariable: Variable = {
   id: 'system.dialogue_count',
-  name: 'system.dialogue_count',
+  name: 'dialogue_count',
   sourceType: ValueSourceMode.constant,
   dataType: VariableDataType.number,
   label: 'workflow.var.system.dialogueCount',
@@ -230,7 +230,7 @@ export const dialogueCountVariable: Variable = {
 
 export const conversationIdVariable: Variable = {
   id: 'system.conversation_id',
-  name: 'system.conversation_id',
+  name: 'conversation_id',
   sourceType: ValueSourceMode.constant,
   dataType: VariableDataType.string,
   label: 'workflow.var.system.conversationId',
@@ -238,7 +238,7 @@ export const conversationIdVariable: Variable = {
 
 export const userIdVariable: Variable = {
   id: 'system.user_id',
-  name: 'system.user_id',
+  name: 'user_id',
   sourceType: ValueSourceMode.constant,
   dataType: VariableDataType.string,
   label: 'workflow.var.system.userId',
@@ -246,7 +246,7 @@ export const userIdVariable: Variable = {
 
 export const appIdVariable: Variable = {
   id: 'system.app_id',
-  name: 'system.app_id',
+  name: 'app_id',
   sourceType: ValueSourceMode.constant,
   dataType: VariableDataType.string,
   label: 'workflow.var.system.appId',
@@ -254,7 +254,7 @@ export const appIdVariable: Variable = {
 
 export const workflowIdVariable: Variable = {
   id: 'system.workflow_id',
-  name: 'system.workflow_id',
+  name: 'workflow_id',
   sourceType: ValueSourceMode.constant,
   dataType: VariableDataType.string,
   label: 'workflow.var.system.workflowId',
@@ -262,7 +262,7 @@ export const workflowIdVariable: Variable = {
 
 export const workflowRunIdVariable: Variable = {
   id: 'system.workflow_run_id',
-  name: 'system.workflow_run_id',
+  name: 'workflow_run_id',
   sourceType: ValueSourceMode.constant,
   dataType: VariableDataType.string,
   label: 'workflow.var.system.workflowRunId',
