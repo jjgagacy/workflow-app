@@ -1,4 +1,4 @@
-import type { OperatorOption } from "../hooks/use-if-else-operator-options";
+import type { OperatorOption } from "../hooks/use-operatorOptions";
 import type { ConditionBranch, ConditionOperator, OperatorType } from "../types";
 
 export type VariableOption = {

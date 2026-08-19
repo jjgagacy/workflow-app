@@ -155,7 +155,10 @@ const translation = {
     },
     agent: {
       name: '智能体',
-      description: '用于决策的代理节点'
+      description: '用于决策的代理节点',
+      text: '文本',
+      files: '文件',
+      json: 'JSON',
     },
     llm: {
       name: '大语言模型',
@@ -186,7 +189,10 @@ const translation = {
       exceptionStrategyDescription: '选择在 LLM 调用过程中如何处理异常。',
       defaultReturnValue: '默认返回值',
       returnDefaultValueDescription: '当发生异常时返回默认值。',
-      defaultReturnValuePlaceholder: '请输入默认值，例如：{} 或 null'
+      defaultReturnValuePlaceholder: '请输入默认值，例如：{} 或 null',
+      text: '文本',
+      reasoningContent: '推理内容',
+      usage: '使用量',
     },
     openai: {
       name: 'OpenAI',
@@ -283,15 +289,15 @@ const translation = {
       cronExpression: 'Cron 表达式',
     },
     'http-request': {
-      name: 'HTTP 请求',
-      description: '发起 HTTP 请求',
+      name: 'HTTP请求',
+      description: '发起HTTP请求',
       output: '输出',
       retry: '重试',
       noRetry: '不重试',
       bodyType: {
         none: '无',
         formData: '表单数据',
-        urlencoded: 'URL 编码',
+        urlencoded: 'URL编码',
         json: 'JSON',
         raw: '原始文本',
         binary: '二进制'
@@ -317,6 +323,10 @@ const translation = {
       deleteHeader: '删除 Header',
       deleteParam: '删除 Param',
       requestBody: '请求 Body',
+      responseBody: '响应 Body',
+      statusCode: '响应状态码',
+      responseHeaders: '响应 Headers',
+      responseFiles: '响应文件',
       formData: 'Form Data',
       urlEncoded: 'Url Encoded',
       addField: '添加字段',
@@ -485,17 +495,6 @@ const translation = {
     unaryOperatorHint: '这个运算符不需要右侧值。',
     addCondition: '添加条件',
     noConditionsFallback: '未命中上面分支时会走到这个输出。',
-    variableGroups: {
-      environment: '环境变量',
-      session: '会话变量',
-      builtIn: '内置',
-      nodeOutputs: '节点输出'
-    },
-    builtIns: {
-      workflowInput: '工作流输入',
-      currentUser: '当前用户',
-      currentTime: '当前时间'
-    },
     default: '默认',
     condition: '条件',
   },
@@ -588,6 +587,23 @@ const translation = {
     retryOnFailureDesc: '开启后，当代码执行失败时会自动重试。',
     maxRetryCount: '最大重试',
     maxRetryCountDesc: '当代码执行失败时，最大重试次数。',
+  },
+  var: {
+    groups: {
+      env: '环境变量',
+      session: '会话变量',
+      system: '内置变量',
+      nodeOutput: '节点输出'
+    },
+    system: {
+      dialogueCount: '对话轮次',
+      conversationId: '会话ID',
+      workflowId: '工作流ID',
+      userId: '用户ID',
+      appId: '应用ID',
+      workflowRunId: '工作流运行ID',
+      timestamp: '时间戳',
+    }
   }
 };
 

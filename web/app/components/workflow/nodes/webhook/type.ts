@@ -1,4 +1,4 @@
-import type { HttpMethod, NodeData } from "../../types";
+import type { HttpMethod, NodeData, Variable } from "../../types";
 
 export type WebhookFieldItem = {
   id: string;
@@ -20,4 +20,5 @@ export type WebhookNodeData = NodeData<{
   body?: WebhookFieldItem[];
   isTest?: boolean;
   userId?: string;
+  variables: Variable[];
 }>;

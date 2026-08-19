@@ -29,7 +29,6 @@ export enum NodeType {
   Schedule = 'schedule',
 }
 
-
 export type NodeData<T = {}> = {
   type: NodeType;
 
@@ -120,6 +119,7 @@ export type NodeCategoryProps =
 export enum VariableDataType {
   string = 'string',
   number = 'number',
+  secret = 'secret',
   boolean = 'boolean',
   array = 'array',
   object = 'object',
@@ -133,7 +133,14 @@ export enum ValueSourceMode {
   custom = 'custom',
 }
 
-export type CodeInputValueSourceType = 'input' | 'env' | 'session' | 'node-output' | 'system';
+export enum VariableGroup {
+  env = 'env',
+  session = 'session',
+  nodeOutput = 'node-output',
+  system = 'system'
+}
+
+export type CodeInputValueSourceType = 'input' | `${VariableGroup}`; //  | 'env' | 'session' | 'node-output' | 'system';
 
 export type Variable = {
   id: string;
@@ -198,7 +205,7 @@ export enum CodeLanguage {
   javascript = 'javascript',
 }
 
-export interface FormVariableSelector {
+export interface VariableSelector {
   nodeId: string;
   path: string[];
 }
@@ -244,7 +251,7 @@ export type FormVariable = {
   label: string; // 表单上的显示名称
 
   value?: any;
-  valueSelector?: FormVariableSelector;
+  valueSelector?: VariableSelector;
   isFile?: boolean;
   required?: boolean;
   hide?: boolean;
@@ -264,3 +271,11 @@ export type WebhookResponseMode =
   | 'onReceived'
   | 'lastNode'
   | 'streaming';
+
+export type NodeOutputVariable = {
+  nodeId: string;
+  title: string;
+  variables: Variable[];
+  isStartNode?: boolean;
+  isLoop?: boolean;
+}

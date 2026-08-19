@@ -14,6 +14,7 @@ import { useNodesUpdate } from "../../hooks/use-nodesUpdate";
 import type { Node } from "../../types";
 import type { KnowledgeBaseSelection, KnowledgeRetrievalNodeData } from "./types";
 import { useKnowledgeRetrieval } from "./hooks";
+import { DEFAULT_OUTPUT_VARIABLE_NAME } from "../document-extractor/data";
 
 type KnowledgeRetrievalPanelProps = {
   node: Node<KnowledgeRetrievalNodeData>;
@@ -37,7 +38,7 @@ const KnowledgeRetrievalPanel = ({ node }: KnowledgeRetrievalPanelProps) => {
 
   const inputVariable = node.data.inputVariable ?? '';
   const knowledgeBases = normalizeKnowledgeBaseSelections(node.data.knowledgeBases);
-  const outputVariableName = node.data.outputVariableName ?? 'knowledgeResults';
+  const outputVariableName = node.data.outputVariableName ?? DEFAULT_OUTPUT_VARIABLE_NAME;
 
   const syncNodeData = (patch: Partial<KnowledgeRetrievalNodeData>) => {
     const nextNode = {

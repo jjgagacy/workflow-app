@@ -22,6 +22,7 @@ import {
 import type { ParameterExtractorItem, ParameterExtractorNodeData } from "./types";
 import { ParameterExtractorInfo } from "./parameterExtractorInfo";
 import ParameterList from "./parameter-list";
+import { DEFAULT_OUTPUT_VARIABLE_NAME } from "../document-extractor/data";
 
 type ParameterExtractorPanelProps = {
   node: Node<ParameterExtractorNodeData>;
@@ -39,7 +40,7 @@ const ParameterExtractorPanel = ({ node }: ParameterExtractorPanelProps) => {
   const inputVariable = node.data.inputVariable ?? '';
   const enableVision = Boolean(node.data.enableVision);
   const parameters = normalizeParameterExtractorItems(node.data.parameters);
-  const outputVariableName = node.data.outputVariableName ?? 'extractedParameters';
+  const outputVariableName = node.data.outputVariableName ?? DEFAULT_OUTPUT_VARIABLE_NAME;
   const model = getWorkflowModelById(modelId);
 
   const modelItems = getWorkflowModelSelectItems();

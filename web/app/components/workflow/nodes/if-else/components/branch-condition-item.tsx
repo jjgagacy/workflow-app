@@ -5,7 +5,7 @@ import { Box, Calendar, CheckSquare, File, Hash, List, Type, X } from "lucide-re
 import type { ComponentType } from "react";
 import { useTranslation } from "react-i18next";
 import { NodeInput } from "../../../components/base/node-input";
-import type { OperatorOption } from "../hooks/use-if-else-operator-options";
+import type { OperatorOption } from "../hooks/use-operatorOptions";
 import type { Condition, ConditionOperator, OperatorType } from "../types";
 import type { SelectItem, VariableOption } from "./branch-list.types";
 

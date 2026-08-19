@@ -17,7 +17,7 @@ export type OperatorTypeItem = {
 
 const toDisplayLabel = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
-export const useIfElseOperatorOptions = () => {
+export const useOperatorOptions = () => {
   const { operatorGroups } = useOperators();
 
   const operatorOptionsByType = useMemo<Record<OperatorType, OperatorOption[]>>(() => {

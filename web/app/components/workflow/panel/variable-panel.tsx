@@ -250,6 +250,7 @@ export const VariablePanel = <TType extends string, TVariable extends VariableRe
         isOpen={isDialogOpen}
         title={dialogMode === "edit" ? dialogTitle.edit : dialogTitle.create}
         description={dialogDescription}
+        className="max-w-2xl! max-h-[90dvh]!"
         onCancel={resetDialogState}
         actions={false}
       >

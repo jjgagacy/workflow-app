@@ -1,3 +1,5 @@
+import { dialogueCountVariable } from "@/app/components/workflow/constants";
+
 const translation = {
   nodes: {
     base: {
@@ -157,7 +159,10 @@ const translation = {
     },
     agent: {
       name: 'Agent',
-      description: 'Agent node for decision making'
+      description: 'Agent node for decision making',
+      text: 'Text',
+      files: 'Files',
+      json: 'JSON',
     },
     llm: {
       name: 'LLM',
@@ -188,6 +193,9 @@ const translation = {
       defaultReturnValue: 'Default Return Value',
       defaultReturnValuePlaceholder: 'e.g. {} or null',
       exceptionHandle: 'Exception Handling',
+      text: 'Text',
+      reasoningContent: 'Reasoning Content',
+      usage: 'Usage',
     },
     openai: {
       name: 'OpenAI',
@@ -318,6 +326,10 @@ const translation = {
       deleteHeader: 'Delete Header',
       deleteParam: 'Delete Param',
       requestBody: 'Request Body',
+      responseBody: 'Response Body',
+      statusCode: 'Status Code',
+      responseHeaders: 'Response Headers',
+      responseFiles: 'Response Files',
       formData: 'Form Data',
       urlEncoded: 'Url Encoded',
       addField: 'Add Field',
@@ -488,17 +500,6 @@ const translation = {
     unaryOperatorHint: 'This operator does not need a right value.',
     addCondition: 'Add condition',
     noConditionsFallback: 'Anything unmatched above goes to this output.',
-    variableGroups: {
-      environment: 'Environment',
-      session: 'Session',
-      builtIn: 'Built-in',
-      nodeOutputs: 'Node outputs'
-    },
-    builtIns: {
-      workflowInput: 'Workflow input',
-      currentUser: 'Current user',
-      currentTime: 'Current time'
-    },
     default: 'Default',
     condition: 'Condition',
   },
@@ -591,6 +592,23 @@ const translation = {
     retryOnFailureDesc: 'When enabled, the system will automatically retry when code execution fails.',
     maxRetryCount: 'Max Retry',
     maxRetryCountDesc: 'The maximum number of times to retry when code execution fails.',
+  },
+  var: {
+    groups: {
+      env: 'Environment',
+      session: 'Session',
+      system: 'System',
+      nodeOutput: 'Node Output'
+    },
+    system: {
+      dialogueCount: 'Dialogue Count',
+      conversationId: 'Conversation ID',
+      workflowId: 'Workflow ID',
+      userId: 'User ID',
+      appId: 'App ID',
+      workflowRunId: 'Workflow Run ID',
+      timestamp: 'Timestamp',
+    }
   }
 };
 

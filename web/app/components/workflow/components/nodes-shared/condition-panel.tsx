@@ -8,6 +8,7 @@ import type { IfElseNodeData } from "@/app/components/workflow/nodes/if-else/typ
 import { useConditionVariableOptions } from "../../hooks/use-condition-variable-options";
 import { Node } from "../../types";
 import BranchLogicInfo from "./branch-logic-info";
+import { useVariableList } from "../../nodes/if-else/hooks/use-variableList";
 
 type SharedConditionPanelProps = {
   node: Node<IfElseNodeData>;
@@ -30,6 +31,7 @@ export const SharedConditionPanel = ({ node, outputHandleCount }: SharedConditio
     handleConditionOperatorChange,
     handleConditionFieldChange,
   } = useIfElseBranchHandlers({ node, branches });
+  const { nodesOutputList } = useVariableList(node.id);
   const decisionBranchCount = branches.filter((branch) => !branch.isDefault).length;
   const resolvedOutputHandleCount = outputHandleCount ?? branches.length;
   const { variableOptions, variableOptionGroups } = useConditionVariableOptions(node.id);

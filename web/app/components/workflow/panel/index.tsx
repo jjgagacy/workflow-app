@@ -8,7 +8,7 @@ import { TitleInput } from "./components/title-input";
 import { useNodesUpdate } from "../hooks/use-nodesUpdate";
 import { NodePanels } from "../nodes/types";
 import { ChatEnvPanel } from "./chat-env";
-import { EnvPanel } from "./env";
+import { EnvPanel } from "./envs";
 import { useWorkflowHistory, WorkflowHistoryEvent } from "../hooks/use-workflow-history";
 import { Edge, Node } from "../types";
 import { SlideTransition } from "../../base/transition/slide-transition";

@@ -1,7 +1,7 @@
 import { CirclePlus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { ConditionBranch, ConditionOperator, OperatorType } from "../types";
-import type { OperatorOption } from "../hooks/use-if-else-operator-options";
+import type { OperatorOption } from "../hooks/use-operatorOptions";
 import type { SelectItem, VariableOption } from "./branch-list.types";
 import { BranchConditionItem } from "./branch-condition-item";
 

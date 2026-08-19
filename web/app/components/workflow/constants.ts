@@ -3,7 +3,7 @@ import { filterNodeDefaultData } from "./nodes/filter/data";
 import { codeNodeDefaultData } from "./nodes/code/data";
 import { variableAggregatorNodeDefaultData } from "./nodes/variable-aggregator/data";
 import { questionClassifierNodeDefaultData } from "./nodes/question-classifier/data";
-import { documentExtractorNodeDefaultData } from "./nodes/document-extractor/data";
+import { DEFAULT_OUTPUT_VARIABLE_NAME, documentExtractorNodeDefaultData } from "./nodes/document-extractor/data";
 import { llmNodeDefaultData } from "./nodes/llm/data";
 import { parameterExtractorNodeDefaultData } from "./nodes/parameter-extractor/data";
 import { listOperatorNodeDefaultData } from "./nodes/list-operator/data";
@@ -21,8 +21,8 @@ import type { ParameterExtractorNodeData } from "./nodes/parameter-extractor/typ
 import type { ListOperatorNodeData } from "./nodes/list-operator/types";
 import type { KnowledgeRetrievalNodeData } from "./nodes/knowledge-retrieval/types";
 import type { HttpRequestNodeData } from "./nodes/http-request/types";
-import type { NodeData } from "./types";
-import { NodeType } from "./types";
+import type { NodeData, Variable } from "./types";
+import { NodeType, ValueSourceMode, VariableDataType } from "./types";
 import { webhookNodeDefaultData } from "./nodes/webhook/data";
 import { scheduleNodeDefaultData } from "./nodes/schedule/data";
 
@@ -199,3 +199,179 @@ export const NODE_TYPE_ICON_COLOR_MAP: Partial<Record<NodeType, string>> = {
   [NodeType.Schedule]: ICON_COLORS.trigger,
 };
 
+export const SUPPORT_OUTPUT_VARIABLE_NODE_TYPES: NodeType[] = [
+  NodeType.Start,
+  NodeType.IfElse,
+  NodeType.Iteration,
+  NodeType.Loop,
+  NodeType.Code,
+  NodeType.TemplateTransform,
+  NodeType.VariableAssigner,
+  NodeType.VariableAggregator,
+  NodeType.ParameterExtractor,
+  NodeType.QuestionClassifier,
+  NodeType.Filter,
+  NodeType.DocExtractor,
+  NodeType.ListOperator,
+  NodeType.Agent,
+  NodeType.LLM,
+  NodeType.HttpRequest,
+  NodeType.KnowledgeRetrieval,
+  NodeType.Webhook,
+];
+
+export const dialogueCountVariable: Variable = {
+  id: 'system.dialogue_count',
+  name: 'system.dialogue_count',
+  sourceType: ValueSourceMode.constant,
+  dataType: VariableDataType.number,
+  label: 'workflow.var.system.dialogueCount',
+};
+
+export const conversationIdVariable: Variable = {
+  id: 'system.conversation_id',
+  name: 'system.conversation_id',
+  sourceType: ValueSourceMode.constant,
+  dataType: VariableDataType.string,
+  label: 'workflow.var.system.conversationId',
+};
+
+export const userIdVariable: Variable = {
+  id: 'system.user_id',
+  name: 'system.user_id',
+  sourceType: ValueSourceMode.constant,
+  dataType: VariableDataType.string,
+  label: 'workflow.var.system.userId',
+};
+
+export const appIdVariable: Variable = {
+  id: 'system.app_id',
+  name: 'system.app_id',
+  sourceType: ValueSourceMode.constant,
+  dataType: VariableDataType.string,
+  label: 'workflow.var.system.appId',
+};
+
+export const workflowIdVariable: Variable = {
+  id: 'system.workflow_id',
+  name: 'system.workflow_id',
+  sourceType: ValueSourceMode.constant,
+  dataType: VariableDataType.string,
+  label: 'workflow.var.system.workflowId',
+};
+
+export const workflowRunIdVariable: Variable = {
+  id: 'system.workflow_run_id',
+  name: 'system.workflow_run_id',
+  sourceType: ValueSourceMode.constant,
+  dataType: VariableDataType.string,
+  label: 'workflow.var.system.workflowRunId',
+};
+
+export const timestampVariable: Variable = {
+  id: 'system.timestamp',
+  name: 'system.timestamp',
+  sourceType: ValueSourceMode.constant,
+  dataType: VariableDataType.string,
+  label: 'workflow.var.system.timestamp',
+};
+
+export const HTTP_REQUEST_OUTPUT_VARIABLES: Variable[] = [
+  {
+    id: 'httpRequest.statusCode',
+    name: 'statusCode',
+    sourceType: ValueSourceMode.variable,
+    dataType: VariableDataType.number,
+    label: 'workflow.nodes.http-request.statusCode',
+  },
+  {
+    id: 'httpRequest.responseBody',
+    name: 'responseBody',
+    sourceType: ValueSourceMode.variable,
+    dataType: VariableDataType.string,
+    label: 'workflow.nodes.http-request.responseBody',
+  },
+  {
+    id: 'httpRequest.responseHeaders',
+    name: 'responseHeaders',
+    sourceType: ValueSourceMode.variable,
+    dataType: VariableDataType.object,
+    label: 'workflow.nodes.http-request.responseHeaders',
+  },
+  {
+    id: 'httpRequest.responseFiles',
+    name: 'responseFiles',
+    sourceType: ValueSourceMode.variable,
+    dataType: VariableDataType.array,
+    label: 'workflow.nodes.http-request.responseFiles',
+  },
+];
+
+export const KNOWLEDGE_RETRIEVAL_OUTPUT_VARIABLES: Variable[] = [
+  {
+    id: 'knowledgeRetrieval',
+    name: DEFAULT_OUTPUT_VARIABLE_NAME,
+    sourceType: ValueSourceMode.variable,
+    dataType: VariableDataType.array,
+    label: 'workflow.nodes.knowledge-retrieval.name',
+  }
+];
+
+export const TEMPLATE_TRANSFORM_OUTPUT_VARIABLES: Variable[] = [
+  {
+    id: 'templateTransform',
+    name: DEFAULT_OUTPUT_VARIABLE_NAME,
+    sourceType: ValueSourceMode.variable,
+    dataType: VariableDataType.string,
+    label: 'workflow.nodes.template-transform.name',
+  }
+];
+
+export const AGENT_OUTPUT_VARIABLES: Variable[] = [
+  {
+    id: 'text',
+    name: 'text',
+    sourceType: ValueSourceMode.variable,
+    dataType: VariableDataType.string,
+    label: 'workflow.nodes.agent.text',
+  },
+  {
+    id: 'files',
+    name: 'files',
+    sourceType: ValueSourceMode.variable,
+    dataType: VariableDataType.array,
+    label: 'workflow.nodes.agent.files',
+  },
+  {
+    id: 'json',
+    name: 'json',
+    sourceType: ValueSourceMode.variable,
+    dataType: VariableDataType.object,
+    label: 'workflow.nodes.agent.json',
+  },
+];
+
+// llm output text, reasoningContent, usage
+export const LLM_OUTPUT_VARIABLES: Variable[] = [
+  {
+    id: 'text',
+    name: 'text',
+    sourceType: ValueSourceMode.variable,
+    dataType: VariableDataType.string,
+    label: 'workflow.nodes.llm.text',
+  },
+  {
+    id: 'reasoningContent',
+    name: 'reasoningContent',
+    sourceType: ValueSourceMode.variable,
+    dataType: VariableDataType.string,
+    label: 'workflow.nodes.llm.reasoningContent',
+  },
+  {
+    id: 'usage',
+    name: 'usage',
+    sourceType: ValueSourceMode.variable,
+    dataType: VariableDataType.object,
+    label: 'workflow.nodes.llm.usage',
+  },
+];

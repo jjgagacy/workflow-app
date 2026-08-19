@@ -16,17 +16,17 @@ import {
   OperatorType,
 } from "../types";
 import { Node } from "../../../types";
-import { useIfElseOperatorOptions } from "./use-if-else-operator-options";
+import { useOperatorOptions } from "./use-operatorOptions";
 
 type UseIfElseBranchHandlersProps = {
   node: Node<IfElseNodeData>;
   branches: ConditionBranch[];
 };
 
-export const useIfElseBranchHandlers = ({ node, branches }: UseIfElseBranchHandlersProps) => {
+export const useBranchHandlers = ({ node, branches }: UseIfElseBranchHandlersProps) => {
   const updateActivePanelNode = useWorkflowStore((state) => state.updateActivePanelNode);
   const { onNodeDataUpdate } = useNodesUpdate();
-  const { operatorOptionsByType } = useIfElseOperatorOptions();
+  const { operatorOptionsByType } = useOperatorOptions();
 
   const readTypeFromOperator = (operator: ConditionOperator): OperatorType | null => {
     const [rawType] = String(operator).split(':');
