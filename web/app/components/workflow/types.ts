@@ -221,7 +221,6 @@ export enum FormVariableType {
   file = 'file',
   fileList = 'fileList',
   boolean = 'boolean',
-  object = 'object',
   json = 'json',
 }
 

@@ -12,7 +12,7 @@ import type {
 } from "./types";
 import { CodeEditor } from "../../components/code-editor";
 import { useConfig } from "./hooks/use-config";
-import { VarList } from "../../components/variable/var-list";
+import { VarList } from "./var-list";
 import { RetryConfig } from "../../components/retry/retry-config";
 import { ExceptionHandler } from "../../components/exception-handler/exception-handler";
 import { SimpleSelect } from "@/app/ui/select";

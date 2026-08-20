@@ -1,6 +1,7 @@
 import CascadeFilterMenu from "@/app/components/base/menu/cascade-filter-menu";
 import type { CascadeFilterOption } from "@/app/components/base/menu/cascade-filter-menu/types";
 import { SimpleSelect } from "@/app/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/app/ui/radio-group";
 import { Box, Calendar, CheckSquare, File, Hash, List, Type, X } from "lucide-react";
 import type { ComponentType } from "react";
 import type { Node } from "../../types";
@@ -88,6 +89,7 @@ export const BranchConditionItem = ({
 
   const selectedOperator = operatorOptions.find((operator) => operator.value === condition.operator.operator);
   const isUnary = selectedOperator?.isUnary ?? Boolean(condition.operator.isUnary);
+  const isBooleanType = conditionType === "boolean";
   const cascadeValue = {
     type: conditionType,
     operator: selectedOperator?.label || String(condition.operator.operator),
@@ -149,14 +151,29 @@ export const BranchConditionItem = ({
         </div>
         {/* 第二行：输入值（仅非一元操作符时显示，独占整行并撑满） */}
         {!isUnary && (
-          <div className="w-full">
-            <NodeInput
-              value={String(condition.rightValue ?? "")}
-              onChange={(event) => onConditionFieldChange(branchId, condition.id, "rightValue", event.target.value)}
-              placeholder={t("workflow.conditions.rightValuePlaceholder")}
-              className="w-full py-1.5"
-            />
-          </div>
+          isBooleanType ? (
+            <div className="w-full">
+              <RadioGroup
+                name={`${branchId}-${condition.id}-boolean`}
+                value={String(condition.rightValue ?? "true")}
+                onValueChange={(value) => onConditionFieldChange(branchId, condition.id, "rightValue", String(value))}
+                orientation="horizontal"
+                className="gap-4"
+              >
+                <RadioGroupItem value="true">True</RadioGroupItem>
+                <RadioGroupItem value="false">False</RadioGroupItem>
+              </RadioGroup>
+            </div>
+          ) : (
+            <div className="w-full">
+              <NodeInput
+                value={String(condition.rightValue ?? "")}
+                onChange={(event) => onConditionFieldChange(branchId, condition.id, "rightValue", event.target.value)}
+                placeholder={t("workflow.conditions.rightValuePlaceholder")}
+                className="w-full py-1.5"
+              />
+            </div>
+          )
         )}
       </div>
     </div>

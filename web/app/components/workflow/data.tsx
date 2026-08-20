@@ -28,35 +28,35 @@ import {
 import { NodeCatalog, NodeCategory, NodeType } from "./types";
 
 export const NODE_ICON_MAP: Record<NodeType, LucideIcon> = {
-  [NodeType.Base]: HelpCircle,
-  [NodeType.Start]: HelpCircle,
-  [NodeType.End]: HelpCircle,
-  [NodeType.Answer]: HelpCircle,
-  [NodeType.LLM]: HelpCircle,
-  [NodeType.KnowledgeRetrieval]: HelpCircle,
-  [NodeType.QuestionClassifier]: HelpCircle,
-  [NodeType.IfElse]: HelpCircle,
-  [NodeType.Code]: HelpCircle,
-  [NodeType.TemplateTransform]: HelpCircle,
-  [NodeType.HttpRequest]: HelpCircle,
-  [NodeType.VariableAssigner]: HelpCircle,
-  [NodeType.VariableAggregator]: HelpCircle,
-  [NodeType.ParameterExtractor]: HelpCircle,
-  [NodeType.Iteration]: HelpCircle,
-  [NodeType.Filter]: HelpCircle,
-  [NodeType.DocExtractor]: HelpCircle,
-  [NodeType.ListOperator]: HelpCircle,
-  [NodeType.Agent]: HelpCircle,
-  [NodeType.IterationStart]: HelpCircle,
-  [NodeType.Loop]: HelpCircle,
-  [NodeType.LoopStart]: HelpCircle,
-  [NodeType.LoopEnd]: HelpCircle,
-  [NodeType.Webhook]: HelpCircle,
-  [NodeType.Schedule]: HelpCircle,
+  [NodeType.Base]: CircuitBoard,
+  [NodeType.Start]: Play,
+  [NodeType.End]: SquareStack,
+  [NodeType.Answer]: Send,
+  [NodeType.LLM]: Brain,
+  [NodeType.KnowledgeRetrieval]: Search,
+  [NodeType.QuestionClassifier]: Split,
+  [NodeType.IfElse]: GitBranch,
+  [NodeType.Code]: Code2,
+  [NodeType.TemplateTransform]: FileText,
+  [NodeType.HttpRequest]: Globe,
+  [NodeType.VariableAssigner]: Hash,
+  [NodeType.VariableAggregator]: MergeIcon,
+  [NodeType.ParameterExtractor]: Search,
+  [NodeType.Iteration]: Repeat,
+  [NodeType.Filter]: Filter,
+  [NodeType.DocExtractor]: FileText,
+  [NodeType.ListOperator]: ListChecks,
+  [NodeType.Agent]: Brain,
+  [NodeType.IterationStart]: Play,
+  [NodeType.Loop]: Repeat,
+  [NodeType.LoopStart]: Play,
+  [NodeType.LoopEnd]: SquareStack,
+  [NodeType.Webhook]: WebhookIcon,
+  [NodeType.Schedule]: Timer,
 };
 
 export const getNodeIcon = (type?: NodeType, className?: string) => {
-  const Icon = type ? NODE_ICON_MAP[type] ?? HelpCircle : HelpCircle;
+  const Icon = type && NODE_ICON_MAP[type] ? NODE_ICON_MAP[type] : HelpCircle;
   return <Icon className={className} />;
 };
 

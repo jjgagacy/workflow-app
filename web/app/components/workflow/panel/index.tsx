@@ -79,6 +79,8 @@ export const Panel = () => {
   if (!activePanel)
     return null;
 
+  const nodeType = node?.data.type;
+
   return (
     <>
       <SlideTransition
@@ -106,7 +108,7 @@ export const Panel = () => {
         <div className="flex items-start justify-between gap-3 border-b border-[var(--border)] px-4 py-3">
           <div className="min-w-0">
             {isNodePanel && node ? (
-              <TitleInput title={title} onChange={handleTitleChange} />
+              <TitleInput nodeType={nodeType} title={title} onChange={handleTitleChange} />
             ) : (
               <div className="truncate text-sm font-semibold text-foreground">{title}</div>
             )}

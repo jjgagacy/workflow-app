@@ -16,7 +16,7 @@ export const VariableIconNode = ({
   const nodeIconClass = getNodeTypeIconColor(nodeType);
   return (
     <>
-      {getNodeTypeIcon(nodeType, `shrink-0 text-text-secondary h-4 w-4 ${nodeIconClass}`)}
+      {getNodeTypeIcon(nodeType, `shrink-0 h-4 w-4 ${nodeIconClass}`)}
       {
         nodeTitle && (
           <div

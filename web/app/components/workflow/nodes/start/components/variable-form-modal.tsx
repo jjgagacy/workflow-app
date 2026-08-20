@@ -71,7 +71,7 @@ export const VariableFormModal = ({ isOpen, existingVariables, initialVariable, 
         {features.needsDefaultInput && (
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-foreground">{t("workflow.startPanel.defaultValue")}</label>
-            {[FormVariableType.textArea, FormVariableType.object, FormVariableType.json].includes(draft.type) ? (
+            {[FormVariableType.textArea, FormVariableType.json].includes(draft.type) ? (
               <Textarea value={draft.default} onChange={(e) => setDraft((c) => ({ ...c, default: e.target.value }))} placeholder={t("workflow.startPanel.textareaDefaultPlaceholder")} rows={3} />
             ) : (
               <Input type={features.defaultInputType} value={draft.default} onChange={(e) => setDraft((c) => ({ ...c, default: e.target.value }))} placeholder={t("workflow.startPanel.textDefaultPlaceholder")} />

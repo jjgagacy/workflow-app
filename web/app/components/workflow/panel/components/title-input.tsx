@@ -1,17 +1,22 @@
 import { Pencil } from "lucide-react";
 import { useRef, useState } from "react";
 import { cn } from "@/utils/classnames";
+import { NodeType } from "../../types";
+import { getNodeTypeIcon } from "../../data";
+import { getNodeTypeIconColor } from "../../utils/node";
 
 type TitleInputProps = {
   title: string;
   onChange: (value: string) => void;
+  nodeType?: NodeType;
   className?: string;
   placeholder?: string;
 };
 
-export const TitleInput = ({ title, onChange, className }: TitleInputProps) => {
+export const TitleInput = ({ title, onChange, className, nodeType }: TitleInputProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const Icon = nodeType ? getNodeTypeIcon(nodeType, `h-3.5 w-3.5 ${getNodeTypeIconColor(nodeType)}`) : <Pencil className="h-3.5 w-3.5" />;
 
   const handleActivate = () => {
     setIsEditing(true);
@@ -39,7 +44,7 @@ export const TitleInput = ({ title, onChange, className }: TitleInputProps) => {
             handleActivate();
           }}
         >
-          <Pencil className="h-3.5 w-3.5" />
+          {Icon}
         </button>
       )}
       <input

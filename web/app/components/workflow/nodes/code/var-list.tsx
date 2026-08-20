@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { SimpleSelect } from "@/app/ui/select";
 import { Node } from "../../types";
 import { buildVariableSelectItems, buildWorkflowVariableOptions } from "../../components/nodes-shared/variable-select";
-import { CodeInputParameter, CodeNodeData } from "../../nodes/code/types";
+import { CodeInputParameter, CodeNodeData } from "./types";
 
 type VarListProps = {
   node: Node<CodeNodeData>;

@@ -71,7 +71,7 @@ export const useVariableDraft = (
     return {
       needsOptions: [FormVariableType.select, FormVariableType.multiSelect, FormVariableType.radio].includes(type),
       needsMaxLength: [FormVariableType.textInput, FormVariableType.textArea].includes(type),
-      needsDefaultInput: [FormVariableType.textInput, FormVariableType.textArea, FormVariableType.number, FormVariableType.boolean, FormVariableType.object, FormVariableType.json].includes(type),
+      needsDefaultInput: [FormVariableType.textInput, FormVariableType.textArea, FormVariableType.number, FormVariableType.boolean, FormVariableType.json].includes(type),
       needsCheckboxDefault: type === FormVariableType.checkbox,
       needsFileSettings: [FormVariableType.file, FormVariableType.fileList].includes(type),
       needsMaxFiles: type === FormVariableType.fileList,

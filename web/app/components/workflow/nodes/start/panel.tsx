@@ -45,7 +45,6 @@ const StartNodePanel = ({ node }: StartNodePanelProps) => {
     { value: FormVariableType.file, label: t("workflow.startPanel.type.file") },
     { value: FormVariableType.fileList, label: t("workflow.startPanel.type.fileList") },
     { value: FormVariableType.boolean, label: t("workflow.startPanel.type.boolean") },
-    { value: FormVariableType.object, label: t("workflow.startPanel.type.object") },
     { value: FormVariableType.json, label: t("workflow.startPanel.type.json") },
   ], [t]);
 
