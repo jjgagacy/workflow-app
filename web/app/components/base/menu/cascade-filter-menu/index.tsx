@@ -52,10 +52,10 @@ export default function CascadeFilterMenu({
   const SelectedIcon = options.find(o => o.key === value.type)?.icon || DefaultIcon;
 
   return (
-    <div className={cn("relative inline-block text-left z-50", className)}>
-      <Menu as="div" className="relative w-full">
+    <div className={cn("relative inline-flex text-left z-50", className)}>
+      <Menu as="div" className="relative h-full">
         {/* 触发按钮 */}
-        <MenuButton className="w-full inline-flex items-center gap-2 rounded-md border border-[var(--border)] bg-background px-3 py-1.5 text-smtransition focus:outline-none hover:bg-muted/10">
+        <MenuButton className="inline-flex h-full min-h-[38px] items-center gap-2 rounded-md border border-[var(--border)] bg-background px-3 py-1.5 text-sm whitespace-nowrap focus:outline-none hover:bg-muted/10">
           <SelectedIcon className="h-4 w-4 text-neutral-500" />
           <span>{value.operator || 'Select operator'}</span>
           <ChevronDown className="ml-auto h-3.5 w-3.5 text-neutral-400" />

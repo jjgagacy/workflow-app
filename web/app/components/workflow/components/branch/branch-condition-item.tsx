@@ -35,6 +35,7 @@ type BranchConditionItemProps = {
   onConditionTypeChange: (branchId: string, conditionId: string, value: OperatorType) => void;
   onConditionFieldChange: (branchId: string, conditionId: string, key: "leftValue" | "rightValue", value: string) => void;
   onConditionOperatorChange: (branchId: string, conditionId: string, value: ConditionOperator) => void;
+  onConditionVariableChange: (branchId: string, conditionId: string, value: { nodeId: string; path: string[] }) => void;
   nodeOutputVariables: NodeOutputVariable[];
   availableNodes: Node[];
 };
@@ -51,6 +52,7 @@ export const BranchConditionItem = ({
   onConditionTypeChange,
   onConditionFieldChange,
   onConditionOperatorChange,
+  onConditionVariableChange,
   nodeOutputVariables,
   availableNodes,
 }: BranchConditionItemProps) => {
@@ -92,6 +94,7 @@ export const BranchConditionItem = ({
   };
 
   const handleVarChange = (variable: Variable, selector: VariableSelector) => {
+    onConditionVariableChange(branchId, condition.id, selector);
   }
 
   return (
@@ -119,18 +122,20 @@ export const BranchConditionItem = ({
       {/* 表单垂直排布 */}
       <div className="flex flex-col gap-2.5">
         {/* 第一行：选择变量 和 类型操作符 并排平分 */}
-        <div className="grid grid-cols-2 gap-2 w-full">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-stretch gap-2 w-full">
           <VarPicker
             nodeId={nodeId}
-            value={''}
+            value={condition.variableSelector}
+            varType={condition.operator.leftType}
             onChange={handleVarChange}
             availableNodes={availableNodes}
             nodeOutputVariables={nodeOutputVariables}
+            className="h-full w-full"
           />
           <CascadeFilterMenu
             value={cascadeValue}
             options={cascadeOptions}
-            className="w-full"
+            className="w-fit"
             onChange={({ type, operator }) => {
               const nextType = type as OperatorType;
               const nextOperator = (operatorOptionsByType[nextType] ?? []).find((item) => item.label === operator);
@@ -142,7 +147,6 @@ export const BranchConditionItem = ({
             }}
           />
         </div>
-
         {/* 第二行：输入值（仅非一元操作符时显示，独占整行并撑满） */}
         {!isUnary && (
           <div className="w-full">

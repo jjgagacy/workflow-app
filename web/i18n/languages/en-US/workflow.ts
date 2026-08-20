@@ -594,6 +594,10 @@ const translation = {
     maxRetryCountDesc: 'The maximum number of times to retry when code execution fails.',
   },
   var: {
+    noAvailableVar: 'No Available Var',
+    noAvailableVarDescription: 'There are no available variables to select.',
+    searchVariable: 'Search Variable',
+    selectVariable: 'Select Variable',
     groups: {
       env: 'Environment',
       session: 'Session',

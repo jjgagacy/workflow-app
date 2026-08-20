@@ -1,4 +1,4 @@
-import { NodeData, ParameterType } from "../../types";
+import { NodeData, ParameterType, VariableSelector } from "../../types";
 
 export type OperatorType =
   | 'string'
@@ -62,6 +62,8 @@ export type Condition = {
   leftValue: ParameterType | ParameterType[];
   operator: ComparisonOperator;
   rightValue: ParameterType | ParameterType[];
+  variableSelector?: VariableSelector; // 
+  subVariable?: string;
 }
 
 export type ConditionEvaluationOptions = {

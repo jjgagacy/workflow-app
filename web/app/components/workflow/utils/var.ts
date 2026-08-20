@@ -1,4 +1,4 @@
-import { FormVariableType, VariableDataType } from "../types";
+import { FormVariableType, VariableDataType, VariableSelector } from "../types";
 
 export const formVariableTypeToVariableType = (formVariable: FormVariableType): VariableDataType => {
   return (
@@ -20,3 +20,16 @@ export const formVariableTypeToVariableType = (formVariable: FormVariableType): 
     )[formVariable] ?? VariableDataType.string
   );
 }
+
+export const isEnvVar = (variableSelector: VariableSelector) => {
+  return variableSelector.path[0] === 'env';
+}
+
+export const isSessionVar = (variableSelector: VariableSelector) => {
+  return variableSelector.path[0] === 'session';
+}
+
+export const isSystemVar = (variableSelector: VariableSelector) => {
+  return variableSelector.path[0] === 'system';
+}
+

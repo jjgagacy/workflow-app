@@ -30,6 +30,7 @@ export const ConditionPanel = ({ node, outputHandleCount }: ConditionPanelProps)
     handleConditionTypeChange,
     handleConditionOperatorChange,
     handleConditionFieldChange,
+    handleConditionVariableChange,
   } = useIfElseBranchHandlers({ node, branches });
   const { nodeVariableList, availableNodes } = useNodeConfig(node.id);
   const decisionBranchCount = branches.filter((branch) => !branch.isDefault).length;
@@ -61,6 +62,7 @@ export const ConditionPanel = ({ node, outputHandleCount }: ConditionPanelProps)
         handleConditionTypeChange={handleConditionTypeChange}
         handleConditionFieldChange={handleConditionFieldChange}
         handleConditionOperatorChange={handleConditionOperatorChange}
+        handleConditionVariableChange={handleConditionVariableChange}
         handleAddCondition={handleAddCondition}
       />
 

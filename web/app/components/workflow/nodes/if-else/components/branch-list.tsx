@@ -23,6 +23,7 @@ export const IfElseBranchList = ({
   handleConditionTypeChange,
   handleConditionFieldChange,
   handleConditionOperatorChange,
+  handleConditionVariableChange,
   handleAddCondition,
 }: IfElseBranchListProps) => {
   const { t } = useTranslation();
@@ -73,6 +74,7 @@ export const IfElseBranchList = ({
                 onConditionTypeChange={handleConditionTypeChange}
                 onConditionFieldChange={handleConditionFieldChange}
                 onConditionOperatorChange={handleConditionOperatorChange}
+                onConditionVariableChange={handleConditionVariableChange}
                 onAddCondition={handleAddCondition}
               />
             ) : (

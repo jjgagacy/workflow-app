@@ -48,7 +48,7 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(({
   } as React.CSSProperties;
   return (
     <HeadlessPopover
-      className="relative inline-block"
+      className="w-full relative inline-block"
       ref={ref}
     >
       {({ open }) => {

@@ -22,9 +22,45 @@ import {
   SquareStack,
   Timer,
   WebhookIcon,
-  Zap
+  Zap,
+  type LucideIcon,
 } from "lucide-react";
-import { NodeCatalog, NodeCategory } from "./types";
+import { NodeCatalog, NodeCategory, NodeType } from "./types";
+
+export const NODE_ICON_MAP: Record<NodeType, LucideIcon> = {
+  [NodeType.Base]: HelpCircle,
+  [NodeType.Start]: HelpCircle,
+  [NodeType.End]: HelpCircle,
+  [NodeType.Answer]: HelpCircle,
+  [NodeType.LLM]: HelpCircle,
+  [NodeType.KnowledgeRetrieval]: HelpCircle,
+  [NodeType.QuestionClassifier]: HelpCircle,
+  [NodeType.IfElse]: HelpCircle,
+  [NodeType.Code]: HelpCircle,
+  [NodeType.TemplateTransform]: HelpCircle,
+  [NodeType.HttpRequest]: HelpCircle,
+  [NodeType.VariableAssigner]: HelpCircle,
+  [NodeType.VariableAggregator]: HelpCircle,
+  [NodeType.ParameterExtractor]: HelpCircle,
+  [NodeType.Iteration]: HelpCircle,
+  [NodeType.Filter]: HelpCircle,
+  [NodeType.DocExtractor]: HelpCircle,
+  [NodeType.ListOperator]: HelpCircle,
+  [NodeType.Agent]: HelpCircle,
+  [NodeType.IterationStart]: HelpCircle,
+  [NodeType.Loop]: HelpCircle,
+  [NodeType.LoopStart]: HelpCircle,
+  [NodeType.LoopEnd]: HelpCircle,
+  [NodeType.Webhook]: HelpCircle,
+  [NodeType.Schedule]: HelpCircle,
+};
+
+export const getNodeIcon = (type?: NodeType, className?: string) => {
+  const Icon = type ? NODE_ICON_MAP[type] ?? HelpCircle : HelpCircle;
+  return <Icon className={className} />;
+};
+
+export const getNodeTypeIcon = (type?: NodeType, className?: string) => getNodeIcon(type, className);
 
 export const NODES_DATA: NodeCatalog[] = [
   // Flow 分类
@@ -39,7 +75,7 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'if',
     name: 'if',
-    icon: <GitBranch />,
+    icon: getNodeIcon(NodeType.IfElse),
     category: NodeCategory.FLOW,
     section: 'flow-control',
     description: ''
@@ -47,7 +83,7 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'switch',
     name: 'switch',
-    icon: <Split />,
+    icon: getNodeIcon(NodeType.IfElse),
     category: NodeCategory.FLOW,
     section: 'flow-control',
     description: ''
@@ -55,7 +91,7 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'iteration',
     name: 'iteration',
-    icon: <Repeat />,
+    icon: getNodeIcon(NodeType.Iteration),
     category: NodeCategory.FLOW,
     section: 'flow-control',
     description: ''
@@ -71,7 +107,7 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'merge',
     name: 'merge',
-    icon: <MergeIcon />,
+    icon: getNodeIcon(NodeType.IfElse),
     category: NodeCategory.FLOW,
     section: 'data',
     description: ''
@@ -79,7 +115,7 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'filter',
     name: 'filter',
-    icon: <Filter />,
+    icon: getNodeIcon(NodeType.Filter),
     category: NodeCategory.FLOW,
     section: 'data',
     description: ''
@@ -87,7 +123,7 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'code',
     name: 'code',
-    icon: <Code2 />,
+    icon: getNodeIcon(NodeType.Code),
     category: NodeCategory.FLOW,
     section: 'data',
     description: ''
@@ -111,7 +147,7 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'variable-aggregator',
     name: 'variable-aggregator',
-    icon: <SquareStack />,
+    icon: getNodeIcon(NodeType.VariableAggregator),
     category: NodeCategory.FLOW,
     section: 'data',
     description: ''
@@ -119,7 +155,7 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'parameter-extractor',
     name: 'parameter-extractor',
-    icon: <Hash />,
+    icon: getNodeIcon(NodeType.ParameterExtractor),
     category: NodeCategory.FLOW,
     section: 'data',
     description: ''
@@ -127,7 +163,7 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'question-classifier',
     name: 'question-classifier',
-    icon: <HelpCircle />,
+    icon: getNodeIcon(NodeType.QuestionClassifier),
     category: NodeCategory.FLOW,
     section: 'data',
     description: ''
@@ -135,7 +171,7 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'document-extractor',
     name: 'document-extractor',
-    icon: <FileText />,
+    icon: getNodeIcon(NodeType.DocExtractor),
     category: NodeCategory.FLOW,
     section: 'data',
     description: ''
@@ -143,7 +179,7 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'list-operator',
     name: 'list-operator',
-    icon: <ListChecks />,
+    icon: getNodeIcon(NodeType.ListOperator),
     category: NodeCategory.FLOW,
     section: 'data',
     description: ''
@@ -153,7 +189,7 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'agent',
     name: 'agent',
-    icon: <Brain />,
+    icon: getNodeIcon(NodeType.Agent),
     category: NodeCategory.AI,
     section: 'ai',
     description: ''
@@ -161,7 +197,7 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'llm',
     name: 'llm',
-    icon: <CircuitBoard />,
+    icon: getNodeIcon(NodeType.LLM),
     category: NodeCategory.AI,
     section: 'ai',
     description: ''
@@ -221,7 +257,7 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'start',
     name: 'start',
-    icon: <Play />,
+    icon: getNodeIcon(NodeType.Start),
     category: NodeCategory.START,
     section: 'start',
     description: ''
@@ -229,7 +265,7 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'webhook',
     name: 'webhook',
-    icon: <WebhookIcon />,
+    icon: getNodeIcon(NodeType.Webhook),
     category: NodeCategory.START,
     section: 'triggers',
     description: ''
@@ -237,7 +273,7 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'schedule',
     name: 'schedule',
-    icon: <Timer />,
+    icon: getNodeIcon(NodeType.Schedule),
     category: NodeCategory.START,
     section: 'triggers',
     description: ''
@@ -245,7 +281,7 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'http-request',
     name: 'http-request',
-    icon: <Send />,
+    icon: getNodeIcon(NodeType.HttpRequest),
     category: NodeCategory.CORE,
     section: 'network',
     description: ''
@@ -253,9 +289,10 @@ export const NODES_DATA: NodeCatalog[] = [
   {
     id: 'knowledge-retrieval',
     name: 'knowledge-retrieval',
-    icon: <Search />,
+    icon: getNodeIcon(NodeType.KnowledgeRetrieval),
     category: NodeCategory.CORE,
     section: 'knowledge',
     description: ''
   },
 ];
+

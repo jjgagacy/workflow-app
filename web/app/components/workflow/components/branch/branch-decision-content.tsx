@@ -19,6 +19,7 @@ type BranchDecisionContentProps = {
   onConditionTypeChange: (branchId: string, conditionId: string, value: OperatorType) => void;
   onConditionFieldChange: (branchId: string, conditionId: string, key: "leftValue" | "rightValue", value: string) => void;
   onConditionOperatorChange: (branchId: string, conditionId: string, value: ConditionOperator) => void;
+  onConditionVariableChange: (branchId: string, conditionId: string, value: { nodeId: string; path: string[] }) => void;
   onAddCondition: (branchId: string) => void;
 };
 
@@ -33,6 +34,7 @@ export const BranchDecisionContent = ({
   onConditionTypeChange,
   onConditionFieldChange,
   onConditionOperatorChange,
+  onConditionVariableChange,
   onAddCondition,
   nodeOutputVariables,
   availableNodes,
@@ -71,6 +73,7 @@ export const BranchDecisionContent = ({
               onConditionTypeChange={onConditionTypeChange}
               onConditionFieldChange={onConditionFieldChange}
               onConditionOperatorChange={onConditionOperatorChange}
+              onConditionVariableChange={onConditionVariableChange}
               nodeOutputVariables={nodeOutputVariables}
               availableNodes={availableNodes}
             />

@@ -5,10 +5,13 @@ import { cn } from "@/utils/classnames";
 import { Popover } from "@/app/components/base/popover";
 import Button from "@/app/components/base/button";
 import { VarPopList } from "./var-popList";
+import { OperatorType } from "../../nodes/if-else/types";
+import { VarPickerTrigger } from "./var-pickerTrigger";
 
 type PickerProps = {
   nodeId: string;
-  value: VariableSelector | string;
+  value?: VariableSelector;
+  varType?: OperatorType;
   readonly?: boolean;
   className?: string;
   onChange: (variable: Variable, selector: VariableSelector) => void;
@@ -33,22 +36,31 @@ export const VarPicker = ({
   availableNodes,
   nodeOutputVariables,
   placeholder,
-  minWidth
+  minWidth,
+  varType,
 }: PickerProps) => {
   const { t } = useTranslation();
   const store = useStoreApi();
   const reactflow = useReactFlow();
 
   return (
-    <div className={cn(className)}>
+    <div className={cn("h-full w-full", className)}>
       <Popover
-        trigger={<Button variant={'ghost'}>Open Popover</Button>}
+        trigger={(
+          <div className="w-full cursor-pointer">
+            <VarPickerTrigger
+              variableSelector={value}
+              varType={varType || "string"}
+              availableNodes={availableNodes}
+            />
+          </div>
+        )}
         direction="bottom"
         gap={4}
         offset={0}
         padding={8}
-        triggerClassName=""
-        panelClassName="bg-green-50 dark:bg-gray-800 rounded shadow-lg"
+        triggerClassName="h-full w-full"
+        panelClassName=""
         sameWidth={false}
         disabled={false}
         portal={true}

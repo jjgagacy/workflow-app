@@ -17,13 +17,13 @@ export const EmptyData = ({
 }: EmptyDataProps) => {
   return (
     <div className={cn(
-      "flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-gray-200 p-8 text-center",
+      "flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-[var(--border)] p-4 text-center",
       className
     )}>
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-50 text-gray-400">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background text-foreground">
         {icon || <Inbox className="h-6 w-6" />}
       </div>
-      <div className="flex flex-col items-start gap-1 self-stretch">
+      <div className="flex flex-col items-center gap-1 self-stretch">
         <div className="system-sm-medium text-text-secondary">{title}</div>
         {description}
       </div>

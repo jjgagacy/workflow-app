@@ -34,5 +34,6 @@ export type IfElseBranchListProps = {
   handleConditionTypeChange: (branchId: string, conditionId: string, value: OperatorType) => void;
   handleConditionFieldChange: (branchId: string, conditionId: string, key: "leftValue" | "rightValue", value: string) => void;
   handleConditionOperatorChange: (branchId: string, conditionId: string, value: ConditionOperator) => void;
+  handleConditionVariableChange: (branchId: string, conditionId: string, value: { nodeId: string; path: string[] }) => void;
   handleAddCondition: (branchId: string) => void;
 };

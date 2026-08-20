@@ -589,6 +589,10 @@ const translation = {
     maxRetryCountDesc: '当代码执行失败时，最大重试次数。',
   },
   var: {
+    noAvailableVar: '暂无可用参数',
+    noAvailableVarDescription: '当前没有可用的参数供选择。',
+    searchVariable: '搜索参数',
+    selectVariable: '选择参数',
     groups: {
       env: '环境变量',
       session: '会话变量',

@@ -201,6 +201,12 @@ export const useBranchHandlers = ({ node, branches }: UseIfElseBranchHandlersPro
     });
   };
 
+  const handleConditionVariableChange = (branchId: string, conditionId: string, value: Node["id"] extends never ? never : { nodeId: string; path: string[] }) => {
+    updateCondition(branchId, conditionId, (condition) => {
+      condition.variableSelector = value;
+    });
+  };
+
   return {
     handleAddBranch,
     handleRemoveBranch,
@@ -213,5 +219,6 @@ export const useBranchHandlers = ({ node, branches }: UseIfElseBranchHandlersPro
     handleConditionTypeChange,
     handleConditionOperatorChange,
     handleConditionFieldChange,
+    handleConditionVariableChange,
   };
 };
