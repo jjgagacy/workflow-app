@@ -1,6 +1,7 @@
-import React, { createContext, useRef } from "react";
+import React, { createContext, useEffect, useRef } from "react";
 import { createWorkflowStore, WorkflowState } from "./store";
 import { useStore } from "zustand";
+import { useNodesSyncDraft } from "./hooks/use-nodesSyncDraft";
 
 interface WorkflowContextProps {
   children: React.ReactNode;
@@ -22,6 +23,17 @@ export const WorkflowContextProvider = ({ children }: WorkflowContextProps) => {
       {children}
     </WorkflowContext.Provider>
   );
+}
+
+export const WorkflowSyncBridge = () => {
+  const { doSyncWorkflowDraft } = useNodesSyncDraft();
+  const setDoSyncWorkflowDraft = useWorkflowStore((state) => state.setDoSyncWorkflowDraft);
+
+  useEffect(() => {
+    setDoSyncWorkflowDraft(doSyncWorkflowDraft);
+  }, [doSyncWorkflowDraft, setDoSyncWorkflowDraft]);
+
+  return null;
 }
 
 export const useWorkflowContext = () => {

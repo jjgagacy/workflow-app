@@ -60,12 +60,12 @@ export const Tools = () => {
   }, [addHistoryState, fitView, getEdges, getNodes, setNodes]);
 
   const handleOpenEnvPanel = useCallback(() => {
-    openEnvPanel();
-  }, [openEnvPanel]);
+    openEnvPanel(t('workflow.variablePanel.environment.title'));
+  }, [openEnvPanel, t]);
 
   const handleOpenChatEnvPanel = useCallback(() => {
-    openChatEnvPanel();
-  }, [openChatEnvPanel]);
+    openChatEnvPanel(t('workflow.variablePanel.session.title'));
+  }, [openChatEnvPanel, t]);
 
   useKeyboardShortcut('n', handleAddNode);
   useKeyboardShortcut('n', handleAddNote, { shiftKey: true });
@@ -115,14 +115,14 @@ export const Tools = () => {
     },
     {
       id: 'env-panel',
-      label: 'Env',
+      label: t("workflow.variablePanel.environment.title"),
       shortcut: { keys: ['E'] },
       icon: <Cloud className={toolIconClassName} />,
       onClick: handleOpenEnvPanel,
     },
     {
       id: 'chat-env-panel',
-      label: 'Session',
+      label: t("workflow.variablePanel.session.title"),
       shortcut: { keys: ['E'], shiftKey: true },
       icon: <MonitorSmartphone className={toolIconClassName} />,
       onClick: handleOpenChatEnvPanel,

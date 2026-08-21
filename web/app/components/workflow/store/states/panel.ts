@@ -22,8 +22,8 @@ export type PanelState = {
   panelMode: WorkflowPanelMode;
   panelWidth: number;
   openNodePanel: (node: Node) => void;
-  openEnvPanel: () => void;
-  openChatEnvPanel: () => void;
+  openEnvPanel: (title?: string) => void;
+  openChatEnvPanel: (title?: string) => void;
   updateActivePanelNode: (node: Node) => void;
   closePanel: () => void;
   togglePanelMode: () => void;
@@ -47,16 +47,16 @@ export const createPanelState: StateCreator<PanelState> = (set, get) => ({
       node,
     },
   }),
-  openEnvPanel: () => set({
+  openEnvPanel: (title?: string) => set({
     activePanel: {
       type: "env",
-      title: "Env",
+      title: title || "Env",
     },
   }),
-  openChatEnvPanel: () => set({
+  openChatEnvPanel: (title?: string) => set({
     activePanel: {
       type: "chat-env",
-      title: "Session",
+      title: title || "Session",
     },
   }),
   updateActivePanelNode: (node: Node) => set((state) => {

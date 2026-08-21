@@ -45,17 +45,20 @@ export const BranchDecisionContent = ({
   return (
     <>
       <div className="mt-4 grid grid-cols-[52px_minmax(0,1fr)] gap-3">
-        <div className="flex min-h-full flex-col items-center justify-center py-2">
-          <div className="w-px flex-1 bg-[var(--border)]/80" />
+        <div className="relative flex min-h-full flex-col items-center justify-center py-3">
+          {/* 连接线：保持在左侧 42px */}
+          <div className="absolute top-3 bottom-3 inset-y-0 left-[42px] w-2.5 rounded-l-[8px] border border-r-0 border-[var(--border)]/80" />
+          {/* 背景遮罩：覆盖连接线的右半部分 */}
+          <div className="absolute top-1/2 left-[38px] h-[22px] w-[18px] -translate-y-1/2 bg-[var(--panel-bg)]" />
+          {/* 按钮：精确覆盖在连接线上方 */}
           <button
             type="button"
             onClick={() => onConditionGroupOperatorToggle(branch.id, branch.conditionGroup.logicalOperator)}
-            className="my-2 rounded-full bg-background px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-foreground shadow-sm ring-1 ring-[var(--border)] transition-colors hover:bg-muted/40"
+            className="absolute top-1/2 left-[25px] w-10 z-40 -translate-y-1/2 flex items-center justify-center gap-1 rounded-md border-[0.5px] border-[var(--border)] bg-background px-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text-accent-secondary)] shadow-xs select-none transition-colors hover:bg-muted/40"
             aria-label={t("workflow.conditions.toggleBranchLogic", { logic: branch.conditionGroup.logicalOperator.toUpperCase() })}
           >
             {branch.conditionGroup.logicalOperator.toUpperCase()}
           </button>
-          <div className="w-px flex-1 bg-[var(--border)]/80" />
         </div>
 
         <div className="min-w-0 space-y-2 rounded-2xl bg-muted/15 px-3 py-2">

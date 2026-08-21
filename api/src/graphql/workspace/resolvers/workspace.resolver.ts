@@ -104,4 +104,5 @@ export class WorkspaceResolver {
       plan: tenant.plan
     } as TenantResponse;
   }
+
 }

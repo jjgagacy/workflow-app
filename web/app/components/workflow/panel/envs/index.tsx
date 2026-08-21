@@ -1,37 +1,58 @@
+import { useTranslation } from "react-i18next";
 import { useWorkflowStore } from "../../context";
 import { WorkflowEnvType } from "../../store/states/env";
-import { VariablePanel } from "../variable-panel";
-
-const ENV_TYPE_OPTIONS: Array<{ value: WorkflowEnvType; label: string }> = [
-  { value: "string", label: "String" },
-  { value: "number", label: "Number" },
-  { value: "secret", label: "Secret" },
-];
+import { VariablePanel } from "../components/variable-panel";
 
 export const EnvPanel = () => {
+  const { t } = useTranslation();
   const envVariables = useWorkflowStore((state) => state.envVariables);
   const addEnvVariable = useWorkflowStore((state) => state.addEnvVariable);
   const updateEnvVariable = useWorkflowStore((state) => state.updateEnvVariable);
   const removeEnvVariable = useWorkflowStore((state) => state.removeEnvVariable);
+  const doSyncWorkflowDraft = useWorkflowStore((state) => state.doSyncWorkflowDraft);
+
+  const handleDeleteEnvVariable = async (_mode: "delete", _variable: Omit<typeof envVariables[number], "id">, id?: string) => {
+    if (id) {
+      removeEnvVariable(id);
+    }
+  };
+
+  const ENV_TYPE_OPTIONS: Array<{ value: WorkflowEnvType; label: string }> = [
+    { value: "string", label: t("workflow.variablePanel.types.string") },
+    { value: "number", label: t("workflow.variablePanel.types.number") },
+    { value: "secret", label: t("workflow.variablePanel.types.secret") },
+  ];
+
+  const handleSaveEnvVariable = async (mode: "create" | "edit", variable: Omit<typeof envVariables[number], "id">, id?: string) => {
+
+    await doSyncWorkflowDraft();
+
+    if (mode === "edit" && id) {
+      updateEnvVariable(id, variable);
+      return;
+    }
+
+    addEnvVariable(variable);
+  };
+
   return (
     <VariablePanel
-      title="Environment variables"
-      emptyText="No environment variables yet."
-      addButtonText="Add variable"
+      title={t("workflow.variablePanel.environment.title")}
+      emptyText={t("workflow.variablePanel.environment.empty")}
+      addButtonText={t("workflow.variablePanel.environment.add")}
       dialogTitle={{
-        create: "Add environment variable",
-        edit: "Edit environment variable",
+        create: t("workflow.variablePanel.environment.createDialogTitle"),
+        edit: t("workflow.variablePanel.environment.editDialogTitle"),
       }}
-      dialogDescription="Set the type, name, value and description for this workflow variable."
+      dialogDescription={t("workflow.variablePanel.environment.dialogDescription")}
       typeOptions={ENV_TYPE_OPTIONS}
       variables={envVariables}
-      addVariable={addEnvVariable}
-      updateVariable={updateEnvVariable}
-      removeVariable={removeEnvVariable}
+      onSave={handleSaveEnvVariable}
+      onDelete={handleDeleteEnvVariable}
       maskSecret
       validateValue={(type, value) => {
         if (type === "number" && value.trim() !== "" && Number.isNaN(Number(value))) {
-          return "Number variables must have a numeric value.";
+          return t("workflow.variablePanel.validation.number");
         }
 
         return "";

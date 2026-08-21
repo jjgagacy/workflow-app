@@ -30,7 +30,7 @@ interface MenuContainerProps {
 export const MenuContainer = ({ children, className, style, ref }: MenuContainerProps) => {
   return (
     <div
-      className={cn(`absolute z-20 rounded-md border-[0.5px] border-[var(--border)] bg-background shadow-md`, className)}
+      className={cn(`absolute z-20 rounded-md bg-background shadow-lg p-2`, className)}
       style={style}
       ref={ref}
     >

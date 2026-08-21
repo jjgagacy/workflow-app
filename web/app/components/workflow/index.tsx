@@ -9,7 +9,7 @@ import { Edge, Node } from "./types";
 import { WorkflowHistoryProvider } from "./store/workflow-history-store";
 import { Control } from "./operator/control";
 import { Sidebar } from "./operator/sidebar";
-import { useWorkflowStore } from "./context";
+import { useWorkflowStore, WorkflowSyncBridge } from "./context";
 import { NodeListSelector } from "./components/nodeListSelector";
 import { SlideTransition } from "../base/transition/slide-transition";
 import { useNodeSelectorClose } from "./hooks/use-nodeSelectorClose";
@@ -300,6 +300,7 @@ const Workflow = ({ nodes, edges, children }: WorkflowProps) => {
   return (
     <ReactFlowProvider>
       <WorkflowHistoryProvider nodes={nodes} edges={edges}>
+        <WorkflowSyncBridge />
         {children}
       </WorkflowHistoryProvider>
     </ReactFlowProvider>

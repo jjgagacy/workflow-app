@@ -4,6 +4,7 @@ import { TenantListener } from "./listeners/tenant.listener";
 import { AppListener } from "./listeners/app.listener";
 import { AppsModule } from "@/ai/apps/apps.module";
 import { InstalledAppService } from "@/ai/apps/installed-app.service";
+import { WorkflowListener } from "./listeners/workflow.listener";
 
 @Global()
 @Module({
@@ -11,10 +12,13 @@ import { InstalledAppService } from "@/ai/apps/installed-app.service";
   providers: [
     TenantListener,
     AppListener,
+    WorkflowListener,
     InstalledAppService
   ],
   exports: [
     TenantListener,
+    AppListener,
+    WorkflowListener,
   ],
 })
 export class EventModule { }

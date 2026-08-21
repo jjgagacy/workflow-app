@@ -8,6 +8,7 @@ import { createNodeState, NodeState } from './states/node';
 import { createWorkflowSlice, WorkflowConfigState } from './states/workflow';
 
 interface WorkflowStoreProps {
+  doSyncWorkflowDraft?: () => Promise<void>;
 }
 
 export type WorkflowState
@@ -19,14 +20,23 @@ export type WorkflowState
   & CommonState
   & WorkflowConfigState;
 
-export const createWorkflowStore = (props: WorkflowStoreProps) => {
-  return createStore<WorkflowState>((...args) => ({
-    ...createFormState(...args),
-    ...createChatEnvState(...args),
-    ...createEnvState(...args),
-    ...createCommonState(...args),
-    ...createPanelState(...args),
-    ...createNodeState(...args),
-    ...createWorkflowSlice(...args),
-  }));
+export const createWorkflowStore = (props: WorkflowStoreProps = {}) => {
+  const doSyncWorkflowDraft = props.doSyncWorkflowDraft ?? (async () => { });
+
+  return createStore<WorkflowState>((...args) => {
+    const state = {
+      ...createFormState(...args),
+      ...createChatEnvState(...args),
+      ...createEnvState(...args),
+      ...createCommonState(...args),
+      ...createPanelState(...args),
+      ...createNodeState(...args),
+      ...createWorkflowSlice(...args),
+    };
+
+    return {
+      ...state,
+      doSyncWorkflowDraft,
+    };
+  });
 }

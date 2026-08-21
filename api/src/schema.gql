@@ -395,6 +395,7 @@ type Mutation {
   removeAccount(id: Int!): Boolean!
   resetPasswordSendEmail(input: ResetPasswordSendEmailInput!): String!
   saveCredentials(input: CredentialInput!): Boolean!
+  saveWorkflowDraft(input: WorkflowDraftInput!): JSON!
   setRolePerms(input: RoleSetPermInput!): Boolean!
   switchTenant(tenant_id: String!): TenantResponse!
   toggleAccountStatus(id: Int!): Boolean!
@@ -474,6 +475,7 @@ type Query {
   currentUser: UserInfoResponse!
   depInfo(key: String!): Dep!
   deps(key: String, name: String, parent: String): [Dep!]!
+  getWorkflowDraft(appId: String!): JSON!
   hello: String!
   listPluginFromIds(pluginIds: [String!]!): [PluginInstallationResponse!]!
   menuInfo(id: Int!): Menu!
@@ -632,6 +634,14 @@ input ValidateChangeEmailOldInput {
 input ValidateDeleteAccountCodeInput {
   code: String!
   token: String!
+}
+
+input WorkflowDraftInput {
+  appId: String!
+  environmentVariables: JSON!
+  features: JSON!
+  graph: JSON!
+  sessionVariables: JSON!
 }
 
 type WorkspaceDetail {

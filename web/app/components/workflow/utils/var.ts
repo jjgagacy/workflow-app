@@ -1,5 +1,9 @@
 import { FormVariableType, VariableDataType, VariableSelector } from "../types";
 
+export const VARIABLE_NAME_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/;
+
+export const isValidVariableName = (value: string) => VARIABLE_NAME_PATTERN.test(value.trim());
+
 export const formVariableTypeToVariableType = (formVariable: FormVariableType): VariableDataType => {
   return (
     (

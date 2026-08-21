@@ -1,11 +1,12 @@
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Button from "@/app/components/base/button";
-import { Dialog, DialogActions, DialogButtonCancel, DialogButtonConfirm } from "@/app/ui/dialog";
-import { Input } from "@/app/ui/input";
-import { Select } from "@/app/ui/select";
-import { Textarea } from "@/app/ui/textarea";
+import { useDialog } from "@/app/components/hooks/use-dialog";
+import { isValidVariableName } from "@/app/components/workflow/utils/var";
+import { toast } from "@/app/ui/toast";
 import { cn } from "@/utils/classnames";
+import { VariableDialog } from "./variable-dialog";
 
 type VariableTypeOption<TType extends string> = {
   value: TType;
@@ -31,9 +32,8 @@ type VariablePanelProps<TType extends string, TVariable extends VariableRecord<T
   dialogDescription: string;
   typeOptions: Array<VariableTypeOption<TType>>;
   variables: TVariable[];
-  addVariable: (variable: Omit<TVariable, "id">) => TVariable;
-  updateVariable: (id: string, variable: Omit<TVariable, "id">) => void;
-  removeVariable: (id: string) => void;
+  onSave: (mode: VariableDialogMode, variable: Omit<TVariable, "id">, id?: string) => void | Promise<void>;
+  onDelete: (mode: "delete", variable: Omit<TVariable, "id">, id?: string) => void | Promise<void>;
   maskSecret?: boolean;
   validateValue?: (type: TType, value: string) => string;
 };
@@ -63,12 +63,13 @@ export const VariablePanel = <TType extends string, TVariable extends VariableRe
   dialogDescription,
   typeOptions,
   variables,
-  addVariable,
-  updateVariable,
-  removeVariable,
+  onSave,
+  onDelete,
   maskSecret = false,
   validateValue,
 }: VariablePanelProps<TType, TVariable>) => {
+  const { t } = useTranslation();
+  const { showConfirm } = useDialog();
   const [dialogMode, setDialogMode] = useState<VariableDialogMode>("create");
   const [editingVariableId, setEditingVariableId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -127,21 +128,21 @@ export const VariablePanel = <TType extends string, TVariable extends VariableRe
     const trimmedName = formState.name.trim();
 
     if (!trimmedName) {
-      return "Variable name is required.";
+      return t("workflow.variablePanel.validation.nameRequired");
     }
-
+    if (!isValidVariableName(trimmedName)) {
+      return t("workflow.variablePanel.validation.namePattern");
+    }
     const hasDuplicateName = variables.some((item) => {
       if (dialogMode === "edit" && item.id === editingVariableId) {
         return false;
       }
-
       return item.name === trimmedName;
     });
 
     if (hasDuplicateName) {
-      return "Variable name already exists.";
+      return t("workflow.variablePanel.validation.nameExists");
     }
-
     if (validateValue) {
       return validateValue(formState.type, formState.value);
     }
@@ -149,10 +150,11 @@ export const VariablePanel = <TType extends string, TVariable extends VariableRe
     return "";
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const nextError = validateForm();
     if (nextError) {
       setErrorMessage(nextError);
+      toast.error(nextError);
       return;
     }
 
@@ -163,20 +165,47 @@ export const VariablePanel = <TType extends string, TVariable extends VariableRe
       description: formState.description.trim(),
     } as Omit<TVariable, "id">;
 
-    if (dialogMode === "edit" && editingVariableId) {
-      updateVariable(editingVariableId, payload);
-    } else {
-      addVariable(payload);
-    }
+    try {
+      if (dialogMode === "edit" && editingVariableId) {
+        await onSave("edit", payload, editingVariableId);
+      } else {
+        await onSave("create", payload);
+      }
 
-    resetDialogState();
+      resetDialogState();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t("workflow.variablePanel.validation.nameExists");
+      setErrorMessage(message);
+      toast.error(message);
+    }
   };
 
-  const handleDelete = (id: string) => {
-    removeVariable(id);
+  const handleDelete = async (variable: TVariable) => {
+    const confirmed = await showConfirm(
+      t("workflow.variablePanel.deleteConfirm.title", { name: variable.name || t("workflow.variablePanel.deleteConfirm.defaultName") }),
+      t("workflow.variablePanel.deleteConfirm.message")
+    );
 
-    if (editingVariableId === id) {
-      resetDialogState();
+    if (!confirmed) {
+      return;
+    }
+
+    const payload = {
+      type: variable.type,
+      name: variable.name,
+      value: variable.value,
+      description: variable.description,
+    } as Omit<TVariable, "id">;
+
+    try {
+      await onDelete("delete", payload, variable.id);
+
+      if (editingVariableId === variable.id) {
+        resetDialogState();
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t("workflow.variablePanel.deleteConfirm.message");
+      toast.error(message);
     }
   };
 
@@ -185,10 +214,9 @@ export const VariablePanel = <TType extends string, TVariable extends VariableRe
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-muted/30 px-4 py-3">
           <div>
-            <div className="text-sm font-medium text-foreground">{title}</div>
             <div className="mt-1 text-xs text-muted-foreground">
               {variables.length
-                ? `${variables.length} variable${variables.length > 1 ? "s" : ""} configured.`
+                ? t("workflow.variablePanel.count", { count: variables.length })
                 : emptyText}
             </div>
           </div>
@@ -214,13 +242,13 @@ export const VariablePanel = <TType extends string, TVariable extends VariableRe
                       {maskSecret && variable.type === ("secret" as TType) ? maskSecretValue(variable.value) : variable.value || "-"}
                     </div>
                     <div className={cn("mt-2 text-xs text-muted-foreground", !variable.description && "italic")}>
-                      {variable.description || "No description"}
+                      {variable.description || t("workflow.variablePanel.noDescription")}
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
                     <button
                       type="button"
-                      aria-label={`Edit ${variable.name}`}
+                      aria-label={t("workflow.variablePanel.editAria", { name: variable.name })}
                       onClick={() => openEditDialog(variable)}
                       className="flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-muted-foreground transition-colors hover:border-[var(--border)] hover:bg-muted/70 hover:text-foreground"
                     >
@@ -228,8 +256,8 @@ export const VariablePanel = <TType extends string, TVariable extends VariableRe
                     </button>
                     <button
                       type="button"
-                      aria-label={`Delete ${variable.name}`}
-                      onClick={() => handleDelete(variable.id)}
+                      aria-label={t("workflow.variablePanel.deleteAria", { name: variable.name })}
+                      onClick={() => handleDelete(variable)}
                       className="flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-muted-foreground transition-colors hover:border-[var(--border)] hover:bg-muted/70 hover:text-foreground"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -241,74 +269,23 @@ export const VariablePanel = <TType extends string, TVariable extends VariableRe
           </div>
         ) : (
           <div className="rounded-lg border border-dashed border-[var(--border)] bg-muted/20 px-4 py-8 text-center text-sm text-muted-foreground">
-            Add your first variable to use it in this workflow.
+            {t("workflow.variablePanel.emptyState")}
           </div>
         )}
       </div>
 
-      <Dialog
+      <VariableDialog
         isOpen={isDialogOpen}
-        title={dialogMode === "edit" ? dialogTitle.edit : dialogTitle.create}
-        description={dialogDescription}
-        className="max-w-2xl! max-h-[90dvh]!"
+        dialogMode={dialogMode}
+        formState={formState}
+        errorMessage={errorMessage}
+        typeOptions={typeOptions}
+        dialogTitle={dialogTitle}
+        dialogDescription={dialogDescription}
         onCancel={resetDialogState}
-        actions={false}
-      >
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-foreground">Type</label>
-            <Select
-              value={formState.type}
-              onChange={(event) => updateFormField("type", event.target.value as TType)}
-            >
-              {typeOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-foreground">Variable name</label>
-            <Input
-              value={formState.name}
-              onChange={(event) => updateFormField("name", event.target.value)}
-              placeholder="e.g. API_BASE_URL"
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-foreground">Value</label>
-            <Input
-              value={formState.value}
-              onChange={(event) => updateFormField("value", event.target.value)}
-              placeholder="Enter a value"
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-foreground">Description</label>
-            <Textarea
-              value={formState.description}
-              onChange={(event) => updateFormField("description", event.target.value)}
-              placeholder="Optional description"
-              rows={3}
-            />
-          </div>
-
-          {errorMessage ? <div className="text-sm text-red-500">{errorMessage}</div> : null}
-        </div>
-
-        <DialogActions className="px-0 pb-0 pt-6">
-          <DialogButtonCancel onCancel={resetDialogState} cancelText="Cancel" />
-          <DialogButtonConfirm
-            onConfirm={handleSubmit}
-            isLoading={false}
-            confirmText={dialogMode === "edit" ? "Save" : "Add"}
-          />
-        </DialogActions>
-      </Dialog>
+        onSubmit={handleSubmit}
+        updateFormField={updateFormField}
+      />
     </>
   );
 };

@@ -12,6 +12,7 @@ import { EnvPanel } from "./envs";
 import { useWorkflowHistory, WorkflowHistoryEvent } from "../hooks/use-workflow-history";
 import { Edge, Node } from "../types";
 import { SlideTransition } from "../../base/transition/slide-transition";
+import { useTranslation } from "react-i18next";
 
 export const Panel = () => {
   const [title, setTitle] = useState("");
@@ -24,6 +25,7 @@ export const Panel = () => {
   const setPanelWidth = useWorkflowStore((state) => state.setPanelWidth);
   const updateActivePanelNode = useWorkflowStore((state) => state.updateActivePanelNode);
   const showNodeSelector = useWorkflowStore((state) => state.showNodeSelector);
+  const { t } = useTranslation();
   const { onNodeDataUpdate } = useNodesUpdate();
   const { addHistoryState } = useWorkflowHistory();
   const { handleResizeStart } = usePanelResize({
@@ -56,7 +58,6 @@ export const Panel = () => {
     }
     const { nodes, edges } = storeApi.getState();
     setTitle(value);
-
     const nextNode = {
       ...node,
       data: {
@@ -92,12 +93,17 @@ export const Panel = () => {
       </SlideTransition>
       <div
         className={cn(
-          "absolute z-[60] flex flex-col overflow-hidden rounded-md border border-[var(--border)] bg-background shadow-2xl transition-all duration-200 ease-out",
+          "fixed z-[60] flex flex-col overflow-hidden rounded-md border border-[var(--border)] bg-background shadow-2xl transition-all duration-200 ease-out",
           panelMode === "side"
-            ? (showNodeSelector ? "bottom-2 right-80 top-2" : "bottom-2 right-2 top-2")
+            ? "bottom-2 right-2 top-2"
             : "left-1/2 top-1/2 h-[min(80vh,720px)] -translate-x-1/2 -translate-y-1/2 rounded-2xl shadow-[0_30px_90px_-20px_rgb(0_0_0_/_35%)]",
         )}
-        style={{ width: resolvedWidth, ...(panelMode === "side" && showNodeSelector ? { right: 'calc(20rem + 10px)' } : {}) }}
+        style={{
+          width: resolvedWidth,
+          ...(panelMode === "side" && showNodeSelector
+            ? { right: "calc(20rem + 10px)" }
+            : {}),
+        }}
       >
         {panelMode === "side" && (
           <div
@@ -113,7 +119,7 @@ export const Panel = () => {
               <div className="truncate text-sm font-semibold text-foreground">{title}</div>
             )}
             <div className="mt-1 text-xs text-muted-foreground">
-              {isNodePanel ? "Node properties" : isEnvPanel ? "Environment variables" : "Session variables"}
+              {isNodePanel ? "Node properties" : isEnvPanel ? t("workflow.variablePanel.environment.description") : t("workflow.variablePanel.session.description")}
             </div>
           </div>
           <div className="flex items-center gap-1">

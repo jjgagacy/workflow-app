@@ -33,6 +33,7 @@ export type I18nTranslations = {
     };
     "app": {
         "APP_NOT_FOUND": string;
+        "WORKFLOW_NOT_FOUND": string;
     };
     "auth": {
         "PASSWORD_INVALID": string;

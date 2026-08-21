@@ -31,6 +31,12 @@ export class WorkflowEntity {
   @Column({ type: 'text', nullable: false })
   features!: string;
 
+  @Column({ type: 'text', nullable: false })
+  environmentVariables!: string;
+
+  @Column({ type: 'text', nullable: false })
+  sessionVariables!: string;
+
   @Column(() => Operate, { prefix: false })
   operate!: Operate;
 }
