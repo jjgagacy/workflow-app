@@ -2,6 +2,8 @@ import { useTranslation } from "react-i18next";
 import { useWorkflowStore } from "../../context";
 import { WorkflowChatEnvType } from "../../store/states/chat-env";
 import { VariablePanel } from "../components/variable-panel";
+import { getErrorMessage } from "@/utils/errors";
+import { toast } from "@/app/ui/toast";
 
 export const ChatEnvPanel = () => {
   const { t } = useTranslation();
@@ -9,10 +11,18 @@ export const ChatEnvPanel = () => {
   const addChatEnvVariable = useWorkflowStore((state) => state.addChatEnvVariable);
   const updateChatEnvVariable = useWorkflowStore((state) => state.updateChatEnvVariable);
   const removeChatEnvVariable = useWorkflowStore((state) => state.removeChatEnvVariable);
+  const doSyncWorkflowDraft = useWorkflowStore((state) => state.doSyncWorkflowDraft);
 
   const handleDeleteChatEnvVariable = async (_mode: "delete", _variable: Omit<typeof chatEnvVariables[number], "id">, id?: string) => {
     if (id) {
       removeChatEnvVariable(id);
+
+      try {
+        await doSyncWorkflowDraft();
+      } catch (error: any) {
+        console.error("Failed to sync workflow draft:", error);
+        toast.error(getErrorMessage(error) || 'sync workflow draft failed' + error.message);
+      }
     }
   };
 
@@ -50,13 +60,19 @@ export const ChatEnvPanel = () => {
     return "";
   };
 
-  const handleSaveChatEnvVariable = (mode: "create" | "edit", variable: Omit<typeof chatEnvVariables[number], "id">, id?: string) => {
+  const handleSaveChatEnvVariable = async (mode: "create" | "edit", variable: Omit<typeof chatEnvVariables[number], "id">, id?: string) => {
     if (mode === "edit" && id) {
       updateChatEnvVariable(id, variable);
-      return;
+    } else {
+      addChatEnvVariable(variable);
     }
 
-    addChatEnvVariable(variable);
+    try {
+      await doSyncWorkflowDraft();
+    } catch (error: any) {
+      console.error("Failed to sync workflow draft:", error);
+      toast.error(getErrorMessage(error) || 'sync workflow draft failed' + error.message);
+    }
   };
 
   return (

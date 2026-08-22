@@ -380,6 +380,7 @@ type Mutation {
   deleteModule(id: Int!): Boolean!
   deletePerm(input: PermInput!): Boolean!
   deleteRole(id: Int!): Boolean!
+  deleteWorkflow(appId: String!): Boolean!
   emailCodeLogin(input: EmailCodeLoginInput!): LoginResponse!
   emailCodeLoginSendEmail(input: EmailCodeLoginSendEmail!): String!
   emailCodeSignUp(input: EmailCodeSignUpInput!): LoginResponse!

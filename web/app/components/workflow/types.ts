@@ -278,3 +278,22 @@ export type NodeOutputVariable = {
   isStartNode?: boolean;
   isLoop?: boolean;
 }
+
+export enum WorkflowRunningStatus {
+  Waiting = 'waiting',
+  Running = 'running',
+  Success = 'success',
+  Failed = 'failed',
+  Canceled = 'canceled',
+}
+
+export type WorkflowRunningState = {
+  messageId?: string;
+  conversationId?: string;
+  state: {
+    workflowId?: string;
+    status?: string;
+    error?: string;
+  }
+}
+

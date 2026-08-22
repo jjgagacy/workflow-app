@@ -78,6 +78,35 @@ export class WorkflowResolver {
     });
   }
 
+  @Mutation(() => Boolean)
+  @UseGuards(LoginRequiredGuard)
+  @UseGuards(TenantContextGuard)
+  @UseGuards(AccountInitializedGuard)
+  @UseGuards(AppsBillingGuard)
+  async deleteWorkflow(
+    @Args('appId', { type: () => String, nullable: false }) appId: string,
+    @CurrentUser() user: any,
+    @CurrentTenent() tenant: any,
+  ): Promise<boolean> {
+    const account = await this.accountService.getById(user.id);
+    if (!account) {
+      throw AccountNotFoundError.create(this.i18n);
+    }
+
+    const app = await this.appsService.getAppByIdAndTenant(appId, tenant.id);
+    if (!app) {
+      throw new BadRequestException(this.i18n.t('app.APP_NOT_FOUND'));
+    }
+
+    const workflow = await this.workflowService.getByAppIdAndTenant(appId, tenant.id);
+    if (!workflow) {
+      throw WorkflowNotFoundError.create(this.i18n);
+    }
+
+    await this.workflowService.delete(workflow.id, tenant.id);
+    return true;
+  }
+
   @Query(() => GraphQLJSON)
   @UseGuards(LoginRequiredGuard)
   @UseGuards(TenantContextGuard)
@@ -100,7 +129,7 @@ export class WorkflowResolver {
 
     const workflow = await this.workflowService.getByAppIdAndTenant(appId, tenant.id);
     if (!workflow) {
-      return WorkflowNotFoundError.create(this.i18n);
+      throw WorkflowNotFoundError.create(this.i18n);
     }
 
     return this.workflowService.transformWorkflow(workflow);

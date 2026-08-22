@@ -15,6 +15,7 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { InjectRepository } from "@nestjs/typeorm";
 import { I18nService } from "nestjs-i18n";
 import { DataSource, EntityManager, FindManyOptions, FindOptionsOrder, FindOptionsWhere, Repository } from "typeorm";
+import { formatDate, formatDateSafely } from "@/common/utils/time";
 
 @Injectable()
 export class WorkflowService {
@@ -205,8 +206,8 @@ export class WorkflowService {
       features: JSON.parse(workflow.features || '{}'),
       environmentVariables: JSON.parse(workflow.environmentVariables || '{}'),
       sessionVariables: JSON.parse(workflow.sessionVariables || '{}'),
-      createdAt: workflow.operate?.createdAt,
-      updatedAt: workflow.operate?.updatedAt,
+      createdAt: formatDateSafely(workflow.operate?.createdAt),
+      updatedAt: formatDateSafely(workflow.operate?.updatedAt),
       createdBy: workflow.operate?.createdBy,
       updatedBy: workflow.operate?.updatedBy,
     };

@@ -5,5 +5,7 @@ export type GetNodeDefaultConfigResponse = {
 
 export type GetNodeDefaultConfigQueryVariables = {
   nodeType: string;
-  codeLanguage: string;
+  codeLanguage?: string;
 }
+
+export * from "./workflow-draft.type";

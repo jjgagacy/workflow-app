@@ -1,6 +1,7 @@
 import { Position } from "@xyflow/react";
 import { CATALOG_NODE_TYPE_MAP, CUSTOM_NODE_NAME, CUSTOM_SIMPLE_NODE_NAME, ICON_COLORS, NODE_TYPE_ICON_COLOR_MAP } from "../constants";
 import { Node, NodeCatalog, NodeCategory, NodeType } from "../types";
+import { produce } from "immer";
 
 export type ResolvedCatalogNode = {
   nodeType: NodeType;
@@ -105,3 +106,22 @@ export const getNodeTypeIconColor = (nodeType?: NodeType) => {
 
   return NODE_TYPE_ICON_COLOR_MAP[nodeType] || ICON_COLORS.neutral;
 };
+
+export const removePrivateData = <T extends { data?: Record<string, unknown> }>(
+  items: T[],
+): T[] => {
+  return produce(items, (draft) => {
+    draft.forEach((item) => {
+      const data = item.data
+      if (!data)
+        return
+
+      const record = data as Record<string, unknown>
+
+      Object.keys(record).forEach((key) => {
+        if (key.startsWith('_'))
+          delete record[key]
+      });
+    });
+  });
+}

@@ -2,6 +2,8 @@ import { useTranslation } from "react-i18next";
 import { useWorkflowStore } from "../../context";
 import { WorkflowEnvType } from "../../store/states/env";
 import { VariablePanel } from "../components/variable-panel";
+import { getErrorMessage } from "@/utils/errors";
+import { toast } from "sonner";
 
 export const EnvPanel = () => {
   const { t } = useTranslation();
@@ -14,6 +16,12 @@ export const EnvPanel = () => {
   const handleDeleteEnvVariable = async (_mode: "delete", _variable: Omit<typeof envVariables[number], "id">, id?: string) => {
     if (id) {
       removeEnvVariable(id);
+      try {
+        await doSyncWorkflowDraft();
+      } catch (error: any) {
+        console.error("Failed to sync workflow draft:", error);
+        toast.error(getErrorMessage(error) || 'sync workflow draft failed' + error.message);
+      }
     }
   };
 
@@ -24,15 +32,18 @@ export const EnvPanel = () => {
   ];
 
   const handleSaveEnvVariable = async (mode: "create" | "edit", variable: Omit<typeof envVariables[number], "id">, id?: string) => {
-
-    await doSyncWorkflowDraft();
-
     if (mode === "edit" && id) {
       updateEnvVariable(id, variable);
-      return;
+    } else {
+      addEnvVariable(variable);
     }
 
-    addEnvVariable(variable);
+    try {
+      await doSyncWorkflowDraft();
+    } catch (error: any) {
+      console.error("Failed to sync workflow draft:", error);
+      toast.error(getErrorMessage(error) || 'sync workflow draft failed' + error.message);
+    }
   };
 
   return (

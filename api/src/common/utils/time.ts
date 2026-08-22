@@ -206,3 +206,9 @@ export function toISOWithOffset(date: Date, timeZone: string): string {
 
   return `${yearStr}-${monthStr}-${dayStr}T${hourStr}:${minuteStr}:${secondStr}.${msStr}${sign}${hh}:${mm}`;
 }
+
+export const formatDateSafely = (time: Date | null | undefined) => {
+  if (time == null || time === undefined)
+    return '';
+  return formatDate(time);
+}
