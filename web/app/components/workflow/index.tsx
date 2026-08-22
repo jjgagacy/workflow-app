@@ -31,6 +31,7 @@ import { useWorkflowInteractions } from "./hooks/use-interactions";
 import { Tools } from "./components/tools";
 import { useWorkflow } from "./hooks/use-workflow";
 import { Operator } from "./operator";
+import { useRefreshWorkflowDraft } from "./hooks/use-refreshWorkflowDraft";
 
 const customGetNodesBounds = (nodes: any[]) => {
   if (nodes.length === 0) return { minX: 0, minY: 0, maxX: 0, maxY: 0, width: 0, height: 0 };
@@ -194,6 +195,12 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   }, []);
 
   useWorkflowShortcut();
+
+  // test
+  const { refreshWorkflowDraft } = useRefreshWorkflowDraft();
+  useEffect(() => {
+    refreshWorkflowDraft();
+  }, []);
 
   // console.log('render workflow body', { nodes, edges });
 

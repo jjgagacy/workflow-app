@@ -107,7 +107,7 @@ export class WorkflowResolver {
     return true;
   }
 
-  @Query(() => GraphQLJSON)
+  @Mutation(() => GraphQLJSON)
   @UseGuards(LoginRequiredGuard)
   @UseGuards(TenantContextGuard)
   @UseGuards(AccountInitializedGuard)

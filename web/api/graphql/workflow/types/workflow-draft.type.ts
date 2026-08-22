@@ -5,8 +5,8 @@ export type WorkflowDraft = {
   type: string;
   graph: Record<string, any>;
   features: Record<string, any>;
-  environmentVariables: Record<string, any>;
-  sessionVariables: Record<string, any>;
+  environmentVariables: Array<Record<string, any>>;
+  sessionVariables: Array<Record<string, any>>;
   createdAt?: string;
   updatedAt?: string;
   createdBy?: string | null;

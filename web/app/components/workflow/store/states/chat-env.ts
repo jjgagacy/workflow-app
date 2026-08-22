@@ -14,6 +14,7 @@ type WorkflowChatEnvInput = Omit<WorkflowChatEnvVariable, "id">;
 
 export type ChatEnvState = {
   chatEnvVariables: WorkflowChatEnvVariable[];
+  setChatEnvVariables: (chatEnvVariables: WorkflowChatEnvVariable[]) => void;
   addChatEnvVariable: (envVariable: WorkflowChatEnvInput) => WorkflowChatEnvVariable;
   updateChatEnvVariable: (id: string, envVariable: WorkflowChatEnvInput) => void;
   removeChatEnvVariable: (id: string) => void;
@@ -25,6 +26,9 @@ const createChatEnvId = () => {
 
 export const createChatEnvState: StateCreator<ChatEnvState> = (set) => ({
   chatEnvVariables: [],
+  setChatEnvVariables: (chatEnvVariables) => {
+    set({ chatEnvVariables });
+  },
   addChatEnvVariable: (envVariable) => {
     const nextEnvVariable = {
       id: createChatEnvId(),

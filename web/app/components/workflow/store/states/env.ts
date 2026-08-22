@@ -14,6 +14,7 @@ type WorkflowEnvInput = Omit<WorkflowEnvVariable, "id">;
 
 export type EnvState = {
   envVariables: WorkflowEnvVariable[];
+  setEnvVariables: (envVariables: WorkflowEnvVariable[]) => void;
   addEnvVariable: (envVariable: WorkflowEnvInput) => WorkflowEnvVariable;
   updateEnvVariable: (id: string, envVariable: WorkflowEnvInput) => void;
   removeEnvVariable: (id: string) => void;
@@ -37,6 +38,9 @@ const createInitialEnvVariables = (): WorkflowEnvVariable[] => {
 
 export const createEnvState: StateCreator<EnvState> = (set) => ({
   envVariables: createInitialEnvVariables(),
+  setEnvVariables: (envVariables) => {
+    set({ envVariables });
+  },
   addEnvVariable: (envVariable) => {
     const nextEnvVariable = {
       id: createEnvId(),

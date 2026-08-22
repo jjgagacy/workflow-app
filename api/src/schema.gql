@@ -389,6 +389,7 @@ type Mutation {
   forgetPasswordReset(input: ForgetPasswordResetInput!): Boolean!
   forgetPasswordSendEmail(input: ForgetPasswordInput!): String!
   forgetPasswordTokenCheck(input: ForgetPasswordInput!): ForgetPasswordCheckResponse!
+  getWorkflowDraft(appId: String!): JSON!
   installFromMarketplace(identifiers: [String!]!): PluginInstallResponse!
   inviteMemberActivation(input: InviteMemberActivationInput!): Boolean!
   inviteTokenCheck(token: String!): InviterResponse!
@@ -476,7 +477,6 @@ type Query {
   currentUser: UserInfoResponse!
   depInfo(key: String!): Dep!
   deps(key: String, name: String, parent: String): [Dep!]!
-  getWorkflowDraft(appId: String!): JSON!
   hello: String!
   listPluginFromIds(pluginIds: [String!]!): [PluginInstallationResponse!]!
   menuInfo(id: Int!): Menu!

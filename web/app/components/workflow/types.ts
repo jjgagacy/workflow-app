@@ -297,3 +297,8 @@ export type WorkflowRunningState = {
   }
 }
 
+export type WorkflowUpdateParams = {
+  nodes: Node[];
+  edges: Edge[];
+  transform: [number, number, number];
+}

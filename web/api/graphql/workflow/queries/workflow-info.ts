@@ -1,14 +1,14 @@
-import { createQueryHook } from "@/hooks/use-graphql";
+import { createMutationHook } from "@/hooks/use-graphql";
 import { GET_WORKFLOW_DRAFT } from "../queries";
 import { GetWorkflowDraftResponse, WorkflowDraft } from "../types/workflow-draft.type";
 
-export const useGetWorkflowDraft = createQueryHook<
+export const useGetWorkflowDraft = createMutationHook<
   GetWorkflowDraftResponse,
   { appId: string },
   WorkflowDraft
 >(
   GET_WORKFLOW_DRAFT,
   {
-    transform: (data) => { return data?.getWorkflowDraft; }
+    transform: (data) => data?.getWorkflowDraft,
   }
 );

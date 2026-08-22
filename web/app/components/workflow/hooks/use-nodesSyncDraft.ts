@@ -60,7 +60,6 @@ export const useNodesSyncDraft = () => {
       return;
 
     const postData = getSyncWorkflowData();
-    console.log('doSyncWorkflowDraft postData', postData)
     if (!postData)
       return;
 
