@@ -1,11 +1,15 @@
 import type { StateCreator } from 'zustand'
 import { WorkflowRunningState } from '../../types';
+import { useDebounce } from '@/hooks/use-debounce';
+import { debounce } from 'lodash-es';
 
 export type WorkflowConfigState = {
   initialized: boolean;
   nodeDefaultConfig: Record<string, any>;
   doSyncWorkflowDraft: () => Promise<void>;
   setDoSyncWorkflowDraft: (fn: () => Promise<void>) => void;
+  debounceSyncWorkflowDraft: () => Promise<void>;
+  setDebounceSyncWorkflowDraft: (fn: () => Promise<void>) => void;
   workflowRunningState?: WorkflowRunningState;
   setWorkflowRunningState: (state: WorkflowRunningState) => void;
   isSyncWorkflowDraft?: boolean;
@@ -23,6 +27,10 @@ export const createWorkflowSlice: WorkflowSliceCreator = (set, get) => ({
   setInitialized: (initialized: boolean) => { set(() => ({ initialized })) },
   doSyncWorkflowDraft: async () => { },
   setDoSyncWorkflowDraft: (fn: () => Promise<void>) => { set(() => ({ doSyncWorkflowDraft: fn })) },
+  debounceSyncWorkflowDraft: async () => { },
+  setDebounceSyncWorkflowDraft: debounce((syncWorkflowDraft) => {
+    syncWorkflowDraft();
+  }),
   workflowRunningState: undefined,
   setWorkflowRunningState: (state: WorkflowRunningState) => { set(() => ({ workflowRunningState: state })) },
   isSyncWorkflowDraft: false,

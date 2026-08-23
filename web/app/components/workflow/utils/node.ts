@@ -189,7 +189,7 @@ export const prepareNodes = (originNodes: Node[], originEdges: Edge[]) => {
     ...node,
     data: {
       ...node.data,
-      icon: normalizeNodeIcon(node),
+      // icon: normalizeNodeIcon(node),
     },
   }));
 };

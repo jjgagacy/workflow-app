@@ -28,9 +28,11 @@ export const WorkflowContextProvider = ({ children }: WorkflowContextProps) => {
 export const WorkflowSyncBridge = () => {
   const { doSyncWorkflowDraft } = useNodesSyncDraft();
   const setDoSyncWorkflowDraft = useWorkflowStore((state) => state.setDoSyncWorkflowDraft);
+  const setDebounceSyncWorkflowDraft = useWorkflowStore((state) => state.setDebounceSyncWorkflowDraft);
 
   useEffect(() => {
     setDoSyncWorkflowDraft(doSyncWorkflowDraft);
+    setDebounceSyncWorkflowDraft(doSyncWorkflowDraft);
   }, [doSyncWorkflowDraft, setDoSyncWorkflowDraft]);
 
   return null;
