@@ -27,7 +27,7 @@ const WorkflowAppContent = () => {
 
   const edges = useMemo(() => {
     if (workflowDraft) {
-      const edges = prepareEdges(workflowDraft.graph.edges || [], workflowDraft.graph.nodes || []);
+      const edges = prepareEdges(workflowDraft.graph.nodes || [], workflowDraft.graph.edges || []);
       console.log('edges', edges);
       return edges;
     }

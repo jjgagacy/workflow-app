@@ -1,6 +1,7 @@
 import { NodeProps } from "@xyflow/react";
 import { NodeSourceHandle } from "../../components/handle/node-source-handle";
 import { NodeHeader } from "../../components/nodes-shared";
+import { getNodeTypeIcon } from "../../data";
 import type { Node } from "../../types";
 import { getNodeTypeIconColor } from "../../utils/node";
 import { KNOWLEDGE_OUTPUT_VARIABLE_NAME } from "./data";
@@ -12,7 +13,7 @@ const KnowledgeRetrievalNode = ({ id, data }: NodeProps<Node<KnowledgeRetrievalN
   const { t } = useTranslation();
   const { normalizeKnowledgeBaseSelections, knowledgeBaseOptions } = useKnowledgeRetrieval();
   const label = data.label?.trim() || t('workflow.nodes.knowledgeRetrieval.label');
-  const iconColor = data.iconColor || getNodeTypeIconColor(data.type);
+  const iconColor = getNodeTypeIconColor(data.type);
   const inputVariable = data.inputVariable?.trim() || t('workflow.nodes.knowledge-retrieval.noInputVariable');
   const selections = normalizeKnowledgeBaseSelections(data.knowledgeBases);
   const selectedNames = selections
@@ -22,7 +23,7 @@ const KnowledgeRetrievalNode = ({ id, data }: NodeProps<Node<KnowledgeRetrievalN
 
   return (
     <div className="knowledge-retrieval-node relative">
-      <NodeHeader icon={data.icon} iconColor={iconColor} title={label} />
+      <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
       {!data.candidate && (
         <>
           <div className="space-y-2 p-4">

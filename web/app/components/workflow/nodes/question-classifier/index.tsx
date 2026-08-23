@@ -3,6 +3,7 @@ import { useEffect, useMemo } from "react";
 import { NodeSourceHandle } from "../../components/handle/node-source-handle";
 import { BranchItem, NodeHeader } from "../../components/nodes-shared";
 import { getWorkflowModelById } from "../../components/nodes-shared/model-options";
+import { getNodeTypeIcon } from "../../data";
 import type { Node } from "../../types";
 import { getNodeTypeIconColor } from "../../utils/node";
 import type { QuestionClassifierNodeData } from "./types";
@@ -12,7 +13,7 @@ import { useQuestionClassifier } from "./hooks";
 const QuestionClassifierNode = ({ id, data }: NodeProps<Node<QuestionClassifierNodeData>>) => {
   const { t } = useTranslation();
   const label = data.label?.trim() || t('workflow.nodes.question-classifier.name');
-  const iconColor = data.iconColor || getNodeTypeIconColor(data.type);
+  const iconColor = getNodeTypeIconColor(data.type);
   const updateNodeInternals = useUpdateNodeInternals();
   const { normalizeCategories, getDefaultCategoryName } = useQuestionClassifier();
 
@@ -26,7 +27,7 @@ const QuestionClassifierNode = ({ id, data }: NodeProps<Node<QuestionClassifierN
 
   return (
     <div className="question-classifier-node">
-      <NodeHeader icon={data.icon} iconColor={iconColor} title={label} />
+      <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
 
       {!data.candidate && (
         <>

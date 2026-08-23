@@ -6,17 +6,18 @@ import { useTranslation } from "react-i18next";
 import { getNodeTypeIconColor } from "../../utils/node";
 import { NodeSourceHandle } from "../../components/handle/node-source-handle";
 import { FileText, ListChecks } from "lucide-react";
+import { getNodeTypeIcon } from "../../data";
 
 const StartNode = ({ id, data }: NodeProps<Node<StartNodeData>>) => {
   const { t } = useTranslation();
   const label = data.label?.trim() || t('workflow.nodes.start.name');
-  const iconColor = data.iconColor || getNodeTypeIconColor(data.type);
+  const iconColor = getNodeTypeIconColor(data.type);
   const variables = data.formVariables ?? [];
   const requiredCount = variables.filter((item) => item.required).length;
 
   return (
     <div className="start-node relative">
-      <NodeHeader icon={data.icon} iconColor={iconColor} title={label} />
+      <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
       {!data.candidate && (
         <>
           <div className="px-3 pb-3">

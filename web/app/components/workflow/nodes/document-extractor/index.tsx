@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { NodeSourceHandle } from "../../components/handle/node-source-handle";
 import { NodeHeader } from "../../components/nodes-shared";
 import type { Node } from "../../types";
+import { getNodeTypeIcon } from "../../data";
 import { getNodeTypeIconColor } from "../../utils/node";
 import type { DocumentExtractorNodeData } from "./types";
 import { DEFAULT_OUTPUT_VARIABLE_NAME } from "./data";
@@ -10,13 +11,13 @@ import { DEFAULT_OUTPUT_VARIABLE_NAME } from "./data";
 const DocumentExtractorNode = ({ id, data }: NodeProps<Node<DocumentExtractorNodeData>>) => {
   const { t } = useTranslation();
   const label = data.label?.trim() || t('workflow.nodes.document-extractor.name') || 'Document Extractor';
-  const iconColor = data.iconColor || getNodeTypeIconColor(data.type);
+  const iconColor = getNodeTypeIconColor(data.type);
   const inputVariable = data.inputVariable?.trim();
   const outputVariableName = data.outputVariableName?.trim() || DEFAULT_OUTPUT_VARIABLE_NAME;
 
   return (
     <div className="document-extractor-node relative">
-      <NodeHeader icon={data.icon} iconColor={iconColor} title={label} />
+      <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
       {!data.candidate && (
         <>
           <div className="px-3 pb-3">

@@ -7,6 +7,7 @@ import { useWorkflowStore } from "../../context";
 import { Node } from "../../types";
 import { useIterationRequiredSize } from "../../hooks/use-iteration-required-size";
 import { getNodeTypeIconColor } from "../../utils/node";
+import { getNodeTypeIcon } from "../../data";
 import { NodeHeader } from "../../components/nodes-shared";
 import { NodeSourceHandle } from "../../components/handle/node-source-handle";
 import type { IterationNodeData } from "./types";
@@ -20,7 +21,7 @@ const IterationNode = ({ id, data }: NodeProps<Node<IterationNodeData>>) => {
   const setShowNodeSelector = useWorkflowStore((state) => state.setShowNodeSelector);
   const childNodes = useStore((state) => state.nodes.filter((node) => node.parentId === id) as Node[]);
   const childNodeCount = childNodes.length;
-  const iconColor = data.iconColor || getNodeTypeIconColor(data.type);
+  const iconColor = getNodeTypeIconColor(data.type);
   const label = data.label?.trim() || t('workflow.nodes.iteration.name');
   const hasChildren = childNodeCount > 0;
   const size = data.size;
@@ -73,7 +74,7 @@ const IterationNode = ({ id, data }: NodeProps<Node<IterationNodeData>>) => {
       />
       <div className="pointer-events-none relative flex min-h-[90px] flex-col">
         <div className="pointer-events-auto flex items-start justify-between gap-3 px-1 py-1.5">
-          <NodeHeader icon={data.icon} iconColor={iconColor} title={label} />
+          <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
           <button
             type="button"
             className="mr-2 mt-1 flex h-8 w-8 items-center justify-center rounded-md border border-[var(--border)] bg-background/90 text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
@@ -91,7 +92,7 @@ const IterationNode = ({ id, data }: NodeProps<Node<IterationNodeData>>) => {
           <div className="pointer-events-auto relative flex flex-1 items-center justify-center px-4 pb-4 pt-2">
             <div className="flex min-h-[120px] w-full flex-col items-center justify-center rounded-xl border border-dashed border-[var(--border)] bg-background/70 px-4 py-5 text-center">
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-muted/60 text-muted-foreground [&>svg]:h-5 [&>svg]:w-5">
-                {data.icon}
+                {getNodeTypeIcon(data.type, 'h-5 w-5')}
               </div>
               <div className="text-sm font-medium text-foreground">
                 {t('workflow.nodes.iteration.description')}

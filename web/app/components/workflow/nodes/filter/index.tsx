@@ -3,6 +3,7 @@ import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Node } from "../../types";
 import { NodeSourceHandle } from "../../components/handle/node-source-handle";
+import { getNodeTypeIcon } from "../../data";
 import { getNodeTypeIconColor } from "../../utils/node";
 import { useIfElseOperatorOptions } from "../if-else/hooks";
 import { getFilterPrimaryBranch } from "./data";
@@ -12,7 +13,7 @@ import { BranchItem, NodeHeader } from "../../components/nodes-shared";
 const FilterNode = ({ id, data }: NodeProps<Node<FilterNodeData>>) => {
   const { t } = useTranslation();
   const label = data.label?.trim() || "Filter";
-  const iconColor = data.iconColor || getNodeTypeIconColor(data.type);
+  const iconColor = getNodeTypeIconColor(data.type);
   const updateNodeInternals = useUpdateNodeInternals();
   const { operatorOptionsByType } = useIfElseOperatorOptions();
   const branch = useMemo(() => getFilterPrimaryBranch(data.branches), [data.branches]);
@@ -38,7 +39,7 @@ const FilterNode = ({ id, data }: NodeProps<Node<FilterNodeData>>) => {
 
   return (
     <div className="if-else-node">
-      <NodeHeader icon={data.icon} iconColor={iconColor} title={label} />
+      <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
       {!data.candidate && (
         <>
           <div className="space-y-2 p-4">

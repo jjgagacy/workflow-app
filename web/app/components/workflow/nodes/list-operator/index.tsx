@@ -1,6 +1,7 @@
 import { NodeProps } from "@xyflow/react";
 import { NodeSourceHandle } from "../../components/handle/node-source-handle";
 import { NodeHeader } from "../../components/nodes-shared";
+import { getNodeTypeIcon } from "../../data";
 import type { Node } from "../../types";
 import { getNodeTypeIconColor } from "../../utils/node";
 import { DEFAULT_LIST_OPERATOR_OUTPUT_VARIABLE_NAME } from "./data";
@@ -10,13 +11,13 @@ import { useTranslation } from "react-i18next";
 const ListOperatorNode = ({ id, data }: NodeProps<Node<ListOperatorNodeData>>) => {
   const { t } = useTranslation();
   const label = data.label?.trim() || t('workflow.nodes.list-operator.name');
-  const iconColor = data.iconColor || getNodeTypeIconColor(data.type);
+  const iconColor = getNodeTypeIconColor(data.type);
   const inputVariable = data.inputVariable?.trim() || t('workflow.nodes.list-operator.no-input-variable');
   const outputVariableName = data.outputVariableName?.trim() || DEFAULT_LIST_OPERATOR_OUTPUT_VARIABLE_NAME;
 
   return (
     <div className="list-operator-node relative">
-      <NodeHeader icon={data.icon} iconColor={iconColor} title={label} />
+      <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
       {!data.candidate && (
         <>
           <div className="px-3 pb-3">

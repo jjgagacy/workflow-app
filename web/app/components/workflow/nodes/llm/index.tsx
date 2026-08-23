@@ -2,6 +2,7 @@ import { NodeProps } from "@xyflow/react";
 import { NodeSourceHandle } from "../../components/handle/node-source-handle";
 import { NodeHeader } from "../../components/nodes-shared";
 import { getWorkflowModelById } from "../../components/nodes-shared/model-options";
+import { getNodeTypeIcon } from "../../data";
 import type { Node } from "../../types";
 import { getNodeTypeIconColor } from "../../utils/node";
 import type { LLMNodeData } from "./types";
@@ -11,7 +12,7 @@ import { LLM_DEFAULT_EXCEPTION_STRATEGY } from "./data";
 const LLMNode = ({ id, data }: NodeProps<Node<LLMNodeData>>) => {
   const { t } = useTranslation();
   const label = data.label?.trim() || 'LLM';
-  const iconColor = data.iconColor || getNodeTypeIconColor(data.type);
+  const iconColor = getNodeTypeIconColor(data.type);
   const model = getWorkflowModelById(data.modelId);
   const modelLabel = model ? `${model.provider} / ${model.name}` : t('workflow.nodes.no-selected-model');
   const enableVision = Boolean(data.enableVision);
@@ -22,7 +23,7 @@ const LLMNode = ({ id, data }: NodeProps<Node<LLMNodeData>>) => {
 
   return (
     <div className="llm-node relative">
-      <NodeHeader icon={data.icon} iconColor={iconColor} title={label} />
+      <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
       {!data.candidate && (
         <>
           <div className="space-y-2 p-4">

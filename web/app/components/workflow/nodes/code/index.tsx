@@ -2,6 +2,7 @@ import { NodeProps } from "@xyflow/react";
 import { useTranslation } from "react-i18next";
 import { NodeSourceHandle } from "../../components/handle/node-source-handle";
 import { NodeHeader } from "../../components/nodes-shared";
+import { getNodeTypeIcon } from "../../data";
 import type { Node } from "../../types";
 import { getNodeTypeIconColor } from "../../utils/node";
 import type { CodeNodeData } from "./types";
@@ -11,7 +12,7 @@ import { ArrowRight, RotateCcw, AlertCircle } from "lucide-react";
 const CodeNode = ({ id, data }: NodeProps<Node<CodeNodeData>>) => {
   const { t } = useTranslation();
   const label = data.label?.trim() || 'Code';
-  const iconColor = data.iconColor || getNodeTypeIconColor(data.type);
+  const iconColor = getNodeTypeIconColor(data.type);
   const inputCount = data.inputs?.length ?? 0;
   const outputCount = Object.keys(data.outputs ?? {}).length;
   const retryOnFailure = Boolean(data.retryOnFailure);
@@ -23,7 +24,7 @@ const CodeNode = ({ id, data }: NodeProps<Node<CodeNodeData>>) => {
 
   return (
     <div className="code-node relative">
-      <NodeHeader icon={data.icon} iconColor={iconColor} title={label} />
+      <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
       {!data.candidate && (
         <>
           <div className="px-3 pb-3">

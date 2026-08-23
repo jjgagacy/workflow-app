@@ -1,6 +1,7 @@
 import { NodeProps } from "@xyflow/react";
 import { NodeSourceHandle } from "../../components/handle/node-source-handle";
 import { NodeHeader } from "../../components/nodes-shared";
+import { getNodeTypeIcon } from "../../data";
 import type { Node } from "../../types";
 import { getNodeTypeIconColor } from "../../utils/node";
 import type { HttpRequestNodeData } from "./types";
@@ -10,7 +11,7 @@ import { useTranslation } from "react-i18next";
 const HttpRequestNode = ({ id, data }: NodeProps<Node<HttpRequestNodeData>>) => {
   const { t } = useTranslation();
   const label = data.label?.trim() || 'HTTP Request';
-  const iconColor = data.iconColor || getNodeTypeIconColor(data.type);
+  const iconColor = getNodeTypeIconColor(data.type);
   const method = data.method || 'GET';
   const url = data.url?.trim() || 'NO URL';
   const bodyType = data.bodyType || 'none';
@@ -21,7 +22,7 @@ const HttpRequestNode = ({ id, data }: NodeProps<Node<HttpRequestNodeData>>) => 
 
   return (
     <div className="http-request-node relative">
-      <NodeHeader icon={data.icon} iconColor={iconColor} title={label} />
+      <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
       {!data.candidate && (
         <>
           <div className="space-y-2 p-4">

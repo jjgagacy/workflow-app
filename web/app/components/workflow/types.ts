@@ -41,8 +41,6 @@ export type NodeData<T = {}> = {
   size?: Dimensions;
   position?: XYPosition;
   candidate?: boolean;
-  icon?: React.ReactNode;
-  iconColor?: string;
 } & T;
 
 export type Node<T = {}> = ReactFlowNode<NodeData<T>>;

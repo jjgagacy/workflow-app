@@ -1,5 +1,5 @@
 import { Position, Node as ReactFlowNode, Edge as ReactFlowEdge } from "@xyflow/react";
-import { CATALOG_NODE_TYPE_MAP, CUSTOM_NODE_NAME, CUSTOM_SIMPLE_NODE_NAME, ICON_COLORS, NODE_INITIAL_POSITION, NODE_POSITION_OFFSETS, NODE_TYPE_ICON_COLOR_MAP } from "../constants";
+import { CATALOG_NODE_TYPE_MAP, CUSTOM_EDGE_NAME, CUSTOM_NODE_NAME, CUSTOM_SIMPLE_NODE_NAME, ICON_COLORS, NODE_INITIAL_POSITION, NODE_POSITION_OFFSETS, NODE_TYPE_ICON_COLOR_MAP } from "../constants";
 import { Edge, Node, NodeCatalog, NodeCategory, NodeType } from "../types";
 import { getNodeTypeIcon } from "../data";
 import { produce } from "immer";
@@ -152,19 +152,19 @@ const processNodesAndEdges = (nodes: Node[], edges: Edge[]) => {
   return { nodes, edges };
 };
 
-const normalizeNodeIcon = (node: Node) => {
-  const icon = node.data?.icon;
-  if (!icon || typeof icon !== 'object' || !('type' in icon) || !('props' in icon)) {
-    return icon;
-  }
-
-  return getNodeTypeIcon(node.data.type, 'h-4 w-4');
-};
-
 export const prepareNodes = (originNodes: Node[], originEdges: Edge[]) => {
   // 深拷贝 + 预处理
   const { nodes, edges } = processNodesAndEdges(deepClone(originNodes), deepClone(originEdges));
   const firstNode = nodes[0];
+
+  nodes.forEach((node) => {
+    const { icon, iconColor, ...restData } = (node.data ?? {}) as Record<string, any>;
+    node.type = CUSTOM_NODE_NAME;
+    node.data = {
+      ...restData,
+      type: node.data?.type ?? NodeType.Base,
+    } as Node['data'];
+  });
 
   // 如果第一个节点没有位置，则为所有节点设置默认位置
   if (!firstNode?.position) {
@@ -189,7 +189,6 @@ export const prepareNodes = (originNodes: Node[], originEdges: Edge[]) => {
     ...node,
     data: {
       ...node.data,
-      // icon: normalizeNodeIcon(node),
     },
   }));
 };
@@ -278,20 +277,31 @@ export const prepareEdges = (originNodes: Node[], originEdges: Edge[]) => {
 
     return map;
   }, {} as Record<string, Node>);
-  // 移除环形边并设置 zIndex
+
+  // 这里必须显式保留 source / target / handle info，否则 React Flow 连线信息会丢失
   return removeCycleEdges(nodes, edges).map((edge) => {
     const sourceNode = nodesMap[edge.source];
     const targetNode = nodesMap[edge.target];
 
+    const normalizedEdge = {
+      ...edge,
+      id: edge.id,
+      source: edge.source,
+      target: edge.target,
+      sourceHandle: edge.sourceHandle ?? 'output',
+      targetHandle: edge.targetHandle ?? 'target',
+      type: CUSTOM_EDGE_NAME,
+    };
+
     if (!sourceNode || !targetNode) {
-      return edge;
+      return normalizedEdge;
     }
 
     // 如果源节点或目标节点是选中节点，则将边的 zIndex 设置为 1，否则设置为 0
     const zIndex = (selectedNode && (sourceNode.id === selectedNode.id || targetNode.id === selectedNode.id)) ? 1 : 0;
 
     return {
-      ...edge,
+      ...normalizedEdge,
       zIndex,
     };
   });

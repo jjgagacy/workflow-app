@@ -2,6 +2,7 @@ import { NodeProps } from "@xyflow/react";
 import type { Node } from "../../types";
 import { NodeSourceHandle } from "../../components/handle/node-source-handle";
 import { NodeHeader } from "../../components/nodes-shared";
+import { getNodeTypeIcon } from "../../data";
 import { useTranslation } from "react-i18next";
 import { getNodeTypeIconColor } from "../../utils/node";
 import { buildScheduleCronExpression } from "./data";
@@ -10,7 +11,7 @@ import { ScheduleNodeData } from "./types";
 const ScheduleNode = ({ id, data }: NodeProps<Node<ScheduleNodeData>>) => {
   const { t } = useTranslation();
   const label = data.label?.trim() || t('workflow.nodes.schedule.name');
-  const iconColor = data.iconColor || getNodeTypeIconColor(data.type);
+  const iconColor = getNodeTypeIconColor(data.type);
   const mode = data.mode || 'visual';
   const frequency = data.frequency || 'hourly';
   const cronExpression = buildScheduleCronExpression(data);
@@ -22,7 +23,7 @@ const ScheduleNode = ({ id, data }: NodeProps<Node<ScheduleNodeData>>) => {
 
   return (
     <div className="schedule-node relative">
-      <NodeHeader icon={data.icon} iconColor={iconColor} title={label} />
+      <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
       {!data.candidate && (
         <>
           <div className="space-y-2 p-4">

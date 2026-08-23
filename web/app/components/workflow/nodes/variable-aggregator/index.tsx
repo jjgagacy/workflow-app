@@ -1,6 +1,7 @@
 import { NodeProps } from "@xyflow/react";
 import { NodeSourceHandle } from "../../components/handle/node-source-handle";
 import { NodeHeader } from "../../components/nodes-shared";
+import { getNodeTypeIcon } from "../../data";
 import type { Node } from "../../types";
 import { getNodeTypeIconColor } from "../../utils/node";
 import type { VariableAggregatorNodeData } from "./types";
@@ -10,13 +11,13 @@ import { DEFAULT_AGGREGATOR_OUTPUT_NAME } from "./data";
 const VariableAggregatorNode = ({ id, data }: NodeProps<Node<VariableAggregatorNodeData>>) => {
   const { t } = useTranslation();
   const label = data.label?.trim() || t('workflow.nodes.variable-aggregator.name');
-  const iconColor = data.iconColor || getNodeTypeIconColor(data.type);
+  const iconColor = getNodeTypeIconColor(data.type);
   const variableCount = data.variables?.length ?? 0;
   const outputName = data.outputName?.trim() || DEFAULT_AGGREGATOR_OUTPUT_NAME;
 
   return (
     <div className="variable-aggregator-node relative">
-      <NodeHeader icon={data.icon} iconColor={iconColor} title={label} />
+      <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
       {!data.candidate && (
         <>
           <div className="px-3 pb-3">

@@ -532,8 +532,6 @@ export const useWorkflowInteractions = () => {
           type: nodeType,
           label,
           description,
-          icon,
-          iconColor,
           disabled: currentNode.data.disabled,
           size: currentNode.data.size,
           candidate: false,
@@ -585,8 +583,6 @@ export const useWorkflowInteractions = () => {
           type: nodeType,
           label,
           description,
-          icon,
-          iconColor,
           candidate: false,
         },
         position: {
@@ -657,8 +653,6 @@ export const useWorkflowInteractions = () => {
           type: nodeType,
           label,
           description,
-          icon,
-          iconColor,
         },
         position: {
           x: centerX - NODE_DEFAULT_WIDTH / 2,
@@ -728,8 +722,6 @@ export const useWorkflowInteractions = () => {
         label,
         description,
         candidate: true,
-        icon,
-        iconColor,
       },
       position: {
         x: 0,

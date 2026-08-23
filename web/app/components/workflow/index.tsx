@@ -217,18 +217,18 @@ export const WorkflowBody = ({
     }
   }, []);
 
-  // const { doSyncWorkflowDraft } = useNodesSyncDraft();
-  // const handleSyncWorkflowDraftWhenHidden = useCallback(() => {
-  //   doSyncWorkflowDraft(false, {
-  //     onError: (error) => {
-  //       console.error('Sync workflow draft failed:', error);
-  //     },
-  //   });
-  // }, []);
+  const { doSyncWorkflowDraft } = useNodesSyncDraft();
+  const handleSyncWorkflowDraftWhenHidden = useCallback(() => {
+    doSyncWorkflowDraft(false, {
+      onError: (error) => {
+        console.error('Sync workflow draft failed:', error);
+      },
+    });
+  }, []);
 
-  // useWorkflowDraftVisibilitySync({
-  //   syncWorkflowDraftWhenHidden: handleSyncWorkflowDraftWhenHidden,
-  // })
+  useWorkflowDraftVisibilitySync({
+    syncWorkflowDraftWhenHidden: handleSyncWorkflowDraftWhenHidden,
+  })
 
   // console.log('render workflow body', { nodes, edges });
 
