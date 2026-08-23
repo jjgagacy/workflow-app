@@ -6,6 +6,7 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { AppContextProvider } from "@/context/app-context";
 import { ModelProviderContextProvider } from "@/context/model-provider-context";
 import '@xyflow/react/dist/style.css';
+import { EventEmitterContextProvider } from "@/context/event-emitter-context";
 
 interface AdminLayoutProps {
   children: ReactNode,
@@ -19,13 +20,15 @@ export default function Layout({ children }: AdminLayoutProps) {
     <>
       <NuqsAdapter>
         <ProtectedRoute>
-          <AppContextProvider>
-            <ModelProviderContextProvider>
-              <AdminLayout routes={routes}>
-                {children}
-              </AdminLayout>
-            </ModelProviderContextProvider>
-          </AppContextProvider>
+          <EventEmitterContextProvider>
+            <AppContextProvider>
+              <ModelProviderContextProvider>
+                <AdminLayout routes={routes}>
+                  {children}
+                </AdminLayout>
+              </ModelProviderContextProvider>
+            </AppContextProvider>
+          </EventEmitterContextProvider>
         </ProtectedRoute>
       </NuqsAdapter>
     </>

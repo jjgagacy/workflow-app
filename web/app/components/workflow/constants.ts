@@ -25,6 +25,7 @@ import type { NodeData, Variable } from "./types";
 import { NodeType, ValueSourceMode, VariableDataType } from "./types";
 import { webhookNodeDefaultData } from "./nodes/webhook/data";
 import { scheduleNodeDefaultData } from "./nodes/schedule/data";
+import { Position, XYPosition } from "@xyflow/react";
 
 export const CUSTOM_NODE_NAME = 'customNode';
 export const CUSTOM_EDGE_NAME = 'customEdge';
@@ -375,3 +376,10 @@ export const LLM_OUTPUT_VARIABLES: Variable[] = [
     label: 'workflow.nodes.llm.usage',
   },
 ];
+
+export const EVENT_WORKFLOW_STATE_UPDATE = 'EVENT_WORKFLOW_STATE_UPDATE';
+
+export const NODE_WIDTH = 240;
+export const NODE_HEIGHT = 88;
+export const NODE_POSITION_OFFSETS = { x: 70, y: 40 } as XYPosition;
+export const NODE_INITIAL_POSITION = { x: 80, y: 80 } as XYPosition;

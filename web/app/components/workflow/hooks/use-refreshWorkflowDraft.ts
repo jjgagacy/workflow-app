@@ -4,6 +4,7 @@ import { useWorkflowStore } from "../context";
 import { useGetWorkflowDraft } from "@/api/graphql/workflow/queries/workflow-info";
 import { useWorkflowNodes } from "./use-workflowNodes";
 import { WorkflowUpdateParams } from "../types";
+import { maskSecretEnvVariables } from "@/utils/env";
 
 export const useRefreshWorkflowDraft = () => {
   const appInfo = useAppStore((state) => state.appInfo);
@@ -20,9 +21,8 @@ export const useRefreshWorkflowDraft = () => {
     setIsSyncWorkflowDraft(true);
     try {
       const res = await getWorkflowDraft({ appId: appInfo.id });
-      console.log('refreshWorkflowDraft res', res);
       applyWorkflowState(res.graph as WorkflowUpdateParams);
-      setEnvVariables(res.environmentVariables?.map((env: any) => env.type === 'secret' ? { ...env, value: '[__HIDDEN__]' } : env) || []);
+      setEnvVariables(maskSecretEnvVariables(res.environmentVariables || []));
       setChatEnvVariables(res.sessionVariables?.map((env: any) => env) || []);
     } finally {
       setIsSyncWorkflowDraft(false);

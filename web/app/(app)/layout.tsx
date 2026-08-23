@@ -7,6 +7,7 @@ import { AppContextProvider } from "@/context/app-context";
 import { ModelProviderContextProvider } from "@/context/model-provider-context";
 import '@xyflow/react/dist/style.css';
 import AppLayout from "../components/layout/app-layout";
+import { EventEmitterContextProvider } from "@/context/event-emitter-context";
 
 interface LayoutProps {
   children: ReactNode,
@@ -20,13 +21,15 @@ export default function Layout({ children }: LayoutProps) {
     <>
       <NuqsAdapter>
         <ProtectedRoute>
-          <AppContextProvider>
-            <ModelProviderContextProvider>
-              <AppLayout routes={routes}>
-                {children}
-              </AppLayout>
-            </ModelProviderContextProvider>
-          </AppContextProvider>
+          <EventEmitterContextProvider>
+            <AppContextProvider>
+              <ModelProviderContextProvider>
+                <AppLayout routes={routes}>
+                  {children}
+                </AppLayout>
+              </ModelProviderContextProvider>
+            </AppContextProvider>
+          </EventEmitterContextProvider>
         </ProtectedRoute>
       </NuqsAdapter>
     </>

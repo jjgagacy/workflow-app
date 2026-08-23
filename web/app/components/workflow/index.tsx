@@ -4,7 +4,7 @@ import { TextUpdaterNode } from "./components/text-updater";
 import { CustomNode } from "./components/custom-node";
 import { CustomEdge } from "./components/custom-edge";
 import { useAppearance } from "@/hooks/use-appearance";
-import { CUSTOM_EDGE_NAME, CUSTOM_NODE_NAME, CUSTOM_NOTE_NODE_NAME } from "./constants";
+import { CUSTOM_EDGE_NAME, CUSTOM_NODE_NAME, CUSTOM_NOTE_NODE_NAME, EVENT_WORKFLOW_STATE_UPDATE } from "./constants";
 import { Edge, Node } from "./types";
 import { WorkflowHistoryProvider } from "./store/workflow-history-store";
 import { Control } from "./operator/control";
@@ -32,6 +32,9 @@ import { Tools } from "./components/tools";
 import { useWorkflow } from "./hooks/use-workflow";
 import { Operator } from "./operator";
 import { useRefreshWorkflowDraft } from "./hooks/use-refreshWorkflowDraft";
+import { useEventEmitterContext } from "@/context/event-emitter-context";
+import { useEventEmitterHandlers } from "./hooks/use-eventEmitterHandlers";
+import { maskSecretEnvVariables } from "@/utils/env";
 
 const customGetNodesBounds = (nodes: any[]) => {
   if (nodes.length === 0) return { minX: 0, minY: 0, maxX: 0, maxY: 0, width: 0, height: 0 };
@@ -62,7 +65,11 @@ export type WorkflowBodyProps = {
   children: React.ReactNode;
 }
 
-export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: WorkflowBodyProps) => {
+export const WorkflowBody = ({
+  nodes: nodesData,
+  edges: edgesData,
+  children,
+}: WorkflowBodyProps) => {
   const defaultEdgeOptions: DefaultEdgeOptions = {
     type: CUSTOM_EDGE_NAME,
     animated: false,
@@ -88,6 +95,7 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   const interactionMode = useWorkflowStore(s => s.interactionMode);
   const setMousePosition = useWorkflowStore(s => s.setMousePosition);
   const canEditWorkflow = !workflowReadonly();
+  const { eventEmitter } = useEventEmitterContext();
   const panOnDragButtons = !canEditWorkflow
     ? false
     : interactionMode === 'hand'
@@ -195,6 +203,45 @@ export const WorkflowBody = ({ nodes: nodesData, edges: edgesData, children }: W
   }, []);
 
   useWorkflowShortcut();
+
+  const setEnvVariables = useWorkflowStore((state) => state.setEnvVariables);
+  const setChatEnvVariables = useWorkflowStore((state) => state.setChatEnvVariables);
+  const handleWorkflowStateUpdate = useCallback((payload: any) => {
+    const {
+      nodes,
+      edges,
+      features,
+      environmentVariables,
+      sessionVariables,
+      transform
+    } = payload;
+
+    setNodes(nodes);
+    setEdges(edges);
+
+    if (features) {
+      // todo
+    }
+    if (environmentVariables) {
+      // todo
+      setEnvVariables(maskSecretEnvVariables(environmentVariables));
+    }
+    if (sessionVariables) {
+      setChatEnvVariables(sessionVariables.map((env: any) => env));
+    }
+    if (transform) {
+      const [x, y, zoom] = transform;
+      setViewport({ x, y, zoom });
+    }
+  }, [setEnvVariables, setChatEnvVariables]);
+  // useEventEmitterHandlers({ onWorkflowStateUpdate: handleWorkflowStateUpdate });
+
+  eventEmitter?.useSubscription((v: any) => {
+    if (v.type === EVENT_WORKFLOW_STATE_UPDATE) {
+      handleWorkflowStateUpdate(v.payload);
+    }
+  });
+
 
   // test
   const { refreshWorkflowDraft } = useRefreshWorkflowDraft();
