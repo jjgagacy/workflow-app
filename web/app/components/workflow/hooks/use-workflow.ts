@@ -5,14 +5,16 @@ import { useTranslation } from "react-i18next"
 import { isIterationNodeType, isLoopNodeType, isStartNodeType } from "../node";
 import { NodeType } from "../types";
 import { SUPPORT_OUTPUT_VARIABLE_NODE_TYPES } from "../constants";
+import { useNodesReadonly } from "./use-nodesReadonly";
 
 export const useWorkflow = () => {
   const storeApi = useStoreApi();
   const reactFlow = useReactFlow();
   const { t } = useTranslation();
+  const { checkIsReadonly } = useNodesReadonly();
 
   const workflowReadonly = () => {
-    return false;
+    return checkIsReadonly();
   }
 
   // 选中节点
@@ -217,6 +219,8 @@ export const useWorkflow = () => {
     getNode,
     getNodeInfo,
     getLeafNodes,
-    getUpstreamNodesWithParent
+    getUpstreamNodesWithParent,
+    isNodeInIteration,
+    isNodeInLoop
   }
 }

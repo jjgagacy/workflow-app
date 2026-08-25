@@ -1,5 +1,5 @@
 import { BaseEdge, EdgeLabelRenderer, useReactFlow, EdgeProps, Position, getBezierPath } from '@xyflow/react';
-import { useMemo } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import { getEdgeStrokeColor } from '../utils/workflow';
 import { cn } from '@/utils/classnames';
 import { PlusCircle, Trash2 } from 'lucide-react';
@@ -20,6 +20,11 @@ export function CustomEdge({
 }: EdgeProps) {
   const { deleteElements } = useReactFlow();
   const setShowNodeSelector = useWorkflowStore((state) => state.setShowNodeSelector);
+
+  // 1. 使用局部 state 替代全局 setEdges，避免全图重绘导致事件丢失
+  const [isHovered, setIsHovered] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX: sourceX - 8,
     sourceY,
@@ -31,11 +36,25 @@ export function CustomEdge({
   });
 
   const stroke = useMemo(() => {
-    return getEdgeStrokeColor(Boolean(selected || data?._nodeHovering));
-  }, [data?._nodeHovering, selected]);
+    return getEdgeStrokeColor(Boolean(selected || isHovered || data?._nodeHovering));
+  }, [data?._nodeHovering, isHovered, selected]);
+
+  // 进入响应区：取消隐藏倒计时，设为 hover
+  const handleMouseEnter = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setIsHovered(true);
+  };
+
+  // 离开响应区：加入 80ms 防抖，防止鼠标在 Edge 与悬浮按钮之间快速移动时闪烁/卡住
+  const handleMouseLeave = () => {
+    timerRef.current = setTimeout(() => {
+      setIsHovered(false);
+    }, 80);
+  };
 
   return (
     <>
+      {/* 实际渲染的可视线条 */}
       <BaseEdge
         id={id}
         path={edgePath}
@@ -44,16 +63,32 @@ export function CustomEdge({
           strokeWidth: 1.5,
         }}
       />
+
+      {/* 2. 核心修正：增加一条透明的粗线条 (20px) 专门用于捕获鼠标 Hover 事件 */}
+      <path
+        d={edgePath}
+        fill="none"
+        stroke="transparent"
+        strokeWidth={20}
+        style={{ cursor: 'pointer' }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      />
+
       <EdgeLabelRenderer>
-        <div className={cn(
-          'nopan nodrag flex items-center gap-1 rounded-full border border-[var(--border)] bg-background/95 p-1 shadow-sm transition-transform',
-          data?._hovering ? 'block' : 'hidden',
-        )}
+        <div
+          className={cn(
+            'nopan nodrag flex items-center gap-1 rounded-full border border-[var(--border)] bg-background/95 p-1 shadow-sm transition-transform',
+            isHovered ? 'block' : 'hidden',
+          )}
           style={{
             position: 'absolute',
             transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
             pointerEvents: 'all',
           }}
+          // 当鼠标移动到 Label 按钮面板上时，保持 hover 状态
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
           <button
             type="button"

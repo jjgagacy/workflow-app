@@ -1,6 +1,6 @@
-import { Connection, EdgeMouseHandler, NodeMouseHandler, OnResize, ResizeParamsWithDirection, useReactFlow, useStoreApi } from "@xyflow/react";
+import { Connection, EdgeMouseHandler, NodeMouseHandler, OnNodeDrag, OnResize, ResizeParamsWithDirection, useReactFlow, useStoreApi, XYPosition } from "@xyflow/react";
 import { useTranslation } from "react-i18next";
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useRef } from "react";
 import { produce } from "immer";
 import { useWorkflow } from "./use-workflow";
 import { useWorkflowContext, useWorkflowStore } from "../context";
@@ -9,6 +9,8 @@ import { newCandidateNode } from "../utils/node";
 import { CUSTOM_EDGE_NAME, CUSTOM_NOTE_NODE_NAME, NODE_DEFAULT_DATA, NODE_DEFAULT_HEIGHT, NODE_DEFAULT_WIDTH } from "../constants";
 import { WorkflowHistoryContext } from "../store/workflow-history-store";
 import { useWorkflowHistory, WorkflowHistoryEvent } from "./use-workflow-history";
+import { SNAP_GUIDE_THRESHOLD, useHelpLine } from "./use-helpLine";
+import { useWorkflowDraftSync } from "./use-workflowDraftSync";
 // import { useWorkflowHistory } from "./use-workflow-history";
 
 const PASTE_OFFSET = 32;
@@ -46,6 +48,7 @@ export const useWorkflowInteractions = () => {
   const reactFlow = useReactFlow<Node, Edge>();
   const historyStore = useContext(WorkflowHistoryContext);
   const { handleUndo, handleRedo, addHistoryState } = useWorkflowHistory();
+  const { handleSyncWorkflowDraft } = useWorkflowDraftSync();
   const {
     workflowReadonly
   } = useWorkflow();
@@ -54,8 +57,12 @@ export const useWorkflowInteractions = () => {
   } = useWorkflow();
   const {
     connectingNodeState,
-    setConnectingNodeState
+    setConnectingNodeState,
+    setHorizontalSnapGuideLines,
+    setVerticalSnapGuideLines
   } = useWorkflowContext().getState();
+  const dragNodeStartPosition = useRef({ x: 0, y: 0 } as XYPosition);
+  const { handleSetGuildLines } = useHelpLine();
 
   const closeNodePanelIfDeleted = useCallback((deletedNodeIds: Set<string>) => {
     const { activePanel, closePanel } = workflowContext.getState();
@@ -215,7 +222,6 @@ export const useWorkflowInteractions = () => {
     if (workflowReadonly())
       return;
 
-
     if (connectingNodeState) {
       // todo
     }
@@ -280,30 +286,79 @@ export const useWorkflowInteractions = () => {
     openNodePanel(node as Node);
   }, [storeApi, workflowContext]);
 
-  const handleNodeDrag = useCallback<NodeMouseHandler>((_, node) => {
+  const handleNodeDragStart = useCallback<NodeMouseHandler>((e, node) => {
     if (workflowReadonly())
       return;
+
+    if (node.type === CUSTOM_NOTE_NODE_NAME)
+      return;
+
+    dragNodeStartPosition.current = { x: node.position.x, y: node.position.y };
   }, [storeApi, workflowContext]);
 
-  const handleNodeDragStart = useCallback<NodeMouseHandler>((_, node) => {
+  const handleNodeDrag = useCallback<OnNodeDrag>((e, node) => {
     if (workflowReadonly())
       return;
-  }, [storeApi, workflowContext]);
 
-  const handleNodeDragStop = useCallback<NodeMouseHandler>((_, node) => {
+    e.stopPropagation();
+    const { setNodes } = reactFlow;
+    const { nodes } = storeApi.getState();
+    const dragNode = nodes.find((n) => n.id === node.id);
+    if (!dragNode)
+      return;
+
+    const { showHorizontalSnapGuideLineNodes, showVerticalSnapGuideLineNodes } = handleSetGuildLines(dragNode);
+
+    const newNodes = produce(nodes as Node[], (draft) => {
+      const currentNode = draft.find(n => n.id === node.id)!;
+
+      const shouldSnapX = showVerticalSnapGuideLineNodes.length > 0 &&
+        Math.abs(showVerticalSnapGuideLineNodes[0].position.x - node.position.x) <= SNAP_GUIDE_THRESHOLD;
+      const shouldSnapY = showHorizontalSnapGuideLineNodes.length > 0 &&
+        Math.abs(showHorizontalSnapGuideLineNodes[0].position.y - node.position.y) <= SNAP_GUIDE_THRESHOLD;
+
+      currentNode.position.x = shouldSnapX
+        ? showVerticalSnapGuideLineNodes[0].position.x
+        : node.position.x;
+
+      currentNode.position.y = shouldSnapY
+        ? showHorizontalSnapGuideLineNodes[0].position.y
+        : node.position.y;
+    });
+    setNodes(newNodes);
+  }, [storeApi, workflowContext, handleSetGuildLines]);
+
+  const handleNodeDragStop = useCallback<OnNodeDrag>((_, node) => {
     if (workflowReadonly())
       return;
+
+    // 1. 清空对齐辅助线
+    setHorizontalSnapGuideLines([]);
+    setVerticalSnapGuideLines([]);
 
     const { nodes, edges } = storeApi.getState();
+    const { setNodes } = reactFlow;
+    const currentStoreNode = nodes.find(item => item.id === node.id);
+    if (!currentStoreNode)
+      return;
+
+    // 2. 使用 store 中已经吸附好的位置与起点位置对比
+    const { x, y } = dragNodeStartPosition.current;
+    if (!(x === currentStoreNode.position.x && y === currentStoreNode.position.y)) {
+      handleSyncWorkflowDraft();
+    }
+
+    // 3. 更新状态：保留 store 中已吸附的位置，仅更新 dragging 状态
     const nextNodes = produce(nodes as Node[], (draft) => {
-      const currentNode = draft.find(item => item.id === node.id);
-      if (!currentNode)
+      const draftNode = draft.find(item => item.id === node.id);
+      if (!draftNode)
         return;
 
-      currentNode.position = { ...node.position };
-      currentNode.selected = node.selected;
-      currentNode.dragging = false;
+      // 关键修正：移除 draftNode.position = { ...node.position }，保留已吸附坐标
+      draftNode.selected = node.selected;
+      draftNode.dragging = false;
     });
+    setNodes(nextNodes);
 
     addHistoryState(WorkflowHistoryEvent.NodeDragStop, { nodes: nextNodes, edges });
   }, [addHistoryState, storeApi, workflowReadonly]);

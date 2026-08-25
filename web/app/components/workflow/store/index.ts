@@ -6,6 +6,7 @@ import { createCommonState, CommonState } from './states/common';
 import { createPanelState, PanelState } from './states/panel';
 import { createNodeState, NodeState } from './states/node';
 import { createWorkflowSlice, WorkflowConfigState } from './states/workflow';
+import { createHelpLineSlice, HelpLineState } from './states/help-line';
 
 interface WorkflowStoreProps {
   doSyncWorkflowDraft?: () => Promise<void>;
@@ -18,7 +19,8 @@ export type WorkflowState
   & PanelState
   & NodeState
   & CommonState
-  & WorkflowConfigState;
+  & WorkflowConfigState
+  & HelpLineState;
 
 export const createWorkflowStore = (props: WorkflowStoreProps = {}) => {
   const doSyncWorkflowDraft = props.doSyncWorkflowDraft ?? (async () => { });
@@ -32,6 +34,7 @@ export const createWorkflowStore = (props: WorkflowStoreProps = {}) => {
       ...createPanelState(...args),
       ...createNodeState(...args),
       ...createWorkflowSlice(...args),
+      ...createHelpLineSlice(...args),
     };
 
     return {

@@ -36,6 +36,7 @@ import { useEventEmitterHandlers } from "./hooks/use-eventEmitterHandlers";
 import { useWorkflowDraftVisibilitySync } from "./hooks/use-workflowDraftVisibilitySync";
 import { useNodesSyncDraft } from "./hooks/use-nodesSyncDraft";
 import { useWorkflowDraftSync } from "./hooks/use-workflowDraftSync";
+import { HelpLine } from "../help-line";
 
 const customGetNodesBounds = (nodes: any[]) => {
   if (nodes.length === 0) return { minX: 0, minY: 0, maxX: 0, maxY: 0, width: 0, height: 0 };
@@ -300,6 +301,7 @@ export const WorkflowBody = ({
           <Panel position="top-left">
             <Tools />
           </Panel>
+          <HelpLine />
           <MiniMap
             color="var(--color-workflow-color)"
             bgColor="var(--color-workflow-bg)"
