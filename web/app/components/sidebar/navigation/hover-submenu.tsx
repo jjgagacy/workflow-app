@@ -1,5 +1,5 @@
 'use client';
-import { MenuItem } from '@/types/menu';
+import { MenuItem, renderMenuIcon, resolveMenuIconClassName } from '@/types/menu';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -60,7 +60,7 @@ export const HoverSubmenu = ({
             href={child.path || '#'}
             className={`flex mb-1 mx-2 items-center px-2 py-1 rounded-md ${getThemeHoverClass(activeTheme as ThemeType)} transition-colors ${isActive(child.path) ? `${getThemeActiveClass(activeTheme as ThemeType)} ${getThemeBgClass(activeTheme as ThemeType)} border border-[var(--border)]` : ""}`}
           >
-            <span className="mr-3">{child.icon}</span>
+            <span className="mr-3">{renderMenuIcon(child.icon, resolveMenuIconClassName(child))}</span>
             <span>{child.title}</span>
           </Link>
         ))}

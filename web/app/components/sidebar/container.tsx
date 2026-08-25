@@ -4,7 +4,6 @@ import { ReactNode } from 'react';
 import { Sidebar } from '../sidebar';
 import { Navigation } from '../sidebar/navigation';
 import { Route } from '@/types/route';
-import { fa } from 'zod/v4/locales';
 
 interface SidebarContainerProps {
   /** 是否折叠 */

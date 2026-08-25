@@ -24,13 +24,13 @@ export const BaseNode = (props: NodeProps<Node<NodeData>> & { children?: React.R
   return (
     <div
       className={cn(
-        "relative flex min-w-[200px] items-stretch gap-3 text-left transition-all",
+        "relative flex border rounded border-[var(--border)] min-w-[200px] items-stretch gap-3 text-left transition-all",
         isIterationNode ? "max-w-none" : "max-w-[260px]",
         isIterationNode && "pointer-events-none",
         !isDisabled && "hover:shadow-xl",
         isDisabled && "bg-gray-100 text-gray-400 opacity-80 dark:bg-gray-800/80 dark:text-gray-500",
-        selected && "ring-primary/30 shadow-xl",
-        data.candidate && "bg-background rounded-lg border border-[var(--border)]"
+        selected && "shadow-xl border-workflow-edge-line",
+        data._candidate && "bg-background rounded-lg border border-[var(--border)]"
       )}
       style={{
         width: data?.size?.width || NODE_DEFAULT_WIDTH,
@@ -43,7 +43,7 @@ export const BaseNode = (props: NodeProps<Node<NodeData>> & { children?: React.R
         isIterationNode && 'pointer-events-none',
       )}>
         {
-          !data.candidate && (
+          !data._candidate && (
             <NodeTargetHandle
               nodeId={nodeProps.id}
               handleId="target"

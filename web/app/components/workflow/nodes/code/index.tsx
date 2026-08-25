@@ -23,9 +23,9 @@ const CodeNode = ({ id, data }: NodeProps<Node<CodeNodeData>>) => {
     : t('workflow.errorHandler.returnDefault');
 
   return (
-    <div className="code-node relative">
+    <div className="code-node relative p-4">
       <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
-      {!data.candidate && (
+      {!data._candidate && (
         <>
           <div className="px-3 pb-3">
             <div className="rounded-lg bg-muted/20 px-3 py-2 text-xs space-y-1.5">

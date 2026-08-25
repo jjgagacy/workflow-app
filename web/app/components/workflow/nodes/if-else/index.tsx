@@ -23,7 +23,7 @@ const IfElseNode = ({ id, data }: NodeProps<Node<IfElseNodeData>>) => {
   return (
     <div className="if-else-node">
       <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
-      {!data.candidate && (
+      {!data._candidate && (
         <>
           <div className="space-y-2 p-4">
             {branches.map((branch, index) => {
@@ -55,7 +55,8 @@ const IfElseNode = ({ id, data }: NodeProps<Node<IfElseNodeData>>) => {
                   <NodeSourceHandle
                     nodeId={id}
                     handleId={branch.id}
-                    className="top-1/2 !-right-[16px] left-full ml-1"
+                    // 修改这里：-right-4 刚好抵消外层 p-4 的右内边距
+                    className="top-1/2 -right-4 -translate-y-1/2"
                   />
                 </BranchItem>
               );

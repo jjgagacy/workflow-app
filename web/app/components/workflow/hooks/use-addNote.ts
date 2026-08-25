@@ -16,7 +16,7 @@ export const useAddNote = () => {
         type: '' as any,
         content: "",
         size: { width: NODE_DEFAULT_WIDTH, height: NODE_DEFAULT_HEIGHT },
-        candidate: true,
+        _candidate: true,
         theme: NoteNodeTheme.gold,
       } as NoteNodeData,
       position: {

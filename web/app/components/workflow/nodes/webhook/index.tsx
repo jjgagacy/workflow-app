@@ -28,7 +28,7 @@ const WebhookNode = ({ id, data }: NodeProps<Node<WebhookNodeData>>) => {
   return (
     <div className="webhook-node relative">
       <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
-      {!data.candidate && (
+      {!data._candidate && (
         <>
           <div className="space-y-2 p-4">
             <div className="rounded-xl border border-[var(--border)] bg-muted/20 p-3">
@@ -41,7 +41,7 @@ const WebhookNode = ({ id, data }: NodeProps<Node<WebhookNodeData>>) => {
             </div>
           </div>
 
-          <NodeSourceHandle nodeId={id} handleId="output" />
+          <NodeSourceHandle nodeId={id} handleId="output" className="top-1/2 -right-4 -translate-y-1/2" />
         </>
       )}
     </div>

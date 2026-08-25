@@ -1,13 +1,43 @@
-import { ReactNode } from "react";
+import { ComponentType, createElement, isValidElement, ReactNode } from "react";
 import { RouteMeta } from "./route";
+
+export const DEFAULT_MENU_ICON_CLASS_NAME = "w-5 h-5";
+
+export type MenuIcon = ComponentType<{ className?: string; size?: number | string }> | ReactNode;
+
+function isRenderableIconComponent(value: unknown): value is ComponentType<{ className?: string; size?: number | string }> {
+  if (typeof value === 'function') return true;
+  return !!value && typeof value === 'object' && '$$typeof' in value && 'render' in value;
+}
+
+export function renderMenuIcon(icon: MenuIcon | undefined, className = DEFAULT_MENU_ICON_CLASS_NAME): ReactNode {
+  if (!icon) return null;
+
+  if (isValidElement(icon)) {
+    return icon;
+  }
+
+  if (isRenderableIconComponent(icon)) {
+    return createElement(icon, { className });
+  }
+
+  return icon;
+}
 
 export interface BaseMenuItem {
   key: string;
   title: string;  // This is required for all menu items
-  icon?: ReactNode;
+  icon?: MenuIcon;
+  className?: string;
+  iconClassName?: string;
   path?: string;
   meta?: RouteMeta;
   fetched?: boolean;
+}
+
+export function resolveMenuIconClassName(item: Pick<BaseMenuItem, 'className' | 'iconClassName'> | undefined, fallback = DEFAULT_MENU_ICON_CLASS_NAME): string {
+  if (!item) return fallback;
+  return item.iconClassName || item.className || fallback;
 }
 
 export interface ParentMenuItem extends BaseMenuItem {

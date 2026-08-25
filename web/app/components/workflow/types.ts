@@ -40,13 +40,14 @@ export type NodeData<T = {}> = {
 
   size?: Dimensions;
   position?: XYPosition;
-  candidate?: boolean;
+  _candidate?: boolean;
 } & T;
 
 export type Node<T = {}> = ReactFlowNode<NodeData<T>>;
 
 export type Edge<T = {}> = ReactFlowEdge<{
-  hovering?: boolean;
+  _hovering?: boolean;
+  _nodeHovering?: boolean;
   sourceType: NodeType;
   targetType: NodeType;
 } & T>;

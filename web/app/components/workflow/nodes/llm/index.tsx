@@ -24,7 +24,7 @@ const LLMNode = ({ id, data }: NodeProps<Node<LLMNodeData>>) => {
   return (
     <div className="llm-node relative">
       <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
-      {!data.candidate && (
+      {!data._candidate && (
         <>
           <div className="space-y-2 p-4">
             <div className="rounded-lg border border-[var(--border)] bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
@@ -40,7 +40,7 @@ const LLMNode = ({ id, data }: NodeProps<Node<LLMNodeData>>) => {
               </div>
             </div>
           </div>
-          <NodeSourceHandle nodeId={id} handleId="output" />
+          <NodeSourceHandle nodeId={id} handleId="output" className="top-1/2 -translate-y-1/2" />
         </>
       )}
     </div>

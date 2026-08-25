@@ -18,7 +18,7 @@ const DocumentExtractorNode = ({ id, data }: NodeProps<Node<DocumentExtractorNod
   return (
     <div className="document-extractor-node relative">
       <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
-      {!data.candidate && (
+      {!data._candidate && (
         <>
           <div className="px-3 pb-3">
             <div className="rounded-lg bg-muted/20 px-3 py-2 space-y-1">
@@ -36,7 +36,7 @@ const DocumentExtractorNode = ({ id, data }: NodeProps<Node<DocumentExtractorNod
               </div>
             </div>
           </div>
-          <NodeSourceHandle nodeId={id} handleId="output" />
+          <NodeSourceHandle nodeId={id} handleId="output" className="top-1/2 -translate-y-1/2" />
         </>
       )}
     </div>

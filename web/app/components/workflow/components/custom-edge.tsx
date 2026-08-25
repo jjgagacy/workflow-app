@@ -31,10 +31,8 @@ export function CustomEdge({
   });
 
   const stroke = useMemo(() => {
-    return getEdgeStrokeColor(Boolean(selected));
-  }, [selected]);
-
-
+    return getEdgeStrokeColor(Boolean(selected || data?._nodeHovering));
+  }, [data?._nodeHovering, selected]);
 
   return (
     <>
@@ -43,13 +41,13 @@ export function CustomEdge({
         path={edgePath}
         style={{
           stroke,
-          strokeWidth: 1,
+          strokeWidth: 1.5,
         }}
       />
       <EdgeLabelRenderer>
         <div className={cn(
           'nopan nodrag flex items-center gap-1 rounded-full border border-[var(--border)] bg-background/95 p-1 shadow-sm transition-transform',
-          data?.hovering ? 'block' : 'hidden',
+          data?._hovering ? 'block' : 'hidden',
         )}
           style={{
             position: 'absolute',

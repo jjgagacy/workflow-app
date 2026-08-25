@@ -52,6 +52,10 @@ export const useWorkflowInteractions = () => {
   const {
     onSelectNodes
   } = useWorkflow();
+  const {
+    connectingNodeState,
+    setConnectingNodeState
+  } = useWorkflowContext().getState();
 
   const closeNodePanelIfDeleted = useCallback((deletedNodeIds: Set<string>) => {
     const { activePanel, closePanel } = workflowContext.getState();
@@ -96,7 +100,7 @@ export const useWorkflowInteractions = () => {
       draft.dragging = false;
       draft.data = {
         ...draft.data,
-        candidate: false,
+        _candidate: false,
       };
     }));
 
@@ -120,18 +124,52 @@ export const useWorkflowInteractions = () => {
     if (workflowReadonly())
       return;
 
-    const { nodes, edges } = storeApi.getState();
-    const { addNodes, addEdges } = reactFlow;
+    const { edges } = storeApi.getState();
+    const { setEdges } = reactFlow;
 
-  }, [storeApi, workflowContext]);
+    const nextEdges = produce(edges, draft => {
+      draft.forEach((edge) => {
+        const isRelated = edge.source === node.id || edge.target === node.id;
+        if (!isRelated) {
+          return;
+        }
+
+        if (!edge.data) {
+          edge.data = { _nodeHovering: true } as any;
+          return;
+        }
+
+        edge.data._nodeHovering = true;
+      });
+    });
+
+    setEdges(nextEdges);
+  }, [reactFlow, storeApi, workflowReadonly]);
 
   const handleNodeMouseLeave = useCallback<NodeMouseHandler>((_, node) => {
     if (workflowReadonly())
       return;
 
-    const { nodes, edges } = storeApi.getState();
-    const { addNodes, addEdges } = reactFlow;
-  }, [storeApi, workflowContext]);
+    const { edges } = storeApi.getState();
+    const { setEdges } = reactFlow;
+
+    const nextEdges = produce(edges, draft => {
+      draft.forEach((edge) => {
+        const isRelated = edge.source === node.id || edge.target === node.id;
+        if (!isRelated) {
+          return;
+        }
+
+        if (!edge.data) {
+          return;
+        }
+
+        edge.data._nodeHovering = false;
+      });
+    });
+
+    setEdges(nextEdges);
+  }, [reactFlow, storeApi, workflowReadonly]);
 
   const handleNodeMouseMove = useCallback<NodeMouseHandler>((_, node) => {
     if (workflowReadonly())
@@ -153,14 +191,35 @@ export const useWorkflowInteractions = () => {
     }
   }, [onSelectNodes, workflowContext, workflowReadonly]);
 
-  const handleConnectStart = useCallback(() => {
+  const handleConnectStart = useCallback((_: any, { nodeId, handleType, handleId }: any) => {
     if (workflowReadonly())
       return;
+
+    if (nodeId && handleType) {
+      const { nodes } = storeApi.getState();
+      const node = nodes.find(n => n.id === nodeId);
+
+      if (node?.type === CUSTOM_NOTE_NODE_NAME)
+        return;
+
+      setConnectingNodeState({
+        nodeId,
+        handleType,
+        handleId,
+        nodeType: node?.data.type || ''
+      })
+    }
   }, [storeApi, workflowContext]);
 
   const handleConnectEnd = useCallback(() => {
     if (workflowReadonly())
       return;
+
+
+    if (connectingNodeState) {
+      // todo
+    }
+    setConnectingNodeState(undefined);
   }, [storeApi, workflowContext]);
 
   const handleConnect = useCallback((params: Connection) => {
@@ -202,7 +261,7 @@ export const useWorkflowInteractions = () => {
       sourceHandle: sourceHandle,
       targetHandle: targetHandle,
       data: {
-        hovering: false,
+        _hovering: false,
         sourceType: sourceNode.data.type,
         targetType: targetNode.data.type,
       }
@@ -534,7 +593,7 @@ export const useWorkflowInteractions = () => {
           description,
           disabled: currentNode.data.disabled,
           size: currentNode.data.size,
-          candidate: false,
+          _candidate: false,
         };
       });
 
@@ -583,7 +642,7 @@ export const useWorkflowInteractions = () => {
           type: nodeType,
           label,
           description,
-          candidate: false,
+          _candidate: false,
         },
         position: {
           x: CHILD_NODE_OFFSET_X,
@@ -610,7 +669,7 @@ export const useWorkflowInteractions = () => {
             target: newNode.id,
             targetHandle: 'target',
             data: {
-              hovering: false,
+              _hovering: false,
               sourceType: edgeSourceNode.data.type,
               targetType: nodeType,
             },
@@ -687,7 +746,7 @@ export const useWorkflowInteractions = () => {
           sourceHandle: previousNodeSourceHandle,
           target: newNode.id,
           data: {
-            hovering: false,
+            _hovering: false,
             sourceType: previousNode.data.type,
             targetType: nodeType,
           }
@@ -700,7 +759,7 @@ export const useWorkflowInteractions = () => {
           target: nextNodeId,
           targetHandle: nextNodeTargetHandle,
           data: {
-            hovering: false,
+            _hovering: false,
             sourceType: nodeType,
             targetType: nextNode.data.type,
           }
@@ -721,7 +780,7 @@ export const useWorkflowInteractions = () => {
         type: nodeType,
         label,
         description,
-        candidate: true,
+        _candidate: true,
       },
       position: {
         x: 0,
@@ -744,9 +803,9 @@ export const useWorkflowInteractions = () => {
       if (!currentEdge)
         return;
       if (!currentEdge.data) {
-        currentEdge.data = { hovering: true } as any;
+        currentEdge.data = { _hovering: true } as any;
       } else {
-        currentEdge.data.hovering = true;
+        currentEdge.data._hovering = true;
       }
     });
     setEdges(newEdges);
@@ -762,7 +821,7 @@ export const useWorkflowInteractions = () => {
       const currentEdge = draft.find(e => e.id === edge.id);
       if (!currentEdge?.data)
         return;
-      currentEdge.data.hovering = false;
+      currentEdge.data._hovering = false;
     });
     setEdges(newEdges);
   }, [reactFlow, storeApi, workflowReadonly]);

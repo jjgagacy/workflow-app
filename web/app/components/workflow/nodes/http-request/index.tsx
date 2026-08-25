@@ -23,7 +23,7 @@ const HttpRequestNode = ({ id, data }: NodeProps<Node<HttpRequestNodeData>>) => 
   return (
     <div className="http-request-node relative">
       <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
-      {!data.candidate && (
+      {!data._candidate && (
         <>
           <div className="space-y-2 p-4">
             {/* 主信息卡 */}
@@ -56,7 +56,7 @@ const HttpRequestNode = ({ id, data }: NodeProps<Node<HttpRequestNodeData>>) => 
             </div>
           </div>
 
-          <NodeSourceHandle nodeId={id} handleId="output" />
+          <NodeSourceHandle nodeId={id} handleId="output" className="top-1/2 -right-4 -translate-y-1/2" />
         </>
       )}
     </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { MenuItem } from '@/types/menu';
+import { MenuItem, renderMenuIcon, resolveMenuIconClassName } from '@/types/menu';
 
 import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
 import { AppWindow, GitBranch, Library, List, PlusIcon, Table } from 'lucide-react';
@@ -64,12 +64,14 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
     ...(routes?.filter(route => route.fetched).map(route => ({
       key: route.key,
       title: route.meta?.title || route.title,
-      icon: route.icon ?? <List className="w-5 h-5" />,
+      icon: route.icon ?? List,
+      className: resolveMenuIconClassName({ className: 'w-5 h-5' }),
       path: route.path,
       children: route.children?.map(child => ({
         key: child.key,
         title: child.meta?.title || child.title,
-        icon: child.icon ?? <List className="w-5 h-5" />,
+        icon: child.icon ?? List,
+        className: resolveMenuIconClassName({ className: 'w-5 h-5' }),
         path: child.path,
       }))
     })) || [])
@@ -207,7 +209,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                     } ${isActive(item.path) ? `${getThemeActiveClass(activeColorTheme as ThemeType)} ${getThemeBgClass(activeColorTheme as ThemeType)}` : ""}`}
                   title={item.title}
                 >
-                  {item.icon}
+                  {renderMenuIcon(item.icon, resolveMenuIconClassName(item))}
                 </div>
               </li>
             </ul>
@@ -221,7 +223,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                   title={item.title}
                 >
                   <div className="flex items-center">
-                    <span>{item.icon}</span>
+                    <span>{renderMenuIcon(item.icon, resolveMenuIconClassName(item))}</span>
                     {!collapsed && (<span className="ml-2 text-text-primary font-semibold">{item.title}</span>)}
                   </div>
                   {!collapsed && (<span>&nbsp;</span>)}
@@ -236,7 +238,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                 onClick={() => toggleSubmenu(item.title)}
               >
                 <div className="flex items-center">
-                  <span>{item.icon}</span>
+                  <span>{renderMenuIcon(item.icon, resolveMenuIconClassName(item))}</span>
                   {!collapsed && <span className="ml-2 text-text-primary font-semibold">{item.title}</span>}
                 </div>
                 {!collapsed && (
@@ -259,7 +261,7 @@ export function Navigation({ collapsed, routes, toggleMobileSidebar }: Navigatio
                       className={`flex items-center w-full px-2 py-2 mb-1 rounded-lg ${getThemeHoverClass(activeColorTheme as ThemeType)} ${collapsed ? "justify-center" : ""
                         } ${isActive(child.path) ? `${getThemeSelectedClass(activeColorTheme as ThemeType)} text-component-active` : ""} rounded-md shadow-2xl shadow-green-800/20`}
                     >
-                      <span>{child.icon}</span>
+                      <span>{renderMenuIcon(child.icon, resolveMenuIconClassName(child))}</span>
                       <span className="ml-2 text-text-primary font-semibold">{child.title}</span>
                     </Link>
                   ))}

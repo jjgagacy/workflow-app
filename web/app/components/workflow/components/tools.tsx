@@ -1,4 +1,4 @@
-import { Fragment, type ReactNode, useCallback } from "react";
+import React, { Fragment, type ReactElement, type ReactNode, useCallback } from "react";
 import { useReactFlow } from "@xyflow/react";
 import { Cloud, Hand, MessageSquare, MonitorSmartphone, MousePointer2, PlusCircle, Settings2, StickyNote, WandSparkles } from "lucide-react";
 import { cn } from "@/utils/classnames";
@@ -18,7 +18,7 @@ type ToolItem = {
   id: string;
   label: string;
   shortcut: KeyboardShortcut;
-  icon: ReactNode;
+  icon: React.ElementType;
   onClick: () => void;
   active?: boolean;
 };
@@ -80,21 +80,21 @@ export const Tools = () => {
       id: 'add-node',
       label: t('workflow.control.addNode'),
       shortcut: { keys: ['N'] },
-      icon: <PlusCircle className={toolIconClassName} />,
+      icon: PlusCircle,
       onClick: handleAddNode,
     },
     {
       id: 'add-note-node',
       label: t('workflow.control.addNote'),
       shortcut: { keys: ['N'], shiftKey: true },
-      icon: <StickyNote className={toolIconClassName} />,
+      icon: StickyNote,
       onClick: handleAddNote,
     },
     {
       id: 'pointer-mode',
       label: t('workflow.control.pointerMode'),
       shortcut: { keys: ['V'] },
-      icon: <MousePointer2 className={toolIconClassName} />,
+      icon: MousePointer2,
       onClick: () => setInteractionMode('pointer'),
       active: interactionMode === 'pointer',
     },
@@ -102,7 +102,7 @@ export const Tools = () => {
       id: 'hand-mode',
       label: t('workflow.control.handMode'),
       shortcut: { keys: ['H'] },
-      icon: <Hand className={toolIconClassName} />,
+      icon: Hand,
       onClick: () => setInteractionMode('hand'),
       active: interactionMode === 'hand',
     },
@@ -110,21 +110,21 @@ export const Tools = () => {
       id: 'tidy-nodes',
       label: t('workflow.control.tidyNodes'),
       shortcut: { keys: ['O'] },
-      icon: <WandSparkles className={toolIconClassName} />,
+      icon: WandSparkles,
       onClick: handleTidyNodes,
     },
     {
       id: 'env-panel',
       label: t("workflow.variablePanel.environment.title"),
       shortcut: { keys: ['E'] },
-      icon: <Cloud className={toolIconClassName} />,
+      icon: Cloud,
       onClick: handleOpenEnvPanel,
     },
     {
       id: 'chat-env-panel',
       label: t("workflow.variablePanel.session.title"),
       shortcut: { keys: ['E'], shiftKey: true },
-      icon: <MonitorSmartphone className={toolIconClassName} />,
+      icon: MonitorSmartphone,
       onClick: handleOpenChatEnvPanel,
     },
   ];
@@ -160,7 +160,17 @@ export const Tools = () => {
                     tool.active && 'border-[var(--border)] bg-muted text-foreground shadow-sm',
                   )}
                 >
-                  {tool.icon}
+                  {(() => {
+                    const Icon = tool.icon;
+                    return (
+                      <Icon
+                        className={cn(
+                          toolIconClassName,
+                          tool.active && 'text-[var(--color-green)]',
+                        )}
+                      />
+                    );
+                  })()}
                 </button>
               </ShortcutTooltip>
             ))}

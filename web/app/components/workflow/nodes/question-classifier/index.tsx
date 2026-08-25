@@ -29,7 +29,7 @@ const QuestionClassifierNode = ({ id, data }: NodeProps<Node<QuestionClassifierN
     <div className="question-classifier-node">
       <NodeHeader icon={getNodeTypeIcon(data.type, 'h-4 w-4')} iconColor={iconColor} title={label} />
 
-      {!data.candidate && (
+      {!data._candidate && (
         <>
           <div className="space-y-2 p-4">
             <div className="flex items-center gap-1 text-xs">
@@ -54,7 +54,7 @@ const QuestionClassifierNode = ({ id, data }: NodeProps<Node<QuestionClassifierN
                   <NodeSourceHandle
                     nodeId={id}
                     handleId={category.id}
-                    className="top-1/2 !-right-[16px] left-full ml-1"
+                    className="top-1/2 -right-4 -translate-y-1/2"
                   />
                 </BranchItem>
               );

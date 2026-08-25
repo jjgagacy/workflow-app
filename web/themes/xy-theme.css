@@ -19,6 +19,7 @@
   --xy-node-border-radius-default: var(--radius-lg);
   --xy-handle-background-color-default: transparent;
   --xy-handle-border-color-default: transparent;
+  --xy-handle-border-color: gray;
   --xy-edge-label-color-default: #505050;
   --color-workflow-bg: var(--background);
   --xy-theme-selected-shadow: rgba(0, 0, 0, 0.02);
@@ -64,7 +65,7 @@ html[data-theme="dark"] #react-flow-body .react-flow {
   align-items: center;
   text-align: left;
   flex-direction: column;
-  border: var(--xy-node-border-default) !important;
+  border: var(--xy-node-border-default);
   border-radius: var(--radius-lg);
   color: var(--xy-node-color, var(--xy-node-color-default));
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -73,12 +74,13 @@ html[data-theme="dark"] #react-flow-body .react-flow {
   /* ✅ 防止拖动时文本选择 */
   user-select: none;
   -webkit-user-select: none;
+  border: none !important;
 }
 
 /* 节点聚焦样式 - 绿色主题 */
 .react-flow__node.selectable:focus {
   border-color: #66bb6a;
-  box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.15);
+  /* box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.15); */
 }
 
 /* 节点 hover 样式 - 绿色主题 */
@@ -94,7 +96,8 @@ html[data-theme="dark"] #react-flow-body .react-flow {
   border-width: 2px;
   border-color: var(--xy-theme-selected);
   border-radius: var(--xy-node-border-radius-default);
-  box-shadow: 0 0 0 4px var(--xy-theme-selected-shadow), var(--xy-node-boxshadow-default);
+  border-style: solid;
+  /* box-shadow: 0 0 0 4px var(--xy-theme-selected-shadow), var(--xy-node-boxshadow-default); */
 }
 
 /* 节点禁用样式 */
@@ -146,16 +149,16 @@ html[data-theme="dark"] #react-flow-body .react-flow {
   background-color: var(--xy-handle-background-color-default);
   width: 12px;
   height: 12px;
-  border: 2px solid #66bb6a;
+  border: 2px solid gray;
   border-radius: 50%;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   /* ✅ 启用硬件加速 */
   transform: translateZ(0);
 }
 
-.react-flow__handle.connectionindicator {
+/* .react-flow__handle.connectionindicator {
   animation: pulse 1.5s ease-in-out infinite;
-}
+} */
 
 .react-flow__handle:hover {
   background-color: #2e7d32;

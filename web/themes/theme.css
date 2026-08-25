@@ -24,6 +24,7 @@
   --color-warning-foreground: oklch(0.205 0 0);
   --color-selection-hover: var(--color-neutral-100);
   --color-selection-active: var(--color-neutral-100);
+  --color-border: var(--color-black);
   --border: var(--color-gray-200);
   --border-light: var(--color-gray-100);
   --border-card: var(--color-gray-200);
@@ -93,10 +94,11 @@
   --color-workflow-color: oklch(58.9% 0.045 270 / 0.15);
   --color-workflow-mask-color: oklch(0% 0 0 / 0.2);
   --color-workflow-edge-line: oklch(0.62 0.16 152);
-  --color-workflow-edge-line-normal: oklch(0.72 0.03 228);
+  --color-workflow-edge-line-normal: oklch(83.591% 0.0001 271.152);
 }
 
 .test {
+
   --text-13: 13px;
   --radius: 0.625rem;
   --background: oklch(1 0 0);

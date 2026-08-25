@@ -112,7 +112,7 @@ const IterationNode = ({ id, data }: NodeProps<Node<IterationNodeData>>) => {
           </div>
         )}
       </div>
-      {!data.candidate && <NodeSourceHandle nodeId={id} handleId="output" className="pointer-events-auto" />}
+      {!data._candidate && <NodeSourceHandle nodeId={id} handleId="output" className="pointer-events-auto top-1/2 -translate-y-1/2" />}
     </div>
   );
 };

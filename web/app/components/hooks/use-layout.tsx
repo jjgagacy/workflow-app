@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import { convertMenuToRoutes, findMatchingRoute } from "@/utils/menu";
-import { MenuItem } from "@/types/menu";
+import { MenuItem, resolveMenuIconClassName } from "@/types/menu";
 import { Route } from "@/types/route";
 import { UserCog } from "lucide-react";
 import { useMenus } from "./use-menus";
@@ -56,12 +56,14 @@ export function useLayoutCore({ routes = [] }: UseLayoutCoreProps = {}): UseLayo
     ...routes.map(route => ({
       key: route.key,
       title: route.meta?.title || route.title,
-      icon: route.icon ?? <UserCog className="w-4 h-4" />,
+      icon: route.icon ?? UserCog,
+      className: resolveMenuIconClassName({ className: 'w-4 h-4' }),
       path: route.path,
       children: route.children?.map(child => ({
         key: child.key,
         title: child.meta?.title || child.title,
-        icon: child.icon ?? <UserCog className="w-4 h-4" />,
+        icon: child.icon ?? UserCog,
+        className: resolveMenuIconClassName({ className: 'w-4 h-4' }),
         path: child.path,
       }))
     }))
