@@ -83,9 +83,13 @@ export const NodeSourceHandle = ({
   }, [isMouseDown]);
 
   const onHandleClick = () => {
-    setShowNodeSelector(true, currentNode?.parentId
-      ? { parentNodeId: currentNode.parentId, previousNodeId: nodeId }
-      : null);
+    const context = {
+      previousNodeId: nodeId,
+      previousNodeSourceHandle: handleId || 'output',
+      ...(currentNode?.parentId ? { parentNodeId: currentNode.parentId } : {}),
+    };
+
+    setShowNodeSelector(true, context);
   };
 
   return (

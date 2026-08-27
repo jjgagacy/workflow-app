@@ -24,6 +24,8 @@ import HttpRequestNode from "./http-request";
 import HttpRequestPanel from "./http-request/panel";
 import StartNode from "./start";
 import StartNodePanel from "./start/panel";
+import EndNode from "./end";
+import EndNodePanel from "./end/panel";
 import ScheduleNode from "./schedule";
 import WebhookNode from "./webhook";
 import WebhookNodePanel from "./webhook/panel";
@@ -43,6 +45,7 @@ export const NodeComponents: Record<string, React.FC<any>> = {
   'knowledge-retrieval': KnowledgeRetrievalNode,
   'http-request': HttpRequestNode,
   'start': StartNode,
+  'end': EndNode,
   'webhook': WebhookNode,
   'schedule': ScheduleNode,
 };
@@ -61,6 +64,7 @@ export const NodePanels: Record<string, React.FC<any>> = {
   'knowledge-retrieval': KnowledgeRetrievalPanel,
   'http-request': HttpRequestPanel,
   'start': StartNodePanel,
+  'end': EndNodePanel,
   'webhook': WebhookNodePanel,
   'schedule': ScheduleNodePanel,
 };

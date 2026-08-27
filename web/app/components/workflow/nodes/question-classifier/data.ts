@@ -19,4 +19,7 @@ export const questionClassifierNodeDefaultData: NodeDefaultData<QuestionClassifi
       }
     ]
   },
+  validate: function (payload: QuestionClassifierNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    return { valid: true };
+  }
 };

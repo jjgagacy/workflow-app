@@ -184,6 +184,14 @@ export const NODES_DATA: NodeCatalog[] = [
     section: 'data',
     description: ''
   },
+  {
+    id: 'end',
+    name: 'end',
+    icon: getNodeIcon(NodeType.End),
+    category: NodeCategory.FLOW,
+    section: 'data',
+    description: ''
+  },
 
   // AI 分类
   {

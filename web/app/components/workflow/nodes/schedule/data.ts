@@ -80,4 +80,7 @@ export const scheduleNodeDefaultData: NodeDefaultData<ScheduleNodeData> = {
     monthDay: 1,
     cron: DEFAULT_CRON,
   },
+  validate: function (payload: ScheduleNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    return { valid: true };
+  }
 };

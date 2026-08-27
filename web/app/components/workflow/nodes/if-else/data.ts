@@ -83,5 +83,8 @@ export const ifElseNodeDefaultData: NodeDefaultData<IfElseNodeData> = {
       strictness: 'strict',
     },
     branches: normalizeIfElseBranches([createIfElseBranch()]),
+  },
+  validate: function (payload: IfElseNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    return { valid: true };
   }
 };

@@ -369,6 +369,11 @@ const translation = {
       removeKnowledgeBase: 'Remove Knowledge Base',
       knowledgeBase: 'Knowledge Base',
       outputVariableName: 'Output Variable Name',
+    },
+    end: {
+      name: 'End',
+      description: 'End node, marks the end of the workflow',
+      output: 'Output',
     }
   },
   sections: {
@@ -669,6 +674,12 @@ const translation = {
       appId: 'App ID',
       workflowRunId: 'Workflow Run ID',
       timestamp: 'Timestamp',
+    }
+  },
+  checkList: {
+    error: {
+      variableNotFound: 'Variable not found in the workflow.',
+      endNodeMissing: 'The workflow must have an End node to terminate the execution.'
     }
   }
 };

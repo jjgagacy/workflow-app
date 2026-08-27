@@ -30,4 +30,7 @@ export const parameterExtractorNodeDefaultData: NodeDefaultData<ParameterExtract
     parameters: normalizeParameterExtractorItems(),
     outputVariableName: DEFAULT_PARAMETER_EXTRACTOR_NAME,
   },
+  validate: function (payload: ParameterExtractorNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    return { valid: true };
+  }
 };

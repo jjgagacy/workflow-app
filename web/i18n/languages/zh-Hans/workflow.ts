@@ -364,6 +364,11 @@ const translation = {
       addKnowledgeBase: '添加知识库',
       removeKnowledgeBase: '删除知识库',
       knowledgeBase: '知识库',
+    },
+    end: {
+      name: '结束',
+      description: '结束节点，标志着工作流的结束',
+      output: '输出'
     }
   },
   sections: {
@@ -664,6 +669,12 @@ const translation = {
       appId: '应用ID',
       workflowRunId: '工作流运行ID',
       timestamp: '时间戳',
+    }
+  },
+  checkList: {
+    error: {
+      variableNotFound: '工作流中未找到变量。',
+      endNodeMissing: '工作流必须包含一个结束节点以终止执行。'
     }
   }
 };

@@ -10,6 +10,7 @@ import { WebhookNodeData } from "../nodes/webhook/type";
 import { CodeNodeData } from "../nodes/code/types";
 import { DocumentExtractorNodeData } from "../nodes/document-extractor/types";
 import { DEFAULT_OUTPUT_VARIABLE_NAME } from "../nodes/document-extractor/data";
+import { IfElseNodeData } from "../nodes/if-else/types";
 
 export const useVariables = () => {
   const { t } = useTranslation();
@@ -176,7 +177,7 @@ export const useVariables = () => {
     res.variables = res.variables.filter((v) => {
       const matched = filterVariable(
         v,
-        { nodeId: v.valueSource || '', path: v.valueSelector || [] }
+        { nodeId: v.variableSelector?.nodeId || '', path: v.variableSelector?.path || [] }
       );
       if (matched)
         return true;
@@ -185,8 +186,32 @@ export const useVariables = () => {
     return res;
   }, []);
 
+  // 获取节点的变量列表
+  const getNodeVariableSelectors = useCallback((node: Node) => {
+    const { data } = node;
+    const dataType = data.type as string;
+    let res: VariableSelector[];
+    switch (dataType) {
+      case NodeType.IfElse:
+        res = (data as IfElseNodeData).branches?.flatMap((branch) => {
+          if (!branch) return [];
+          return branch.conditionGroup.conditions.flatMap((condition) => {
+            return condition.variableSelector || [];
+          });
+        }) || [];
+        break;
+
+      // todo
+
+      default:
+        return [];
+    }
+    return res;
+  }, []);
+
   return {
     getSystemVariables,
     getNodeOutputVariable,
+    getNodeVariableSelectors,
   }
 }

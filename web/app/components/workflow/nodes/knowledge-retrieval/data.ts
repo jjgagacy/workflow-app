@@ -11,4 +11,7 @@ export const knowledgeRetrievalNodeDefaultData: NodeDefaultData<KnowledgeRetriev
     knowledgeBases: [],
     outputVariableName: KNOWLEDGE_OUTPUT_VARIABLE_NAME,
   },
+  validate: function (payload: KnowledgeRetrievalNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    return { valid: true };
+  }
 };

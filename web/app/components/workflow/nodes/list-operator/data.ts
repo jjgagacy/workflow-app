@@ -31,4 +31,7 @@ export const listOperatorNodeDefaultData: NodeDefaultData<ListOperatorNodeData> 
     sortOrder: 'asc',
     outputVariableName: DEFAULT_LIST_OPERATOR_OUTPUT_VARIABLE_NAME,
   },
+  validate: function (payload: ListOperatorNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    return { valid: true };
+  }
 };

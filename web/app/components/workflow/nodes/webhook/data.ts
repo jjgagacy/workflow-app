@@ -67,9 +67,14 @@ export const webhookNodeDefaultData: NodeDefaultData<WebhookNodeData> = ({
     headers: [createWebhookFieldItem()],
     params: [createWebhookFieldItem()],
     body: [createWebhookFieldItem()],
+  },
+  validate: function (payload: WebhookNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    return { valid: true };
   }
 });
+
 export type WebhookListField = 'headers' | 'params' | 'body';
+
 export type UrlTabValue = 'test' | 'production'; export const CONTENT_TYPE_OPTIONS: SelectItem[] = [
   { value: 'application/json', name: 'application/json' },
   { value: 'application/x-www-form-urlencoded', name: 'application/x-www-form-urlencoded' },
@@ -77,6 +82,7 @@ export type UrlTabValue = 'test' | 'production'; export const CONTENT_TYPE_OPTIO
   { value: 'text/plain', name: 'text/plain' },
   { value: 'application/octet-stream', name: 'application/octet-stream' },
 ];
+
 export const METHOD_OPTIONS: SelectItem[] = [
   { value: 'GET', name: 'GET' },
   { value: 'POST', name: 'POST' },

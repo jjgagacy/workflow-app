@@ -21,5 +21,8 @@ export const documentExtractorNodeDefaultData: NodeDefaultData<DocumentExtractor
     inputVariable: '',
     outputVariableName: DEFAULT_OUTPUT_VARIABLE_NAME,
   },
+  validate: function (payload: DocumentExtractorNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    return { valid: true };
+  }
 };
 

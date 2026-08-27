@@ -48,6 +48,8 @@ export type Node<T = {}> = ReactFlowNode<NodeData<T>>;
 export type Edge<T = {}> = ReactFlowEdge<{
   _hovering?: boolean;
   _nodeHovering?: boolean;
+  isInIteration?: boolean;
+  isInLoop?: boolean;
   sourceType: NodeType;
   targetType: NodeType;
 } & T>;
@@ -149,7 +151,7 @@ export type Variable = {
   dataType?: VariableDataType; // 这个变量的物理数据结构是什么（string, number, file）
 
   label?: string;
-  valueSelector?: string[]; // 当 sourceMode === 'variable' 时，用来追踪上游节点路径的 Selector
+  variableSelector?: VariableSelector; // 当 sourceMode === 'variable' 时，用来追踪上游节点路径的 Selector
   value?: string;           // 当 sourceMode === 'constant' 或 'custom' 时的具象值
 
   options?: { label: string; value: string }[];
@@ -176,6 +178,7 @@ export interface OperatorGroup {
 export type NodeDefaultData<T> = {
   value: Partial<T>;
   runInputData?: Record<string, any>;
+  validate: (payload: T, t: any, data?: any) => { valid: boolean; errorMessage?: string };
 }
 
 export type NodeAddParams = (params: {

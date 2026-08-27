@@ -218,16 +218,6 @@ export const useWorkflowInteractions = () => {
     }
   }, [storeApi, workflowContext]);
 
-  const handleConnectEnd = useCallback(() => {
-    if (workflowReadonly())
-      return;
-
-    if (connectingNodeState) {
-      // todo
-    }
-    setConnectingNodeState(undefined);
-  }, [storeApi, workflowContext]);
-
   const handleConnect = useCallback((params: Connection) => {
     if (workflowReadonly())
       return;
@@ -257,8 +247,10 @@ export const useWorkflowInteractions = () => {
     }
 
     const parentNode = nodes.find(n => n.id === sourceNode.parentId);
+    const isInIteration = parentNode?.data.type === NodeType.Iteration;
+    const isInLoop = parentNode?.data.type === NodeType.Loop;
 
-    const newEdge = {
+    const newEdge: Edge = {
       ...params,
       id: `${source}-${sourceHandle}-${target}-${targetHandle}`,
       type: CUSTOM_EDGE_NAME,
@@ -268,6 +260,8 @@ export const useWorkflowInteractions = () => {
       targetHandle: targetHandle,
       data: {
         _hovering: false,
+        isInIteration,
+        isInLoop,
         sourceType: sourceNode.data.type,
         targetType: targetNode.data.type,
       }
@@ -278,6 +272,17 @@ export const useWorkflowInteractions = () => {
     setEdges(newEdges);
     addHistoryState(WorkflowHistoryEvent.NodeConnect, { nodes, edges: newEdges });
   }, [addHistoryState, reactFlow, storeApi, workflowReadonly]);
+
+  const handleConnectEnd = useCallback(() => {
+    if (workflowReadonly())
+      return;
+
+    if (connectingNodeState) {
+      // todo
+    }
+    setConnectingNodeState(undefined);
+  }, [storeApi, workflowContext]);
+
 
   const handleNodeDoubleClick = useCallback<NodeMouseHandler>((_, node) => {
     const { openNodePanel } = workflowContext.getState();
@@ -823,6 +828,80 @@ export const useWorkflowInteractions = () => {
 
       setNodes(nextNodes);
       setEdges(nextEdges);
+      setCandidateNode(undefined);
+      setShowNodeSelector(false);
+      return;
+    }
+
+    if (previousNodeId) {
+      const { nodes, edges } = storeApi.getState();
+      const { setNodes, setEdges } = reactFlow;
+      const previousNode = nodes.find((node) => node.id === previousNodeId);
+
+      if (!previousNode) {
+        setShowNodeSelector(false);
+        return;
+      }
+
+      const previousWidth = previousNode.measured?.width ?? NODE_DEFAULT_WIDTH;
+      const previousHeight = previousNode.measured?.height ?? NODE_DEFAULT_HEIGHT;
+      const sourceHandleId = previousNodeSourceHandle || 'output';
+
+      const newNode = newCandidateNode({
+        type: renderType,
+        parentId: previousNode.parentId,
+        selected: true,
+        data: {
+          ...NODE_DEFAULT_DATA[nodeType],
+          type: nodeType,
+          label,
+          description,
+          _candidate: false,
+        },
+        position: {
+          x: previousNode.position.x + previousWidth + 120,
+          y: previousNode.position.y + previousHeight / 2 - NODE_DEFAULT_HEIGHT / 2,
+        },
+      });
+
+      const nextNodes = produce(nodes as Node[], (draft) => {
+        draft.forEach((node) => {
+          node.selected = false;
+        });
+
+        draft.push(newNode);
+      });
+
+      const nextEdges = produce(edges, (draft) => {
+        const duplicateIndex = draft.findIndex((edge) =>
+          edge.source === previousNodeId &&
+          edge.sourceHandle === sourceHandleId &&
+          edge.target === newNode.id &&
+          edge.targetHandle === 'target'
+        );
+
+        if (duplicateIndex >= 0) {
+          draft.splice(duplicateIndex, 1);
+        }
+
+        draft.push({
+          id: `${previousNodeId}-${sourceHandleId}-${newNode.id}-target`,
+          type: CUSTOM_EDGE_NAME,
+          source: previousNodeId,
+          sourceHandle: sourceHandleId,
+          target: newNode.id,
+          targetHandle: 'target',
+          data: {
+            _hovering: false,
+            sourceType: previousNode.data.type,
+            targetType: nodeType,
+          },
+        });
+      });
+
+      setNodes(nextNodes);
+      setEdges(nextEdges);
+      addHistoryState(WorkflowHistoryEvent.NodeAdd, { nodes: nextNodes, edges: nextEdges });
       setCandidateNode(undefined);
       setShowNodeSelector(false);
       return;

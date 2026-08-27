@@ -33,4 +33,7 @@ export const httpRequestNodeDefaultData: NodeDefaultData<HttpRequestNodeData> = 
     exceptionDefaultValue: '',
     outputVariableName: DEFAULT_HTTP_RESPONSE_VARIABLE_NAME,
   },
+  validate: function (payload: HttpRequestNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    return { valid: true };
+  }
 };

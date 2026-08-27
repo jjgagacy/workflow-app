@@ -37,6 +37,7 @@ import { useWorkflowDraftVisibilitySync } from "./hooks/use-workflowDraftVisibil
 import { useNodesSyncDraft } from "./hooks/use-nodesSyncDraft";
 import { useWorkflowDraftSync } from "./hooks/use-workflowDraftSync";
 import { HelpLine } from "../help-line";
+import { CustomConnectionLine } from "./components/custom-connectionLine";
 
 const customGetNodesBounds = (nodes: any[]) => {
   if (nodes.length === 0) return { minX: 0, minY: 0, maxX: 0, maxY: 0, width: 0, height: 0 };
@@ -96,6 +97,7 @@ export const WorkflowBody = ({
   const setShowCommandPalette = useWorkflowStore(s => s.setShowCommandPalette);
   const interactionMode = useWorkflowStore(s => s.interactionMode);
   const setMousePosition = useWorkflowStore(s => s.setMousePosition);
+  const { isValidConnection } = useWorkflow();
   const canEditWorkflow = !workflowReadonly();
   const panOnDragButtons = !canEditWorkflow
     ? false
@@ -177,9 +179,6 @@ export const WorkflowBody = ({
       }
     }, 100);
   }, []);
-
-  const onNodeDrag: OnNodeDrag = (_, node) => {
-  };
 
   useNodeSelectorClose(showNodeSelector, setShowNodeSelector, nodeSelectorWrapperRef);
   useKeyboardShortcut('n', () => {
@@ -289,8 +288,11 @@ export const WorkflowBody = ({
           onSelectionStart={handleNodeSelectionStart}
           onEdgeMouseEnter={handleEdgeEnter}
           onEdgeMouseLeave={handleEdgeLeave}
+          isValidConnection={isValidConnection}
           deleteKeyCode={null}
           minZoom={0.25}
+          connectionLineContainerStyle={{ zIndex: 1001 }}
+          connectionLineComponent={CustomConnectionLine}
         >
           <Background
             gap={[14, 14]}

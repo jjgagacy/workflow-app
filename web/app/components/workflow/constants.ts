@@ -25,6 +25,7 @@ import type { NodeData, Variable } from "./types";
 import { NodeType, ValueSourceMode, VariableDataType } from "./types";
 import { webhookNodeDefaultData } from "./nodes/webhook/data";
 import { scheduleNodeDefaultData } from "./nodes/schedule/data";
+import { EndDefaultData } from "./nodes/end/data";
 import { Position, XYPosition } from "@xyflow/react";
 
 export const CUSTOM_NODE_NAME = 'customNode';
@@ -123,6 +124,11 @@ export const NODE_DEFAULT_DATA: NodeDefaultDataByType = {
     label: '',
     ...httpRequestNodeDefaultData.value,
   },
+  [NodeType.End]: {
+    type: NodeType.End,
+    label: '',
+    ...EndDefaultData.value,
+  },
   [NodeType.Webhook]: {
     type: NodeType.Webhook,
     label: '',
@@ -156,6 +162,7 @@ export const CATALOG_NODE_TYPE_MAP: Record<string, NodeType> = {
   'http-request': NodeType.HttpRequest,
   'knowledge-retrieval': NodeType.KnowledgeRetrieval,
   'start': NodeType.Start,
+  'end': NodeType.End,
   'webhook': NodeType.Webhook,
   'schedule': NodeType.Schedule,
 };

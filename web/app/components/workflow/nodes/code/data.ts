@@ -34,4 +34,7 @@ export const codeNodeDefaultData: NodeDefaultData<CodeNodeData> = {
     exceptionStrategy: 'stop-execution',
     exceptionDefaultValue: '',
   },
+  validate: function (payload: CodeNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    return { valid: true };
+  }
 };

@@ -18,4 +18,7 @@ export const llmNodeDefaultData: NodeDefaultData<LLMNodeData> = {
     exceptionStrategy: LLM_DEFAULT_EXCEPTION_STRATEGY,
     exceptionDefaultValue: '',
   },
+  validate: function (payload: LLMNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    return { valid: true };
+  }
 };

@@ -1,10 +1,10 @@
-import { Edge, getOutgoers, Node, useReactFlow, useStoreApi } from "@xyflow/react";
+import { Edge, getOutgoers, Node, useReactFlow, useStoreApi, Connection } from "@xyflow/react";
 import { produce } from "immer";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next"
 import { isIterationNodeType, isLoopNodeType, isStartNodeType } from "../node";
 import { NodeType } from "../types";
-import { SUPPORT_OUTPUT_VARIABLE_NODE_TYPES } from "../constants";
+import { CUSTOM_NOTE_NODE_NAME, SUPPORT_OUTPUT_VARIABLE_NODE_TYPES } from "../constants";
 import { useNodesReadonly } from "./use-nodesReadonly";
 
 export const useWorkflow = () => {
@@ -213,6 +213,40 @@ export const useWorkflow = () => {
     return precedingNodes;
   }, [storeApi, getPrecedingNodesOnPath]);
 
+  // 参数类型：在建立新连接时是 Connection，在校验已有边时是 Edge
+  const isValidConnection = useCallback(({ source, target, sourceHandle, targetHandle }: Connection | Edge) => {
+    const { nodes, edges } = storeApi.getState();
+    const sourceNode = nodes.find(node => node.id === source);
+    const targetNode = nodes.find(node => node.id === target);
+
+    if (!sourceNode || !targetNode)
+      return false;
+
+    if (sourceNode.type === CUSTOM_NOTE_NODE_NAME || targetNode.type === CUSTOM_NOTE_NODE_NAME)
+      return false;
+
+    if (sourceNode.parentId !== targetNode.parentId)
+      return false;
+
+    // 检查是否会形成环路
+    const hasCycle = (node: Node, visited = new Set()) => {
+      if (visited.has(node.id))
+        return false
+
+      visited.add(node.id)
+
+      for (const outgoer of getOutgoers(node, nodes, edges)) {
+        if (outgoer.id === source)
+          return true
+        if (hasCycle(outgoer, visited))
+          return true
+      }
+      return false;
+    }
+    return !hasCycle(targetNode)
+  }, [storeApi]);
+
+
   return {
     workflowReadonly,
     onSelectNodes,
@@ -221,6 +255,7 @@ export const useWorkflow = () => {
     getLeafNodes,
     getUpstreamNodesWithParent,
     isNodeInIteration,
-    isNodeInLoop
+    isNodeInLoop,
+    isValidConnection
   }
 }

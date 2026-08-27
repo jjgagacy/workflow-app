@@ -1,6 +1,6 @@
 import { NodeDefaultData } from "../../types";
 import { createIfElseBranch } from "../if-else/data";
-import type { ConditionBranch } from "../if-else/types";
+import type { ConditionBranch, IfElseNodeData } from "../if-else/types";
 import type { FilterNodeData } from "./types";
 
 export const normalizeFilterBranches = (branches?: ConditionBranch[]) => {
@@ -28,5 +28,8 @@ export const filterNodeDefaultData: NodeDefaultData<FilterNodeData> = {
       strictness: 'strict',
     },
     branches: normalizeFilterBranches([createIfElseBranch()]),
+  },
+  validate: function (payload: IfElseNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    return { valid: true };
   }
 };

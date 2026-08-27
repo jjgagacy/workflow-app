@@ -16,4 +16,7 @@ export const variableAggregatorNodeDefaultData: NodeDefaultData<VariableAggregat
     variables: [createVariableAggregatorItem()],
     outputName: DEFAULT_AGGREGATOR_OUTPUT_NAME,
   },
+  validate: function (payload: VariableAggregatorNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    return { valid: true };
+  }
 };

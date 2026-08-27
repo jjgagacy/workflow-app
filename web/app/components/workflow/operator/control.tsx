@@ -8,6 +8,7 @@ import { useWorkflowStore } from "../context";
 import { ShortcutTooltip } from "../../base/tooltip/shortcut";
 import { useTranslation } from "react-i18next";
 import { useAddNote } from "../hooks/use-addNote";
+import { Checklist } from "../components/checklist";
 
 export const Control = () => {
   const { t } = useTranslation();
@@ -49,6 +50,7 @@ export const Control = () => {
           <Bookmark className="h-4 w-4" />
         </div>
       </ShortcutTooltip>
+      <Checklist />
       <Tooltip content={t('workflow.control.run')} placement="left">
         <div
           className={cn(`flex h-8 w-8 cursor-pointer items-center border border-[var(--border)] justify-center rounded-sm ${getThemeBgClass(activeColorTheme as ThemeType)} ${getThemeHoverClass(activeColorTheme as ThemeType)} transition-colors`)}
