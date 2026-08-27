@@ -1,6 +1,7 @@
 import { dialogueCountVariable } from "@/app/components/workflow/constants";
 
 const translation = {
+  parallelLimit: 'Maximum parallel limit of {{num}} exceeded',
   nodes: {
     base: {
       name: 'Base',

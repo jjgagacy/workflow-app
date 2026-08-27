@@ -6,6 +6,8 @@ import { isIterationNodeType, isLoopNodeType, isStartNodeType } from "../node";
 import { NodeType } from "../types";
 import { CUSTOM_NOTE_NODE_NAME, SUPPORT_OUTPUT_VARIABLE_NODE_TYPES } from "../constants";
 import { useNodesReadonly } from "./use-nodesReadonly";
+import { NODE_MAX_PARALLEL_LIMIT } from "@/config";
+import { toast } from "@/app/ui/toast";
 
 export const useWorkflow = () => {
   const storeApi = useStoreApi();
@@ -213,11 +215,24 @@ export const useWorkflow = () => {
     return precedingNodes;
   }, [storeApi, getPrecedingNodesOnPath]);
 
+  const checkNodeMaxParallelLimit = useCallback((nodeId: string, sourceHandle = 'output') => {
+    const { edges } = storeApi.getState();
+    const connectedEdge = edges.filter((edge) => edge.source === nodeId && edge.sourceHandle === sourceHandle);
+    if (connectedEdge.length > NODE_MAX_PARALLEL_LIMIT) {
+      toast.error(t('workflow.parallelLimit', { num: NODE_MAX_PARALLEL_LIMIT }));
+      return false;
+    }
+    return true;
+  }, [storeApi, t]);
+
   // 参数类型：在建立新连接时是 Connection，在校验已有边时是 Edge
   const isValidConnection = useCallback(({ source, target, sourceHandle, targetHandle }: Connection | Edge) => {
     const { nodes, edges } = storeApi.getState();
     const sourceNode = nodes.find(node => node.id === source);
     const targetNode = nodes.find(node => node.id === target);
+
+    if (targetHandle === 'output')
+      return false;
 
     if (!sourceNode || !targetNode)
       return false;
@@ -226,6 +241,9 @@ export const useWorkflow = () => {
       return false;
 
     if (sourceNode.parentId !== targetNode.parentId)
+      return false;
+
+    if (!checkNodeMaxParallelLimit(source!))
       return false;
 
     // 检查是否会形成环路

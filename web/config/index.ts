@@ -6,3 +6,8 @@ export const API_PREFIX = process.env.NEXT_PUBLIC_API_PREFIX || 'http://localhos
 export const PUBLIC_API_PREFIX = process.env.NEXT_PUBLIC_PUBLIC_API_PREFIX || 'http://localhost:3001/open/api';
 export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 export const ASSETS_URL = process.env.NEXT_PUBLIC_ASSETS_URL || `${BASE_URL}/assets`;
+
+export const NODE_MAX_PARALLEL_LIMIT = 10;
+export const NODE_MAX_TOOL_LIMIT = 10;
+export const NODE_MAX_ITERATION_LIMIT = 10;
+

@@ -1,4 +1,5 @@
 const translation = {
+  parallelLimit: '超过最大并行限制 {{num}}',
   nodes: {
     base: {
       name: '基础节点',
