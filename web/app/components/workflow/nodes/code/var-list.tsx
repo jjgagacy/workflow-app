@@ -1,14 +1,14 @@
 import { CirclePlus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { SimpleSelect } from "@/app/ui/select";
-import { Node } from "../../types";
-import { buildVariableSelectItems, buildWorkflowVariableOptions } from "../../components/nodes-shared/variable-select";
+import { Node, NodeOutputVariable, Variable, VariableSelector } from "../../types";
 import { CodeInputParameter, CodeNodeData } from "./types";
+import { VarPicker } from "../../components/variable/var-picker";
 
 type VarListProps = {
   node: Node<CodeNodeData>;
   inputParameters: CodeInputParameter[];
-  variableOptions: ReturnType<typeof buildWorkflowVariableOptions>;
+  availableNodes: Node[];
+  nodeOutputVariables: NodeOutputVariable[];
   onUpsertInputParameter: (parameterId: string, patch: Partial<CodeInputParameter>) => void;
   onRemoveInputParameter: (parameterId: string) => void;
   onAddInputParameter: () => void;
@@ -17,7 +17,8 @@ type VarListProps = {
 export const VarList = ({
   node,
   inputParameters,
-  variableOptions,
+  availableNodes,
+  nodeOutputVariables,
   onUpsertInputParameter,
   onRemoveInputParameter,
   onAddInputParameter,
@@ -48,11 +49,14 @@ export const VarList = ({
       ) : (
         <div className="space-y-1.5">
           {inputParameters.map((parameter, index) => {
-            const valueItems = buildVariableSelectItems({
-              t,
-              currentValue: String(parameter.valueSource ?? ''),
-              options: variableOptions,
-            });
+            const resolvedVariableSelector = parameter.variableSelector;
+
+            const handleVariableChange = (_variable: Variable, selector: VariableSelector) => {
+              onUpsertInputParameter(parameter.id, {
+                valueSource: selector.path.join('.') || 'input',
+                variableSelector: selector,
+              });
+            };
 
             return (
               <div
@@ -88,12 +92,13 @@ export const VarList = ({
 
                 {/* 第二行：变量值 */}
                 <div className="mt-1.5 pl-7">
-                  <SimpleSelect
-                    items={valueItems}
-                    defaultValue={parameter.valueSource}
-                    allowSearch={false}
+                  <VarPicker
+                    nodeId={node.id}
+                    value={resolvedVariableSelector}
+                    onChange={handleVariableChange}
+                    availableNodes={availableNodes}
+                    nodeOutputVariables={nodeOutputVariables}
                     className="w-full"
-                    onSelect={(item) => onUpsertInputParameter(parameter.id, { valueSource: String(item.value) })}
                   />
                 </div>
               </div>

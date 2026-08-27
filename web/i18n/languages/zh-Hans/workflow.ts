@@ -674,7 +674,15 @@ const translation = {
   checkList: {
     error: {
       variableNotFound: '工作流中未找到变量。',
-      endNodeMissing: '工作流必须包含一个结束节点以终止执行。'
+      endNodeMissing: '工作流必须包含一个结束节点以终止执行。',
+      codeEmpty: '代码不能为空。',
+      codeInputVariableMissing: '请为输入参数"{{name}}"选择变量。',
+      filterConditionMissing: '请至少添加一个过滤条件。',
+      filterVariableMissing: '请为条件 {{index}} 选择变量。',
+      filterValueMissing: '请为条件 {{index}} 输入比较值。',
+      ifElseConditionMissing: '请为分支"{{branch}}"至少添加一个条件。',
+      ifElseVariableMissing: '请为分支"{{branch}}"中的条件 {{index}} 选择变量。',
+      ifElseValueMissing: '请为分支"{{branch}}"中的条件 {{index}} 输入比较值。'
     }
   }
 };

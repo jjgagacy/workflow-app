@@ -85,6 +85,41 @@ export const ifElseNodeDefaultData: NodeDefaultData<IfElseNodeData> = {
     branches: normalizeIfElseBranches([createIfElseBranch()]),
   },
   validate: function (payload: IfElseNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    const decisionBranches = normalizeIfElseBranches(payload.branches).filter((branch) => !branch.isDefault);
+
+    for (const branch of decisionBranches) {
+      const conditions = branch.conditionGroup.conditions ?? [];
+      const branchName = branch.name || branch.id;
+
+      if (conditions.length === 0) {
+        return { valid: false, errorMessage: t('workflow.checkList.error.ifElseConditionMissing', { branch: branchName }) };
+      }
+
+      for (let index = 0; index < conditions.length; index += 1) {
+        const condition = conditions[index];
+
+        if (!condition.variableSelector?.nodeId || !condition.variableSelector?.path?.length) {
+          return {
+            valid: false,
+            errorMessage: t('workflow.checkList.error.ifElseVariableMissing', { branch: branchName, index: index + 1 }),
+          };
+        }
+
+        if (!condition.operator?.isUnary) {
+          const rightValue = condition.rightValue;
+          const isEmptyValue = rightValue === undefined || rightValue === null || rightValue === ''
+            || (Array.isArray(rightValue) && rightValue.length === 0);
+
+          if (isEmptyValue) {
+            return {
+              valid: false,
+              errorMessage: t('workflow.checkList.error.ifElseValueMissing', { branch: branchName, index: index + 1 }),
+            };
+          }
+        }
+      }
+    }
+
     return { valid: true };
   }
 };

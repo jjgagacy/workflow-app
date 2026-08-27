@@ -35,6 +35,20 @@ export const codeNodeDefaultData: NodeDefaultData<CodeNodeData> = {
     exceptionDefaultValue: '',
   },
   validate: function (payload: CodeNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    if (!payload.code || !payload.code.trim()) {
+      return { valid: false, errorMessage: t('workflow.checkList.error.codeEmpty') };
+    }
+
+    const missingVariableInput = (payload.inputs ?? []).find(
+      (input) => !input.variableSelector?.nodeId || !input.variableSelector?.path?.length,
+    );
+    if (missingVariableInput) {
+      return {
+        valid: false,
+        errorMessage: t('workflow.checkList.error.codeInputVariableMissing', { name: missingVariableInput.name || missingVariableInput.id }),
+      };
+    }
+
     return { valid: true };
   }
 };

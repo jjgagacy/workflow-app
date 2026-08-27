@@ -81,9 +81,14 @@ export const useConfig = (nodeId: string, codeData: CodeNodeData) => {
 
   useEffect(() => {
     if ((languageDefaultConfig && codeData.language) && languageDefaultConfig[codeData.language] && !isInitialized) {
+      // 已保存过代码/输入的节点不应被默认模板覆盖，仅新建节点才套用默认配置
+      if (codeData.code) {
+        setIsInitialized(true);
+        return;
+      }
       handleLanguageChange(codeData.language, true);
     }
-  }, [languageDefaultConfig, isInitialized, codeData.language, handleLanguageChange]);
+  }, [languageDefaultConfig, isInitialized, codeData.language, codeData.code, handleLanguageChange]);
 
   return {
     languageDefaultConfig,

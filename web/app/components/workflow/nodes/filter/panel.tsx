@@ -23,6 +23,7 @@ const FilterPanel = ({ node }: FilterPanelProps) => {
     handleConditionTypeChange,
     handleConditionOperatorChange,
     handleConditionFieldChange,
+    handleConditionVariableChange,
   } = useFilterConditionHandlers({ node });
 
   return (
@@ -74,6 +75,10 @@ const FilterPanel = ({ node }: FilterPanelProps) => {
           onConditionOperatorChange={(branchId, conditionId, value) => {
             void branchId;
             handleConditionOperatorChange(conditionId, value);
+          }}
+          onConditionVariableChange={(branchId, conditionId, value) => {
+            void branchId;
+            handleConditionVariableChange(conditionId, value);
           }}
           onAddCondition={(branchId) => {
             void branchId;

@@ -42,6 +42,7 @@ export const VarPicker = ({
   const { t } = useTranslation();
   const store = useStoreApi();
   const reactflow = useReactFlow();
+  console.log('##', value);
 
   return (
     <div className={cn("h-full w-full", className)}>

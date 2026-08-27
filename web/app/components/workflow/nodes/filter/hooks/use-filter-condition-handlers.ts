@@ -10,6 +10,7 @@ import type {
 } from "../../if-else/types";
 import type { Node } from "../../../types";
 import type { FilterNodeData } from "../types";
+import type { VariableSelector } from "../../../types";
 import { useIfElseOperatorOptions } from "../../if-else/hooks";
 import { normalizeFilterBranches } from "../data";
 
@@ -137,6 +138,12 @@ export const useFilterConditionHandlers = ({ node }: UseFilterConditionHandlersP
     });
   };
 
+  const handleConditionVariableChange = (conditionId: string, value: VariableSelector) => {
+    updateCondition(conditionId, (condition) => {
+      condition.variableSelector = value;
+    });
+  };
+
   return {
     branch,
     operatorOptionsByType,
@@ -146,5 +153,6 @@ export const useFilterConditionHandlers = ({ node }: UseFilterConditionHandlersP
     handleConditionTypeChange,
     handleConditionOperatorChange,
     handleConditionFieldChange,
+    handleConditionVariableChange,
   };
 };

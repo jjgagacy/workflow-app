@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { buildWorkflowVariableOptions } from "../../components/nodes-shared/variable-select";
 import { useNodesUpdate } from "../../hooks/use-nodesUpdate";
 import { useWorkflowStore } from "../../context";
+import { useWorkflowVariables } from "../../hooks/use-workflowVariables";
 import { CodeLanguage, Node } from "../../types";
 import { createCodeInputParameter } from "./data";
 import type {
@@ -30,6 +31,7 @@ const CodePanel = ({ node }: CodePanelProps) => {
   const envVariables = useWorkflowStore((state) => state.envVariables);
   const { onNodeDataUpdate } = useNodesUpdate();
   const { handleLanguageChange } = useConfig(node.id, node.data);
+  const { availableNodes, nodeVariableList } = useWorkflowVariables(node.id);
   const panelRef = useRef<HTMLDivElement>(null);
 
   const syncNodeData = (patch: Partial<CodeNodeData>) => {
@@ -49,9 +51,20 @@ const CodePanel = ({ node }: CodePanelProps) => {
   };
 
   const nodeData = node.data;
-  // console.log('nodeData:', nodeData);
 
-  const inputParameters = node.data.inputs ?? [];
+  const normalizeInputParameter = (parameter: CodeInputParameter): CodeInputParameter => {
+    const variableSelector = parameter.variableSelector;
+    const nextValueSource = variableSelector?.path?.join('.') || parameter.valueSource || 'input';
+
+    return {
+      ...parameter,
+      valueSource: nextValueSource,
+      variableSelector: variableSelector || undefined,
+    };
+  };
+
+  const inputParameters = (node.data.inputs ?? []).map(normalizeInputParameter);
+  console.log(inputParameters)
   const outputVariables = node.data.outputs ?? [];
   const retryOnFailure = Boolean(node.data.retryOnFailure);
   const retryCount = Math.max(1, Number(node.data.retryCount) || 1);
@@ -76,10 +89,16 @@ const CodePanel = ({ node }: CodePanelProps) => {
         return item;
       }
 
-      return {
+      const nextItem = {
         ...item,
         ...patch,
       };
+
+      if (patch.variableSelector) {
+        nextItem.valueSource = patch.variableSelector.path.join('.') || 'input';
+      }
+
+      return normalizeInputParameter(nextItem);
     });
 
     syncNodeData({ inputs: nextInputParameters });
@@ -108,7 +127,8 @@ const CodePanel = ({ node }: CodePanelProps) => {
       <VarList
         node={node}
         inputParameters={inputParameters}
-        variableOptions={variableOptions}
+        availableNodes={availableNodes}
+        nodeOutputVariables={nodeVariableList}
         onUpsertInputParameter={upsertInputParameter}
         onRemoveInputParameter={removeInputParameter}
         onAddInputParameter={addInputParameter}

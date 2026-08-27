@@ -679,7 +679,15 @@ const translation = {
   checkList: {
     error: {
       variableNotFound: 'Variable not found in the workflow.',
-      endNodeMissing: 'The workflow must have an End node to terminate the execution.'
+      endNodeMissing: 'The workflow must have an End node to terminate the execution.',
+      codeEmpty: 'Code cannot be empty.',
+      codeInputVariableMissing: 'Please select a variable for input parameter "{{name}}".',
+      filterConditionMissing: 'Please add at least one filter condition.',
+      filterVariableMissing: 'Please select a variable for condition {{index}}.',
+      filterValueMissing: 'Please enter a comparison value for condition {{index}}.',
+      ifElseConditionMissing: 'Please add at least one condition for branch "{{branch}}".',
+      ifElseVariableMissing: 'Please select a variable for condition {{index}} in branch "{{branch}}".',
+      ifElseValueMissing: 'Please enter a comparison value for condition {{index}} in branch "{{branch}}".'
     }
   }
 };

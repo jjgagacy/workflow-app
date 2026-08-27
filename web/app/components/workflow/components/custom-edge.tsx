@@ -85,6 +85,8 @@ export function CustomEdge({
             position: 'absolute',
             transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
             pointerEvents: 'all',
+            // react-flow__nodes 渲染在 edgelabel-renderer 之后，默认会盖住组内边的按钮，需显式提升层级
+            zIndex: 1000,
           }}
           // 当鼠标移动到 Label 按钮面板上时，保持 hover 状态
           onMouseEnter={handleMouseEnter}
