@@ -3,17 +3,15 @@ import { CirclePlus } from "lucide-react";
 import { useStoreApi } from "@xyflow/react";
 import { useTranslation } from "react-i18next";
 import { SimpleSelect } from "@/app/ui/select";
-import {
-  buildVariableSelectItems,
-  buildWorkflowVariableOptions,
-} from "../../components/nodes-shared/variable-select";
+import { VarPicker } from "../../components/variable/var-picker";
 import {
   getWorkflowModelSelectItems,
   getWorkflowModelById,
 } from "../../components/nodes-shared/model-options";
 import { useWorkflowStore } from "../../context";
+import { useNodeConfig } from "../../hooks/use-node-config";
 import { useNodesUpdate } from "../../hooks/use-nodesUpdate";
-import type { Node } from "../../types";
+import type { Node, Variable, VariableSelector } from "../../types";
 import ClassifierList from "./list";
 import type { QuestionClassifierCategory, QuestionClassifierNodeData } from "./types";
 import { useQuestionClassifier } from "./hooks";
@@ -24,15 +22,13 @@ type QuestionClassifierPanelProps = {
 
 const QuestionClassifierPanel = ({ node }: QuestionClassifierPanelProps) => {
   const { t } = useTranslation();
-  const store = useStoreApi();
   const updateActivePanelNode = useWorkflowStore((state) => state.updateActivePanelNode);
-  const chatEnvVariables = useWorkflowStore((state) => state.chatEnvVariables);
-  const envVariables = useWorkflowStore((state) => state.envVariables);
+  const { availableNodes, nodeVariableList } = useNodeConfig(node.id);
   const { onNodeDataUpdate } = useNodesUpdate();
   const { createCategory, normalizeCategories, getDefaultCategoryName } = useQuestionClassifier();
 
   const categories = normalizeCategories(node.data.categories);
-  const inputVariable = String(node.data.inputVariable ?? '');
+  const inputVariable = node.data.inputVariable;
   const modelId = node.data.modelId ?? '';
   const modelItems = getWorkflowModelSelectItems();
   const selectedModel = getWorkflowModelById(modelId);
@@ -52,23 +48,6 @@ const QuestionClassifierPanel = ({ node }: QuestionClassifierPanelProps) => {
       data: patch,
     });
   };
-
-  const variableItems = useMemo(() => {
-    const nodes = store.getState().nodes as Node[];
-    const variableOptions = buildWorkflowVariableOptions({
-      t,
-      nodeId: node.id,
-      nodes,
-      envVariables,
-      chatEnvVariables,
-    });
-
-    return buildVariableSelectItems({
-      t,
-      currentValue: inputVariable,
-      options: variableOptions,
-    });
-  }, [chatEnvVariables, envVariables, inputVariable, node.id, store, t]);
 
   const updateCategory = (categoryId: string, patch: Partial<QuestionClassifierCategory>) => {
     const nextCategories = categories.map((category) => {
@@ -99,6 +78,10 @@ const QuestionClassifierPanel = ({ node }: QuestionClassifierPanelProps) => {
     });
   };
 
+  const handleInputVariableChange = (_variable: Variable, selector: VariableSelector) => {
+    syncNodeData({ inputVariable: selector });
+  };
+
   return (
     <div className="space-y-0">
       <div className="rounded-lg bg-muted/20 px-4 py-4">
@@ -127,12 +110,13 @@ const QuestionClassifierPanel = ({ node }: QuestionClassifierPanelProps) => {
 
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">
         <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.base.input-variable-label')}</div>
-        <SimpleSelect
-          items={variableItems}
-          defaultValue={inputVariable}
-          allowSearch={false}
+        <VarPicker
+          nodeId={node.id}
+          value={inputVariable}
+          onChange={handleInputVariableChange}
+          availableNodes={availableNodes}
+          nodeOutputVariables={nodeVariableList}
           className="w-full"
-          onSelect={(item) => syncNodeData({ inputVariable: String(item.value) })}
         />
       </section>
 

@@ -1,17 +1,13 @@
-import { useMemo } from "react";
 import { CirclePlus } from "lucide-react";
-import { useStoreApi } from "@xyflow/react";
 import { useTranslation } from "react-i18next";
 import { SimpleSelect } from "@/app/ui/select";
 import DeleteButton from "../../components/base/delete-button";
 import { NodeInput } from "../../components/base/node-input";
-import {
-  buildVariableSelectItems,
-  buildWorkflowVariableOptions,
-} from "../../components/nodes-shared/variable-select";
+import { VarPicker } from "../../components/variable/var-picker";
 import { useWorkflowStore } from "../../context";
+import { useNodeConfig } from "../../hooks/use-node-config";
 import { useNodesUpdate } from "../../hooks/use-nodesUpdate";
-import type { Node } from "../../types";
+import type { Node, Variable, VariableSelector } from "../../types";
 import type { KnowledgeBaseSelection, KnowledgeRetrievalNodeData } from "./types";
 import { useKnowledgeRetrieval } from "./hooks";
 import { DEFAULT_OUTPUT_VARIABLE_NAME } from "../document-extractor/data";
@@ -29,14 +25,12 @@ type SelectItem = {
 
 const KnowledgeRetrievalPanel = ({ node }: KnowledgeRetrievalPanelProps) => {
   const { t } = useTranslation();
-  const store = useStoreApi();
   const updateActivePanelNode = useWorkflowStore((state) => state.updateActivePanelNode);
-  const chatEnvVariables = useWorkflowStore((state) => state.chatEnvVariables);
-  const envVariables = useWorkflowStore((state) => state.envVariables);
+  const { availableNodes, nodeVariableList } = useNodeConfig(node.id);
   const { onNodeDataUpdate } = useNodesUpdate();
   const { normalizeKnowledgeBaseSelections, createKnowledgeBaseSelection, knowledgeBaseOptions } = useKnowledgeRetrieval();
 
-  const inputVariable = node.data.inputVariable ?? '';
+  const inputVariable = node.data.inputVariable;
   const knowledgeBases = normalizeKnowledgeBaseSelections(node.data.knowledgeBases);
   const outputVariableName = node.data.outputVariableName ?? DEFAULT_OUTPUT_VARIABLE_NAME;
 
@@ -55,23 +49,6 @@ const KnowledgeRetrievalPanel = ({ node }: KnowledgeRetrievalPanelProps) => {
       data: patch,
     });
   };
-
-  const variableItems = useMemo(() => {
-    const nodes = store.getState().nodes as Node[];
-    const variableOptions = buildWorkflowVariableOptions({
-      t,
-      nodeId: node.id,
-      nodes,
-      envVariables,
-      chatEnvVariables,
-    });
-
-    return buildVariableSelectItems({
-      t,
-      currentValue: inputVariable,
-      options: variableOptions,
-    });
-  }, [chatEnvVariables, envVariables, inputVariable, node.id, store, t]);
 
   const knowledgeBaseItems: SelectItem[] = knowledgeBaseOptions.map((option) => ({
     value: option.id,
@@ -105,6 +82,10 @@ const KnowledgeRetrievalPanel = ({ node }: KnowledgeRetrievalPanelProps) => {
     });
   };
 
+  const handleInputVariableChange = (_variable: Variable, selector: VariableSelector) => {
+    syncNodeData({ inputVariable: selector });
+  };
+
   return (
     <div className="space-y-0">
       <div className="rounded-lg bg-muted/20 px-4 py-3">
@@ -116,12 +97,13 @@ const KnowledgeRetrievalPanel = ({ node }: KnowledgeRetrievalPanelProps) => {
 
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">
         <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.knowledge-retrieval.input')}</div>
-        <SimpleSelect
-          items={variableItems}
-          defaultValue={inputVariable}
-          allowSearch={false}
+        <VarPicker
+          nodeId={node.id}
+          value={inputVariable}
+          onChange={handleInputVariableChange}
+          availableNodes={availableNodes}
+          nodeOutputVariables={nodeVariableList}
           className="w-full"
-          onSelect={(item) => syncNodeData({ inputVariable: String(item.value) })}
         />
       </section>
 
@@ -162,12 +144,16 @@ const KnowledgeRetrievalPanel = ({ node }: KnowledgeRetrievalPanelProps) => {
 
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">
         <label className="block">
-          <div className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.knowledge-retrieval.outputVariableName')}</div>
-          <NodeInput
-            value={outputVariableName}
-            onChange={(event) => syncNodeData({ outputVariableName: event.target.value })}
-            placeholder="text"
-          />
+          <div className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">输出变量名</div>
+          <div className="rounded-lg border border-[var(--border)] bg-background p-2.5">
+            <div className="mb-2 flex items-center gap-2 text-[11px] text-muted-foreground">
+              <span className="inline-flex items-center rounded bg-primary/10 px-2 py-1 font-medium text-primary">
+                {outputVariableName}
+              </span>
+              <span className="text-muted-foreground/70">=</span>
+              <span className="rounded bg-muted/50 px-2 py-1 font-medium text-foreground">string</span>
+            </div>
+          </div>
         </label>
       </section>
     </div>

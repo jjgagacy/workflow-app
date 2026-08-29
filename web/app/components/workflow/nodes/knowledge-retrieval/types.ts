@@ -1,4 +1,4 @@
-import type { NodeData } from "../../types";
+import type { NodeData, VariableSelector } from "../../types";
 
 export type KnowledgeBaseOption = {
   id: string;
@@ -12,7 +12,7 @@ export type KnowledgeBaseSelection = {
 };
 
 export type KnowledgeRetrievalNodeData = NodeData<{
-  inputVariable?: string;
+  inputVariable?: VariableSelector;
   knowledgeBases?: KnowledgeBaseSelection[];
   outputVariableName?: string;
 }>;

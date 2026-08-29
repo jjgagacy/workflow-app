@@ -25,12 +25,46 @@ export const normalizeParameterExtractorItems = (items?: ParameterExtractorItem[
 export const parameterExtractorNodeDefaultData: NodeDefaultData<ParameterExtractorNodeData> = {
   value: {
     modelId: WORKFLOW_MODEL_DEFAULT_ID,
-    inputVariable: 'input',
     enableVision: false,
     parameters: normalizeParameterExtractorItems(),
     outputVariableName: DEFAULT_PARAMETER_EXTRACTOR_NAME,
   },
   validate: function (payload: ParameterExtractorNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    if (!payload.modelId) {
+      return { valid: false, errorMessage: t('workflow.checkList.error.parameterExtractorModelMissing') };
+    }
+
+    if (!payload.inputVariable?.nodeId || !payload.inputVariable?.path?.length) {
+      return { valid: false, errorMessage: t('workflow.checkList.error.parameterExtractorInputVariableMissing') };
+    }
+
+    const parameters = normalizeParameterExtractorItems(payload.parameters);
+    if (parameters.length === 0) {
+      return { valid: false, errorMessage: t('workflow.checkList.error.parameterExtractorParameterMissing') };
+    }
+
+    for (let index = 0; index < parameters.length; index += 1) {
+      const parameter = parameters[index];
+
+      if (!parameter.name?.trim()) {
+        return {
+          valid: false,
+          errorMessage: t('workflow.checkList.error.parameterExtractorParameterNameMissing', { index: index + 1 }),
+        };
+      }
+
+      if (!parameter.description?.trim()) {
+        return {
+          valid: false,
+          errorMessage: t('workflow.checkList.error.parameterExtractorParameterDescriptionMissing', { index: index + 1 }),
+        };
+      }
+    }
+
+    if (!payload.outputVariableName?.trim()) {
+      return { valid: false, errorMessage: t('workflow.checkList.error.parameterExtractorOutputVariableMissing') };
+    }
+
     return { valid: true };
   }
 };

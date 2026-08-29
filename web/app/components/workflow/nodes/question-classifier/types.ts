@@ -1,4 +1,4 @@
-import type { NodeData } from "../../types";
+import type { NodeData, VariableSelector } from "../../types";
 
 export type QuestionClassifierCategory = {
   id: string;
@@ -8,6 +8,6 @@ export type QuestionClassifierCategory = {
 
 export type QuestionClassifierNodeData = NodeData<{
   modelId?: string;
-  inputVariable?: string;
+  inputVariable?: VariableSelector;
   categories?: QuestionClassifierCategory[];
 }>;

@@ -14,7 +14,7 @@ const KnowledgeRetrievalNode = ({ id, data }: NodeProps<Node<KnowledgeRetrievalN
   const { normalizeKnowledgeBaseSelections, knowledgeBaseOptions } = useKnowledgeRetrieval();
   const label = data.label?.trim() || t('workflow.nodes.knowledgeRetrieval.label');
   const iconColor = getNodeTypeIconColor(data.type);
-  const inputVariable = data.inputVariable?.trim() || t('workflow.nodes.knowledge-retrieval.noInputVariable');
+  const inputVariable = data.inputVariable?.path?.join('.');
   const selections = normalizeKnowledgeBaseSelections(data.knowledgeBases);
   const selectedNames = selections
     .map((selection) => knowledgeBaseOptions.find((option) => option.id === selection.knowledgeBaseId)?.name || selection.knowledgeBaseId)
@@ -29,7 +29,7 @@ const KnowledgeRetrievalNode = ({ id, data }: NodeProps<Node<KnowledgeRetrievalN
           <div className="space-y-2 p-4">
             <div className="rounded-lg border border-[var(--border)] bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
               <div className="flex flex-wrap gap-2">
-                <span className="rounded-full bg-background px-2.5 py-1">{t('workflow.nodes.knowledge-retrieval.input')} {inputVariable}</span>
+                <span className="rounded-full bg-background px-2.5 py-1">{t('workflow.nodes.knowledge-retrieval.input')} {inputVariable || t('workflow.nodes.knowledge-retrieval.noInputVariable')}</span>
                 <span className="rounded-full bg-background px-2.5 py-1">{t('workflow.nodes.knowledge-retrieval.knowledgeBases')} {selectedNames.length}</span>
                 <span className="rounded-full bg-background px-2.5 py-1">{t('workflow.nodes.knowledge-retrieval.output')} {outputVariableName}</span>
               </div>

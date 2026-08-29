@@ -1,15 +1,13 @@
 import { useMemo } from "react";
-import { useStoreApi } from "@xyflow/react";
 import { useTranslation } from "react-i18next";
-import { SimpleSelect } from "@/app/ui/select";
-import { buildVariableSelectItems, buildWorkflowVariableOptions } from "../../../components/nodes-shared/variable-select";
-import { useWorkflowStore } from "../../../context";
-import type { Node } from "../../../types";
+import { VarPicker } from "../../../components/variable/var-picker";
+import { useNodeConfig } from "../../../hooks/use-node-config";
+import type { Node, Variable, VariableSelector } from "../../../types";
 
 interface ArrayVariableSelectorProps {
   nodeId: string;
-  inputVariable: string;
-  onSelect: (value: string) => void;
+  inputVariable?: VariableSelector;
+  onSelect: (value: VariableSelector) => void;
 }
 
 const isArrayType = (typeLabel?: string) => {
@@ -26,40 +24,37 @@ export const ArrayVariableSelector = ({
   onSelect
 }: ArrayVariableSelectorProps) => {
   const { t } = useTranslation();
-  const store = useStoreApi();
-  const chatEnvVariables = useWorkflowStore((state) => state.chatEnvVariables);
-  const envVariables = useWorkflowStore((state) => state.envVariables);
+  const { availableNodes, nodeVariableList } = useNodeConfig(nodeId);
+  console.log('--', nodeVariableList);
 
-  const arrayVariableItems = useMemo(() => {
-    const nodes = store.getState().nodes as Node[];
-    const variableOptions = buildWorkflowVariableOptions({
-      t,
-      nodeId,
-      nodes,
-      envVariables,
-      chatEnvVariables,
-    });
+  const arrayVariableList = useMemo(() => {
+    return (nodeVariableList ?? [])
+      .map((group) => ({
+        ...group,
+        variables: group.variables.filter((variable) => {
+          const dataType = variable.dataType?.toLowerCase?.() ?? '';
+          return dataType === 'array';
+        }),
+      }))
+      .filter((group) => group.variables.length > 0);
+  }, [nodeVariableList]);
 
-    const filteredOptions = variableOptions.filter((option) => isArrayType(option.description));
-
-    return buildVariableSelectItems({
-      t,
-      currentValue: inputVariable,
-      options: filteredOptions,
-    });
-  }, [chatEnvVariables, envVariables, inputVariable, nodeId, store, t]);
+  const handleVariableChange = (_variable: Variable, selector: VariableSelector) => {
+    onSelect(selector);
+  };
 
   return (
     <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">
       <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
         {t('workflow.nodes.list-operator.arrayVariable')}
       </div>
-      <SimpleSelect
-        items={arrayVariableItems}
-        defaultValue={inputVariable}
-        allowSearch={false}
+      <VarPicker
+        nodeId={nodeId}
+        value={inputVariable}
+        onChange={handleVariableChange}
+        availableNodes={availableNodes}
+        nodeOutputVariables={arrayVariableList}
         className="w-full"
-        onSelect={(item) => onSelect(String(item.value))}
       />
     </section>
   );

@@ -1,8 +1,8 @@
-import type { NodeData } from "../../types";
+import type { NodeData, VariableSelector } from "../../types";
 
 export type VariableAggregatorItem = {
   id: string;
-  valueSource: string;
+  valueSource?: VariableSelector;
 };
 
 export type VariableAggregatorNodeData = NodeData<{

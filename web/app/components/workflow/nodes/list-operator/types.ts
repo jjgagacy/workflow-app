@@ -1,4 +1,4 @@
-import type { NodeData } from "../../types";
+import type { NodeData, VariableSelector } from "../../types";
 
 export type ListOperatorLogicalOperator = 'and' | 'or';
 
@@ -19,7 +19,7 @@ export type ListOperatorCondition = {
 };
 
 export type ListOperatorNodeData = NodeData<{
-  inputVariable?: string;
+  inputVariable?: VariableSelector;
   logicalOperator?: ListOperatorLogicalOperator;
   conditions?: ListOperatorCondition[];
   firstN?: number;

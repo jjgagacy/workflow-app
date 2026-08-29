@@ -1,13 +1,15 @@
 import { CirclePlus } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { SimpleSelect } from "@/app/ui/select";
-import { buildVariableSelectItems, buildWorkflowVariableOptions } from "../../components/nodes-shared/variable-select";
 import DeleteButton from "../../components/base/delete-button";
+import { VarPicker } from "../../components/variable/var-picker";
+import type { Node, Variable, VariableSelector } from "../../types";
 import type { VariableAggregatorItem } from "./types";
 
 type VariableAggregatorVarListProps = {
   variables: VariableAggregatorItem[];
-  variableOptions: ReturnType<typeof buildWorkflowVariableOptions>;
+  availableNodes?: Node[];
+  nodeId: string;
+  nodeOutputVariables?: ReturnType<typeof import("../../hooks/use-node-config").useNodeConfig>["nodeVariableList"];
   onAddVariable: () => void;
   onUpsertVariable: (variableId: string, patch: Partial<VariableAggregatorItem>) => void;
   onRemoveVariable: (variableId: string) => void;
@@ -15,7 +17,9 @@ type VariableAggregatorVarListProps = {
 
 const VariableAggregatorVarList = ({
   variables,
-  variableOptions,
+  availableNodes,
+  nodeId,
+  nodeOutputVariables,
   onAddVariable,
   onUpsertVariable,
   onRemoveVariable,
@@ -43,11 +47,9 @@ const VariableAggregatorVarList = ({
       ) : (
         <div className="space-y-1.5">
           {variables.map((item, index) => {
-            const valueItems = buildVariableSelectItems({
-              t,
-              currentValue: String(item.valueSource ?? ""),
-              options: variableOptions,
-            });
+            const handleValueChange = (_variable: Variable, selector: VariableSelector) => {
+              onUpsertVariable(item.id, { valueSource: selector });
+            };
 
             return (
               <div key={item.id} className="rounded-lg border border-[var(--border)] bg-background px-3 py-2">
@@ -68,12 +70,13 @@ const VariableAggregatorVarList = ({
                 </div>
 
                 <div className="mt-1.5 pl-7">
-                  <SimpleSelect
-                    items={valueItems}
-                    defaultValue={item.valueSource}
-                    allowSearch={false}
+                  <VarPicker
+                    nodeId={nodeId}
+                    value={item.valueSource}
+                    onChange={handleValueChange}
+                    availableNodes={availableNodes}
+                    nodeOutputVariables={nodeOutputVariables}
                     className="w-full"
-                    onSelect={(selected) => onUpsertVariable(item.id, { valueSource: String(selected.value) })}
                   />
                 </div>
               </div>

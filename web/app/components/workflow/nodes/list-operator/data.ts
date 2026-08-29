@@ -22,7 +22,6 @@ export const normalizeListOperatorConditions = (conditions?: ListOperatorConditi
 
 export const listOperatorNodeDefaultData: NodeDefaultData<ListOperatorNodeData> = {
   value: {
-    inputVariable: '',
     logicalOperator: 'and',
     conditions: normalizeListOperatorConditions(),
     firstN: 0,
@@ -32,6 +31,14 @@ export const listOperatorNodeDefaultData: NodeDefaultData<ListOperatorNodeData> 
     outputVariableName: DEFAULT_LIST_OPERATOR_OUTPUT_VARIABLE_NAME,
   },
   validate: function (payload: ListOperatorNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    if (!payload.inputVariable?.nodeId || !payload.inputVariable?.path?.length) {
+      return { valid: false, errorMessage: t('workflow.checkList.error.listOperatorInputVariableMissing') };
+    }
+
+    if (!payload.outputVariableName?.trim()) {
+      return { valid: false, errorMessage: t('workflow.checkList.error.listOperatorOutputVariableMissing') };
+    }
+
     return { valid: true };
   }
 };

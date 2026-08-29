@@ -1,12 +1,11 @@
 import { useMemo } from "react";
-import { useStoreApi } from "@xyflow/react";
 import { useTranslation } from "react-i18next";
-import { SimpleSelect } from "@/app/ui/select";
 import { NodeInput } from "../../components/base/node-input";
-import { buildVariableSelectItems, buildWorkflowVariableOptions } from "../../components/nodes-shared/variable-select";
+import { VarPicker } from "../../components/variable/var-picker";
 import { useWorkflowStore } from "../../context";
+import { useNodeConfig } from "../../hooks/use-node-config";
 import { useNodesUpdate } from "../../hooks/use-nodesUpdate";
-import type { Node } from "../../types";
+import type { Node, Variable, VariableSelector } from "../../types";
 import { DEFAULT_OUTPUT_VARIABLE_NAME, DOCUMENT_EXTRACTOR_SUPPORTED_FORMATS } from "./data";
 import type { DocumentExtractorNodeData } from "./types";
 
@@ -14,31 +13,13 @@ type DocumentExtractorPanelProps = {
   node: Node<DocumentExtractorNodeData>;
 };
 
-const isFileType = (typeLabel?: string) => {
-  const normalized = String(typeLabel ?? '').trim().toLowerCase();
-  if (!normalized) {
-    return false;
-  }
-
-  return (
-    normalized === 'file'
-    || normalized === 'file[]'
-    || normalized === 'files'
-    || normalized === 'array<file>'
-    || normalized === 'file array'
-    || normalized === 'array[file]'
-  );
-};
-
 const DocumentExtractorPanel = ({ node }: DocumentExtractorPanelProps) => {
   const { t } = useTranslation();
-  const store = useStoreApi();
   const updateActivePanelNode = useWorkflowStore((state) => state.updateActivePanelNode);
-  const chatEnvVariables = useWorkflowStore((state) => state.chatEnvVariables);
-  const envVariables = useWorkflowStore((state) => state.envVariables);
+  const { availableNodes, nodeVariableList } = useNodeConfig(node.id);
   const { onNodeDataUpdate } = useNodesUpdate();
 
-  const inputVariable = node.data.inputVariable ?? '';
+  const inputVariable = node.data.inputVariable;
   const outputVariableName = node.data.outputVariableName ?? DEFAULT_OUTPUT_VARIABLE_NAME;
 
   const syncNodeData = (patch: Partial<DocumentExtractorNodeData>) => {
@@ -57,24 +38,21 @@ const DocumentExtractorPanel = ({ node }: DocumentExtractorPanelProps) => {
     });
   };
 
-  const fileVariableItems = useMemo(() => {
-    const nodes = store.getState().nodes as Node[];
-    const variableOptions = buildWorkflowVariableOptions({
-      t,
-      nodeId: node.id,
-      nodes,
-      envVariables,
-      chatEnvVariables,
-    });
+  const fileVariableList = useMemo(() => {
+    return (nodeVariableList ?? [])
+      .map((group) => ({
+        ...group,
+        variables: group.variables.filter((variable) => {
+          const dataType = variable.dataType?.toLowerCase?.() ?? '';
+          return dataType === 'file' || dataType === 'array';
+        }),
+      }))
+      .filter((group) => group.variables.length > 0);
+  }, [nodeVariableList]);
 
-    const filteredOptions = variableOptions.filter((option) => isFileType(option.description));
-
-    return buildVariableSelectItems({
-      t,
-      currentValue: inputVariable,
-      options: filteredOptions,
-    });
-  }, [chatEnvVariables, envVariables, inputVariable, node.id, store, t]);
+  const handleInputVariableChange = (_variable: Variable, selector: VariableSelector) => {
+    syncNodeData({ inputVariable: selector });
+  };
 
   return (
     <div className="space-y-0">
@@ -101,12 +79,13 @@ const DocumentExtractorPanel = ({ node }: DocumentExtractorPanelProps) => {
           {t('workflow.nodes.document-extractor.input-variable')}
         </div>
 
-        <SimpleSelect
-          items={fileVariableItems}
-          defaultValue={inputVariable}
-          allowSearch={false}
+        <VarPicker
+          nodeId={node.id}
+          value={inputVariable}
+          onChange={handleInputVariableChange}
+          availableNodes={availableNodes}
+          nodeOutputVariables={fileVariableList}
           className="w-full"
-          onSelect={(item) => syncNodeData({ inputVariable: String(item.value) })}
         />
 
         <div className="text-xs leading-5 text-muted-foreground">
@@ -117,14 +96,19 @@ const DocumentExtractorPanel = ({ node }: DocumentExtractorPanelProps) => {
       {/* 输出变量名 */}
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">
         <label className="block">
-          <div className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+          <div className="mb-2 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
             {t('workflow.nodes.document-extractor.output-variable')}
           </div>
-          <NodeInput
-            value={outputVariableName}
-            onChange={(event) => syncNodeData({ outputVariableName: event.target.value })}
-            placeholder={DEFAULT_OUTPUT_VARIABLE_NAME}
-          />
+
+          <div className="rounded-lg border border-[var(--border)] bg-background p-2.5">
+            <div className="mb-2 flex items-center gap-2 text-[11px] text-muted-foreground">
+              <span className="inline-flex items-center rounded bg-primary/10 px-2 py-1 font-medium text-primary">
+                {outputVariableName}
+              </span>
+              <span className="text-muted-foreground/70">=</span>
+              <span className="rounded bg-muted/50 px-2 py-1 font-medium text-foreground">string</span>
+            </div>
+          </div>
         </label>
       </section>
     </div>

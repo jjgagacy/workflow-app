@@ -12,7 +12,7 @@ const DocumentExtractorNode = ({ id, data }: NodeProps<Node<DocumentExtractorNod
   const { t } = useTranslation();
   const label = data.label?.trim() || t('workflow.nodes.document-extractor.name') || 'Document Extractor';
   const iconColor = getNodeTypeIconColor(data.type);
-  const inputVariable = data.inputVariable?.trim();
+  const inputVariable = data.inputVariable?.path?.join('.') || '';
   const outputVariableName = data.outputVariableName?.trim() || DEFAULT_OUTPUT_VARIABLE_NAME;
 
   return (

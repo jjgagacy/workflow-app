@@ -12,7 +12,7 @@ const ListOperatorNode = ({ id, data }: NodeProps<Node<ListOperatorNodeData>>) =
   const { t } = useTranslation();
   const label = data.label?.trim() || t('workflow.nodes.list-operator.name');
   const iconColor = getNodeTypeIconColor(data.type);
-  const inputVariable = data.inputVariable?.trim() || t('workflow.nodes.list-operator.no-input-variable');
+  const inputVariable = data.inputVariable?.path?.join('.');
   const outputVariableName = data.outputVariableName?.trim() || DEFAULT_LIST_OPERATOR_OUTPUT_VARIABLE_NAME;
 
   return (
@@ -25,7 +25,7 @@ const ListOperatorNode = ({ id, data }: NodeProps<Node<ListOperatorNodeData>>) =
               <div className="flex flex-col gap-2 text-xs">
                 <span className="flex items-center justify-between  gap-1 text-muted-foreground">
                   <span>{t('workflow.nodes.list-operator.input')}</span>
-                  <span className="font-mono text-foreground">{inputVariable}</span>
+                  <span className="font-mono text-foreground">{inputVariable || t('workflow.nodes.list-operator.no-input-variable')}</span>
                 </span>
                 <span className="flex items-center justify-between  gap-1 text-muted-foreground">
                   <span>{t('workflow.nodes.list-operator.output')}</span>
@@ -34,7 +34,7 @@ const ListOperatorNode = ({ id, data }: NodeProps<Node<ListOperatorNodeData>>) =
               </div>
             </div>
           </div>
-          <NodeSourceHandle nodeId={id} handleId="output" className="top-1/2 -right-4 -translate-y-1/2" />
+          <NodeSourceHandle nodeId={id} handleId="output" className="top-1/2 -translate-y-1/2" />
         </>
       )}
     </div>

@@ -1,20 +1,16 @@
-import { useMemo } from "react";
-import { useStoreApi } from "@xyflow/react";
 import { useTranslation } from "react-i18next";
 import { Checkbox } from "@/app/ui/checkbox";
 import { SimpleSelect } from "@/app/ui/select";
 import { NodeInput } from "../../components/base/node-input";
-import {
-  buildVariableSelectItems,
-  buildWorkflowVariableOptions,
-} from "../../components/nodes-shared/variable-select";
+import { VarPicker } from "../../components/variable/var-picker";
 import {
   getWorkflowModelById,
   getWorkflowModelSelectItems,
 } from "../../components/nodes-shared/model-options";
 import { useWorkflowStore } from "../../context";
+import { useNodeConfig } from "../../hooks/use-node-config";
 import { useNodesUpdate } from "../../hooks/use-nodesUpdate";
-import type { Node } from "../../types";
+import type { Node, Variable, VariableSelector } from "../../types";
 import {
   createParameterExtractorItem,
   normalizeParameterExtractorItems,
@@ -30,37 +26,26 @@ type ParameterExtractorPanelProps = {
 
 const ParameterExtractorPanel = ({ node }: ParameterExtractorPanelProps) => {
   const { t } = useTranslation();
-  const store = useStoreApi();
   const updateActivePanelNode = useWorkflowStore((state) => state.updateActivePanelNode);
-  const chatEnvVariables = useWorkflowStore((state) => state.chatEnvVariables);
-  const envVariables = useWorkflowStore((state) => state.envVariables);
+  const { availableNodes, nodeVariableList } = useNodeConfig(node.id);
   const { onNodeDataUpdate } = useNodesUpdate();
 
   const modelId = node.data.modelId ?? '';
-  const inputVariable = node.data.inputVariable ?? '';
+  const inputVariable = node.data.inputVariable;
   const enableVision = Boolean(node.data.enableVision);
   const parameters = normalizeParameterExtractorItems(node.data.parameters);
   const outputVariableName = node.data.outputVariableName ?? DEFAULT_OUTPUT_VARIABLE_NAME;
   const model = getWorkflowModelById(modelId);
+  const outputFields = [
+    ...parameters
+      .map((parameter) => parameter.name.trim())
+      .filter(Boolean),
+    '_isSuccess',
+    '_errorMessage',
+    '_usage',
+  ];
 
   const modelItems = getWorkflowModelSelectItems();
-
-  const variableItems = useMemo(() => {
-    const nodes = store.getState().nodes as Node[];
-    const variableOptions = buildWorkflowVariableOptions({
-      t,
-      nodeId: node.id,
-      nodes,
-      envVariables,
-      chatEnvVariables,
-    });
-
-    return buildVariableSelectItems({
-      t,
-      currentValue: inputVariable,
-      options: variableOptions,
-    });
-  }, [chatEnvVariables, envVariables, inputVariable, node.id, store, t]);
 
   const syncNodeData = (patch: Partial<ParameterExtractorNodeData>) => {
     const nextNode = {
@@ -106,6 +91,10 @@ const ParameterExtractorPanel = ({ node }: ParameterExtractorPanelProps) => {
     });
   };
 
+  const handleInputVariableChange = (_variable: Variable, selector: VariableSelector) => {
+    syncNodeData({ inputVariable: selector });
+  };
+
   return (
     <div className="space-y-0">
       <ParameterExtractorInfo
@@ -128,12 +117,13 @@ const ParameterExtractorPanel = ({ node }: ParameterExtractorPanelProps) => {
 
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-1">
         <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.parameter-extractor.inputVariable')}</div>
-        <SimpleSelect
-          items={variableItems}
-          defaultValue={inputVariable}
-          allowSearch={false}
+        <VarPicker
+          nodeId={node.id}
+          value={inputVariable}
+          onChange={handleInputVariableChange}
+          availableNodes={availableNodes}
+          nodeOutputVariables={nodeVariableList}
           className="w-full"
-          onSelect={(item) => syncNodeData({ inputVariable: String(item.value) })}
         />
       </section>
 
@@ -162,14 +152,35 @@ const ParameterExtractorPanel = ({ node }: ParameterExtractorPanelProps) => {
       />
 
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">
-        <label className="block">
-          <div className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.parameter-extractor.outputVariable')}</div>
-          <NodeInput
-            value={outputVariableName}
-            onChange={(event) => syncNodeData({ outputVariableName: event.target.value })}
-            placeholder=""
-          />
-        </label>
+        <div className="block">
+          <div className="mb-2 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.parameter-extractor.outputVariable')}</div>
+
+          <div className="rounded-lg border border-[var(--border)] bg-background p-2.5">
+            <div className="mb-2 flex items-center gap-2 text-[11px] text-muted-foreground">
+              <span className="inline-flex items-center rounded bg-primary/10 px-2 py-1 font-medium text-primary">
+                {outputVariableName}
+              </span>
+              <span className="text-muted-foreground/70">=</span>
+              <span className="rounded bg-muted/50 px-2 py-1 font-medium text-foreground">object</span>
+            </div>
+
+            <div className="rounded-md border border-dashed border-[var(--border)] bg-muted/20 p-2">
+              <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                fields
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {outputFields.map((field) => (
+                  <span
+                    key={field}
+                    className="rounded-full border border-[var(--border)] bg-background px-2 py-1 text-[10px] font-medium text-foreground/90"
+                  >
+                    {field}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );

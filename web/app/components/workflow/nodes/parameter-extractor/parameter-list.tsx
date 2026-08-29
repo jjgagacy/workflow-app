@@ -106,14 +106,9 @@ export const ParameterList = ({
                   value={item.description}
                   onChange={(event) => onUpsertParameter(item.id, { description: event.target.value })}
                   placeholder={t('workflow.nodes.parameter-extractor.parameter_description_placeholder')}
-                  rows={3}
-                  className={missingDescription ? 'min-h-[88px] border-destructive' : 'min-h-[88px]'}
+                  rows={2}
+                  className={missingDescription ? 'min-h-[64px]' : 'min-h-[64px]'}
                 />
-                {missingDescription && (
-                  <div className="mt-1 text-xs text-destructive">
-                    {t('workflow.nodes.parameter-extractor.parameter_description_required')}
-                  </div>
-                )}
               </label>
             </div>
           );

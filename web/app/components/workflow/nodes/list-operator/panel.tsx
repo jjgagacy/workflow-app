@@ -14,6 +14,7 @@ import ArrayVariableSelector from "./components/variable-selector";
 import ConditionList from "./components/condition-list";
 import PaginationSettings from "./components/pagination";
 import SortSettings from "./components/sort";
+import { useTranslation } from "react-i18next";
 
 type ListOperatorPanelProps = {
   node: Node<ListOperatorNodeData>;
@@ -30,11 +31,12 @@ const isArrayType = (typeLabel?: string) => {
 
 
 const ListOperatorPanel = ({ node }: ListOperatorPanelProps) => {
+  const { t } = useTranslation();
   const updateActivePanelNode = useWorkflowStore((state) => state.updateActivePanelNode);
   const { onNodeDataUpdate } = useNodesUpdate();
   const { conditionOperatorItems, sortOrderItems } = useListOperatorOptions();
 
-  const inputVariable = node.data.inputVariable ?? '';
+  const inputVariable = node.data.inputVariable;
   const logicalOperator = (node.data.logicalOperator ?? 'and') as ListOperatorLogicalOperator;
   const conditions = normalizeListOperatorConditions(node.data.conditions);
   const firstN = Math.max(0, Number(node.data.firstN) || 0);
@@ -127,12 +129,19 @@ const ListOperatorPanel = ({ node }: ListOperatorPanelProps) => {
 
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">
         <label className="block">
-          <div className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">输出变量名</div>
-          <NodeInput
-            value={outputVariableName}
-            onChange={(event) => syncNodeData({ outputVariableName: event.target.value })}
-            placeholder=""
-          />
+          <div className="mb-2 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+            {t('workflow.nodes.document-extractor.output-variable')}
+          </div>
+
+          <div className="rounded-lg border border-[var(--border)] bg-background p-2.5">
+            <div className="mb-2 flex items-center gap-2 text-[11px] text-muted-foreground">
+              <span className="inline-flex items-center rounded bg-primary/10 px-2 py-1 font-medium text-primary">
+                {outputVariableName}
+              </span>
+              <span className="text-muted-foreground/70">=</span>
+              <span className="rounded bg-muted/50 px-2 py-1 font-medium text-foreground">array</span>
+            </div>
+          </div>
         </label>
       </section>
     </div>

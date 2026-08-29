@@ -1,4 +1,4 @@
-import type { NodeData, VariableDataType } from "../../types";
+import type { NodeData, VariableDataType, VariableSelector } from "../../types";
 
 export type ParameterExtractorItem = {
   id: string;
@@ -9,7 +9,7 @@ export type ParameterExtractorItem = {
 
 export type ParameterExtractorNodeData = NodeData<{
   modelId?: string;
-  inputVariable?: string;
+  inputVariable?: VariableSelector;
   enableVision?: boolean;
   parameters?: ParameterExtractorItem[];
   outputVariableName?: string;

@@ -1,7 +1,7 @@
-import type { NodeData } from "../../types";
+import type { NodeData, VariableSelector } from "../../types";
 
 export type DocumentExtractorNodeData = NodeData<{
-  inputVariable?: string;
+  inputVariable?: VariableSelector;
   outputVariableName?: string;
   isArrayFile?: boolean;
 }>;

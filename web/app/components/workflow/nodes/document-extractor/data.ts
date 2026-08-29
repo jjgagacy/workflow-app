@@ -18,10 +18,17 @@ export const DOCUMENT_EXTRACTOR_SUPPORTED_FORMATS = [
 
 export const documentExtractorNodeDefaultData: NodeDefaultData<DocumentExtractorNodeData> = {
   value: {
-    inputVariable: '',
     outputVariableName: DEFAULT_OUTPUT_VARIABLE_NAME,
   },
   validate: function (payload: DocumentExtractorNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    if (!payload.inputVariable?.nodeId || !payload.inputVariable?.path?.length) {
+      return { valid: false, errorMessage: t('workflow.checkList.error.documentExtractorInputVariableMissing') };
+    }
+
+    if (!payload.outputVariableName?.trim()) {
+      return { valid: false, errorMessage: t('workflow.checkList.error.documentExtractorOutputVariableMissing') };
+    }
+
     return { valid: true };
   }
 };
