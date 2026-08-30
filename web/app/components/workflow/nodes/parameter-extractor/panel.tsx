@@ -38,11 +38,14 @@ const ParameterExtractorPanel = ({ node }: ParameterExtractorPanelProps) => {
   const model = getWorkflowModelById(modelId);
   const outputFields = [
     ...parameters
-      .map((parameter) => parameter.name.trim())
-      .filter(Boolean),
-    '_isSuccess',
-    '_errorMessage',
-    '_usage',
+      .filter((parameter) => parameter.name.trim())
+      .map((parameter) => ({
+        name: parameter.name.trim(),
+        description: parameter.description.trim() || t('workflow.nodes.parameter-extractor.outputFieldDescriptionFallback'),
+      })),
+    { name: '_isSuccess', description: t('workflow.nodes.parameter-extractor.outputFieldIsSuccess') },
+    { name: '_errorMessage', description: t('workflow.nodes.parameter-extractor.outputFieldErrorMessage') },
+    { name: '_usage', description: t('workflow.nodes.parameter-extractor.outputFieldUsage') },
   ];
 
   const modelItems = getWorkflowModelSelectItems();
@@ -166,16 +169,19 @@ const ParameterExtractorPanel = ({ node }: ParameterExtractorPanelProps) => {
 
             <div className="rounded-md border border-dashed border-[var(--border)] bg-muted/20 p-2">
               <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-                fields
+                {t('workflow.nodes.parameter-extractor.outputFields')}
               </div>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="space-y-2">
                 {outputFields.map((field) => (
-                  <span
-                    key={field}
-                    className="rounded-full border border-[var(--border)] bg-background px-2 py-1 text-[10px] font-medium text-foreground/90"
+                  <div
+                    key={field.name}
+                    className="rounded-md border border-[var(--border)] bg-background px-2 py-1.5"
                   >
-                    {field}
-                  </span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-mono text-[11px] font-medium text-foreground">{field.name}</span>
+                      <span className="text-[9px] text-muted-foreground">{field.description}</span>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>

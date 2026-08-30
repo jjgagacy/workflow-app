@@ -1,33 +1,24 @@
 import { useTranslation } from "react-i18next";
-import { NodeInput } from "../../../components/base/node-input";
 
-type OutputSectionProps = {
-  outputVariableName: string;
-  onOutputVariableNameChange: (value: string) => void;
+type OutputField = {
+  name: string;
+  description: string;
 };
 
-const OutputSection = ({ outputVariableName, onOutputVariableNameChange }: OutputSectionProps) => {
+type OutputVariableSectionProps = {
+  outputVariableName: string;
+  outputFields: OutputField[];
+};
+
+export const OutputVariableSection = ({ outputVariableName, outputFields }: OutputVariableSectionProps) => {
   const { t } = useTranslation();
-  const outputFields = [
-    { name: 'body', description: t('workflow.nodes.http-request.outputFieldBody') },
-    { name: 'statusCode', description: t('workflow.nodes.http-request.outputFieldStatusCode') },
-    { name: 'headers', description: t('workflow.nodes.http-request.outputFieldHeaders') },
-    { name: 'files', description: t('workflow.nodes.http-request.outputFieldFiles') },
-  ];
 
   return (
     <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">
-      <label className="block">
-        <div className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.http-request.outputVariableName')}</div>
-        <NodeInput
-          value={outputVariableName}
-          onChange={(event) => onOutputVariableNameChange(event.target.value)}
-          placeholder=""
-        />
-      </label>
-
       <div className="block">
-        <div className="mb-2 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.http-request.outputVariable')}</div>
+        <div className="mb-2 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+          {t('workflow.nodes.llm.outputVariable')}
+        </div>
 
         <div className="rounded-lg border border-[var(--border)] bg-background p-2.5">
           <div className="mb-2 flex items-center gap-2 text-[11px] text-muted-foreground">
@@ -37,10 +28,9 @@ const OutputSection = ({ outputVariableName, onOutputVariableNameChange }: Outpu
             <span className="text-muted-foreground/70">=</span>
             <span className="rounded bg-muted/50 px-2 py-1 font-medium text-foreground">object</span>
           </div>
-
           <div className="rounded-md border border-dashed border-[var(--border)] bg-muted/20 p-2">
             <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-              {t('workflow.nodes.http-request.outputFields')}
+              {t('workflow.nodes.llm.outputFields')}
             </div>
             <div className="space-y-2">
               {outputFields.map((field) => (
@@ -61,5 +51,3 @@ const OutputSection = ({ outputVariableName, onOutputVariableNameChange }: Outpu
     </section>
   );
 };
-
-export default OutputSection;

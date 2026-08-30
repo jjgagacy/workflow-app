@@ -286,32 +286,32 @@ export const timestampVariable: Variable = {
 
 export const HTTP_REQUEST_OUTPUT_VARIABLES: Variable[] = [
   {
+    id: 'httpRequest.body',
+    name: 'body',
+    sourceType: ValueSourceMode.variable,
+    dataType: VariableDataType.string,
+    label: 'workflow.nodes.http-request.outputFieldBody',
+  },
+  {
     id: 'httpRequest.statusCode',
     name: 'statusCode',
     sourceType: ValueSourceMode.variable,
     dataType: VariableDataType.number,
-    label: 'workflow.nodes.http-request.statusCode',
+    label: 'workflow.nodes.http-request.outputFieldStatusCode',
   },
   {
-    id: 'httpRequest.responseBody',
-    name: 'responseBody',
-    sourceType: ValueSourceMode.variable,
-    dataType: VariableDataType.string,
-    label: 'workflow.nodes.http-request.responseBody',
-  },
-  {
-    id: 'httpRequest.responseHeaders',
-    name: 'responseHeaders',
+    id: 'httpRequest.headers',
+    name: 'headers',
     sourceType: ValueSourceMode.variable,
     dataType: VariableDataType.object,
-    label: 'workflow.nodes.http-request.responseHeaders',
+    label: 'workflow.nodes.http-request.outputFieldHeaders',
   },
   {
-    id: 'httpRequest.responseFiles',
-    name: 'responseFiles',
+    id: 'httpRequest.files',
+    name: 'files',
     sourceType: ValueSourceMode.variable,
     dataType: VariableDataType.array,
-    label: 'workflow.nodes.http-request.responseFiles',
+    label: 'workflow.nodes.http-request.outputFieldFiles',
   },
 ];
 
@@ -376,8 +376,8 @@ export const LLM_OUTPUT_VARIABLES: Variable[] = [
     label: 'workflow.nodes.llm.reasoningContent',
   },
   {
-    id: 'usage',
-    name: 'usage',
+    id: '_usage',
+    name: '_usage',
     sourceType: ValueSourceMode.variable,
     dataType: VariableDataType.object,
     label: 'workflow.nodes.llm.usage',

@@ -94,6 +94,11 @@ const translation = {
       visionAbilityDescription: 'When enabled, the parameter extractor can process inputs that contain images.',
       enableVision: 'Enable Vision',
       outputVariable: 'Output Variable',
+      outputFields: 'Fields',
+      outputFieldDescriptionFallback: 'Parameter description',
+      outputFieldIsSuccess: 'Success status',
+      outputFieldErrorMessage: 'Error message',
+      outputFieldUsage: 'LLM usage',
     },
     'question-classifier': {
       name: 'Question Classifier',
@@ -197,6 +202,10 @@ const translation = {
       text: 'Text',
       reasoningContent: 'Reasoning Content',
       usage: 'Usage',
+      outputVariable: 'Output Variable',
+      outputFields: 'Fields',
+      outputFieldText: 'Generated content',
+      outputFieldUsage: 'LLM usage',
     },
     openai: {
       name: 'OpenAI',
@@ -351,6 +360,12 @@ const translation = {
       exceptionHandler: 'Exception Handler',
       returnDefaultValue: 'Return Default Value',
       outputVariableName: 'Output Variable Name',
+      outputVariable: 'Output Variable',
+      outputFields: 'Fields',
+      outputFieldBody: 'Response body',
+      outputFieldStatusCode: 'Response status code',
+      outputFieldHeaders: 'Response headers',
+      outputFieldFiles: 'Response files list',
     },
     'knowledge-retrieval': {
       name: 'Knowledge Retrieval',
@@ -677,12 +692,21 @@ const translation = {
       timestamp: 'Timestamp',
     }
   },
+  checklist: {
+    title: 'Checklist',
+    summary: 'Total {{count}} errors',
+    invalidNode: 'Node configuration is invalid',
+  },
   checkList: {
     error: {
       variableNotFound: 'Variable not found in the workflow.',
       endNodeMissing: 'The workflow must have an End node to terminate the execution.',
       codeEmpty: 'Code cannot be empty.',
       codeInputVariableMissing: 'Please select a variable for input parameter "{{name}}".',
+      llmModelMissing: 'Please select a model.',
+      llmInputVariableMissing: 'Please select an input variable for the LLM.',
+      llmSystemPromptMissing: 'Please enter a system prompt.',
+      llmUserPromptMissing: 'Please enter a user prompt.',
       parameterExtractorModelMissing: 'Please select a model.',
       parameterExtractorInputVariableMissing: 'Please select an input variable to extract.',
       parameterExtractorParameterMissing: 'Please add at least one parameter to extract.',

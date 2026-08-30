@@ -1,4 +1,4 @@
-import type { NodeData } from "../../types";
+import type { NodeData, VariableSelector } from "../../types";
 
 export type SelectItem = {
   value: string;
@@ -10,7 +10,7 @@ export type LLMExceptionStrategy = 'stop-execution' | 'return-default';
 
 export type LLMNodeData = NodeData<{
   modelId?: string;
-  inputVariable?: string;
+  inputVariable?: VariableSelector;
   systemPrompt?: string;
   userPrompt?: string;
   assistantPrompt?: string;
@@ -20,4 +20,5 @@ export type LLMNodeData = NodeData<{
   retryIntervalMs?: number;
   exceptionStrategy?: LLMExceptionStrategy;
   exceptionDefaultValue?: string;
+  outputVariableName?: string;
 }>;

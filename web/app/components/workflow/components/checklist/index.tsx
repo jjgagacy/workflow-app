@@ -26,7 +26,7 @@ export const Checklist = () => {
       triggerClassName="inline-flex relative"
       panelClassName="z-50"
       trigger={({ open }) => (
-        <Tooltip content="检查清单" placement="left">
+        <Tooltip content={t('workflow.checklist.title')} placement="left">
           <div
             className={cn(
               `relative flex h-8 w-8 cursor-pointer items-center justify-center rounded-sm border border-[var(--border)] ${getThemeBgClass(activeColorTheme as ThemeType)} ${getThemeHoverClass(activeColorTheme as ThemeType)} transition-colors`,

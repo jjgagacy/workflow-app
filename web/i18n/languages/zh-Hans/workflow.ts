@@ -91,6 +91,11 @@ const translation = {
       visionAbilityDescription: '启用后，参数提取器可以处理包含图片内容的输入。',
       enableVision: '启用视觉',
       outputVariable: '输出变量',
+      outputFields: '字段',
+      outputFieldDescriptionFallback: '参数说明',
+      outputFieldIsSuccess: '是否成功',
+      outputFieldErrorMessage: '错误消息',
+      outputFieldUsage: '大模型用量',
     },
     'question-classifier': {
       name: '问题分类器',
@@ -194,6 +199,10 @@ const translation = {
       text: '文本',
       reasoningContent: '推理内容',
       usage: '使用量',
+      outputVariable: '输出变量',
+      outputFields: '字段',
+      outputFieldText: '生成内容',
+      outputFieldUsage: '大模型用量',
     },
     openai: {
       name: 'OpenAI',
@@ -347,6 +356,12 @@ const translation = {
       exceptionHandler: '异常处理',
       returnDefaultValue: '默认返回值',
       outputVariableName: '输出变量名',
+      outputVariable: '输出变量',
+      outputFields: '字段',
+      outputFieldBody: '返回内容',
+      outputFieldStatusCode: '响应状态码',
+      outputFieldHeaders: '响应头 Headers',
+      outputFieldFiles: '响应文件列表',
     },
     'knowledge-retrieval': {
       name: '知识检索',
@@ -672,12 +687,21 @@ const translation = {
       timestamp: '时间戳',
     }
   },
+  checklist: {
+    title: '检查清单',
+    summary: '共 {{count}} 个错误',
+    invalidNode: '节点配置无效',
+  },
   checkList: {
     error: {
       variableNotFound: '工作流中未找到变量。',
       endNodeMissing: '工作流必须包含一个结束节点以终止执行。',
       codeEmpty: '代码不能为空。',
       codeInputVariableMissing: '请为输入参数"{{name}}"选择变量。',
+      llmModelMissing: '请选择模型。',
+      llmInputVariableMissing: '请选择 LLM 的输入变量。',
+      llmSystemPromptMissing: '请填写系统提示词。',
+      llmUserPromptMissing: '请填写用户提示词。',
       parameterExtractorModelMissing: '请选择模型。',
       parameterExtractorInputVariableMissing: '请选择要提取的输入变量。',
       parameterExtractorParameterMissing: '请至少添加一个要提取的参数。',

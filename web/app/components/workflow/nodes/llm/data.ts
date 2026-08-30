@@ -7,7 +7,6 @@ export const LLM_DEFAULT_EXCEPTION_STRATEGY = 'stop-execution';
 export const llmNodeDefaultData: NodeDefaultData<LLMNodeData> = {
   value: {
     modelId: WORKFLOW_MODEL_DEFAULT_ID,
-    inputVariable: 'input',
     systemPrompt: '',
     userPrompt: '',
     assistantPrompt: '',
@@ -19,6 +18,22 @@ export const llmNodeDefaultData: NodeDefaultData<LLMNodeData> = {
     exceptionDefaultValue: '',
   },
   validate: function (payload: LLMNodeData, t: any, data?: any): { valid: boolean; errorMessage?: string; } {
+    if (!payload.modelId) {
+      return { valid: false, errorMessage: t('workflow.checkList.error.llmModelMissing') };
+    }
+
+    if (!payload.inputVariable?.nodeId || !payload.inputVariable?.path?.length) {
+      return { valid: false, errorMessage: t('workflow.checkList.error.llmInputVariableMissing') };
+    }
+
+    if (!payload.systemPrompt?.trim()) {
+      return { valid: false, errorMessage: t('workflow.checkList.error.llmSystemPromptMissing') };
+    }
+
+    if (!payload.userPrompt?.trim()) {
+      return { valid: false, errorMessage: t('workflow.checkList.error.llmUserPromptMissing') };
+    }
+
     return { valid: true };
   }
 };

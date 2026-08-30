@@ -1,5 +1,6 @@
 import { ChevronRight, CircleAlert } from "lucide-react";
 import { useStore, useStoreApi } from "@xyflow/react";
+import { useTranslation } from "react-i18next";
 import { useWorkflowStore } from "../../context";
 import { getNodeTypeIcon } from "../../data";
 import type { Node, NodeType } from "../../types";
@@ -57,6 +58,8 @@ export const ChecklistContent = ({
     close();
   };
 
+  const { t } = useTranslation();
+
   return (
     <div className="w-[320px] rounded-xl border border-[var(--border)] bg-background p-3 shadow-lg">
       <div className="mb-3 flex items-center justify-between gap-2">
@@ -65,8 +68,10 @@ export const ChecklistContent = ({
             <CircleAlert className="h-4 w-4" />
           </div>
           <div>
-            <div className="text-sm font-bold text-text-primary">检查清单</div>
-            <div className="text-[11px] text-[var(--color-text-secondary)]">共 <span className="text-text-primary font-bold">{totalErrors}</span> 个错误</div>
+            <div className="text-sm font-bold text-text-primary">{t('workflow.checklist.title')}</div>
+            <div className="text-[11px] text-[var(--color-text-secondary)]">
+              {t('workflow.checklist.summary', { count: totalErrors })}
+            </div>
           </div>
         </div>
       </div>
@@ -93,7 +98,9 @@ export const ChecklistContent = ({
                   onClick={() => handleOpenNode(item.id)}
                   className="flex w-full items-center justify-between gap-2 rounded-md border border-transparent bg-background px-2 py-1.5 text-left text-xs text-[var(--color-text-secondary)] transition-colors hover:border-[var(--border)] hover:text-[var(--color-text)]"
                 >
-                  <span className="line-clamp-2">{item.errorMessage || (item.invalidNode ? "节点配置无效" : item.label || group.label)}</span>
+                  <span className="line-clamp-2">
+                    {item.errorMessage || (item.invalidNode ? t('workflow.checklist.invalidNode') : item.label || group.label)}
+                  </span>
                   <ChevronRight className="h-3.5 w-3.5 shrink-0" />
                 </button>
               ))}

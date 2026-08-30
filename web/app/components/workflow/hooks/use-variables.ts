@@ -11,6 +11,14 @@ import { CodeNodeData } from "../nodes/code/types";
 import { DocumentExtractorNodeData } from "../nodes/document-extractor/types";
 import { DEFAULT_OUTPUT_VARIABLE_NAME } from "../nodes/document-extractor/data";
 import { IfElseNodeData } from "../nodes/if-else/types";
+import { normalizeParameterExtractorItems } from "../nodes/parameter-extractor/data";
+import type { ParameterExtractorNodeData } from "../nodes/parameter-extractor/types";
+import type { KnowledgeRetrievalNodeData } from "../nodes/knowledge-retrieval/types";
+import type { ListOperatorNodeData } from "../nodes/list-operator/types";
+import type { QuestionClassifierNodeData } from "../nodes/question-classifier/types";
+import type { LLMNodeData } from "../nodes/llm/types";
+import type { VariableAggregatorNodeData } from "../nodes/variable-aggregator/types";
+import type { EndNodeType } from "../nodes/end/type";
 
 export const useVariables = () => {
   const { t } = useTranslation();
@@ -114,6 +122,45 @@ export const useVariables = () => {
       case NodeType.ListOperator:
         break;
       case NodeType.ParameterExtractor:
+        {
+          const parameters = normalizeParameterExtractorItems((data as ParameterExtractorNodeData).parameters);
+          res.variables = [
+            ...parameters
+              .filter((parameter) => parameter.name?.trim())
+              .map((parameter) => ({
+                id: parameter.name,
+                name: parameter.name,
+                sourceType: ValueSourceMode.variable,
+                dataType: parameter.type || VariableDataType.string,
+                label: parameter.description || parameter.name,
+                valueSourceType: 'node-output',
+              } as Variable)),
+            {
+              id: '_isSuccess',
+              name: '_isSuccess',
+              sourceType: ValueSourceMode.variable,
+              dataType: VariableDataType.boolean,
+              label: t('workflow.nodes.parameter-extractor.outputFieldIsSuccess'),
+              valueSourceType: 'node-output',
+            },
+            {
+              id: '_errorMessage',
+              name: '_errorMessage',
+              sourceType: ValueSourceMode.variable,
+              dataType: VariableDataType.string,
+              label: t('workflow.nodes.parameter-extractor.outputFieldErrorMessage'),
+              valueSourceType: 'node-output',
+            },
+            {
+              id: '_usage',
+              name: '_usage',
+              sourceType: ValueSourceMode.variable,
+              dataType: VariableDataType.object,
+              label: t('workflow.nodes.parameter-extractor.outputFieldUsage'),
+              valueSourceType: 'node-output',
+            },
+          ];
+        }
         break;
       case NodeType.DocExtractor:
         res.variables = [
@@ -193,6 +240,7 @@ export const useVariables = () => {
     let res: VariableSelector[];
     switch (dataType) {
       case NodeType.IfElse:
+      case NodeType.Filter:
         res = (data as IfElseNodeData).branches?.flatMap((branch) => {
           if (!branch) return [];
           return branch.conditionGroup.conditions.flatMap((condition) => {
@@ -200,9 +248,46 @@ export const useVariables = () => {
           });
         }) || [];
         break;
-
-      // todo
-
+      case NodeType.DocExtractor:
+        res = [(data as DocumentExtractorNodeData).inputVariable].filter(
+          (selector): selector is VariableSelector => Boolean(selector)
+        );
+        break;
+      case NodeType.KnowledgeRetrieval:
+        res = [(data as KnowledgeRetrievalNodeData).inputVariable].filter(
+          (selector): selector is VariableSelector => Boolean(selector)
+        );
+        break;
+      case NodeType.ListOperator:
+        res = [(data as ListOperatorNodeData).inputVariable].filter(
+          (selector): selector is VariableSelector => Boolean(selector)
+        );
+        break;
+      case NodeType.ParameterExtractor:
+        res = [(data as ParameterExtractorNodeData).inputVariable].filter(
+          (selector): selector is VariableSelector => Boolean(selector)
+        );
+        break;
+      case NodeType.QuestionClassifier:
+        res = [(data as QuestionClassifierNodeData).inputVariable].filter(
+          (selector): selector is VariableSelector => Boolean(selector)
+        );
+        break;
+      case NodeType.LLM:
+        res = [(data as LLMNodeData).inputVariable].filter(
+          (selector): selector is VariableSelector => Boolean(selector)
+        );
+        break;
+      case NodeType.VariableAggregator:
+        res = ((data as VariableAggregatorNodeData).variables ?? [])
+          .map((item) => item.valueSource)
+          .filter((selector): selector is VariableSelector => Boolean(selector));
+        break;
+      case NodeType.End:
+        res = ((data as EndNodeType).outputs ?? [])
+          .map((output) => output.valueSelector)
+          .filter((selector): selector is VariableSelector => Boolean(selector));
+        break;
       default:
         return [];
     }
