@@ -132,7 +132,7 @@ export default function MainContent() {
     ]
   };
   return (
-    <main className="pt-16 bg-gradient-to-b from-green-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <main className="pt-16 bg-white dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800">
       {/* Hero Section */}
       <section className="mx-auto px-4 sm:px-6 lg:px-8 py-20 relative  overflow-hidden flex justify-center border-b border-gray-200 dark:border-gray-700">
         {/* 内容 */}

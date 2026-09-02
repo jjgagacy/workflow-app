@@ -12,6 +12,7 @@ import { TOOL_PROVIDER_SYMBOL, ToolProvider } from "../interfaces/tool/tool-prov
 import { isToolClass, TOOL_SYMBOL, ToolClassType } from "../interfaces/tool/tool.js";
 import { ModelType } from "../core/entities/enums/model.enum.js";
 import { AIModel, AIMODEL_SYMBOL } from "../core/entities/plugin/ai-model.js";
+import { AIProviderBase } from "../core/entities/plugin/provider-base.js";
 import { TEXT_EMBEDDING_MODEL_SYMBOL } from "../interfaces/model/text-embedding.model.js";
 import { LARGE_LANGUAGE_MODEL_SYMBOL } from "../interfaces/model/llm.model.js";
 import { RERANK_MODEL_SYMBOL } from "../interfaces/model/rerank.model.js";
@@ -26,6 +27,7 @@ import { MODEL_PROVIDER_SYMBOL, ModelProvider } from "../interfaces/model/model-
 import { matchMethods, matchPath, Request } from "../core/entities/endpoint/endpoint.entity.js";
 import { OAuthProvider } from "../interfaces/oauth/oauth-provider.js";
 import { hasStaticMarker } from "../interfaces/marker.class.js";
+import { Logger } from "../config/logger.js";
 
 export interface ToolRegistration {
   configuration: ToolConfiguration;
@@ -95,8 +97,15 @@ export class PluginRegistry {
     this.manifestFilePath = path.resolve(process.cwd(), this.config.baseDir, 'manifest.yaml');
     this.initPromise = this.initialize();
     this.initPromise.catch(err => {
-      throw new Error(`Failed to initialize: ${err}`)
+      Logger.error('Failed to initialize plugin registry: ' + (err instanceof Error ? err.message : String(err)));
     });
+  }
+
+  // Waits for the async manifest/provider loading to finish before any request is dispatched.
+  async ready(): Promise<void> {
+    if (this.initPromise) {
+      await this.initPromise;
+    }
   }
 
   private async initialize(): Promise<void> {
@@ -107,7 +116,7 @@ export class PluginRegistry {
       // await this.loadManifestLog();
       // this.logRegistry();
     } catch (error: any) {
-      throw new Error(`Failed to initialize plugin: ${error} : ${error.statck}`);
+      throw new Error(`Failed to initialize plugin: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -147,12 +156,28 @@ export class PluginRegistry {
       if (this.declaration.plugins.tools) {
         for (const toolFilePath of this.declaration.plugins.tools) {
           const toolProviderConfiguration = await loadYamlFile<ToolProviderConfiguration>(resolveFrom(this.manifestFilePath, toolFilePath));
+          const tools: ToolConfiguration[] = [];
+          for (const toolFilePattern of toolProviderConfiguration.toolFiles) {
+            tools.push(...await this.loadToolDeclarations(
+              path.dirname(this.manifestFilePath),
+              toolFilePattern,
+            ));
+          }
+          toolProviderConfiguration.tools = tools;
           this.toolProviderConfigurations.push(toolProviderConfiguration);
         }
       }
       if (this.declaration.plugins.models) {
         for (const modelFilePath of this.declaration.plugins.models) {
           const model = await loadYamlFile<ModelProviderConfiguration>(resolveFrom(this.manifestFilePath, modelFilePath));
+          const models: AIProviderBase[] = [];
+          for (const modelFilePattern of model.modelFiles) {
+            models.push(...await this.loadModelDeclarations(
+              path.dirname(this.manifestFilePath),
+              modelFilePattern,
+            ));
+          }
+          model.models = models;
           this.modelProviderConfigurations.push(model);
         }
       }
@@ -171,6 +196,68 @@ export class PluginRegistry {
     } catch (error) {
       throw new Error(`Error loading plugin manifest file: ${error}`);
     }
+  }
+
+  private async loadModelDeclarations(pluginRootDir: string, modelFilePattern: string): Promise<AIProviderBase[]> {
+    const models: AIProviderBase[] = [];
+    if (!modelFilePattern) {
+      return models;
+    }
+
+    const modelFiles = this.findModelFiles(pluginRootDir, [modelFilePattern]);
+    for (const modelFile of modelFiles) {
+      const modelDeclaration = await loadYamlFile<AIProviderBase>(modelFile);
+      models.push(modelDeclaration);
+    }
+    return models;
+  }
+
+  private async loadToolDeclarations(pluginRootDir: string, toolFilePattern: string): Promise<ToolConfiguration[]> {
+    const tools: ToolConfiguration[] = [];
+    if (!toolFilePattern) {
+      return tools;
+    }
+
+    const toolFiles = this.findModelFiles(pluginRootDir, [toolFilePattern]);
+    for (const toolFile of toolFiles) {
+      const toolDeclaration = await loadYamlFile<ToolConfiguration>(toolFile);
+      tools.push(toolDeclaration);
+    }
+    return tools;
+  }
+
+  private findModelFiles(baseDir: string, patterns: string[]): string[] {
+    const matchers = patterns.map(pattern => this.globToRegExp(pattern));
+    const results: string[] = [];
+
+    const walk = (dir: string) => {
+      if (!fs.existsSync(dir)) return;
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          walk(fullPath);
+          continue;
+        }
+        if (!entry.isFile()) continue;
+        // position/provider files are not model schema files
+        if (entry.name.endsWith('_position.yaml') || entry.name.endsWith('_provider.yaml')) continue;
+
+        const relativePath = path.relative(baseDir, fullPath);
+        if (matchers.some(matcher => matcher.test(relativePath))) {
+          results.push(fullPath);
+        }
+      }
+    };
+    walk(baseDir);
+    return results;
+  }
+
+  private globToRegExp(pattern: string): RegExp {
+    const escaped = pattern
+      .split('/')
+      .map(segment => segment.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '[^/]*'))
+      .join('/');
+    return new RegExp(`^${escaped}$`);
   }
 
   private async resolvePluginHandlers(): Promise<void> {
@@ -213,9 +300,8 @@ export class PluginRegistry {
       }
 
       const tools = new Map<string, ToolRegistration>();
-      for (const toolPath of providerConfiguration.toolFiles) {
+      for (const toolConfiguration of providerConfiguration.tools) {
         try {
-          const toolConfiguration = await loadYamlFile<ToolConfiguration>(resolveFrom(this.manifestFilePath, toolPath));
           const toolFilePath = toolConfiguration.extra.node?.module;
           const toolClassName = toolConfiguration.extra.node?.class;
           if (!toolFilePath) continue;
@@ -236,7 +322,7 @@ export class PluginRegistry {
             toolRegistration,
           );
         } catch (error) {
-          throw new Error(`Error loading tool manifest: ${toolPath}: ${error}`);
+          throw new Error(`Error loading tool manifest: ${toolConfiguration.identity.name}: ${error}`);
         }
       }
 
@@ -281,7 +367,7 @@ export class PluginRegistry {
               SPEECH2TEXT_MODEL_SYMBOL,
               MODERATION_MODEL_SYMBOL
             )) {
-              const modelInstance = new (modelCls.class as any)();
+              const modelInstance = new (modelCls.class as any)(provider.models);
               const modelType = modelInstance.modelType as ModelType;
               models.set(modelType, modelInstance);
             }

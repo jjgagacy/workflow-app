@@ -95,7 +95,7 @@ func UpgradePlugin(config *core.Config) gin.HandlerFunc {
 			OriginalPluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier `json:"original_plugin_unique_identifier" validate:"required,plugin_unique_identifier"`
 			NewPluginUniqueIdentifier      plugin_entities.PluginUniqueIdentifier `json:"new_plugin_unique_identifier" validate:"required,plugin_unique_identifier"`
 			Source                         string                                 `json:"source" validate:"required"`
-			Meta                           map[string]any                         `json"meta" validate:"omitempty"`
+			Meta                           map[string]any                         `json:"meta" validate:"omitempty"`
 		}) {
 			ctx.JSON(http.StatusOK, service.UpgradePlugin(
 				config,

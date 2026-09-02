@@ -73,6 +73,14 @@ export const NODES_DATA: NodeCatalog[] = [
   //   description: ''
   // },
   {
+    id: 'end',
+    name: 'end',
+    icon: getNodeIcon(NodeType.End),
+    category: NodeCategory.FLOW,
+    section: 'flow-control',
+    description: ''
+  },
+  {
     id: 'if',
     name: 'if',
     icon: getNodeIcon(NodeType.IfElse),
@@ -184,24 +192,15 @@ export const NODES_DATA: NodeCatalog[] = [
     section: 'data',
     description: ''
   },
-  {
-    id: 'end',
-    name: 'end',
-    icon: getNodeIcon(NodeType.End),
-    category: NodeCategory.FLOW,
-    section: 'data',
-    description: ''
-  },
-
   // AI 分类
-  {
-    id: 'agent',
-    name: 'agent',
-    icon: getNodeIcon(NodeType.Agent),
-    category: NodeCategory.AI,
-    section: 'ai',
-    description: ''
-  },
+  // {
+  //   id: 'agent',
+  //   name: 'agent',
+  //   icon: getNodeIcon(NodeType.Agent),
+  //   category: NodeCategory.AI,
+  //   section: 'ai',
+  //   description: ''
+  // },
   {
     id: 'llm',
     name: 'llm',

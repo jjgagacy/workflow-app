@@ -2,8 +2,8 @@ import path from "path";
 import { pathToFileURL } from "url";
 
 export interface ClassInfo<T extends new (...args: any[]) => any = new (...args: any[]) => any> {
-  name: string;
-  exportName: string;
+  name: string; // name 是类名
+  exportName: string; // exportName 是导出名
   class: T;
   isDefault: boolean;
 }

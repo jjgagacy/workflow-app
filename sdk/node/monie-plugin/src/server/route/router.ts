@@ -42,7 +42,7 @@ export class Router implements IRouter {
   async dispatch(session: Session, data: any) {
     for (const route of this.routes) {
       if (route.filter(data)) {
-        return await route.handler(session, data);
+        return route.handler(session, data);
       }
     }
   }

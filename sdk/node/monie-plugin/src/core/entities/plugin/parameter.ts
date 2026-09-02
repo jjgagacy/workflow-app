@@ -1,11 +1,11 @@
 import { I18nObject } from "../i18n.js";
 
 export enum ParameterType {
-  INT = 'INT',
-  FLOAT = 'FLOAT',
-  BOOLEAN = 'BOOLEAN',
-  STRING = 'STRING',
-  TEXT = 'TEXT'
+  INT = 'int',
+  FLOAT = 'float',
+  BOOLEAN = 'boolean',
+  STRING = 'string',
+  TEXT = 'text'
 }
 
 export class ParameterOption {

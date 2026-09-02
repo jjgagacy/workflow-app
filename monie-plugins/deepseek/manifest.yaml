@@ -1,17 +1,17 @@
 version: 1.0.0
 type: plugin
-author: monie
-name: hello
+author: monyii
+name: deepseek
 label:
-  en_US: Hello
-  zh_Hans: Hello 
+  en_US: Deepseek
+  zh_Hans: 深度求索
 description:
-  en_US: A simple plugin to say hello.
-  zh_Hans: 一个简单的插件，用于打招呼。
-icon_small: monie.svg
-icon_small_dark: monie.svg
-icon_large: monie.svg
-icon_large_dark: monie.svg
+  en_US: Models provided by deepseek, such as deepseek-chat、deepseek-coder.
+  zh_Hans: 深度求索提供的模型，例如 deepseek-chat、deepseek-coder。
+icon_small: deepseek_small.svg
+icon_small_dark: deepseek_small.svg
+icon_large: deepseek.svg
+icon_large_dark: deepseek.svg
 resource:
   memory: 268435456
   permission:
@@ -33,13 +33,8 @@ resource:
       enabled: true
       size: 1048576
 plugins:
-  tools:
-    - provider/telegraph.yaml
   models:
-    - provider/openai.yaml
-  endpoints:
-    - endpoints/endpoint_provider.yaml
-  agent_strategies:
+    - provider/deepseek.yaml
 meta:
   version: 1.0.0
   arch:
@@ -49,6 +44,6 @@ meta:
     language: node
     version: "22.19"
     entry_point: index
-created_at: 2025-10-04T07:33:59.884736+08:00
+created_at: 2026-09-01T00:00:00.000000+08:00
 privacy: PRIVACY.md
 verified: false

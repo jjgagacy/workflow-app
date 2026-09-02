@@ -10,7 +10,6 @@ export abstract class RequestReader extends EventEmitter implements StreamReader
   type: string;
   private isRunning: boolean = false;
   private processingPromise: Promise<void> | null = null;
-  // TODO: non blocking is not implemented
   protected useNonBlocking: boolean = true;
   private messageCallbacks: Set<MessageCallback> = new Set();
 

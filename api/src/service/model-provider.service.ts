@@ -21,17 +21,17 @@ export class ModelProviderService {
   ): Promise<ModelProviderList> {
     const providerConfiguration = await this.providerService.getConfigurations(tenantId);
     const providerList: ModelProviderInfo[] = [];
-    for (const pc of providerConfiguration.values()) {
+    for (const config of providerConfiguration.values()) {
       if (modelType) {
         const modelTypeEnum = EnumConverter.toEnum(ModelType, modelType);
-        if (!pc.provider.supportedModelTypes.includes(modelTypeEnum)) continue;
+        if (!config.provider.supportedModelTypes.includes(modelTypeEnum)) continue;
       }
-      const providerName = pc.provider.provider.split('/').slice(-1)[0];
+      const providerName = config.provider.provider.split('/').slice(-1)[0];
       providerList.push({
         tenantId,
-        providerName: pc.provider.provider,
-        label: pc.provider.label || {},
-        description: pc.provider.description,
+        providerName: config.provider.provider,
+        label: config.provider.label || {},
+        description: config.provider.description,
         icon: {
           en_US: this.marketplaceService.getModelProviderIconUrl(providerName),
           zh_Hans: this.marketplaceService.getModelProviderIconUrl(providerName, 'light', 'zh_Hans'),
@@ -40,22 +40,22 @@ export class ModelProviderService {
           en_US: this.marketplaceService.getModelProviderIconUrl(providerName, 'dark'),
           zh_Hans: this.marketplaceService.getModelProviderIconUrl(providerName, 'dark', 'zh_Hans'),
         },
-        supportedModelTypes: pc.provider.supportedModelTypes.map((v) => v as string),
-        preferredProviderType: pc.preferredProviderType,
+        supportedModelTypes: config.provider.supportedModelTypes.map((v) => v as string),
+        preferredProviderType: config.preferredProviderType,
         customConfiguration: {
-          status: pc.customConfigurationAvailable()
+          status: config.customConfigurationAvailable()
             ? CustomConfigurationStatus.ACTIVE
             : CustomConfigurationStatus.UNSUPPORTED
         } as CustomConfiguration,
         systemConfiguration: {
-          enabled: pc.systemConfiguration.enabled,
-          currentQuotaType: pc.systemConfiguration.currentQuotaType,
+          enabled: config.systemConfiguration.enabled,
+          currentQuotaType: config.systemConfiguration.currentQuotaType,
           quotaList: this.transQuotaConfigurationsToQuotaInfoList(
-            pc.systemConfiguration.quotaConfiguration
+            config.systemConfiguration.quotaConfiguration
           ),
         } as SystemConfiguration,
-        providerCredentialSchema: pc.provider.providerCredentialSchema,
-        modelCredentialSchema: pc.provider.modelCredentialSchema,
+        providerCredentialSchema: config.provider.providerCredentialSchema,
+        modelCredentialSchema: config.provider.modelCredentialSchema,
       } as ModelProviderInfo);
     }
 

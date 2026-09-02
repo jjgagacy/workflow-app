@@ -5,7 +5,7 @@ import readline from "readline";
 import { deepSnakeToCamel } from "../../utils/string.util.js";
 
 export class StdioReader extends RequestReader {
-  private rl: readline.Interface;
+  private readline: readline.Interface;
   private messageQueue: StreamMessage[] = [];
   private errorQueue: Error[] = [];
   private resolveQueue: ((value: IteratorResult<StreamMessage>) => void) | null = null;
@@ -14,7 +14,7 @@ export class StdioReader extends RequestReader {
 
   constructor() {
     super('stdio');
-    this.rl = readline.createInterface({
+    this.readline = readline.createInterface({
       input: process.stdin,
       // output: process.stdout,
       // Disable terminal control sequence and line buffering
@@ -76,7 +76,7 @@ export class StdioReader extends RequestReader {
   }
 
   private setupEventListeners(): void {
-    this.rl.on('line', (line: string) => {
+    this.readline.on('line', (line: string) => {
       if (!line.trim()) return;
 
       if (this.messageQueue.length > this.max_queue) {
@@ -104,7 +104,7 @@ export class StdioReader extends RequestReader {
       }
     });
 
-    this.rl.on('close', () => {
+    this.readline.on('close', () => {
       this.isClosed = true;
 
       if (this.resolveQueue) {
@@ -113,7 +113,7 @@ export class StdioReader extends RequestReader {
       }
     });
 
-    this.rl.on('error', (error: Error) => {
+    this.readline.on('error', (error: Error) => {
       this.emit('stream.read.error', error);
       this.errorQueue.push(error);
 
@@ -126,7 +126,7 @@ export class StdioReader extends RequestReader {
 
   close(): void {
     if (!this.isClosed) {
-      this.rl.close();
+      this.readline.close();
       this.isClosed = true;
 
       // Clear waiting promise

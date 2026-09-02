@@ -9,7 +9,7 @@ export abstract class ModelProvider {
   static [MODEL_PROVIDER_SYMBOL] = true;
   constructor(
     public providerSchema: Provider,
-    public modelTypeMap: Map<ModelType, AIModel>,
+    public modelTypeMap: Map<ModelType, AIModel>, // todo: AIModel[]
   ) { }
 
   abstract validateProviderCredentials(credentials: Record<string, any>): Promise<void>;

@@ -11,8 +11,8 @@ export enum QuotaUnit {
 }
 
 export enum SystemConfigurationStatus {
-  UNSUPPORTED = 'unsupported',
   ACTIVE = 'active',
+  UNSUPPORTED = 'unsupported',
   QUOTA_EXCEEDED = 'quota_exceeded',
 }
 

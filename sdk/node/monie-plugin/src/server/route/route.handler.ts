@@ -15,6 +15,7 @@ export type RouteFilter = (data: any) => boolean;
 export type RouteHandlerResult =
   | Promise<HandleResult>
   | AsyncGenerator<any>
+  | HandleResult
   | undefined;
 
 export type RouteHandler = (session: Session, data: any) => RouteHandlerResult;

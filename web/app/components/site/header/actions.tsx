@@ -34,7 +34,7 @@ export default function Actions() {
           </Link>
         </Button>
 
-        <Button variant={'primary'}>
+        <Button variant={'tertiary'}>
           <Link
             href="/signup"
             className="transition-opacity font-medium"

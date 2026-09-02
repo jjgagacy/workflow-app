@@ -174,7 +174,7 @@ export class PluginExecutor {
       return;
     }
     await modelProviderInstance.validateProviderCredentials(request.credentials);
-    return { result: true, credentials: request.credentials };
+    return this.wrapIOResult({ result: true, credentials: request.credentials });
   }
 
   async validateModelCredentials(

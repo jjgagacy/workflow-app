@@ -1,25 +1,16 @@
 import { ModelFeature, ModelType } from "../enums/model.enum.js";
 import { PriceConfig } from "../pricing.js";
-import { ProviderBase } from "./provider-base.js";
+import { ProviderBase, AIProviderBase } from "./provider-base.js";
 
 export const AIMODEL_SYMBOL = Symbol.for('plugin.ai-model');
 
-export abstract class AIModel extends ProviderBase {
+export abstract class AIModel {
   static [AIMODEL_SYMBOL] = true;
   modelType: ModelType = ModelType.LLM;
-  pricing?: PriceConfig;
+  modelSchemas: AIProviderBase[];
 
-  constructor(data: Partial<AIModel> = {}) {
-    super(data);
-    this.validateModel();
-  }
-
-  private validateModel(): void {
-    if (!this.features) {
-      this.features = [ModelFeature.STRUCTURED_OUTPUT];
-    } else {
-      this.features.push(ModelFeature.STRUCTURED_OUTPUT);
-    }
+  constructor(modelSchemas: AIProviderBase[] = []) {
+    this.modelSchemas = modelSchemas;
   }
 
   abstract getModelSchema(

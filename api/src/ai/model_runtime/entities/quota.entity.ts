@@ -69,10 +69,9 @@ export class CustomProviderModel {
 
 // Provider custom configuration
 export class CustomProviderConfiguration {
+  models: CustomProviderModel[] = [];
   @IsOptional()
   credentials?: Credentials;
-
-  models: CustomProviderModel[] = [];
 
   constructor(models: CustomProviderModel[], credentials?: Credentials) {
     this.credentials = credentials;

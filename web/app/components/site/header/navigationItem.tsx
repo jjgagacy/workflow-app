@@ -74,7 +74,7 @@ export default function NavigationItem({ item }: NavigationitemProps) {
         <>
           <button
             ref={triggerRef}
-            className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-500 transition-colors font-medium"
+            className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-500 transition-colors font-bold"
           >
             <span>{item.label}</span>
             <ChevronDown className="w-4 h-4" />
@@ -136,7 +136,7 @@ export default function NavigationItem({ item }: NavigationitemProps) {
       ) : (
         <Link
           href={item.href}
-          className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors font-medium"
+          className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors font-bold"
         >
           {item.label}
         </Link>

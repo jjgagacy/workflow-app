@@ -75,17 +75,7 @@ export class IOServer implements Server {
     }
     this.isRunning = true;
 
-    const callback: MessageCallback = async (message) => {
-      switch (message.event) {
-        case StreamRequestEvent.REQUEST:
-          await this.dispatchMessage(message);
-          break;
-        case StreamRequestEvent.SHUTDOWN:
-          await this.stop();
-          return;
-      }
-    };
-    this.reader.onMessage(callback);
+    this.reader.onMessage(this.createMessageCallback());
 
     try {
       this.eventLoopPromise = this.runEventLoop();
@@ -102,6 +92,19 @@ export class IOServer implements Server {
       await this.sleep(3000);
       await this.restart();
     }
+  }
+
+  private createMessageCallback(): MessageCallback {
+    return async (message) => {
+      switch (message.event) {
+        case StreamRequestEvent.REQUEST:
+          await this.dispatchMessage(message);
+          break;
+        case StreamRequestEvent.SHUTDOWN:
+          await this.stop();
+          return;
+      }
+    };
   }
 
   private async runEventLoop(): Promise<void> {
@@ -250,12 +253,23 @@ export class IOServer implements Server {
       this.config.pluginDaemonUrl,
     );
 
+    // Ensure providers/tools/endpoints are fully registered before any request is routed,
+    // otherwise early requests race ahead of async manifest loading.
+    await this.registry.ready();
+
     if (this.isCPUTask(message) && !this.config.disableWorker) {
       return this.handleCPUTask(message);
     }
 
     let handleResult: HandleResult | AsyncGenerator<any, any, any> | undefined;
-    // Logger.info(JSON.stringify(session))
+    Logger.info(JSON.stringify({
+      sessionId: session.sessionId,
+      conversationId: session.conversationId,
+      messageId: session.messageId,
+      context: session.context,
+      pluginDaemonUrl: session.pluginDaemonUrl
+    }));
+    Logger.info(JSON.stringify(message.data));
     try {
       handleResult = await this.router.dispatch(session, message.data);
     } catch (err: any) {
@@ -265,18 +279,37 @@ export class IOServer implements Server {
     let result: unknown;
     if (handleResult) {
       if (handleResult instanceof Promise) {
-        const resolved = (await handleResult) as HandleResult;
-        if (resolved.taskType === TaskType.CPU && !this.config.disableWorker) {
-          return this.handleCPUTask(message);
+        const resolved = (await handleResult) as HandleResult | unknown;
+        if (resolved && typeof resolved === 'object' && 'taskType' in resolved) {
+          const typedResolved = resolved as HandleResult;
+          if (typedResolved.taskType === TaskType.CPU && !this.config.disableWorker) {
+            return this.handleCPUTask(message);
+          }
+          result = typedResolved.result;
+          if (result !== undefined) {
+            await this.processAndSendMessage(result, session);
+          }
+          return;
         }
-        result = resolved.result;
-        await this.processAndSendMessage(result, session);
+        if (resolved !== undefined) {
+          await this.processAndSendMessage(resolved, session);
+        }
       } else if (Symbol.asyncIterator in handleResult) {
         for await (const item of handleResult) {
           await this.processAndSendMessage(item, session);
         }
+      } else if (typeof handleResult === 'object' && 'taskType' in handleResult) {
+        const typedHandleResult = handleResult as HandleResult;
+        if (typedHandleResult.taskType === TaskType.CPU && !this.config.disableWorker) {
+          return this.handleCPUTask(message);
+        }
+        result = typedHandleResult.result;
+        if (result !== undefined) {
+          await this.processAndSendMessage(result, session);
+        }
+      } else {
+        await this.processAndSendMessage(handleResult, session);
       }
-      return;
     }
 
     return this.handleIOTask(session, message);

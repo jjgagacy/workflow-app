@@ -1,7 +1,7 @@
 import { CommonParameterType, FormType } from "../enums/form.enum.js";
 import { ConfigurateMethod, ModelType } from "../enums/model.enum.js";
 import { I18nObject } from "../i18n.js";
-import { AIModel } from "./ai-model.js";
+import { AIProviderBase } from "./provider-base.js";
 import { OauthSchema } from "./oauth.js";
 import { ParameterOption } from "./parameter.js";
 import { ToolConfiguration, ToolProviderIdentity } from "./declaration/tool.js";
@@ -153,7 +153,7 @@ export class Provider {
   providerCredentialSchema?: ProviderCredentialSchema | undefined;
   modelCredentialSchema?: ModelCredentialSchema | undefined;
 
-  models: AIModel[] = [];
+  models: AIProviderBase[] = [];
 
   modelFiles: string[] = [];
   positionFiles?: Record<string, string[]>;
@@ -175,7 +175,7 @@ export class SimpleProvider {
   iconSmall?: I18nObject | undefined;
   iconLarge?: I18nObject | undefined;
 
-  models: AIModel[];
+  models: AIProviderBase[];
   supportedModelTypes: ModelType[];
 
   constructor(provider: Partial<SimpleProvider> = {}) {

@@ -5,6 +5,7 @@ import { App } from 'supertest/types';
 import { AppModule } from '@/app.module';
 import { EnhanceCacheService } from '@/common/services/cache/enhance-cache.service';
 import { ProviderService } from '@/ai/model_runtime/services/provider.service';
+import { inspect } from 'util';
 
 describe('ProviderService (e2e)', () => {
   let app: INestApplication<App>;
@@ -30,7 +31,11 @@ describe('ProviderService (e2e)', () => {
     it('should get configurations', async () => {
       const configurations = await providerService.getConfigurations(testTenantId);
       expect(configurations).toBeDefined();
-      console.log('Fetched provider configurations:', configurations);
+      console.log('Fetched provider configurations:');
+      for (const config of configurations.values()) {
+        console.log(inspect(config.provider, { depth: null, colors: true }));
+      }
+      // console.log(inspect(configurations, { depth: null, colors: true }));
     });
   });
 
