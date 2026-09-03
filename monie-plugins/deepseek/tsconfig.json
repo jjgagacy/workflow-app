@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "rootDir": "./src",
-    "outDir": "./dist",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "target": "es2023",
@@ -31,7 +29,8 @@
     }
   },
   "include": [
-    "./src/**/*"
+    "./src/**/*",
+    "./test/**/*"
   ],
   "exclude": [
     "node_modules",

@@ -7,11 +7,11 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "npm run clean && tsc && tsc-alias && npm run copy-env && npm run copy-package-json && npm run copy-asset && npm run copy-manifest && npm run copy-icon && npm run post-build",
+    "build": "npm run clean && tsc --project tsconfig.build.json && tsc-alias -p tsconfig.build.json && npm run copy-env && npm run copy-package-json && npm run copy-asset && npm run copy-manifest && npm run copy-icon && npm run post-build",
     "test:e2e": "npm --prefix ../../sdk/node/monie-plugin run build && npm run build && node --experimental-strip-types --test test/provider.e2e-spec.ts",
     "test:llm:e2e": "npm --prefix ../../sdk/node/monie-plugin run build && npm run build && node --experimental-strip-types --test test/llm.e2e-spec.ts",
     "clean": "rimraf dist",
-    "dev": "tsc --watch",
+    "dev": "tsc --project tsconfig.build.json --watch",
     "post-build": "npm run validate-build",
     "validate-build": "node scripts/validate-build.js",
     "copy-package-json": "node scripts/copy-package-json.js",
@@ -19,7 +19,7 @@
     "copy-asset": "npx copyfiles -u 1 \"src/**/*.{yaml,yml,json,svg}\" dist/",
     "copy-manifest": "npx copyfiles manifest.yaml dist/",
     "copy-env": "npx copyfiles -u 0 \".env*\" dist/",
-    "watch": "npm run copy-asset && npm run copy-env && npm run copy-manifest && npm run copy-icon && concurrently \"npm run copy-asset -- --watch\" \"npm run copy-manifest -- --watch\" \"npm run copy-env -- --watch\" \"npm run copy-icon -- --watch\" \"tsc-watch --onSuccess \\\"tsc-alias\\\"\""
+    "watch": "npm run copy-asset && npm run copy-env && npm run copy-manifest && npm run copy-icon && concurrently \"npm run copy-asset -- --watch\" \"npm run copy-manifest -- --watch\" \"npm run copy-env -- --watch\" \"npm run copy-icon -- --watch\" \"tsc-watch -p tsconfig.build.json --onSuccess \\\"tsc-alias -p tsconfig.build.json\\\"\""
   },
   "files": [
     "dist"
