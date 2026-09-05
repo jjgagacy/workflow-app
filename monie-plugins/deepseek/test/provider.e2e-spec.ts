@@ -26,7 +26,7 @@ test('validates DeepSeek provider credentials through the plugin protocol', {
       data: {
         type: 'model',
         action: 'validate_provider_credentials',
-        provider: 'monyii',
+        provider: 'deepseek',
         credentials: { apiKey: apiKey },
       },
     })}\n`);

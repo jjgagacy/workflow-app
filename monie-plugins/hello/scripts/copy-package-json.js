@@ -114,7 +114,7 @@ function getBuildInfo(projectRoot, dependencies) {
   const moniePluginDep = Object.entries(dependencies).find(([name]) => name === 'monie-plugin');
   if (moniePluginDep) {
     const [, version] = moniePluginDep;
-    if (version === 'file:') {
+    if (version.startsWith('file:')) {
       const pluginPath = version.replace('file:', '');
       const packageJsonPath = join(pluginPath, 'package.json');
 
@@ -178,7 +178,7 @@ function copyRelatedFiles(projectRoot, distPath) {
   });
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+if (process.argv[1] === __filename) {
   copyPackageJson();
 }
 

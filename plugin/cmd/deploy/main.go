@@ -35,7 +35,7 @@ func loadManifest(manifestPath string) (*PluginManifest, error) {
 }
 
 func main() {
-	pluginsDir := "~/Documents/codes/workflow-app/monie-plugins"
+	pluginsDir := "../monie-plugins"
 	outputBaseDir := "./storage/plugin"
 
 	if strings.HasPrefix(pluginsDir, "~") {

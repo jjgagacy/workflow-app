@@ -107,6 +107,8 @@ type PluginDeclaration struct {
 	AgentStrategy               *AgentStrategyProviderDeclaration `json:"agent_strategy,omitempty" yaml:"agent_strategy,omitempty"`
 }
 
+// MarshalPluginID generates a unique identifier for a plugin based on its author, name, and version.
+// The format is "author/name:version" if the author is provided, otherwise it is "name:version".
 func MarshalPluginID(author string, name string, version string) string {
 	if author == "" {
 		return fmt.Sprintf("%s:%s", name, version)
@@ -114,6 +116,10 @@ func MarshalPluginID(author string, name string, version string) string {
 	return fmt.Sprintf("%s/%s:%s", author, name, version)
 }
 
+// MarshalPluginFSID generates a unique identifier for a plugin based on its author, name, and version.
+// The format is "author--name-version" if the author is provided,
+// otherwise it is "name-version".
+// This function is useful for creating a consistent and unique identifier for plugins in the system.
 func MarshalPluginFSID(author, name, version string) string {
 	if author == "" {
 		return fmt.Sprintf("%s-%s", name, version)

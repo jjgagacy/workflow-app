@@ -1,0 +1,13 @@
+import { AIModel, AudioFile, Speech2TextModel, Speech2TextOptions } from "monie-plugin";
+
+export class TongyiSpeech2TextModel extends Speech2TextModel {
+  invoke(model: string, credentials: Record<string, any>, file: AudioFile, user?: string | null, options?: Speech2TextOptions): Promise<string> | string {
+    throw new Error("Method not implemented.");
+  }
+  getModelSchema(model: string, credentials?: Record<string, any>): Promise<AIModel | undefined> {
+    throw new Error("Method not implemented.");
+  }
+  validateCredentials(model: string, credentials: Record<string, any>): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+}

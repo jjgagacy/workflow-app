@@ -1,0 +1,45 @@
+version: 1.0.0
+type: plugin
+author: monyii
+name: tongyi
+label:
+  en_US: TongYi
+  zh_Hans: 通义千问
+description:
+  en_US: TongYi QianWen models from Alibaba Cloud, offering various capabilities including qwen-turbo (fast), qwen-plus (balanced), and qwen-max (powerful).
+  zh_Hans: 阿里云通义千问大语言模型，提供多种能力版本，包括 qwen-turbo（快速）、qwen-plus（均衡）和 qwen-max（强大）。
+icon_small: tongyi_small.svg
+icon_small_dark: tongyi_small.svg
+icon_large: tongyi.svg
+icon_large_dark: tongyi.svg
+resource:
+  memory: 268435456
+  permission:
+    model:
+      enabled: true
+      llm: true
+      text_embedding: true
+      rerank: true
+      tts: true
+      speech2text: true
+      moderation: true
+    app:
+      enabled: true
+    storage:
+      enabled: true
+      size: 1048576
+plugins:
+  models:
+    - provider/tongyi.yaml
+meta:
+  version: 1.0.0
+  arch:
+    - amd64
+    - arm64
+  runner:
+    language: node
+    version: "22.19"
+    entry_point: index
+created: 2026-09-03T00:00:00.000000+08:00
+privacy: PRIVACY.md
+verified: false

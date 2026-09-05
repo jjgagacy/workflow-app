@@ -1,0 +1,10 @@
+# for more details, please refer to https://help.aliyun.com/zh/model-studio/getting-started/models#3383780daf8hw
+model: qwen3.7-text-embedding-flash
+model_type: text-embedding
+model_properties:
+  context_size: 131072
+  max_chunks: 10
+price_config:
+  input: "0.0005"
+  unit: "0.001"
+  currency: RMB
