@@ -171,11 +171,13 @@ export class PluginRegistry {
         for (const modelFilePath of this.declaration.plugins.models) {
           const model = await loadYamlFile<ModelProviderConfiguration>(resolveFrom(this.manifestFilePath, modelFilePath));
           const models: AIProviderBase[] = [];
-          for (const modelFilePattern of model.modelFiles) {
-            models.push(...await this.loadModelDeclarations(
-              path.dirname(this.manifestFilePath),
-              modelFilePattern,
-            ));
+          if (Array.isArray(model.modelFiles)) {
+            for (const modelFilePattern of model.modelFiles) {
+              models.push(...await this.loadModelDeclarations(
+                path.dirname(this.manifestFilePath),
+                modelFilePattern,
+              ));
+            }
           }
           model.models = models;
           this.modelProviderConfigurations.push(model);
