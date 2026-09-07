@@ -4,6 +4,7 @@ import { UseGuards } from "@nestjs/common";
 import { EditionSelfHostedGuard } from "@/common/guards/auth/edition_self_hosted.guard";
 import { PermInput } from "../types/perm-input.type";
 import { CurrentTenent } from "@/common/decorators/current-tenant";
+import CreateModulePermArgs from "@/account/perm/args/create-module-perm.args";
 
 @Resolver()
 @UseGuards(EditionSelfHostedGuard)

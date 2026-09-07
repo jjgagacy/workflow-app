@@ -33,7 +33,7 @@ import { EventModule } from '@/events/event.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: TypeOrmConfig,
+      useFactory: (config: ConfigService) => TypeOrmConfig(config, true),
     }),
     HttpModule.registerAsync({
       global: true,

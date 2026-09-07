@@ -1,5 +1,6 @@
 import { QueryDto } from "@/common/database/dto/query.dto";
 import { notEmpty, validNumber } from "@/common/utils/strings";
+import GetMenuArgs from "../args/get-menu.args";
 
 export class QueryMenuDto extends QueryDto {
   name?: string;

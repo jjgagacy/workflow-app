@@ -9,7 +9,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HelloResolver } from './common/graphql/hello.resolver';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { JWT_CONSTANTS } from './config/constants';
 import { FooModule } from './foo/foo.module';
@@ -114,6 +113,7 @@ import { AppsService } from './ai/apps/apps.service';
 import { AppManagerService } from './service/app-manager.service';
 import { InstalledAppService } from './ai/apps/installed-app.service';
 import { WorkflowResolver } from './graphql/workspace/resolvers/workflow.resolver';
+import { ClearCacheCommand } from './commands/clear-cache.command';
 
 // const isWorkerThread = !require.main?.filename.includes('worker');
 // console.log(`AppModule loaded in ${isWorkerThread ? 'main thread' : 'worker thread'}`);
@@ -163,7 +163,7 @@ import { WorkflowResolver } from './graphql/workspace/resolvers/workflow.resolve
     ToolModule,
     WorkflowModule,
     MonieModule,
-    AppModule,
+    // AppModule,
     LoggerModule,
     I18nGlobalModule,
     ServiceModule,
@@ -200,7 +200,7 @@ import { WorkflowResolver } from './graphql/workspace/resolvers/workflow.resolve
     }),
     MailModule,
     PluginModule,
-    ModelRuntimeModule,
+    // ModelRuntimeModule,
     TaskModule,
   ],
   controllers: [
@@ -280,6 +280,7 @@ import { WorkflowResolver } from './graphql/workspace/resolvers/workflow.resolve
     InstalledAppService,
     AppManagerService,
     WorkflowResolver,
+    ClearCacheCommand
   ],
 })
 export class AppModule implements NestModule {

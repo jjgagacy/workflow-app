@@ -9,3 +9,5 @@ type CreateModulePermArgs = {
   // module perm restrictLevel
   restrictLevel?: number;
 };
+
+export default CreateModulePermArgs

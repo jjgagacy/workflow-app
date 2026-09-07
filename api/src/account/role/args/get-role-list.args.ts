@@ -8,3 +8,5 @@ type GetRoleListArgs = Pagination & {
   hasRolePerms?: boolean;
   tenantId?: string;
 };
+
+export default GetRoleListArgs;

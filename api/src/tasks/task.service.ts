@@ -1,6 +1,7 @@
 import { Injectable, OnApplicationBootstrap, OnApplicationShutdown } from "@nestjs/common";
 import { DynamicThreadPool, FixedThreadPool, PoolEvents } from "poolifier";
 import { TaskData, WorkerData, WorkerResult } from "./task.type";
+import { existsSync } from "fs";
 import { join } from "path";
 import { ConfigService } from "@nestjs/config";
 import * as os from "os";
@@ -10,9 +11,27 @@ export class TaskService implements OnApplicationBootstrap, OnApplicationShutdow
   private pool!: FixedThreadPool<WorkerData<TaskData>, WorkerResult<TaskData>> | DynamicThreadPool<WorkerData<TaskData>, WorkerResult<TaskData>>;
   private minWorkers: number = 2;
   private maxWorkers: number = Math.max(2, Math.floor(os.cpus().length / 2));
-  private workerPath = join(process.cwd(), './dist/src/workers/app.worker.js');
+  private workerPath: string;
+  private workerExecArgv: string[] | undefined;
 
   constructor(private configService: ConfigService) {
+    const compiledWorkerPath = join(__dirname, '../workers/app.worker.js');
+    const sourceWorkerPath = join(__dirname, '../workers/app.worker.ts');
+
+    if (existsSync(compiledWorkerPath)) {
+      this.workerPath = compiledWorkerPath;
+    } else if (existsSync(sourceWorkerPath)) {
+      this.workerPath = sourceWorkerPath;
+      this.workerExecArgv = [
+        '-r',
+        require.resolve('ts-node/register'),
+        '-r',
+        require.resolve('tsconfig-paths/register'),
+      ];
+    } else {
+      throw new Error(`Unable to find task worker at ${compiledWorkerPath} or ${sourceWorkerPath}`);
+    }
+
     this.initializePool();
   }
 
@@ -50,6 +69,7 @@ export class TaskService implements OnApplicationBootstrap, OnApplicationShutdow
       messageHandler,
       errorHandler,
       exitHandler,
+      workerOptions: this.workerExecArgv ? { execArgv: this.workerExecArgv } : undefined,
     };
 
     if (useDynamicPool) {

@@ -1,5 +1,5 @@
 /**
- * Enum class for model statu
+ * Enum class for model status
  */
 export enum ModelStatus {
   ACTIVE = 'active',

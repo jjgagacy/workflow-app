@@ -11,6 +11,7 @@ import { I18nTranslations } from "@/generated/i18n.generated";
 import { validateDto } from "@/common/utils/validation";
 import { isPaginator } from "@/common/database/utils/pagination";
 import { getPaginationOptions } from "@/common/database/dto/query.dto";
+import GetModuleListArgs from "./module/args/get-module-list.args";
 
 @Injectable()
 export class ModuleService {

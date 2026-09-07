@@ -3,7 +3,7 @@ import { ModelType } from "@/ai/model_runtime/enums/model-runtime.enum";
 import { CustomConfigurationStatus } from "@/ai/model_runtime/enums/quota.enum";
 import { ProviderService } from "@/ai/model_runtime/services/provider.service";
 import { EnumConverter } from "@/common/utils/enums";
-import { CustomConfiguration, ModelProviderInfo, ModelProviderList, QuotaInfo, RestrictModel, SystemConfiguration } from "@/graphql/model/model_provider/types/provider.type";
+import { CustomConfiguration, ModelProviderInfo, ModelProviderList, ModelProviderModelList, QuotaInfo, RestrictModel, SystemConfiguration } from "@/graphql/model/model_provider/types/provider.type";
 import { Injectable } from "@nestjs/common";
 import { MarketplaceService } from "./marketplace.service";
 import { ModelCredentialResponse, ProviderCredentialResponse } from "@/graphql/workspace/types/provider.type";
@@ -116,5 +116,16 @@ export class ModelProviderService {
     }
     await providerConfig.upsertCustomCredentials(credentials);
     return true;
+  }
+
+  public async getModelByModelType(tenantId: string, modelType: string): Promise<ModelProviderModelList[]> {
+    // Implement the logic to fetch models by modelType
+    // This is a placeholder implementation and should be replaced with actual logic
+    const providerConfiguration = await this.providerService.getConfigurations(tenantId);
+    const models = providerConfiguration.getModels('', EnumConverter.toEnum(ModelType, modelType));
+
+    // todo: 
+
+    return [];
   }
 }

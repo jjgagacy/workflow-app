@@ -10,13 +10,14 @@ class AppRequestHandlerWorker<
   Response extends WorkerResult<TaskData>
 > extends ThreadWorker<Data, Response> {
   private app!: INestApplicationContext;
+  private initPromise: Promise<void>;
   public constructor() {
     super({
       echo: (workerData?: Data) => {
         return workerData as unknown as Response
       }
     });
-    this.initNestApp();
+    this.initPromise = this.initNestApp();
     this.addTaskFunction('ping', this.ping.bind(this));
   }
 
@@ -26,6 +27,7 @@ class AppRequestHandlerWorker<
   }
 
   private async ping(workerData?: Data): Promise<Response> {
+    await this.initPromise;
     const service = this.app.get(PingService);
     try {
       const result = await service.ping(workerData);

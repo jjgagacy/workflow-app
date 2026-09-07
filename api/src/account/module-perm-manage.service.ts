@@ -7,6 +7,9 @@ import { CreateModulePermDto } from "./perm/dto/create-module-perm.dto";
 import { UpdateModulePermDto } from "./perm/dto/update-module-perm.dto";
 import { I18nService } from "nestjs-i18n";
 import { I18nTranslations } from "@/generated/i18n.generated";
+import CreateModulePermArgs from "./perm/args/create-module-perm.args";
+import UpdateModulePermArgs from "./perm/args/update-module-perm.args";
+import DeleteModulePermArgs from "./perm/args/delete-module-perm.args";
 
 @Injectable()
 export class ModulePermManageService {

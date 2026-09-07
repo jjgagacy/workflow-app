@@ -7,3 +7,5 @@ type SetMenuArgs = {
   icon: string;
   module?: string;
 };
+
+export default SetMenuArgs;

@@ -1,11 +1,8 @@
-import { PromptMessageContent } from "@/ai/prompt/classes/abstract.class";
 import { EnhanceCacheService } from "@/common/services/cache/enhance-cache.service";
 import { MonieConfig } from "@/monie/monie.config";
-import { Injectable, OnModuleInit } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { PluginDeclarationService } from "./plugin/plugin-declaration.service";
 import { PluginDeclaration } from "@/ai/model_runtime/classes/plugin/declaration";
-import { supportedLanguage, SupportedLanguage } from "@/common/constants/timezone";
-import { EmailLanguage } from "@/mail/mail-i18n.service";
 import { I18nObject } from "@/ai/model_runtime/classes/model-runtime.class";
 import { ModelProviderDeclaration } from "@/ai/model_runtime/classes/model-provider.class";
 import { i18nLangMap } from "@/i18n-global/langmap";
@@ -16,7 +13,7 @@ import { marshalPluginID } from "@/ai/plugin/entities/identify";
 
 export type IconLanguage = 'en_US' | 'zh_Hans';
 const cacheKeyPluginDeclarations = 'marketplace_plugin_declarations';
-const cacheTTLPluginDeclarations = 5000;
+const cacheTTLPluginDeclarations = 10 * 60 * 1000; // ms
 
 @Injectable()
 export class MarketplaceService {
@@ -29,7 +26,7 @@ export class MarketplaceService {
   async initPluginDeclarations(): Promise<PluginDeclaration[]> {
     const pluginPath = this.monieConfig.marketplacePluginsPath();
     const pluginDeclarations = await this.pluginDeclarationService.decodePluginPath(pluginPath);
-    console.log(`Loaded ${pluginDeclarations.length} plugin declarations from marketplace.`);
+    // console.log(`Loaded ${pluginDeclarations.length} plugin declarations from marketplace.`);
     return pluginDeclarations;
   }
 
@@ -41,6 +38,10 @@ export class MarketplaceService {
     const pluginDeclarations = await this.initPluginDeclarations();
     await this.cacheService.set(cacheKeyPluginDeclarations, pluginDeclarations, cacheTTLPluginDeclarations);
     return pluginDeclarations;
+  }
+
+  async clearPluginDeclarationsCache(): Promise<boolean> {
+    return this.cacheService.del(cacheKeyPluginDeclarations);
   }
 
   async queryModelProviders(props?: ModelProviderQueryProps): Promise<PluginDeclaration[]> {

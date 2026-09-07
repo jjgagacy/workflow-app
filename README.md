@@ -24,3 +24,7 @@ Your system should meets the following minimum requirements:
 
 # Contact
 
+# Todo
+
+- `getPluginDeclarationsUseCache()` 方法如果新增了model，怎么更新缓存？
+

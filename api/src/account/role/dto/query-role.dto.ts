@@ -1,5 +1,6 @@
 import { QueryDto } from "@/common/database/dto/query.dto";
 import { notEmpty, validNumber } from "@/common/utils/strings";
+import GetRoleListArgs from "../args/get-role-list.args";
 
 export class QueryRoleDto extends QueryDto {
   id?: number;

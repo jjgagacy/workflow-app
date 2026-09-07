@@ -22,6 +22,7 @@ import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
 import { AccountStatus } from "./account.enums";
 import { AccountBannedError, AccountInPendingError, AccountNotInitializedError } from "@/service/exceptions/account.error";
+import GetAccountListArgs from "./account/args/get-account-list.args";
 
 @Injectable()
 export class AccountService {

@@ -156,6 +156,12 @@ input EmailCodeSignUpInput {
   username: String!
 }
 
+"""模型来源"""
+enum FetchFrom {
+  CUSTOMIZABLE_MODEL
+  PREDEFINED_MODEL
+}
+
 type FieldModelSchema {
   label: I18nObject!
   placeholder: I18nObject
@@ -287,6 +293,19 @@ type ModelCredentialSchema {
   model: FieldModelSchema!
 }
 
+"""模型功能"""
+enum ModelFeature {
+  AGENT_THROUGHT
+  AUDIO
+  DOCUMENT
+  MULTI_TOOL_CALL
+  STREAM_TOOL_CALL
+  STRUCTURED_OUTPUT
+  TOOL_CALL
+  VESION
+  VIDEO
+}
+
 type ModelProvider {
   """Name of the author"""
   author: String!
@@ -330,6 +349,24 @@ type ModelProvidersList {
   """List of model providers"""
   data: [ModelProvider!]!
   pageInfo: PageInfo
+}
+
+"""模型状态"""
+enum ModelStatus {
+  """模型处于活动状态"""
+  ACTIVE
+
+  """模型已禁用"""
+  DISABLED
+
+  """模型未配置"""
+  NO_CONFIGURE
+
+  """没有权限使用该模型"""
+  NO_PERMISSION
+
+  """模型配额已超出"""
+  QUOTA_EXCEEDED
 }
 
 type Module {
@@ -468,6 +505,17 @@ type ProviderCredentialResponse {
 
 type ProviderCredentialSchema {
   credentialFormSchema: [CredentialFormSchema!]
+}
+
+type ProviderModel {
+  deprecated: Boolean!
+  features: [ModelFeature!]
+  fetchFrom: FetchFrom!
+  label: String!
+  model: String!
+  modelProperties: JSON
+  modelType: String!
+  status: ModelStatus!
 }
 
 type Query {

@@ -1,6 +1,8 @@
 import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { I18nObject } from "./i18n-object.type";
 import { FormType } from "@/ai/model_runtime/entities/form.entity";
+import { CustomConfigurationStatus } from "@/ai/model_runtime/enums/quota.enum";
+import { ProviderModel } from "../../types/models.type";
 
 @ObjectType('RestrictModel')
 export class RestrictModel {
@@ -179,4 +181,35 @@ export class ModelProviderInfo {
 export class ModelProviderList {
   @Field(() => [ModelProviderInfo])
   data!: ModelProviderInfo[];
+}
+
+registerEnumType(CustomConfigurationStatus, {
+  name: 'CustomConfigurationStatus',
+});
+
+@ObjectType('ModelProviderModelList')
+export class ModelProviderModelList {
+  @Field()
+  tenantId!: string;
+
+  @Field()
+  providerName!: string;
+
+  @Field(() => I18nObject)
+  label!: I18nObject;
+
+  @Field(() => I18nObject, { nullable: true })
+  description?: I18nObject;
+
+  @Field(() => I18nObject, { nullable: true })
+  icon?: I18nObject;
+
+  @Field(() => I18nObject, { nullable: true })
+  iconDark?: I18nObject;
+
+  @Field(() => CustomConfigurationStatus, { nullable: false })
+  status!: CustomConfigurationStatus;
+
+  @Field(() => [ProviderModel], { nullable: false })
+  models!: ProviderModel[];
 }

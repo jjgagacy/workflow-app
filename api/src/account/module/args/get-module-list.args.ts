@@ -4,3 +4,5 @@ type GetModuleListArgs = Pagination & {
   relations?: { perms: boolean, menus: boolean },
   tenantId?: string;
 };
+
+export default GetModuleListArgs;

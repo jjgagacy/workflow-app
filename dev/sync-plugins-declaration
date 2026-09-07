@@ -1,5 +1,8 @@
 #!/bin/bash
-cd ../monie-plugins
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+echo "Syncing plugin declarations from monie-plugins to api/plugins-declaration..."
+cd "${PROJECT_ROOT}/monie-plugins"
 for plugin in */; do
   if [ -d "${plugin}dist" ]; then
     rsync -avmu \

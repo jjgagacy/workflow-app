@@ -127,34 +127,38 @@ func CombinedGetPluginDeclaration(
 		":",
 	)
 
+	// Use memory cache first
 	if declaration := pluginCache.get(cacheKey); declaration != nil {
 		return declaration, nil
 	}
 
-	// todo redis
-	var declaration plugin_entities.PluginDeclaration
-	var err error
-	if runtimeType != plugin_entities.PLUGIN_RUNTIME_TYPE_REMOTE {
-		pluginDeclaration, dbErr := db.GetOne[model.PluginDeclaration](
-			db.Equal("plugin_unique_identifier", pluginUniqueIdentifier.String()),
-		)
+	// Use redis cache next
+	declaration, err := AutoGetWithGetter(
+		cacheKey,
+		func() (*plugin_entities.PluginDeclaration, error) {
+			if runtimeType != plugin_entities.PLUGIN_RUNTIME_TYPE_REMOTE {
+				pluginDeclaration, dbErr := db.GetOne[model.PluginDeclaration](
+					db.Equal("plugin_unique_identifier", pluginUniqueIdentifier.String()),
+				)
 
-		if dbErr == nil {
-			declaration = pluginDeclaration.Declaration
-		}
-		err = dbErr
-	} else {
-		// todo: fetch plugin from remote
-		plugin, dbErr := db.GetOne[model.Plugin](
-			db.Equal("plugin_unique_identifier", pluginUniqueIdentifier.String()),
-			db.Equal("install_type", string(plugin_entities.PLUGIN_RUNTIME_TYPE_REMOTE)),
-		)
+				if dbErr != nil {
+					return nil, dbErr
+				}
+				return &pluginDeclaration.Declaration, nil
+			} else {
+				// todo: fetch plugin from remote
+				plugin, dbErr := db.GetOne[model.Plugin](
+					db.Equal("plugin_unique_identifier", pluginUniqueIdentifier.String()),
+					db.Equal("install_type", string(plugin_entities.PLUGIN_RUNTIME_TYPE_REMOTE)),
+				)
 
-		if dbErr == nil {
-			declaration = plugin.RemoteDeclaration
-		}
-		err = dbErr
-	}
+				if dbErr != nil {
+					return nil, dbErr
+				}
+				return &plugin.RemoteDeclaration, nil
+			}
+		},
+	)
 
 	if err == types.ErrRecordNotFound {
 		return nil, types.ErrPluginNotFound
@@ -164,7 +168,6 @@ func CombinedGetPluginDeclaration(
 		return nil, err
 	}
 
-	pluginCache.set(cacheKey, &declaration)
-
-	return &declaration, nil
+	pluginCache.set(cacheKey, declaration)
+	return declaration, nil
 }

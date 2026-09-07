@@ -4,3 +4,5 @@ type GetDepArgs = {
   parent: string;
   tenantId: string;
 };
+
+export default GetDepArgs;

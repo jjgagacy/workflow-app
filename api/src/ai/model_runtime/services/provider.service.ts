@@ -377,6 +377,14 @@ export class ProviderService {
     return groupToMaps(providerModelSettings, (pms) => pms.providerName);
   }
 
+  /**
+   * Initialize trial provider records for the given tenant.
+   *
+   * @param tenantId The ID of the tenant.
+   * @param providerNameToProviderMaps A map of provider names to their corresponding provider entities.
+   * @param entityManager Optional entity manager for database operations.
+   * @returns A map of provider names to their corresponding provider entities, including any newly created trial records.
+   */
   @Transactional()
   async initTrialProvider(
     tenantId: string,

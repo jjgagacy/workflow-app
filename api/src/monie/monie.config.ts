@@ -17,7 +17,7 @@ import { SecurityConfig } from "./config/security.config";
 import { BillingConfig } from "./config/billing.config";
 import { LoginConfig } from "./config/login.config";
 import { FeatureConfig } from "./config/feature.config";
-import { HostedAnthropicConfig, HostedAzureOpenAIConfig, HostedMiniMaxConfig, HostedModerationConfig, HostedOpenAIConfig, HostedSparkConfig, HostedZhipuAIConfig, ModelCreditService } from "./config/hosted.config";
+import { HostedAnthropicConfig, HostedAzureOpenAIConfig, HostedDeepseekConfig, HostedGeminiConfig, HostedMiniMaxConfig, HostedModerationConfig, HostedOpenAIConfig, HostedSparkConfig, HostedTongyiConfig, HostedZhipuAIConfig, ModelCreditService } from "./config/hosted.config";
 import { MarketplaceConfig } from "./config/marketplace.config";
 
 @Injectable()
@@ -53,6 +53,9 @@ export interface MonieConfig extends
   HostedMiniMaxConfig,
   HostedSparkConfig,
   HostedZhipuAIConfig,
+  HostedDeepseekConfig,
+  HostedGeminiConfig,
+  HostedTongyiConfig,
   HostedModerationConfig,
   ModelPositionConfig,
   MarketplaceConfig { }
@@ -82,6 +85,9 @@ applyMixins(MonieConfig, [
   HostedMiniMaxConfig,
   HostedSparkConfig,
   HostedZhipuAIConfig,
+  HostedDeepseekConfig,
+  HostedGeminiConfig,
+  HostedTongyiConfig,
   HostedModerationConfig,
   ModelPositionConfig,
   MarketplaceConfig

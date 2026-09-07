@@ -9,7 +9,7 @@ import { IMAGE_MIME_TYPES } from "@/config/file.constants";
 import { Injectable } from "@nestjs/common";
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
+import { join, resolve } from "node:path";
 
 @Injectable()
 export class PluginDeclarationService {

@@ -1,0 +1,17 @@
+# for more details, please refer to https://help.aliyun.com/zh/model-studio/getting-started/models
+model: qwen3.5-ocr
+label:
+  en_US: qwen3.5-ocr
+model_type: llm
+features:
+  - vision
+  - agent-thought
+  - image
+model_properties:
+  mode: chat
+  context_size: 131072
+price_config:
+  input: '0.0008'
+  output: '0.002'
+  unit: '0.001'
+  currency: RMB

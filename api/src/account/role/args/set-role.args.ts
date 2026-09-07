@@ -4,3 +4,5 @@ type SetRoleArgs = {
   name: string;
   status: number;
 };
+
+export default SetRoleArgs;

@@ -5,3 +5,5 @@ type SetDepArgs = {
   remarks: string;
   manager: string;
 };
+
+export default SetDepArgs;

@@ -12,6 +12,7 @@ import { I18nTranslations } from "@/generated/i18n.generated";
 import { validateDto } from "@/common/utils/validation";
 import { InvalidInputGraphQLException } from "@/common/exceptions";
 import { isPaginator } from "@/common/database/utils/pagination";
+import GetDepArgs from "./dep/args/get-dep.args";
 
 @Injectable()
 export class DepService {

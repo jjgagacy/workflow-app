@@ -164,6 +164,33 @@ export class HostedZhipuAIConfig {
 }
 
 @Injectable()
+export class HostedDeepseekConfig {
+  constructor(protected readonly configService: ConfigService) { }
+
+  deepseekEnabled(): boolean {
+    return toBoolean(this.configService.get('HOSTED_DEEPSEEK_ENABLED'));
+  }
+}
+
+@Injectable()
+export class HostedGeminiConfig {
+  constructor(protected readonly configService: ConfigService) { }
+
+  geminiEnabled(): boolean {
+    return toBoolean(this.configService.get('HOSTED_GEMINI_ENABLED'));
+  }
+}
+
+@Injectable()
+export class HostedTongyiConfig {
+  constructor(protected readonly configService: ConfigService) { }
+
+  tongyiEnabled(): boolean {
+    return toBoolean(this.configService.get('HOSTED_TONGYI_ENABLED'));
+  }
+}
+
+@Injectable()
 export class HostedModerationConfig {
   constructor(protected readonly configService: ConfigService) { }
 

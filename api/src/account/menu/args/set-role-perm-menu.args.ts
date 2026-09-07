@@ -3,3 +3,4 @@ type SetRolePermMenuArgs = {
   scope: string[];
   perms: string[];
 };
+export default SetRolePermMenuArgs;

@@ -9,3 +9,5 @@ type GetMenuArgs = {
   withScope?: boolean;
   tenantId?: string;
 };
+
+export default GetMenuArgs;

@@ -7,3 +7,5 @@ type SetAccountArgs = {
   email: string;
   roles: number[];
 };
+
+export default SetAccountArgs;

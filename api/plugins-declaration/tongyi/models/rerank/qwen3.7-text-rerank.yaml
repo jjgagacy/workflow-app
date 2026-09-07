@@ -1,0 +1,4 @@
+model: qwen3.7-text-rerank
+model_type: rerank
+model_properties:
+  context_size: 32768

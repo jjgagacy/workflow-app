@@ -1,5 +1,6 @@
 import { QueryDto } from "@/common/database/dto/query.dto";
 import { notEmpty } from "@/common/utils/strings";
+import GetDepArgs from "../args/get-dep.args";
 
 export class QueryDepDto extends QueryDto {
   key?: string;

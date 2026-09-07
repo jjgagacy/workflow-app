@@ -9,3 +9,5 @@ type GetAccountListArgs = Pagination & {
   relations: { roles: boolean; }
   tenantId: string;
 };
+
+export default GetAccountListArgs;

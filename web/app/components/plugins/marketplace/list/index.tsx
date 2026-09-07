@@ -25,7 +25,7 @@ const List = ({
             }
 
             return (<CardWrapper
-              key={plugin.author}
+              key={`${plugin.author}-${plugin.name}`}
               plugin={plugin}
               locale={locale}
             />

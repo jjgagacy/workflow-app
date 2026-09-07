@@ -16,6 +16,7 @@ import { I18nTranslations } from "@/generated/i18n.generated";
 import { validateDto } from "@/common/utils/validation";
 import { getPaginationOptions } from "@/common/database/dto/query.dto";
 import { isPaginator } from "@/common/database/utils/pagination";
+import GetMenuArgs from "./menu/args/get-menu.args";
 
 @Injectable()
 export class MenuService {

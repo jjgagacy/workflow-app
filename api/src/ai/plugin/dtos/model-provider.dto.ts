@@ -1,6 +1,6 @@
 import { ModelProviderDeclaration } from "@/ai/model_runtime/classes/model-provider.class";
 
-export const DEFAULT_PLUGIN_ID = 'monie';
+export const DEFAULT_PLUGIN_ID = 'monyii';
 
 export interface ModelProviderProps {
   id: string;

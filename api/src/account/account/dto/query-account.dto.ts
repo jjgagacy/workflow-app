@@ -1,5 +1,6 @@
 import { QueryDto } from "@/common/database/dto/query.dto";
 import { notEmpty, validId, validNumber } from "@/common/utils/strings";
+import GetAccountListArgs from "../args/get-account-list.args";
 
 export class QueryAccountDto extends QueryDto {
   id?: number;

@@ -1,0 +1,40 @@
+version: 1.0.0
+type: plugin
+author: monyii
+name: deepseek
+label:
+  en_US: Deepseek
+  zh_Hans: 深度求索
+description:
+  en_US: Models provided by deepseek, such as deepseek-chat、deepseek-coder.
+  zh_Hans: 深度求索提供的模型，例如 deepseek-chat、deepseek-coder。
+icon_small: deepseek_small.svg
+icon_small_dark: deepseek_small.svg
+icon_large: deepseek.svg
+icon_large_dark: deepseek.svg
+resource:
+  memory: 268435456
+  permission:
+    model:
+      enabled: true
+      llm: true
+    app:
+      enabled: true
+    storage:
+      enabled: true
+      size: 1048576
+plugins:
+  models:
+    - provider/deepseek.yaml
+meta:
+  version: 1.0.0
+  arch:
+    - amd64
+    - arm64
+  runner:
+    language: node
+    version: "22.19"
+    entry_point: index
+created: 2026-09-01T00:00:00.000000+08:00
+privacy: PRIVACY.md
+verified: false

@@ -40,6 +40,9 @@ export class HostConfiguration implements OnModuleInit {
     this.providerMap.set(`${DEFAULT_PLUGIN_ID}/minimax/minimax`, this.initMinimax());
     this.providerMap.set(`${DEFAULT_PLUGIN_ID}/spark/spark`, this.initSpark());
     this.providerMap.set(`${DEFAULT_PLUGIN_ID}/zhipu/zhipu`, this.initZhipu());
+    this.providerMap.set(`${DEFAULT_PLUGIN_ID}/deepseek/deepseek`, this.initDeepseek());
+    this.providerMap.set(`${DEFAULT_PLUGIN_ID}/gemini/gemini`, this.initGemini());
+    this.providerMap.set(`${DEFAULT_PLUGIN_ID}/tongyi/tongyi`, this.initTongyi());
 
     this.hostedModeration = this.initHostedModeration();
   }
@@ -205,6 +208,57 @@ export class HostConfiguration implements OnModuleInit {
         credentials: undefined,
         quotaUnit,
         quotas,
+      });
+    }
+
+    return new HostingProvider({
+      enabled: false,
+      quotaUnit,
+    });
+  }
+
+  private initDeepseek(): HostingProvider {
+    const quotaUnit = QuotaUnit.TOKENS;
+
+    if (this.monieConfig.deepseekEnabled()) {
+      return new HostingProvider({
+        enabled: true,
+        quotaUnit,
+        quotas: [new FreeHostingQuota()],
+      });
+    }
+
+    return new HostingProvider({
+      enabled: false,
+      quotaUnit,
+    });
+  }
+
+  private initGemini(): HostingProvider {
+    const quotaUnit = QuotaUnit.TOKENS;
+
+    if (this.monieConfig.geminiEnabled()) {
+      return new HostingProvider({
+        enabled: true,
+        quotaUnit,
+        quotas: [new FreeHostingQuota()],
+      });
+    }
+
+    return new HostingProvider({
+      enabled: false,
+      quotaUnit,
+    });
+  }
+
+  private initTongyi(): HostingProvider {
+    const quotaUnit = QuotaUnit.TOKENS;
+
+    if (this.monieConfig.tongyiEnabled()) {
+      return new HostingProvider({
+        enabled: true,
+        quotaUnit,
+        quotas: [new FreeHostingQuota()],
       });
     }
 

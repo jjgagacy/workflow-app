@@ -4,6 +4,7 @@ import { WinstonLogger } from "./winston.service";
 import { MonieConfig } from "@/monie/monie.config";
 
 export type LogLevels = 'error' | 'warn' | 'log' | 'debug' | 'verbose';
+
 export interface LogContext {
   [key: string]: any;
 }
@@ -12,6 +13,7 @@ export interface LogContext {
 export class GlobalLogger extends ConsoleLogger implements LoggerService {
   private readonly logLevels: LogLevels[];
   private readonly isProduction: boolean;
+  private readonly isCliMode: boolean;
 
   constructor(
     private readonly configService: ConfigService,
@@ -21,8 +23,15 @@ export class GlobalLogger extends ConsoleLogger implements LoggerService {
   ) {
     super()
     this.setContext(context || 'GlobalLogger')
-    this.isProduction = this.configService.get('NODE_ENV') === 'production';
-    this.logLevels = this.getLogLevels();
+    this.isCliMode = process.env.IS_CLI === 'true';
+
+    if (!this.isCliMode) {
+      this.isProduction = this.configService.get('NODE_ENV') === 'production';
+      this.logLevels = this.getLogLevels();
+    } else {
+      this.logLevels = ['error'];
+      this.isProduction = true;
+    }
   }
 
   private getLogLevels(): LogLevels[] {

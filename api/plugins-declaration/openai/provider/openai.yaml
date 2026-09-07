@@ -1,0 +1,70 @@
+provider: openai
+label:
+  en_US: OpenAI
+description:
+  en_US: OpenAI large language models, providing various capabilities and versions.
+  zh_Hans: OpenAI 大语言模型，提供多种能力版本。
+help:
+  title:
+    en_US: Get your API Key from OpenAI
+    zh_Hans: 从 OpenAI 获取 API Key
+  url:
+    en_US: https://platform.openai.com/account/api-keys
+icon_small:
+  en_US: "_assets/openai_small.svg"
+icon_small_dark:
+  en_US: "_assets/openai_small.svg"
+icon_large:
+  en_US: "_assets/openai.svg"
+icon_large_dark:
+  en_US: "_assets/openai.svg"
+supported_model_types:
+  - llm
+configurate_methods:
+  - predefined-model
+  - customizable-model
+extra:
+  node:
+    module: provider/openai.js
+    class: OpenAIProvider
+    models:
+      - "models/llm/llm.js"
+      - "models/rerank/rerank.js"
+      - "models/text_embedding/text_embedding.js"
+      - "models/tts/tts.js"
+      - "models/speech2text/speech2text.js"
+model_files:
+  - "models/llm/*.yaml"
+  - "models/rerank/*.yaml"
+  - "models/speech2text/*.yaml"
+  - "models/text_embedding/*.yaml"
+  - "models/tts/*.yaml"
+provider_credential_schema:
+  credential_form_schema:
+    - variable: api_key
+      label:
+        en_US: API Key
+      type: secret-input
+      required: true
+      placeholder:
+        zh_Hans: 在此输入您的 API Key
+        en_US: Enter your API Key
+    - default: '4096'
+      label:
+        en_US: Model context size
+        zh_Hans: 模型上下文长度
+      placeholder:
+        en_US: Enter your Model context size
+        zh_Hans: 在此输入您的模型上下文长度
+      required: true
+      type: text-input
+      variable: context_size
+    - default: '4096'
+      label:
+        en_US: Upper bound for max tokens
+        zh_Hans: 最大 token 上限
+      show_on:
+      - value: llm
+        variable: __model_type
+      type: text-input
+      variable: max_tokens

@@ -1,5 +1,6 @@
 import { QueryDto } from "@/common/database/dto/query.dto";
 import { notEmpty, validNumber } from "@/common/utils/strings";
+import GetModuleListArgs from "../args/get-module-list.args";
 
 export class QueryModuleDto extends QueryDto {
   key?: string;
