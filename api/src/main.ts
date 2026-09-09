@@ -41,7 +41,7 @@ async function bootstrap() {
       app.get(ConfigService),
       logger,
       app.get(MonieConfig),
-      'MONIE',
+      'MONYII',
     ),
   );
   // 启用 CORS

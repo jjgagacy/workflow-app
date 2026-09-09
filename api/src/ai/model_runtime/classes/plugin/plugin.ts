@@ -15,6 +15,7 @@ export enum PluginType {
 }
 
 export enum PluginProviderType {
+  Name = "name",
   Tool = "tool",
   Model = "model",
   Endpoint = "endpoint",

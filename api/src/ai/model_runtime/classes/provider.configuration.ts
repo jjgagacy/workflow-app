@@ -12,6 +12,8 @@ import { obfuscateToken } from "@/encryption/encryption.service";
 import { ProviderEntity } from "@/account/entities/provider.entity";
 import { EntityManager } from "typeorm";
 import { ModelProviderDeclaration } from "./model-provider.class";
+import { PluginModelProvider } from "./plugin/model-provider";
+import { ModelStatus } from "../enums/model-status.enum";
 
 export interface ConfigurationOptions {
   tenantId: string;
@@ -23,6 +25,9 @@ export interface ConfigurationOptions {
   modelSettings: ModelSettings[];
 }
 
+/**
+ * ProviderConfiguration class manages the configuration for a specific provider within a tenant.
+ */
 export class ProviderConfiguration {
   tenantId: string;
   provider: ModelProviderDeclaration;
@@ -46,20 +51,113 @@ export class ProviderConfiguration {
   }
 
   async getProviderModel(
-    modelType: ModelType,
-    model: string,
-    onlyActive: boolean = false
+    modelType?: ModelType,
+    onlyActive: boolean = false,
+    modelProviderPlugin: ModelProviderDeclaration[] = [],
+    model?: string,
   ): Promise<ModelWithProvider | null> {
-    const providerModels = await this.getProviderModels(modelType, onlyActive, model);
+    const providerModels = await this.getProviderModels(modelType, onlyActive, modelProviderPlugin, model);
     return providerModels.find(providerModel => providerModel.model === model) || null;
   }
 
   async getProviderModels(
-    modelType: ModelType,
+    modelType?: ModelType,
     onlyActive: boolean = false,
-    model?: string
+    modelProviderPlugin: ModelProviderDeclaration[] = [],
+    model?: string,
   ): Promise<ModelWithProvider[]> {
-    return [];
+    const providerDeclaration = modelProviderPlugin.find(decl => decl.provider === this.provider.provider);
+    if (!providerDeclaration) {
+      return [];
+    }
+
+    const modelTypes: ModelType[] = modelType ? [modelType] : providerDeclaration.supportedModelTypes;
+    const models: ModelWithProvider[] = [];
+    const modelSettingMap: Partial<Record<ModelType, Record<string, ModelSettings>>> = {};
+    for (const setting of this.modelSettings) {
+      if (!modelSettingMap[setting.modelType]) {
+        modelSettingMap[setting.modelType] = {};
+      }
+      modelSettingMap[setting.modelType]![setting.model] = setting;
+    }
+
+    let providerModels: ModelWithProvider[] = [];
+    if (this.usingProviderType === ProviderType.SYSTEM) {
+      providerModels = this.getSystemProviderModels(modelTypes, providerDeclaration, modelSettingMap);
+    } else {
+      providerModels = this.getCustomProviderModels(modelTypes, providerDeclaration, modelSettingMap, model);
+    }
+
+    if (onlyActive) {
+      providerModels = providerModels.filter(providerModel => providerModel.status === 'active');
+    }
+
+    return this.sortProviderModels(providerModels);
+  }
+
+  private sortProviderModels(providerModels: ModelWithProvider[]): ModelWithProvider[] {
+    return [...providerModels].sort((a, b) => {
+      if (a.modelType !== b.modelType) {
+        return a.modelType.localeCompare(b.modelType);
+      }
+      return a.model.localeCompare(b.model);
+    });
+  }
+
+  private getSystemProviderModels(
+    modelTypes: ModelType[],
+    providerDeclaration: ModelProviderDeclaration,
+    modelSettingMap: Partial<Record<ModelType, Record<string, ModelSettings>>>
+  ): ModelWithProvider[] {
+    const providerModels: ModelWithProvider[] = [];
+    for (const modelType of modelTypes) {
+      for (const model of providerDeclaration.models.filter(m => m.modelType === modelType)) {
+        let status = ModelStatus.ACTIVE;
+        const modelSetting = modelSettingMap[modelType]?.[model.model];
+        if (modelSetting && !modelSetting.enabled) {
+          status = ModelStatus.DISABLED;
+        }
+
+        providerModels.push(new ModelWithProvider({
+          ...model,
+          status,
+          provider: this.provider.toSimpleProvider(),
+        }));
+      }
+    }
+
+    return providerModels;
+  }
+
+  private getCustomProviderModels(
+    modelTypes: ModelType[],
+    providerDeclaration: ModelProviderDeclaration,
+    modelSettingMap: Partial<Record<ModelType, Record<string, ModelSettings>>>,
+    specificModel?: string
+  ): ModelWithProvider[] {
+    const credentials: Credentials | null = this.customConfiguration.credentials ?? null;
+    const providerModels: ModelWithProvider[] = [];
+    for (const modelType of modelTypes) {
+      for (const model of providerDeclaration.models.filter(m => m.modelType === modelType)) {
+        if (specificModel && model.model !== specificModel) {
+          continue;
+        }
+
+        let status = credentials ? ModelStatus.ACTIVE : ModelStatus.DISABLED;
+        const modelSetting = modelSettingMap[modelType]?.[model.model];
+        if (modelSetting && !modelSetting.enabled) {
+          status = ModelStatus.DISABLED;
+        }
+
+        providerModels.push(new ModelWithProvider({
+          ...model,
+          status,
+          provider: this.provider.toSimpleProvider(),
+        }));
+      }
+    }
+
+    return providerModels;
   }
 
   modelDisabledByModelSetting(
@@ -108,8 +206,7 @@ export class ProviderConfiguration {
     }
   }
 
-  async getSystemConfigurationStatus(
-  ): Promise<SystemConfigurationStatus | null> {
+  async getSystemConfigurationStatus(): Promise<SystemConfigurationStatus | null> {
     if (!this.systemConfiguration.enabled) {
       return null;
     }
@@ -121,9 +218,7 @@ export class ProviderConfiguration {
     return quota.isValid ? SystemConfigurationStatus.ACTIVE : SystemConfigurationStatus.QUOTA_EXCEEDED;
   }
 
-  getCustomCredentials(
-    obfuscated: boolean = false
-  ): Credentials | null {
+  getCustomCredentials(obfuscated: boolean = false): Credentials | null {
     const credentials = this.customConfiguration.credentials;
     if (!credentials) return null;
     if (!obfuscated) return credentials ?? null;
@@ -134,11 +229,7 @@ export class ProviderConfiguration {
     );
   }
 
-  getCustomModelCredentials(
-    modelName: string,
-    modelType: ModelType,
-    obfuscated: boolean = false
-  ): Credentials | null {
+  getCustomModelCredentials(modelName: string, modelType: ModelType, obfuscated: boolean = false): Credentials | null {
     if (this.customConfiguration.models.length === 0)
       return null;
 
@@ -177,17 +268,27 @@ export class ProviderConfiguration {
   }
 }
 
+/**
+ * ProviderConfigurations class manages a collection of ProviderConfiguration instances for a specific tenant.
+ */
 export class ProviderConfigurations {
   configurations: Record<string, ProviderConfiguration> = {};
 
   constructor(public tenantId: string) { }
 
-  getModels(
-    provider?: string,
+  async getModels(
     modelType?: ModelType,
+    provider?: string,
+    modelProviderPlugin: ModelProviderDeclaration[] = [],
     onlyActive: boolean = false
-  ): ModelWithProvider[] {
-    throw new NotImplementedException();
+  ): Promise<ModelWithProvider[]> {
+    const models: ModelWithProvider[] = [];
+    for (const config of this.values()) {
+      if (provider && config.provider.provider !== provider) continue;
+      const providerModels = await config.getProviderModels(modelType, onlyActive, modelProviderPlugin);
+      models.push(...providerModels);
+    }
+    return models;
   }
 
   toList(): ProviderConfiguration[] {

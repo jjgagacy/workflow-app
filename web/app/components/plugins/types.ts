@@ -11,6 +11,10 @@ export type Plugin = {
   description?: Record<string, string>;
 }
 
+export const createPluginIdentifier = (plugin: Plugin) => {
+  return `${plugin.author}/${plugin.name}`;
+}
+
 export type PluginInstallation = {
   id: string;
   name: string;

@@ -134,6 +134,7 @@ func InstallPluginRuntimeToTenant(
 			Message:                "",
 		})
 
+		// if plugin is already installed, we can skip it
 		if err == nil {
 			if err := done(pluginUniqueIdentifier, pluginDeclaration, metas[i]); err != nil {
 				return nil, errors.Join(err, errors.New("failed on plugin installation"))

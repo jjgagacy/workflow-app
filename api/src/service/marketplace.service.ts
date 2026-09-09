@@ -9,7 +9,7 @@ import { i18nLangMap } from "@/i18n-global/langmap";
 import { ModelProviderQueryProps } from "./types/model-provider.type";
 import { PluginProviderType } from "@/ai/model_runtime/classes/plugin/plugin";
 import { ProviderID } from "@/ai/plugin/entities/provider-id.entities";
-import { marshalPluginID } from "@/ai/plugin/entities/identify";
+import { compareVersions, isValidPluginUniqueIdentifier, marshalPluginID } from "@/ai/plugin/entities/identify";
 
 export type IconLanguage = 'en_US' | 'zh_Hans';
 const cacheKeyPluginDeclarations = 'marketplace_plugin_declarations';
@@ -79,19 +79,80 @@ export class MarketplaceService {
               return false;
             }
           }
+        } else if (props.category === PluginProviderType.Name) {
+          if (props.excludes && props.excludes.includes(declaration.name)) {
+            return false;
+          }
         }
+      }
+      if (props?.query) {
+        return this.matchesQuery(declaration, props.query);
       }
       return true;
     });
   }
 
+  private matchesQuery(declaration: PluginDeclaration, query: string): boolean {
+    const keyword = query.toLowerCase().trim();
+    if (keyword === '') return true;
+
+    if (this.matchesText(declaration.author, keyword)) return true;
+    if (this.matchesText(declaration.name, keyword)) return true;
+    if (this.matchesI18nObject(declaration.label, keyword)) return true;
+    if (this.matchesI18nObject(declaration.description, keyword)) return true;
+
+    if (declaration.model) {
+      if (this.matchesText(declaration.model.provider, keyword)) return true;
+      if (this.matchesI18nObject(declaration.model.label, keyword)) return true;
+      if (this.matchesI18nObject(declaration.model.description, keyword)) return true;
+      if (declaration.model.models.some(model =>
+        this.matchesText(model.model, keyword) || this.matchesI18nObject(model.label, keyword)
+      )) return true;
+    }
+
+    if (declaration.tool) {
+      if (this.matchesText(declaration.tool.identity.name, keyword)) return true;
+      if (this.matchesI18nObject(declaration.tool.identity.label, keyword)) return true;
+      if (this.matchesI18nObject(declaration.tool.identity.description, keyword)) return true;
+      if (declaration.tool.tools.some(tool =>
+        this.matchesText(tool.identity.name, keyword) || this.matchesI18nObject(tool.identity.label, keyword)
+      )) return true;
+    }
+
+    if (declaration.agentStrategy) {
+      if (this.matchesText(declaration.agentStrategy.identity.name, keyword)) return true;
+      if (this.matchesI18nObject(declaration.agentStrategy.identity.label, keyword)) return true;
+      if (this.matchesI18nObject(declaration.agentStrategy.identity.description, keyword)) return true;
+      if (declaration.agentStrategy.strategies.some(strategy =>
+        this.matchesText(strategy.identity.name, keyword) ||
+        this.matchesI18nObject(strategy.identity.label, keyword) ||
+        this.matchesI18nObject(strategy.description, keyword)
+      )) return true;
+    }
+
+    if (declaration.endpoint) {
+      if (declaration.endpoint.endpoints.some(endpoint => this.matchesText(endpoint.path, keyword))) return true;
+    }
+
+    return false;
+  }
+
+  private matchesText(text: string | null | undefined, keyword: string): boolean {
+    return !!text && text.toLowerCase().includes(keyword);
+  }
+
+  private matchesI18nObject(i18n: I18nObject | null | undefined, keyword: string): boolean {
+    if (!i18n) return false;
+    return Object.values(i18n).some(value => typeof value === 'string' && value.toLowerCase().includes(keyword));
+  }
+
   async getModelProviderIcon(
-    provider: string,
+    pluginId: string,
     theme: string = 'light',
     language: IconLanguage = 'en_US',
     useSmall: boolean = false
   ): Promise<{ data: Buffer, mimeType: string } | null> {
-    const pluginDeclaration = (await this.getPluginDeclarationsUseCache()).find(declaration => declaration.model?.provider === provider);
+    const pluginDeclaration = (await this.getPluginDeclarationsUseCache()).find(declaration => `${declaration.author}/${declaration.name}` === pluginId);
     if (!pluginDeclaration) {
       return null;
     }
@@ -122,7 +183,7 @@ export class MarketplaceService {
     if (!iconPath) {
       return null;
     }
-    return iconPath[language] || null;
+    return iconPath[language] || iconPath["en_US"] || null;
   }
 
   getModelProviderIconUrl(provider: string, theme: string = 'light', language: IconLanguage = 'en_US', useSmall: boolean = false): string | null {
@@ -145,10 +206,14 @@ export class MarketplaceService {
   }
 
   async findPluginUniqueIdentifier(identifierOrPluginId: string): Promise<string | null> {
+    const validUniqueIdentifier = isValidPluginUniqueIdentifier(identifierOrPluginId);
     const pluginDeclarations = await this.getPluginDeclarationsUseCache();
     for (const pluginDeclaration of pluginDeclarations) {
-      const providerId = new ProviderID(pluginDeclaration.author + '/' + pluginDeclaration.name);
       const pluginUniqueIdentifier = marshalPluginID(pluginDeclaration.author || '', pluginDeclaration.name, pluginDeclaration.version);
+      if (validUniqueIdentifier && pluginUniqueIdentifier === identifierOrPluginId) {
+        return pluginUniqueIdentifier;
+      }
+      const providerId = new ProviderID(pluginDeclaration.name);
 
       if (pluginUniqueIdentifier === identifierOrPluginId) {
         return pluginUniqueIdentifier;
@@ -157,6 +222,19 @@ export class MarketplaceService {
       }
     }
     return null
+  }
+
+  // resolves a plugin_id (`author/name`) to the pluginUniqueIdentifier of its latest installed version
+  async findLatestPluginUniqueIdentifierByPluginId(pluginId: string): Promise<string | null> {
+    const [author, name] = pluginId.split('/');
+    const pluginDeclarations = await this.getPluginDeclarationsUseCache();
+    const matched = pluginDeclarations.filter(declaration => declaration.author === author && declaration.name === name);
+    if (matched.length === 0) {
+      return null;
+    }
+
+    const latest = matched.reduce((a, b) => compareVersions(a.version, b.version) >= 0 ? a : b);
+    return marshalPluginID(latest.author || '', latest.name, latest.version);
   }
 }
 

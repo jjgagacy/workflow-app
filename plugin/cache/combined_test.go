@@ -1,10 +1,17 @@
 package cache
 
 import (
+	"fmt"
+	"strings"
 	"testing"
+	"time"
 
+	"github.com/jjgagacy/workflow-app/plugin/core"
+	"github.com/jjgagacy/workflow-app/plugin/core/db"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 )
 
 func TestCacheSetAndGet(t *testing.T) {
@@ -74,4 +81,84 @@ func TestCacheConcurrentAccess(t *testing.T) {
 	defer pluginCache.RUnlock()
 
 	assert.True(t, pluginCache.itemSize <= maxCacheSize)
+}
+
+func TestCombinedGetPluginDeclarationMemoryCacheHit(t *testing.T) {
+	identifier, err := plugin_entities.NewPluginUniqueIdentifier(fmt.Sprintf("alex/xu-%d:1.0.0", time.Now().UnixNano()))
+	require.NoError(t, err)
+	runtimeType := plugin_entities.PLUGIN_RUNTIME_TYPE_LOCAL
+
+	declaration := &plugin_entities.PluginDeclaration{
+		PluginDeclarationBaseFields: plugin_entities.PluginDeclarationBaseFields{
+			Author: "alex",
+			Name:   "xu",
+		},
+		Model: &plugin_entities.ModelProviderDeclaration{
+			Provider: "openai",
+		},
+	}
+
+	cacheKey := strings.Join([]string{"declaration_cache", string(runtimeType), string(identifier)}, ":")
+	pluginCache.set(cacheKey, declaration)
+	t.Cleanup(func() {
+		pluginCache.Lock()
+		delete(pluginCache.items, cacheKey)
+		pluginCache.Unlock()
+	})
+
+	result, err := CombinedGetPluginDeclaration(identifier, runtimeType)
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Equal(t, "openai", result.Model.Provider)
+}
+
+func TestCombinedGetPluginDeclarationRedisNotInit(t *testing.T) {
+	identifier, err := plugin_entities.NewPluginUniqueIdentifier(fmt.Sprintf("alex/xu-%d:1.0.0", time.Now().UnixNano()))
+	require.NoError(t, err)
+	runtimeType := plugin_entities.PLUGIN_RUNTIME_TYPE_LOCAL
+
+	originalClient := client
+	client = nil
+	t.Cleanup(func() {
+		client = originalClient
+	})
+
+	result, err := CombinedGetPluginDeclaration(identifier, runtimeType)
+	assert.Nil(t, result)
+	assert.ErrorIs(t, err, ErrDbNotInit)
+}
+
+func setUpTestDB() *gorm.DB {
+	db.Init(&core.Config{
+		DBType:            "postgresql",
+		DBHost:            "localhost",
+		DBPort:            5432,
+		DBDatabase:        "workflow_plugin",
+		DBDefaultDatabase: "",
+		DBUsername:        "alex",
+		DBPassword:        func(s string) *string { return &s }(""),
+		DBSslMode:         "disable",
+
+		DBMaxIdleConns:    10,
+		DBMaxOpenConns:    30,
+		DBConnMaxLifetime: 3600,
+		DBExtras:          "",
+		DBCharset:         "utf8",
+		DBTimeZone:        "Asia/Shanghai",
+	})
+
+	return db.DB
+}
+
+func TestCombinedGetPluginDeclaration(t *testing.T) {
+	setUpTestDB()
+	InitRedisClient("0.0.0.0:6379", "", "", false, 0)
+	identifier, err := plugin_entities.NewPluginUniqueIdentifier("monyii/deepseek:1.0.0")
+	require.NoError(t, err)
+
+	runtimeType := plugin_entities.PLUGIN_RUNTIME_TYPE_LOCAL
+
+	result, err := CombinedGetPluginDeclaration(identifier, runtimeType)
+	assert.NotNil(t, result)
+	assert.NoError(t, err)
 }

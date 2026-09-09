@@ -207,6 +207,9 @@ const translation = {
     install_model_provider: 'Install Model Provider',
     install_model: 'Install Model',
     models_list: 'Models List',
+    remove: 'Remove',
+    remove_confirm_title: 'Remove Model Provider',
+    remove_confirm_description: 'Are you sure you want to remove this model provider? This action cannot be undone.',
   },
   install_model: {
     title: 'Install Model',

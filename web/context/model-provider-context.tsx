@@ -8,7 +8,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 export interface ModelProviderContextType {
   modelProviderList: ModelProviderInfo[];
-  mutateModelProviderList: () => Promise<void>;
+  mutateModelProviderList: () => Promise<any>;
   enableBilling: boolean;
 }
 
@@ -19,27 +19,19 @@ const ModelProviderContext = createContext<ModelProviderContextType>({
 });
 
 export function ModelProviderContextProvider({ children }: { children: React.ReactNode }) {
-  const [modelProviderList, setModelProviderList] = useState<ModelProviderInfo[]>([]);
-  const [mutateModelProviderList, setMutateModelProviderList] = useState<() => Promise<void>>(() => async () => { });
   const [enableBilling, setEnableBilling] = useState<boolean>(false);
   const { modelProviders, mutate, error } = useGetModelProviderList();
 
   useEffect(() => {
     if (error) {
       toast.error(getErrorMessage(error));
-    } else if (modelProviders) {
-      setModelProviderList(modelProviders);
-      setMutateModelProviderList(() => async () => {
-        await mutate();
-      });
     }
-    // todo: billing
-  }, [error, modelProviders, mutate]);
+  }, [error]);
 
   return (
     <ModelProviderContext.Provider value={{
-      modelProviderList,
-      mutateModelProviderList,
+      modelProviderList: modelProviders || [],
+      mutateModelProviderList: mutate,
       enableBilling
     }}>
       {children}

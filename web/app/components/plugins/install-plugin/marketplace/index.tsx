@@ -2,31 +2,39 @@
 
 import { Dialog } from "@/app/ui/dialog";
 import { useTranslation } from "react-i18next";
-import { Plugin } from "../../types";
+import { createPluginIdentifier, Plugin } from "../../types";
 import { useCallback, useEffect, useState } from "react";
 import { InstallStep } from "../types";
 import Install from "./steps/install";
 import { useCheckInstalled } from "../hooks/use-check-installed";
 import Installed from "../base/installed";
+import api from "@/api";
+import { toast } from "@/app/ui/toast";
+import { getErrorMessage } from "@/utils/errors";
 
 type InstallFromMarketplaceProps = {
-  identifier: string;
+  identifier: string; // plugin_id=`author/name`
   manifest: Plugin;
-  onSuccess: () => void;
   onClose: () => void;
+  onInstalled?: (plugin: Plugin) => void;
+  onStartInstall?: () => void;
+  onFailed?: (message: string) => void;
 }
 
 const InstallFromMarketplace = ({
   identifier,
   manifest,
-  onSuccess,
-  onClose
+  onInstalled,
+  onClose,
+  onStartInstall,
+  onFailed
 }: InstallFromMarketplaceProps) => {
   const { t } = useTranslation();
   const [step, setStep] = useState<InstallStep>(InstallStep.readyToInstall);
   const [isInstalling, setIsInstalling] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
   const { installInfo, isLoading, mutate } = useCheckInstalled({ identifiers: [identifier] });
+  const installPluginFromMarketplace = api.plugin.useInstallPluginFromMarketplace();
 
   useEffect(() => {
     setStep(installInfo && installInfo[identifier] ? InstallStep.installed : InstallStep.readyToInstall);
@@ -36,28 +44,28 @@ const InstallFromMarketplace = ({
     return t(`system.install_model.title`)
   }, [t]);
 
-  const handleInstalled = useCallback(() => {
-  }, []);
-
-  const handleFailed = useCallback(() => {
-  }, []);
-
-  const handleStartToInstall = useCallback(() => {
-  }, []);
-
-  const handleInstall = useCallback(() => {
+  const handleInstall = useCallback(async () => {
     if (isInstalling) return;
+    onStartInstall?.();
     setIsInstalling(true);
     try {
-
-    } catch (error) {
-
+      await installPluginFromMarketplace({ identifiers: [identifier] });
+      setStep(InstallStep.installed);
+      onInstalled?.(manifest);
+    } catch (error: any) {
+      const errString = getErrorMessage(error);
+      toast.error(errString);
+      onFailed?.(errString);
+      setErrorMessage(errString);
+      setStep(InstallStep.installFailed);
+    } finally {
+      setIsInstalling(false);
     }
-  }, []);
+  }, [onStartInstall, isInstalling, setIsInstalling, installPluginFromMarketplace, identifier, manifest, onInstalled, onFailed]);
 
   const handleCancel = useCallback(() => {
     onClose();
-  }, []);
+  }, [onClose]);
 
   return (
     <>
@@ -68,7 +76,7 @@ const InstallFromMarketplace = ({
         description=""
         confirmText={t('app.actions.confirm')}
         cancelText={t('app.actions.cancel')}
-        onConfirm={handleStartToInstall}
+        onConfirm={handleInstall}
         onCancel={handleCancel}
         actions={step === InstallStep.readyToInstall}
       >
@@ -77,9 +85,9 @@ const InstallFromMarketplace = ({
             identifier={identifier}
             manifest={manifest}
             onCancel={onClose}
-            onInstalled={handleInstalled}
-            onFailed={handleFailed}
-            onStartToInstall={handleStartToInstall}
+            onInstalled={onInstalled}
+            onFailed={onFailed}
+            onStartToInstall={handleInstall}
           />
         )}
 

@@ -2,8 +2,8 @@ import { gql } from "graphql-request";
 import { I18N_FIELDS } from "../../types/i18n";
 
 export const GET_MODEL_PROVIDERS = gql`
-  query($excludes: [String!], $category: String) {
-    modelProviders(excludes: $excludes, category: $category) {
+  mutation($excludes: [String!], $category: String, $query: String) {
+    marketplaceModelProviderList(excludes: $excludes, category: $category, query: $query) {
       data {
         providerType,
         author,
@@ -15,6 +15,11 @@ export const GET_MODEL_PROVIDERS = gql`
         description {
           ${I18N_FIELDS}
         }
+      }
+      pageInfo {
+        page,
+        pageSize,
+        total
       }
     }
   }

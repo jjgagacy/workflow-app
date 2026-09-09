@@ -2,8 +2,8 @@ import { PageInfo } from "@/common/graphql/types/page-info.type";
 import { I18nObject } from "@/graphql/model/model_provider/types/i18n-object.type";
 import { Field, ObjectType } from "@nestjs/graphql";
 
-@ObjectType('ModelProvider')
-export class ModelProvider {
+@ObjectType('MarketplaceModelProviderResponse')
+export class MarketplaceModelProviderResponse {
   @Field(() => String, { description: "Type of the provider" })
   providerType!: string;
 
@@ -23,10 +23,10 @@ export class ModelProvider {
   description?: I18nObject;
 }
 
-@ObjectType('ModelProvidersList')
-export class ModelProvidersList {
-  @Field(() => [ModelProvider], { description: "List of model providers" })
-  data!: ModelProvider[];
+@ObjectType('ModelProvidersListResponse')
+export class MarketplaceModelProvidersListResponse {
+  @Field(() => [MarketplaceModelProviderResponse], { description: "List of model providers" })
+  data!: MarketplaceModelProviderResponse[];
 
   @Field(() => PageInfo, { nullable: true })
   pageInfo?: PageInfo;

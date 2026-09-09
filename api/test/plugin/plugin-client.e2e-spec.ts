@@ -62,7 +62,7 @@ describe('PluginClientTest (e2e)', () => {
         method: 'GET',
         path: '/sse/events',
       }).subscribe({
-        next: (data) => {
+        next: (data: any) => {
           receivedData.push(data);
         },
         complete: () => {

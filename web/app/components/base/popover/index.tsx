@@ -25,6 +25,7 @@ export interface PopoverProps {
   /** 是否禁用 */
   disabled?: boolean;
   portal?: boolean;
+  className?: string;
 }
 
 export const Popover = forwardRef<HTMLDivElement, PopoverProps>(({
@@ -39,6 +40,7 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(({
   sameWidth = false,
   disabled = false,
   portal = true,
+  className = ''
 }: PopoverProps, ref) => {
   // 构建用于间距控制的 CSS 变量
   const anchorStyles = {
@@ -48,7 +50,7 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(({
   } as React.CSSProperties;
   return (
     <HeadlessPopover
-      className="w-full relative inline-block"
+      className={cn('w-full relative inline-block', className)}
       ref={ref}
     >
       {({ open }) => {

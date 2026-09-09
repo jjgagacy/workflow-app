@@ -208,6 +208,9 @@ const translation = {
     install_model_provider: '安装模型提供商',
     install_model: '安装模型',
     models_list: '模型列表',
+    remove: '移除',
+    remove_confirm_title: '移除模型提供商',
+    remove_confirm_description: '确定要移除此模型提供商吗？此操作不可撤销。',
   },
   install_model: {
     title: '安装模型',

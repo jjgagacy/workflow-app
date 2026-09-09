@@ -1,24 +1,20 @@
-import { useGraphQLQuery } from "@/hooks/use-graphql";
+import { createMutationHook } from "@/hooks/use-graphql";
 import { GET_MODEL_PROVIDERS } from "./queries";
 import { ModelProvider } from "../types/model-provider";
+import { PageInfo } from "../../types/page-info";
 
-export const useGetModelProviders = (params: {
-  excludes?: string[];
-  category?: string;
-} = {}) => {
-  const { data, error, isLoading, mutate } = useGraphQLQuery<{ modelProviders: { data: ModelProvider[]; }; }, typeof params>(
-    GET_MODEL_PROVIDERS,
-    params,
-    {
-      shouldRetryOnError: false,
-      revalidateOnReconnect: true
-    }
-  );
-
-  return {
-    modelProviders: data?.modelProviders?.data,
-    isLoading,
-    error,
-    mutate
-  };
+export type MarketplaceModelProvidersResponse = {
+  data: ModelProvider[];
+  pageInfo?: PageInfo;
 };
+
+export const useGetMarketplaceModelProviders = createMutationHook<
+  { marketplaceModelProviderList: MarketplaceModelProvidersResponse },
+  { excludes?: string[]; category?: string; query?: string },
+  MarketplaceModelProvidersResponse
+>(
+  GET_MODEL_PROVIDERS,
+  {
+    transform: (data) => data.marketplaceModelProviderList
+  }
+);

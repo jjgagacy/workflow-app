@@ -129,10 +129,7 @@ export class ProviderManager {
     providerConfiguration: ProviderConfiguration,
     credentials: Credentials,
   ): Promise<{ providerRecord?: ProviderEntity, credentials: Credentials }> {
-    const providerRecord = await this.getCustomProviderCredentials(
-      providerConfiguration.tenantId,
-      providerConfiguration.provider.provider
-    );
+    const providerRecord = await this.getCustomProviderCredentials(providerConfiguration.tenantId, providerConfiguration.provider.provider);
     const secretVariables = extractSecretVariables(providerConfiguration.provider.providerCredentialSchema?.credentialFormSchema || []);
     let originalCredentials: Credentials = {};
     if (providerRecord && providerRecord.encryptedConfig) {

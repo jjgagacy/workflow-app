@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import Card from "../../card";
-import { Plugin } from "../../types"
+import { createPluginIdentifier, Plugin } from "../../types"
 import { useMixedTranslation } from "../hooks";
 import { useBoolean } from "ahooks";
 import InstallFromMarketplace from "../../install-plugin/marketplace";
@@ -10,17 +10,20 @@ import InstallFromMarketplace from "../../install-plugin/marketplace";
 type CardWrapperProps = {
   plugin: Plugin;
   locale?: string;
+  onInstalled?: (plugin: Plugin) => void;
+  onFailed?: (message: string) => void;
 }
 
 const CardWrapper = ({
   plugin,
   locale,
+  onInstalled,
+  onFailed,
 }: CardWrapperProps) => {
   const { t } = useMixedTranslation(locale);
   const [isShowInstallDialog, { setTrue: showInstallDialog, setFalse: hideInstallDialog }] = useBoolean(false);
 
   const handleInstallClick = useCallback(() => {
-    console.log(`Installing plugin: ${plugin.name}`);
     showInstallDialog();
   }, []);
 
@@ -40,9 +43,10 @@ const CardWrapper = ({
         isShowInstallDialog && (
           <InstallFromMarketplace
             manifest={plugin}
-            identifier={`${plugin.author}/${plugin.name}`}
+            identifier={createPluginIdentifier(plugin)}
             onClose={hideInstallDialog}
-            onSuccess={hideInstallDialog}
+            onInstalled={() => onInstalled?.(plugin)}
+            onFailed={onFailed}
           />
         )
       }

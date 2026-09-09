@@ -18,7 +18,7 @@ func AutoSet[T any](key string, value T, context ...redis.Cmdable) error {
 	typeName := typeInfo.Name()
 	fullTypeName := pkgPath + "." + typeName
 
-	serialKey := serialKey(fullTypeName)
+	serialKey := serialKey("auto_type", fullTypeName, key)
 	return store(serialKey, value, time.Minute*30, context...)
 }
 
@@ -38,7 +38,7 @@ func AutoGetWithGetter[T any](key string, getter func() (*T, error), context ...
 	typeName := typeInfo.Name()
 	fullTypeName := pkgPath + "." + typeName
 
-	serialKey := serialKey(fullTypeName)
+	serialKey := serialKey("auto_type", fullTypeName, key)
 	result, err := get[T](serialKey, context...)
 	if err != nil {
 		if err == ErrNotFound {
@@ -68,6 +68,6 @@ func AutoDelete[T any](key string, context ...redis.Cmdable) (int64, error) {
 	typeName := typeInfo.Name()
 	fullTypeName := pkgPath + "." + typeName
 
-	serialKey := serialKey(fullTypeName)
+	serialKey := serialKey("auto_type", fullTypeName, key)
 	return del(serialKey, context...)
 }

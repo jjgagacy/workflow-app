@@ -17,7 +17,7 @@ export class ProviderID {
     }
     if (!this.isValidFormat(value)) {
       if (/^[a-z0-9_-]+$/.test(value)) {
-        value = `monie/${value}/${value}`;
+        value = `monyii/${value}/monyii`;
       } else {
         throw new BadRequestException(`Invalid plugin id: ${value}`);
       }
@@ -38,7 +38,7 @@ export class ProviderID {
   }
 
   isMonie(): boolean {
-    return this.organization === 'monie';
+    return this.organization === 'monyii';
   }
 }
 

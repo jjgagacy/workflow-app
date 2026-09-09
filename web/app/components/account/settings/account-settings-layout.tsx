@@ -64,7 +64,7 @@ export default function AccountSettingsLayout() {
       }
     };
     handleInvalidMenu();
-  }, [activeMenu])
+  }, [activeMenu]);
 
   const renderContent = () => {
     switch (activeMenu) {

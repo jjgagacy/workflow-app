@@ -26,11 +26,30 @@ describe('ModelProviderService (e2e)', () => {
     await cacheService.get('foo');
   });
 
-  describe('getProviderList', () => {
+  describe.only('getProviderList', () => {
     it('should get provider list', async () => {
       const providers = await modelProviderService.getProviderList(testTenantId);
       expect(providers).toBeDefined();
       console.log('Fetched provider list:', JSON.stringify(providers, null, 2));
+    });
+  });
+
+  describe('getModelsByModelType', () => {
+    it('should get models grouped by provider for a given modelType', async () => {
+      const result = await modelProviderService.getModelsByModelType(testTenantId, 'llm');
+      expect(result).toBeDefined();
+      expect(Array.isArray(result)).toBe(true);
+
+      for (const providerModels of result) {
+        expect(providerModels.providerName).toBeDefined();
+        expect(providerModels.label).toBeDefined();
+        expect(providerModels.models.length).toBeGreaterThan(0);
+        for (const model of providerModels.models) {
+          expect(model.modelType).toBe('llm');
+        }
+      }
+
+      console.log('Fetched models by model type:', JSON.stringify(result, null, 2));
     });
   });
 

@@ -255,6 +255,26 @@ type LoginResponse {
   roles: [String!]
 }
 
+type MarketplaceModelProviderResponse {
+  """Name of the author"""
+  author: String!
+
+  """Description of the provider in multiple languages"""
+  description: I18nObject
+
+  """Url of the provider icon"""
+  icon: String!
+
+  """Label of the provider in multiple languages"""
+  label: I18nObject!
+
+  """Name of the model"""
+  name: String!
+
+  """Type of the provider"""
+  providerType: String!
+}
+
 type Menu {
   id: Int!
   key: String!
@@ -306,26 +326,6 @@ enum ModelFeature {
   VIDEO
 }
 
-type ModelProvider {
-  """Name of the author"""
-  author: String!
-
-  """Description of the provider in multiple languages"""
-  description: I18nObject
-
-  """Url of the provider icon"""
-  icon: String!
-
-  """Label of the provider in multiple languages"""
-  label: I18nObject!
-
-  """Name of the model"""
-  name: String!
-
-  """Type of the provider"""
-  providerType: String!
-}
-
 type ModelProviderInfo {
   customConfiguration: CustomConfiguration!
   description: I18nObject
@@ -345,9 +345,9 @@ type ModelProviderList {
   data: [ModelProviderInfo!]!
 }
 
-type ModelProvidersList {
+type ModelProvidersListResponse {
   """List of model providers"""
-  data: [ModelProvider!]!
+  data: [MarketplaceModelProviderResponse!]!
   pageInfo: PageInfo
 }
 
@@ -431,6 +431,16 @@ type Mutation {
   inviteMemberActivation(input: InviteMemberActivationInput!): Boolean!
   inviteTokenCheck(token: String!): InviterResponse!
   login(input: LoginInput!): LoginResponse!
+  marketplaceModelProviderList(
+    """Category to filter providers by"""
+    category: String
+
+    """List of provider names to exclude from the results"""
+    excludes: [String!]
+
+    """Search query to filter providers by name or description"""
+    query: String
+  ): ModelProvidersListResponse!
   removeAccount(id: Int!): Boolean!
   resetPasswordSendEmail(input: ResetPasswordSendEmailInput!): String!
   saveCredentials(input: CredentialInput!): Boolean!
@@ -438,6 +448,7 @@ type Mutation {
   setRolePerms(input: RoleSetPermInput!): Boolean!
   switchTenant(tenant_id: String!): TenantResponse!
   toggleAccountStatus(id: Int!): Boolean!
+  uninstallFromMarketplace(identifiers: [String!]!): PluginUninstallResponse!
   updateAccount(input: AccountInput!): AccountResponse!
   updateAccountAppearance(appearance: String!): Boolean!
   updateAccountAvatar(input: UpdateAccountAvatarInput!): Boolean!
@@ -498,6 +509,10 @@ type PluginInstallationResponse {
   version: String!
 }
 
+type PluginUninstallResponse {
+  success: Boolean!
+}
+
 type ProviderCredentialResponse {
   credentials: JSON
   providerName: String!
@@ -507,11 +522,11 @@ type ProviderCredentialSchema {
   credentialFormSchema: [CredentialFormSchema!]
 }
 
-type ProviderModel {
+type ProviderModelResponse {
   deprecated: Boolean!
   features: [ModelFeature!]
   fetchFrom: FetchFrom!
-  label: String!
+  label: I18nObject!
   model: String!
   modelProperties: JSON
   modelType: String!
@@ -531,13 +546,6 @@ type Query {
   menus(key: String, module: Boolean, modulePerm: Boolean, name: String, parent: String, scope: Boolean, status: Int): [Menu!]!
   modelCredentials(model: String!, modelType: String!, providerName: String!): ModelCredentialResponse!
   modelProviderList(modelType: String): ModelProviderList!
-  modelProviders(
-    """Category to filter providers by"""
-    category: String
-
-    """List of provider names to exclude from the results"""
-    excludes: [String!]
-  ): ModelProvidersList!
   modules(key: String, limit: Int, name: String, page: Int): ModuleList!
   nodeTypeDefaultConfig(codeLanguage: String, nodeType: String!): JSON!
   providerCredentials(providerName: String!): ProviderCredentialResponse!

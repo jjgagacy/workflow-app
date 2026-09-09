@@ -7,4 +7,7 @@ export class GetModelProvidersArgs {
 
   @Field(() => String, { nullable: true, description: "Category to filter providers by" })
   category?: string;
+
+  @Field(() => String, { nullable: true, description: "Search query to filter providers by name or description" })
+  query?: string;
 }

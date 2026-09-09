@@ -58,6 +58,23 @@ export class PluginInstallerService {
     });
   }
 
+  async uninstall(tenantId: string, pluginInstallationId: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.baseClient.requestWithPluginDaemonResponse(
+        'POST',
+        `plugin/${tenantId}/management/uninstall`,
+        {
+          data: {
+            plugin_installation_id: pluginInstallationId,
+          }
+        }
+      ).subscribe({
+        next: (response) => resolve(response),
+        error: (error) => reject(error),
+      });
+    });
+  }
+
   async listPlugins(tenantId: string): Promise<PluginInstallation[]> {
     return new Promise((resolve, reject) => {
       this.baseClient.requestWithPluginDaemonResponse(

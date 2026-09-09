@@ -32,9 +32,9 @@ func init() {
 func TestInstallPlugin(t *testing.T) {
 	url := strings.Join([]string{baseUrl + "/plugin/", tenantId, "/management/install/identifiers"}, "")
 	requestBody := map[string]any{
-		"plugin_unique_identifies": []string{string(pluginUniqueIdentifier)},
-		"source":                   "local",
-		"meta": []map[string]any{{
+		"plugin_unique_identifiers": []string{string(pluginUniqueIdentifier)},
+		"source":                    "local",
+		"metas": []map[string]any{{
 			"config":  "value1",
 			"enabled": true,
 		}},

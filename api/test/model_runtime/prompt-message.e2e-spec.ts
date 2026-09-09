@@ -38,11 +38,11 @@ describe("PromptMessage (e2e)", () => {
 
     it('should handle AssistantPromptMessage isEmpty method', () => {
       // 创建工具调用消息
-      const toolCallFunction = new AssistantPromptMessageToolCallFunction();
+      const toolCallFunction = new AssistantPromptMessageToolCallFunction('get_weather', '{"city": "New York"}');
       toolCallFunction.name = "get_weather";
       toolCallFunction.arguments = '{"city": "New York"}';
 
-      const toolCall = new AssistantPromptMessageToolCall();
+      const toolCall = new AssistantPromptMessageToolCall({ id: 'call_123', type: 'function', function: toolCallFunction });
       toolCall.id = "call_123";
       toolCall.type = "function";
       toolCall.function = toolCallFunction;

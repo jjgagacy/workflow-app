@@ -26,7 +26,7 @@ var (
 )
 
 const (
-	CACHE_PREFIX = "plugin_dae"
+	CACHE_PREFIX = "plugin_daemon"
 )
 
 func getRedisOption(addr, username, password string, useSsl bool, db int) *redis.Options {

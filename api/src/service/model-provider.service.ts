@@ -3,16 +3,19 @@ import { ModelType } from "@/ai/model_runtime/enums/model-runtime.enum";
 import { CustomConfigurationStatus } from "@/ai/model_runtime/enums/quota.enum";
 import { ProviderService } from "@/ai/model_runtime/services/provider.service";
 import { EnumConverter } from "@/common/utils/enums";
-import { CustomConfiguration, ModelProviderInfo, ModelProviderList, ModelProviderModelList, QuotaInfo, RestrictModel, SystemConfiguration } from "@/graphql/model/model_provider/types/provider.type";
+import { CustomConfiguration, ModelProviderInfo, ModelProviderList, ModelProviderModelsResponse, QuotaInfo, RestrictModel, SystemConfiguration } from "@/graphql/model/model_provider/types/provider.type";
 import { Injectable } from "@nestjs/common";
 import { MarketplaceService } from "./marketplace.service";
 import { ModelCredentialResponse, ProviderCredentialResponse } from "@/graphql/workspace/types/provider.type";
+import { PluginModelProvider } from "@/ai/model_runtime/classes/plugin/model-provider";
+import { ProviderID } from "@/ai/plugin/entities/provider-id.entities";
 
 @Injectable()
 export class ModelProviderService {
   constructor(
     private readonly providerService: ProviderService,
-    private readonly marketplaceService: MarketplaceService
+    private readonly marketplaceService: MarketplaceService,
+    private readonly pluginModelProvider: PluginModelProvider
   ) { }
 
   async getProviderList(
@@ -26,19 +29,19 @@ export class ModelProviderService {
         const modelTypeEnum = EnumConverter.toEnum(ModelType, modelType);
         if (!config.provider.supportedModelTypes.includes(modelTypeEnum)) continue;
       }
-      const providerName = config.provider.provider.split('/').slice(-1)[0];
+      const pluginId = new ProviderID(config.provider.provider).pluginId;
       providerList.push({
         tenantId,
         providerName: config.provider.provider,
         label: config.provider.label || {},
         description: config.provider.description,
         icon: {
-          en_US: this.marketplaceService.getModelProviderIconUrl(providerName),
-          zh_Hans: this.marketplaceService.getModelProviderIconUrl(providerName, 'light', 'zh_Hans'),
+          en_US: this.marketplaceService.getModelProviderIconUrl(pluginId),
+          zh_Hans: this.marketplaceService.getModelProviderIconUrl(pluginId, 'light', 'zh_Hans'),
         },
         iconDark: {
-          en_US: this.marketplaceService.getModelProviderIconUrl(providerName, 'dark'),
-          zh_Hans: this.marketplaceService.getModelProviderIconUrl(providerName, 'dark', 'zh_Hans'),
+          en_US: this.marketplaceService.getModelProviderIconUrl(pluginId, 'dark'),
+          zh_Hans: this.marketplaceService.getModelProviderIconUrl(pluginId, 'dark', 'zh_Hans'),
         },
         supportedModelTypes: config.provider.supportedModelTypes.map((v) => v as string),
         preferredProviderType: config.preferredProviderType,
@@ -118,14 +121,45 @@ export class ModelProviderService {
     return true;
   }
 
-  public async getModelByModelType(tenantId: string, modelType: string): Promise<ModelProviderModelList[]> {
+  public async getModelsByModelType(tenantId: string, modelType?: string): Promise<ModelProviderModelsResponse[]> {
     // Implement the logic to fetch models by modelType
     // This is a placeholder implementation and should be replaced with actual logic
+    const allModelProviderDeclarations = await this.pluginModelProvider.getAllModelProviders(tenantId);
     const providerConfiguration = await this.providerService.getConfigurations(tenantId);
-    const models = providerConfiguration.getModels('', EnumConverter.toEnum(ModelType, modelType));
+    const models = await providerConfiguration.getModels(modelType ? EnumConverter.toEnum(ModelType, modelType) : undefined, '', allModelProviderDeclarations);
 
-    // todo: 
+    const modelsByProvider = new Map<string, typeof models>();
+    for (const model of models) {
+      const providerName = model.provider.provider;
+      const providerModels = modelsByProvider.get(providerName) ?? [];
+      providerModels.push(model);
+      modelsByProvider.set(providerName, providerModels);
+    }
 
-    return [];
+    const modelProviderModelsResponse: ModelProviderModelsResponse[] = [];
+    for (const [providerName, providerModels] of modelsByProvider) {
+      // Skip providers without any models left after filtering.
+      if (providerModels.length === 0) continue;
+
+      modelProviderModelsResponse.push({
+        tenantId,
+        providerName,
+        label: providerModels[0].provider.label,
+        status: CustomConfigurationStatus.ACTIVE,
+        models: providerModels.map(m => ({
+          model: m.model,
+          label: m.label,
+          modelType: m.modelType,
+          features: m.features,
+          fetchFrom: m.fetchFrom,
+          modelProperties: m.modelProperties,
+          deprecated: m.deprecated,
+          provider: m.provider.provider,
+          status: m.status,
+        })),
+      } as ModelProviderModelsResponse);
+    }
+
+    return modelProviderModelsResponse;
   }
 }

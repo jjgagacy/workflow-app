@@ -70,6 +70,15 @@ describe('PluginInstaller (e2e)', () => {
     });
   });
 
+  describe('uninstallPlugin', () => {
+    const installationId = '9a44765d-44fd-4663-b08d-649c483934c5';
+    it('should uninstall the plugin with the given installation ID', async () => {
+      const result = await pluginInstallerService.uninstall(testTenantId, installationId);
+      expect(result).toBe(true);
+      console.log('Uninstall result for installation ID:', installationId, result);
+    });
+  });
+
   afterAll(async () => {
     await app.close();
   });

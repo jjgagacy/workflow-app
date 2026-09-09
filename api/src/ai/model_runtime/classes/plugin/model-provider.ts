@@ -30,6 +30,7 @@ export class PluginModelProvider {
 
   async getAllModelProviders(tenantId: string): Promise<ModelProviderDeclaration[]> {
     const modelProviders = await this.pluginModelClient.fetchModelProviders(tenantId);
+    // console.log('===', modelProviders);
     return modelProviders.map(modelProvider => {
       modelProvider.declaration.provider = modelProvider.pluginId + '/' + modelProvider.declaration.provider;
       if (!modelProvider.declaration.configMethods) {

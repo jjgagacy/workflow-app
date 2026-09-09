@@ -5,7 +5,7 @@ import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 import { PluginService } from "@/service/plugin/plugin.service";
 import { BadRequestException, UseGuards } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { PluginInstallationResponse, PluginInstallResponse } from "../types/plugin.type";
+import { PluginInstallationResponse, PluginInstallResponse, PluginUninstallResponse } from "../types/plugin.type";
 import { PluginInstallation } from "@/ai/plugin/entities/plugin-installation";
 
 @Resolver()
@@ -28,6 +28,24 @@ export class PluginResolver {
     }
     // Install plugins
     return this.pluginService.installFromMarketplace(tenant.id, identifiers);
+  }
+
+  @Mutation(() => PluginUninstallResponse)
+  @UseGuards(AccountInitializedGuard)
+  @UseGuards(TenantContextGuard)
+  async uninstallFromMarketplace(
+    @Args('identifiers', { type: () => [String] }) identifiers: string[],
+    @CurrentTenent() tenant: any
+  ): Promise<PluginUninstallResponse> {
+    // Validate identifiers
+    for (const identifier of identifiers) {
+      if (typeof identifier !== 'string' || !identifier) {
+        throw new BadRequestException('Invalid plugin identifier');
+      }
+    }
+    // Uninstall plugins
+    const success = await this.pluginService.uninstallFromMarketplace(tenant.id, identifiers);
+    return { success };
   }
 
   @Query(() => [PluginInstallationResponse])

@@ -6,3 +6,10 @@ export const INSTALL_PLUGIN_FROM_MARKETPLACE = gql`
       allInstalled,
     }
 }`
+
+export const UNINSTALL_PLUGIN_FROM_MARKETPLACE = gql`
+  mutation($identifiers: [String!]!) {
+    uninstallFromMarketplace(identifiers: $identifiers) {
+      success,
+    }
+}`

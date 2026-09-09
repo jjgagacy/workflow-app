@@ -6,16 +6,11 @@ type InstallProps = {
   manifest: Plugin;
   onCancel: () => void;
   onStartToInstall?: () => void;
-  onInstalled?: () => void;
-  onFailed?: () => void;
+  onInstalled?: (plugin: Plugin) => void;
+  onFailed?: (message: string) => void;
 }
 const Install = ({
-  identifier,
   manifest,
-  onCancel,
-  onStartToInstall,
-  onInstalled,
-  onFailed
 }: InstallProps) => {
   return (
     <>

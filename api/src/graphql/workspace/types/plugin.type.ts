@@ -7,6 +7,12 @@ export class PluginInstallResponse {
   allInstalled!: boolean;
 }
 
+@ObjectType('PluginUninstallResponse')
+export class PluginUninstallResponse {
+  @Field()
+  success!: boolean;
+}
+
 @ObjectType('PluginInstallationResponse')
 export class PluginInstallationResponse {
   @Field()
