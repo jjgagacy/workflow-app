@@ -8,7 +8,7 @@ import { DataSource, EntityManager, Repository } from "typeorm";
 import { ProviderConfiguration, ProviderConfigurations } from "../classes/provider.configuration";
 import { ModelType } from "../enums/model-runtime.enum";
 import { ProviderModelBundle } from "../entities/model.entity";
-import { Provider } from "../classes/provider.class";
+import { Provider, ProviderProps } from "../classes/provider.class";
 import { DefaultModel } from "../classes/default-model.class";
 import { TenantDefaultModelEntity } from "@/account/entities/tenant-default-model.entity";
 import { PluginModelProvider } from "../classes/plugin/model-provider";
@@ -34,6 +34,7 @@ import { CredentialsCacheType } from "../types/cache.type";
 import { GlobalLogger } from "@/logger/logger.service";
 import { StorageService } from "@/storage/storage.service";
 import { ProviderManager } from "./provider-manager";
+import { ModelProviderDeclaration } from "../classes/model-provider.class";
 
 @Injectable()
 export class ProviderService {
@@ -122,10 +123,10 @@ export class ProviderService {
       let providerModelSetting = allProviderModelSettings.get(providerName) || [];
       // 转换为模型设置
       const modelSettings = await this.toModelSettings(provider, providerModelSetting);
-
+      const providerDeclaration = new ModelProviderDeclaration({ ...provider } satisfies ProviderProps);
       const providerConfiguration = new ProviderConfiguration(this.providerManager, {
         tenantId,
-        provider,
+        provider: providerDeclaration,
         preferredProviderType,
         usingProviderType,
         systemConfiguration,
@@ -592,12 +593,11 @@ export class ProviderService {
     }
   }
 
-  private async decryptCredentialFields(
+  async decryptCredentialFields(
     tenantId: string,
     credentials: Record<string, any>,
     secretVars: string[]
   ): Promise<Record<string, any>> {
-
     const privateKeyPem = await this.storageService.load(`perms/${tenantId}`);
     const privateKeyContent = privateKeyPem.toString('utf-8');
     if (!privateKeyContent) {
@@ -609,15 +609,13 @@ export class ProviderService {
       if (!credentials[key]) {
         continue;
       }
-
       try {
-        const buf = Buffer.from(credentials[key], 'utf8');
+        const buf = Buffer.from(credentials[key], 'base64');
         credentials[key] = this.encryptionService.decrypt(buf, privateKeyContent);
       } catch (error) {
-        this.logger.warn(`Failed to descrypt variable: ${key}`);
+        this.logger.warn(`Failed to descrypt variable: ${key} error: ${error}`);
       }
     }
-
     return credentials;
   }
 }

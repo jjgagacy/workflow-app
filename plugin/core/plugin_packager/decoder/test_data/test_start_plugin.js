@@ -69,6 +69,7 @@ class StartPluginTest {
         const message = {
             type: messageType,
             data: data,
+            timestamp: Date.now(),
         }
         this.sendEvent('session', sessionId, message)
     }

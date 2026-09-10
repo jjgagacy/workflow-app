@@ -153,7 +153,7 @@ func setUpTestDB() *gorm.DB {
 func TestCombinedGetPluginDeclaration(t *testing.T) {
 	setUpTestDB()
 	InitRedisClient("0.0.0.0:6379", "", "", false, 0)
-	identifier, err := plugin_entities.NewPluginUniqueIdentifier("monyii/deepseek:1.0.0")
+	identifier, err := plugin_entities.NewPluginUniqueIdentifier("monyii/openai:1.0.0")
 	require.NoError(t, err)
 
 	runtimeType := plugin_entities.PLUGIN_RUNTIME_TYPE_LOCAL

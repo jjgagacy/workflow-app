@@ -83,13 +83,13 @@ export class ModelProviderService {
     });
   }
 
-  public async getProviderCredentials(tenantId: string, providerName: string): Promise<ProviderCredentialResponse> {
+  public async getProviderCredentials(tenantId: string, providerName: string, obfuscated: boolean = true): Promise<ProviderCredentialResponse> {
     const providerConfiguration = await this.providerService.getConfigurations(tenantId);
     const providerConfig = providerConfiguration.get(providerName);
     if (!providerConfig) {
       throw new Error(`Provider configuration not found for provider: ${providerName}`);
     }
-    const credentials = providerConfig.getCustomCredentials(true);
+    const credentials = providerConfig.getCustomCredentials(obfuscated);
     return {
       providerName,
       credentials,
@@ -122,11 +122,13 @@ export class ModelProviderService {
   }
 
   public async getModelsByModelType(tenantId: string, modelType?: string): Promise<ModelProviderModelsResponse[]> {
-    // Implement the logic to fetch models by modelType
-    // This is a placeholder implementation and should be replaced with actual logic
     const allModelProviderDeclarations = await this.pluginModelProvider.getAllModelProviders(tenantId);
     const providerConfiguration = await this.providerService.getConfigurations(tenantId);
-    const models = await providerConfiguration.getModels(modelType ? EnumConverter.toEnum(ModelType, modelType) : undefined, '', allModelProviderDeclarations);
+    const models = await providerConfiguration.getModels(
+      modelType ? EnumConverter.toEnum(ModelType, modelType) : undefined,
+      '',
+      allModelProviderDeclarations
+    );
 
     const modelsByProvider = new Map<string, typeof models>();
     for (const model of models) {

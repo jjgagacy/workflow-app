@@ -236,7 +236,7 @@ export class ProviderManager {
         preferredProviderType: providerType,
       });
       await workManager.save(preferredProviderEntity);
-      if (!preferredProviderEntity.id) throw new DatabaseRecordCreatedError(`Failed create preferred provider`);
+      checkEntityCreatedId(preferredProviderEntity, this.i18n);
     }
   }
 

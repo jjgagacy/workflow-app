@@ -38,7 +38,7 @@ export class ProviderID {
   }
 
   isMonie(): boolean {
-    return this.organization === 'monyii';
+    return this.organization === 'monyii' || this.organization === 'monie';
   }
 }
 

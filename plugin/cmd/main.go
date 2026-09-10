@@ -8,6 +8,7 @@ import (
 	"github.com/jjgagacy/workflow-app/plugin/cmd/plugin"
 	"github.com/jjgagacy/workflow-app/plugin/cmd/run"
 	"github.com/jjgagacy/workflow-app/plugin/utils"
+	"github.com/joho/godotenv"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -69,6 +70,18 @@ If no parameter are provided, an interactive mode will be started.`,
 		},
 	}
 
+	pluginClearCwd = &cobra.Command{
+		Use:   "clear cwd",
+		Short: "Clear plugin daemon cwd all plugins",
+		Long:  `Clear the current working directory of the plugin daemon for all plugins.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := clearPluginWorkingPath(); err != nil {
+				fmt.Fprintf(os.Stderr, "clear cwd failed: %v\n", err)
+				os.Exit(1)
+			}
+		},
+	}
+
 	pluginPackageCmd = &cobra.Command{
 		Use:   "package [package_path]",
 		Short: "Package a plugin",
@@ -114,6 +127,42 @@ func main() {
 		fmt.Println(err)
 		os.Exit(-1)
 	}
+}
+
+func clearPluginWorkingPath() error {
+	if err := godotenv.Load(); err != nil {
+		if !os.IsNotExist(err) {
+			return fmt.Errorf("load .env failed: %w", err)
+		}
+	}
+
+	workingPath := viper.GetString("PLUGIN_WORKING_PATH")
+	if workingPath == "" {
+		workingPath = os.Getenv("PLUGIN_WORKING_PATH")
+	}
+	if workingPath == "" {
+		workingPath = "./cwd"
+	}
+
+	absPath, err := filepath.Abs(workingPath)
+	if err != nil {
+		return fmt.Errorf("resolve plugin working path %q: %w", workingPath, err)
+	}
+
+	cleanedPath := filepath.Clean(absPath)
+	if cleanedPath == "." || cleanedPath == string(filepath.Separator) || cleanedPath == "" {
+		return fmt.Errorf("refusing to clear unsafe working path %q", workingPath)
+	}
+
+	if err := os.RemoveAll(cleanedPath); err != nil {
+		return fmt.Errorf("remove plugin working path %q failed: %w", cleanedPath, err)
+	}
+	if err := os.MkdirAll(cleanedPath, 0o755); err != nil {
+		return fmt.Errorf("recreate plugin working path %q failed: %w", cleanedPath, err)
+	}
+
+	fmt.Printf("Cleared plugin working directory: %s\n", cleanedPath)
+	return nil
 }
 
 func init() {
@@ -164,6 +213,7 @@ func init() {
 	rootCmd.AddCommand(pluginCmd)
 	pluginCmd.AddCommand(bundleCmd)
 	pluginCmd.AddCommand(pluginInitCmd)
+	pluginCmd.AddCommand(pluginClearCwd)
 	pluginCmd.AddCommand(pluginPackageCmd)
 	pluginCmd.AddCommand(runCmd)
 }

@@ -33,11 +33,13 @@ extra:
       - "models/text_embedding/text_embedding.js"
       - "models/tts/tts.js"
       - "models/speech2text/speech2text.js"
+      - "models/moderation/moderation.js"
 model_files:
   - "models/llm/*.yaml"
   - "models/rerank/*.yaml"
   - "models/speech2text/*.yaml"
   - "models/text_embedding/*.yaml"
+  - "models/moderation/*.yaml"
   - "models/tts/*.yaml"
 provider_credential_schema:
   credential_form_schema:

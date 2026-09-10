@@ -45,7 +45,12 @@ describe('ProviderCredentialsCacheServiceTest (e2e)', () => {
     const encrypted = encryptionService.encrypt(plaintext, publicKey);
     expect(Buffer.isBuffer(encrypted)).toBe(true);
 
-    const decrypted = encryptionService.decrypt(encrypted, privateKey);
+    const encrypteString = encrypted.toString('base64');
+    console.log('encrypted string:', encrypteString);
+    const decryptedString = Buffer.from(encrypteString /*encrypted*/, 'base64');
+    console.log('decrypted string:', decryptedString);
+
+    const decrypted = encryptionService.decrypt(decryptedString, privateKey);
     expect(decrypted).toBe(plaintext);
   });
 

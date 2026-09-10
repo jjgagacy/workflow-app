@@ -1,94 +1,102 @@
 'use client';
 
-import { CredentialFormSchema, FormType, FormValue, ModelProviderInfo } from "@/api/graphql/model-provider/types/model-provider";
+import { FormType, FormValue, ModelProviderInfo } from "@/api/graphql/model-provider/types/model-provider";
 import { Dialog } from "@/app/ui/dialog";
 import { useTranslation } from "react-i18next";
 import Form from "./form";
-import { useCallback, useMemo, useState } from "react";
-import { ConfigurationMethod, CredentialFormSchemaAll } from "../types";
-import { getLanguage } from "@/i18n/config";
-import { getClientLocale } from "@/i18n";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { ConfigurationMethod } from "../types";
 import { useProviderCredentials } from "../hooks";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "@/app/ui/toast";
 import { getErrorMessage } from "@/utils/errors";
 import api from "@/api";
+import { merge } from "lodash-es";
 
 type ModelProviderSetupModalProps = {
   provider: ModelProviderInfo;
   configMethod: ConfigurationMethod;
   onCancel: () => void;
   onSave: () => void;
-}
+};
 
 const ModelProviderSetupModal = ({ provider, configMethod, onCancel, onSave }: ModelProviderSetupModalProps) => {
   const { t } = useTranslation();
-  const defaultLocale = getClientLocale();
-  const locale = getLanguage(defaultLocale);
-  const isProviderFormSchema = configMethod === ConfigurationMethod.predefinedModel;
-  const [isLoading, setIsLoading] = useState(false);
   const { isCurrentManager } = useAuth();
   const useSaveCredential = api.modelProvider.useSaveCredential();
 
+  const isProviderFormSchema = configMethod === ConfigurationMethod.predefinedModel;
+
+  // 1. 获取对应的 Form Schema 列表
   const formSchemas = useMemo(() => {
-    const formSchemas = isProviderFormSchema
-      ? provider.providerCredentialSchema?.credentialFormSchema
-      : provider.modelCredentialSchema?.credentialFormSchema;
-    return formSchemas || [];
+    const credentialSchema = isProviderFormSchema
+      ? provider.providerCredentialSchema
+      : provider.modelCredentialSchema;
+    return credentialSchema?.credentialFormSchema || [];
   }, [isProviderFormSchema, provider.providerCredentialSchema, provider.modelCredentialSchema]);
 
-  const { credentials: formCredentials, mutate } = useProviderCredentials(provider.providerName);
-
-  const [requiredFormSchema, defaultSchemaValue] = useMemo(() => {
-    const requiredFormSchema: CredentialFormSchemaAll[] = [];
-    const defaultSchemaValue: FormValue = {};
-
+  // 2. 提取 Schema 默认值
+  const defaultSchemaValue = useMemo(() => {
+    const defaultValue: FormValue = {};
     formSchemas.forEach(schema => {
-      if (schema.required) {
-        requiredFormSchema.push(schema);
-      }
       if (schema.default) {
-        defaultSchemaValue[schema.variable] = schema.default;
+        defaultValue[schema.variable] = schema.default;
       }
     });
-
-    return [requiredFormSchema, defaultSchemaValue];
+    return defaultValue;
   }, [formSchemas]);
 
-  const initialFormValue = useMemo(() => {
-    return {
+  // 3. 获取已保存的 Credentials (异步)
+  const { credentials: formCredentials, mutate } = useProviderCredentials(provider.providerName);
+
+  // 4. 合并默认值与已拉取到的凭证
+  const mergedFormValue = useMemo(
+    () => ({
       ...defaultSchemaValue,
-      ...formCredentials
+      ...formCredentials,
+    }),
+    [defaultSchemaValue, formCredentials],
+  );
+
+  // 5. 状态定义：表单值 + 是否已被用户编辑 (isDirty)
+  const [formValue, setFormValue] = useState<FormValue>(mergedFormValue);
+  const [isDirty, setIsDirty] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // 当切换 Provider 时，重置 isDirty 标记
+  useEffect(() => {
+    setIsDirty(false);
+  }, [provider.providerName]);
+
+  // 2. 避免使用对象引用，将 credentials 序列化为稳定 key，防止死循环
+  const credentialsKey = JSON.stringify(formCredentials);
+  // 【核心简化】：仅在用户未修改表单 (!isDirty) 时，同步最新的数据/默认值
+  useEffect(() => {
+    if (!isDirty) {
+      setFormValue(mergedFormValue);
     }
-  }, [defaultSchemaValue, formCredentials]);
+  }, [credentialsKey, isDirty]);
 
-  const [formValue, setFormValue] = useState(initialFormValue);
-  const isEditMode = isCurrentManager;
+  // 用户交互时，标记表单为 dirty
+  const handleFormChange = (value: FormValue) => {
+    setIsDirty(true);
+    setFormValue(value);
+  };
 
+  // 6. 密钥类字段脱敏逻辑 (直接复用计算好的 formSchemas)
   const secretFormSchemas = useMemo(() => {
-    return (isProviderFormSchema
-      ? provider.providerCredentialSchema?.credentialFormSchema
-      : provider.modelCredentialSchema?.credentialFormSchema
-    )?.filter(schema => schema.type === FormType.SECRET_INPUT);
-  }, [
-    provider.providerCredentialSchema,
-    provider.modelCredentialSchema,
-    isProviderFormSchema
-  ]);
+    return formSchemas.filter(schema => schema.type === FormType.SECRET_INPUT);
+  }, [formSchemas]);
 
   const secretFormValues = useCallback((v: FormValue) => {
     const secretValues: FormValue = { ...v };
-    secretFormSchemas?.forEach(({ variable }) => {
+    secretFormSchemas.forEach(({ variable }) => {
       if (secretValues[variable] !== undefined && secretValues[variable] === formCredentials?.[variable]) {
         secretValues[variable] = '[__HIDDEN__]';
       }
     });
     return secretValues;
   }, [secretFormSchemas, formCredentials]);
-
-  const handleFormChange = (value: FormValue) => {
-    setFormValue(value);
-  };
 
   const handleFormSave = async () => {
     try {
@@ -97,7 +105,7 @@ const ModelProviderSetupModal = ({ provider, configMethod, onCancel, onSave }: M
         input: {
           providerName: provider.providerName,
           credentials: secretFormValues(formValue),
-        }
+        },
       });
       toast.success(t('system.operation_successed'));
       mutate();
@@ -119,13 +127,13 @@ const ModelProviderSetupModal = ({ provider, configMethod, onCancel, onSave }: M
       description=""
       confirmText={t('app.actions.confirm')}
       cancelText={t('app.actions.cancel')}
-      onConfirm={() => handleFormSave()}
+      onConfirm={handleFormSave}
       onCancel={onCancel}
       className="min-w-2xl"
     >
       <Form
         formSchemas={formSchemas}
-        isEditing={isEditMode}
+        isEditing={isCurrentManager}
         value={formValue}
         onChange={handleFormChange}
       />

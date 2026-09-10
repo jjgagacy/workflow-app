@@ -52,7 +52,7 @@ export interface ProviderProps {
   help?: ProviderHelp;
 
   supportedModelTypes: ModelType[];
-  configMethod: ConfigurateMethod[];
+  configMethods: ConfigurateMethod[];
 
   providerCredentialSchema?: ProviderCredentialSchema;
   modelCredentialSchema?: ModelCredentialSchema;
@@ -119,7 +119,7 @@ export class Provider {
     this.help = props.help;
 
     this.supportedModelTypes = props.supportedModelTypes;
-    this.configMethods = props.configMethod;
+    this.configMethods = props.configMethods ?? [];
 
     this.providerCredentialSchema = props.providerCredentialSchema;
     this.modelCredentialSchema = props.modelCredentialSchema;

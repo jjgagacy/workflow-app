@@ -72,7 +72,6 @@ export class ProviderConfiguration {
     }
 
     const modelTypes: ModelType[] = modelType ? [modelType] : providerDeclaration.supportedModelTypes;
-    const models: ModelWithProvider[] = [];
     const modelSettingMap: Partial<Record<ModelType, Record<string, ModelSettings>>> = {};
     for (const setting of this.modelSettings) {
       if (!modelSettingMap[setting.modelType]) {

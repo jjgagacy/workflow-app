@@ -2,7 +2,7 @@ import { CurrentTenent } from "@/common/decorators/current-tenant";
 import { AccountInitializedGuard } from "@/common/guards/auth/account-initialized.guard";
 import { LoginRequiredGuard } from "@/common/guards/auth/login-required.guard";
 import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
-import { ModelProviderList } from "@/graphql/model/model_provider/types/provider.type";
+import { ModelProviderList, ModelProviderModelsResponse } from "@/graphql/model/model_provider/types/provider.type";
 import { ModelProviderService } from "@/service/model-provider.service";
 import { UseGuards } from "@nestjs/common/decorators/core/use-guards.decorator";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
@@ -43,5 +43,15 @@ export class ModelProviderListResolver {
     @CurrentTenent() tenant: any,
   ): Promise<boolean> {
     return this.modelProviderService.saveProviderCredentials(tenant.id, input.providerName, input.credentials);
+  }
+
+  @Query(() => [ModelProviderModelsResponse])
+  @UseGuards(AccountInitializedGuard)
+  @UseGuards(TenantContextGuard)
+  async modelsByModelType(
+    @CurrentTenent() tenant: any,
+    @Args('modelType', { type: () => String, nullable: true }) modelType?: string,
+  ): Promise<ModelProviderModelsResponse[]> {
+    return this.modelProviderService.getModelsByModelType(tenant.id, modelType);
   }
 }

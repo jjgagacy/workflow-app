@@ -105,6 +105,11 @@ type CustomConfiguration {
   status: String!
 }
 
+enum CustomConfigurationStatus {
+  ACTIVE
+  UNSUPPORTED
+}
+
 """Date custom scalar type"""
 scalar Date
 
@@ -345,6 +350,17 @@ type ModelProviderList {
   data: [ModelProviderInfo!]!
 }
 
+type ModelProviderModelsResponse {
+  description: I18nObject
+  icon: I18nObject
+  iconDark: I18nObject
+  label: I18nObject!
+  models: [ProviderModelResponse!]!
+  providerName: String!
+  status: CustomConfigurationStatus!
+  tenantId: String!
+}
+
 type ModelProvidersListResponse {
   """List of model providers"""
   data: [MarketplaceModelProviderResponse!]!
@@ -546,6 +562,7 @@ type Query {
   menus(key: String, module: Boolean, modulePerm: Boolean, name: String, parent: String, scope: Boolean, status: Int): [Menu!]!
   modelCredentials(model: String!, modelType: String!, providerName: String!): ModelCredentialResponse!
   modelProviderList(modelType: String): ModelProviderList!
+  modelsByModelType(modelType: String): [ModelProviderModelsResponse!]!
   modules(key: String, limit: Int, name: String, page: Int): ModuleList!
   nodeTypeDefaultConfig(codeLanguage: String, nodeType: String!): JSON!
   providerCredentials(providerName: String!): ProviderCredentialResponse!
