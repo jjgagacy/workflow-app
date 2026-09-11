@@ -6,7 +6,6 @@ import { AppModule } from '@/app.module';
 import { EnhanceCacheService } from '@/common/services/cache/enhance-cache.service';
 import { ModelProviderService } from '@/service/model-provider.service';
 import { ProviderService } from '@/ai/model_runtime/services/provider.service';
-import { inspect } from 'util';
 
 describe('ModelProviderService (e2e)', () => {
   let app: INestApplication<App>;

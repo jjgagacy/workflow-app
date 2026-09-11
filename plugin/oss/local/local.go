@@ -114,7 +114,7 @@ func NewLocalStorage(args oss.Args) (oss.OSS, error) {
 	}
 
 	root := args.Local.Path
-	if err := os.MkdirAll(root, 0755); err != nil {
+	if err := os.MkdirAll(root, 0o755); err != nil {
 		return nil, fmt.Errorf("failed to create storage path")
 	}
 

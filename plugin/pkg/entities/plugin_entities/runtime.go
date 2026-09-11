@@ -29,6 +29,30 @@ type PluginRuntimeState struct {
 	Logs        []string   `json:"logs"`
 }
 
+func (s *PluginRuntimeState) IsValidStatus() bool {
+	switch PluginRuntimeStatus(s.Status) {
+	case PLUGIN_RUNTIME_STATUS_ACTIVE,
+		PLUGIN_RUNTIME_STATUS_LAUNCHING,
+		PLUGIN_RUNTIME_STATUS_STOPPED,
+		PLUGIN_RUNTIME_STATUS_RESTARTING,
+		PLUGIN_RUNTIME_STATUS_PENDING:
+		return true
+	}
+	return false
+}
+
+func (s *PluginRuntimeState) SetStatus(status PluginRuntimeStatus) {
+	s.Status = string(status)
+}
+
+func (s *PluginRuntimeState) GetStatus() PluginRuntimeStatus {
+	return PluginRuntimeStatus(s.Status)
+}
+
+func (s *PluginRuntimeState) IsActive() bool {
+	return s.Status == string(PLUGIN_RUNTIME_STATUS_ACTIVE)
+}
+
 type PluginRuntimeStatus string
 
 const (
@@ -58,8 +82,6 @@ type PluginBasicInfo interface {
 }
 
 type PluginRuntimeInterface interface {
-	PluginBasicInfo
-
 	// Listen listens for messages from the plugin
 	Listen(sessionId string) (*entities.Broadcast[SessionMessage], error)
 	// Write writes a message to the plugin

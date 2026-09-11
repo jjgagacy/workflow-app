@@ -42,6 +42,14 @@ func (p PluginUniqueIdentifier) PluginID() string {
 	return p.String()
 }
 
+func (p PluginUniqueIdentifier) BaseName() string {
+	parts := strings.Split(p.String(), "@")
+	if len(parts) == 2 {
+		return parts[0]
+	}
+	return p.String()
+}
+
 func (p PluginUniqueIdentifier) Checksum() string {
 	parts := strings.Split(p.String(), "@")
 	if len(parts) == 2 {
