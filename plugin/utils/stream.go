@@ -55,6 +55,7 @@ func (s *Stream[T]) BeforeClose(f func()) {
 
 func (s *Stream[T]) Next() bool {
 	s.mu.Lock()
+	// s.err 判断防止调用 writeError() 后仍然返回 false, 确保不吞掉最后一个错误
 	if s.closed == 1 && s.q.Len() == 0 && s.err == nil {
 		s.mu.Unlock()
 		return false

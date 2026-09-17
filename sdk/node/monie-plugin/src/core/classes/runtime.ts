@@ -1,5 +1,5 @@
 import { RequestReader } from "../reader.class.js";
-import { ResponseWriter } from "../writer.class.js";
+import { StreamWriter } from "../streams/stream.js";
 
 export class InvokeCredentials {
   toolCredentials: Record<string, string> = {};
@@ -14,7 +14,7 @@ export class Session {
   sessionId: string;
 
   reader?: RequestReader | undefined;
-  writer?: ResponseWriter | undefined;
+  writer?: StreamWriter | undefined;
 
   conversationId: string | null = null;
   messageId: string | null = null;
@@ -28,7 +28,7 @@ export class Session {
   constructor(
     sessionId: string,
     reader?: RequestReader | undefined,
-    writer?: ResponseWriter | undefined,
+    writer?: StreamWriter | undefined,
     conversationId?: string,
     messageId?: string,
     appId?: string,

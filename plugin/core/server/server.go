@@ -49,15 +49,12 @@ func (app *App) Run(config *core.Config) {
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-
 	<-quit
 
 	log.Println("Shutting down server...")
-
 	shutdown()
 	for _, s := range shutdowns {
 		s()
 	}
-
 	log.Println("Server gracefully stopped")
 }

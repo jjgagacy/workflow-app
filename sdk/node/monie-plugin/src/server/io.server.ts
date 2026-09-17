@@ -29,6 +29,8 @@ import { BlobInvokeMessage } from "../core/dtos/invoke-message.dto.js";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { Logger } from "../config/logger.js";
+import { StreamWriter } from "../core/streams/stream.js";
+import { TCPReaderWriter } from "./tcp/tcp-reader.class.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -41,14 +43,14 @@ export class IOServer implements Server {
   private maxWorkers: number = Math.max(2, Math.floor(os.cpus().length / 2));
   private pool: DynamicThreadPool<TaskData, TaskResult> | null = null;
   private messageHandler?: (msg: StreamMessage) => Promise<any> | any;
-  private registry: PluginRegistry;
+  protected registry: PluginRegistry;
   private pluginExecutor: PluginExecutor;
   private router: Router;
 
   constructor(
     protected config: PluginConfig,
     private reader: RequestReader,
-    private writer?: ResponseWriter
+    private writer?: StreamWriter
   ) {
     this.isRunning = false;
     this.registry = new PluginRegistry(config);
@@ -80,7 +82,12 @@ export class IOServer implements Server {
     try {
       this.eventLoopPromise = this.runEventLoop();
       if (this.writer) {
-        this.heartbeatPromise = this.heartbeat();
+        const writerReady = this.reader.type === 'remote'
+          ? (this.writer as any).isConnected()
+          : true;
+        if (writerReady) {
+          this.heartbeatPromise = this.heartbeat();
+        }
       }
       if (this.reader.type === 'stdio') {
         this.parentCheckPromise = this.parentAliveCheck();
@@ -150,6 +157,11 @@ export class IOServer implements Server {
   }
 
   private async send_heartbeat(): Promise<void> {
+    if (this.writer && typeof (this.writer as any).isConnected === 'function') {
+      if (!(this.writer as any).isConnected()) {
+        return;
+      }
+    }
     this.writer?.heartbeat();
   }
 

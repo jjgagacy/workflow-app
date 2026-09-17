@@ -18,9 +18,9 @@ export enum InitializeMessageType {
 
 export class InitializeMessage {
   type: InitializeMessageType;
-  data: Record<string, any>;
+  data: Record<string, any> | any[];
 
-  constructor(type: InitializeMessageType, data: Record<string, any>) {
+  constructor(type: InitializeMessageType, data: Record<string, any> | any[]) {
     this.type = type;
     this.data = data;
   }

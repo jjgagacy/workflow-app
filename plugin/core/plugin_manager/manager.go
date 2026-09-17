@@ -10,6 +10,7 @@ import (
 	"github.com/jjgagacy/workflow-app/plugin/core"
 	"github.com/jjgagacy/workflow-app/plugin/core/db"
 	"github.com/jjgagacy/workflow-app/plugin/core/invocation"
+	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager/debugging_runtime"
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager/media_transport"
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_packager/decoder"
 	"github.com/jjgagacy/workflow-app/plugin/model"
@@ -34,9 +35,15 @@ type PluginManager struct {
 	// mediaBucket is used to manage media files like plugin icons, images, etc.
 	mediaBucket *media_transport.MediaBucket
 	// packageBucket is used to mange plugin packages, all the packages uploaded by users will be saved here
+	// when user install plugin if this package is not running, the manager should start it to handle the installation
+	// and save package to the installed bucket
 	packageBucket *media_transport.PackageBucket
 	// installedBucket is used manage installed plugins
+	// check plugins in the installed bucket and watcher for changes
+	// if add new plugins to this bucket, the manager should detect and handle them accordingly
 	installedBucket *media_transport.InstalledBucket
+	// remote server
+	remotePluginServer debugging_runtime.RemotePluginServerInterface
 }
 
 var (

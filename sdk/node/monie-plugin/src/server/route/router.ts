@@ -3,6 +3,7 @@ import { ResponseWriter } from "../../core/writer.class.js";
 import { Route, RouteFilter, RouteHandler } from "./route.handler.js";
 import { Session } from "../../core/classes/runtime.js";
 import { Logger } from "../../config/logger.js";
+import { StreamWriter } from "../../core/streams/stream.js";
 
 export interface IRouter {
   dispatch(session: Session, data: any): void;
@@ -13,7 +14,7 @@ export class Router implements IRouter {
 
   constructor(
     private requestReader: RequestReader,
-    private responseWriter?: ResponseWriter
+    private responseWriter?: StreamWriter
   ) { }
 
   registerRoute<T>(

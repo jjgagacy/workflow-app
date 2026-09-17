@@ -69,7 +69,7 @@ func FullDuplex(
 		}
 	})
 
-	// init successfully
+	// init successfully, start the plugin lifecycle
 	for !r.Stopped() {
 		if err := r.StartPlugin(); err != nil {
 			if r.Stopped() {

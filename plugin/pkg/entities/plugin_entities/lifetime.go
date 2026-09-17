@@ -102,7 +102,7 @@ func (r *PluginRuntime) RuntimeState() PluginRuntimeState {
 	return r.State
 }
 
-func (r *PluginRuntime) UpdateScheduledAt(t time.Time) {
+func (r *PluginRuntime) UpdateScheduleAt(t time.Time) {
 	r.State.ScheduleAt = &t
 }
 

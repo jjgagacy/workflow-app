@@ -109,6 +109,13 @@ type Config struct {
 	PluginStdioBufferSize    int `envconfig:"PLUGIN_STDIO_BUFFER_SIZE" default:"1024"`
 	PluginStdioMaxBufferSize int `envconfig:"PLUGIN_STDIO_MAX_BUFFER_SIZE" default:"5242880"`
 
+	PluginRemoteInstallingHost                string `envconfig:"PLUGIN_REMOTE_INSTALLING_HOST"`
+	PluginRemoteInstallingPort                uint16 `envconfig:"PLUGIN_REMOTE_INSTALLING_PORT"`
+	PluginRemoteInstallingEnabled             *bool  `envconfig:"PLUGIN_REMOTE_INSTALLING_ENABLED"`
+	PluginRemoteInstallingMaxConn             int    `envconfig:"PLUGIN_REMOTE_INSTALLING_MAX_CONN"`
+	PluginRemoteInstallingMaxSingleTenantConn int    `envconfig:"PLUGIN_REMOTE_INSTALLING_MAX_SINGLE_TENANT_CONN"`
+	PluginRemoteInstallServerEventLoopNums    int    `envconfig:"PLUGIN_REMOTE_INSTALL_SERVER_EVENT_LOOP_NUMS"`
+
 	DisplayClusterLog bool `envconfig:"DISPLAY_CLUSTER_LOG"`
 
 	// proxy settings

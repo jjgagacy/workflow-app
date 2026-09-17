@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
-import path from 'path';
+import path from 'node:path';
+import fs from 'node:fs';
 
 export class RawEnvConfig {
   INSTALL_METHOD: string | undefined;
@@ -28,20 +29,21 @@ export class EnvLoader {
 
   load(configPath?: string): NodeJS.ProcessEnv {
     const getEnvPath = () => {
-      if (configPath) {
-        const env = process.env.NODE_ENV || 'dev';
-        const envSpecificFile = `.env.${env}`;
-        const separator = path.sep;
+      const env = process.env.NODE_ENV || 'dev';
+      const envSpecificFile = `.env.${env}`;
+      const defaultFile = '.env';
 
-        if (configPath.endsWith(separator)) {
-          return configPath + envSpecificFile;
-        }
+      const targetDir = configPath || '';
+      const envSpecificPath = path.join(targetDir, envSpecificFile);
+      const defaultPath = path.join(targetDir, defaultFile);
 
-        return path.join(configPath, envSpecificFile);
+      // 1. 优先校验环境特定文件是否存在 (.env.dev / .env.test 等)
+      if (fs.existsSync(envSpecificPath)) {
+        return envSpecificPath;
       }
 
-      const env = process.env.NODE_ENV || 'dev';
-      return `.env.${env}`;
+      // 2. 文件不存在时自动回退至通用 .env
+      return defaultPath;
     }
 
     const result = dotenv.config({

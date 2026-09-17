@@ -54,7 +54,6 @@ export class PluginConfig implements IPluginConfig {
         `INSTALL_METHOD must be valid`
       );
     }
-
     return method as InstallMethod;
   }
 

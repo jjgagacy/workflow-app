@@ -7,6 +7,7 @@ import (
 
 	"github.com/jjgagacy/workflow-app/plugin/core"
 	"github.com/jjgagacy/workflow-app/plugin/core/db"
+	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager/debugging_runtime"
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager/local_runtime"
 	"github.com/jjgagacy/workflow-app/plugin/model"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
@@ -26,8 +27,50 @@ func (p *PluginManager) startLocalWatcher(config *core.Config) {
 	}()
 }
 
+func (p *PluginManager) initRemoteWatcher(config *core.Config) {
+	if p.remotePluginServer != nil {
+		return
+	}
+	p.remotePluginServer = debugging_runtime.NewRemotePluginServer(config, p.mediaBucket)
+}
+
 func (p *PluginManager) startRemoteWatcher(config *core.Config) {
-	// todo
+	if !(config.PluginRemoteInstallingEnabled != nil && *config.PluginRemoteInstallingEnabled) {
+		return
+	}
+
+	p.initRemoteWatcher(config)
+	go func() {
+		err := p.remotePluginServer.Launch()
+		if err != nil {
+			utils.Error("launch remote plugin server failed: %s", err.Error())
+		}
+	}()
+	go func() {
+		p.remotePluginServer.Wrap(func(runtime plugin_entities.PluginFullDuplexLifetime) {
+			identity, err := runtime.Identity()
+			if err != nil {
+				utils.Error("get remote plugin identity failed: %s", err.Error())
+				return
+			}
+			p.m.Store(identity.String(), runtime)
+			utils.Submit(map[string]string{
+				"module":    "plugin_manager",
+				"function":  "startRemoteWatcher",
+				"plugin_id": identity.String(),
+				"type":      "remote",
+			}, func() {
+				defer func() {
+					if err := recover(); err != nil {
+						utils.Error("panic recovered: %v, stack: %s", err, debug.Stack())
+					}
+					p.m.Delete(identity.String())
+				}()
+				p.fullDuplexLifecycle(runtime, nil, nil)
+			})
+			utils.Info("remote plugin connected: %s", identity.String())
+		})
+	}()
 }
 
 func (p *PluginManager) handleNewLocalPlugins(config *core.Config) {

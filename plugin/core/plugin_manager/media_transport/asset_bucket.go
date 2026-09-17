@@ -174,5 +174,18 @@ func (m *MediaBucket) RemapAssets(declaration *plugin_entities.PluginDeclaration
 		}
 	}
 
+	if declaration.IconLarge != "" {
+		declaration.IconLarge, err = remap(declaration.IconLarge)
+		if err != nil {
+			return nil, errors.Join(err, fmt.Errorf("failed to remap plugin icon large"))
+		}
+	}
+	if declaration.IconLargeDark != "" {
+		declaration.IconLargeDark, err = remap(declaration.IconLargeDark)
+		if err != nil {
+			return nil, errors.Join(err, fmt.Errorf("failed to remap plugin dark icon large"))
+		}
+	}
+
 	return assetsIds, nil
 }

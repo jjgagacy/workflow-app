@@ -48,7 +48,7 @@ describe("ModelProvider (e2e)", () => {
             }
           ]
         },
-        configMethod: [],
+        configMethods: [],
         models: [],
       });
       provider.provider = 'openai';

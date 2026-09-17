@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, beforeAll, afterEach, jest, afterAll } from '@jest/globals';
 import { camelToSnake, deepCamelToSnake, deepSnakeToCamel, snakeToCamel } from "../src/utils/string.util";
 
 // run: npm run test -- string

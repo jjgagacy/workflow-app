@@ -51,7 +51,35 @@ go run cmd/main.go package sync-packages [plugins_dir] [package_root]
 go run cmd/main.go plugin clear cwd
 ```
 
+## 启动立即运行插件，执行
 
+```bash
+go run cmd/deploy/main.go
+```
+
+插件目录 "monie-plugins" 的所有插件打包复制到 PLUGIN_INSTALLED_PATH 目录，这样 plugin daemon启动的时候会从这个目录找到所有的插件运行。
+
+## 调试插件步骤
+
+首先开启 plugin daemon 
+
+```bash
+cd plugin
+go run main.go
+```
+
+比如调试插件 ./monie-plugins/hello 
+```bash
+cd ./monie-plugins/hello 
+npm run watch
+node dist/index.js # 执行插件
+```
+
+如果同步要修改插件sdk 需要同步运行 watch
+```bash
+cd ./sdk/node/monie-plugin
+npm run watch
+```
 
 # Contact
 

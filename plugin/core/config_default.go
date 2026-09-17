@@ -34,6 +34,11 @@ func (config *Config) SetDefault() {
 	setDefaultInt(&config.InvocationWriteTimeout, 5000)  // Milliseconds = 5s
 	setDefaultInt(&config.InvocationReadTimeout, 240000) // Milliseconds = 240s
 
+	setDefaultInt(&config.PluginRemoteInstallServerEventLoopNums, 8)
+	setDefaultInt(&config.PluginRemoteInstallingMaxConn, 256)
+	setDefaultInt(&config.PluginRemoteInstallingMaxSingleTenantConn, 5)
+	setDefaultBoolPtr(&config.PluginRemoteInstallingEnabled, true)
+
 	switch config.DBType {
 	case "postgresql":
 		setDefaultString(&config.DBDefaultDatabase, "postgres")

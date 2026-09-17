@@ -4,18 +4,40 @@ import { StreamFactory } from "./core/factory.class.js";
 import { StreamMessage } from "./core/dtos/stream.dto.js";
 import { StreamRequestEvent } from "./core/entities/event.enum.js";
 import { IOServer } from "./server/io.server.js";
+import { TCPReaderWriter } from "./server/tcp/tcp-reader.class.js";
 
 export class Plugin extends IOServer {
+  private readonly remoteStream: TCPReaderWriter | undefined;
+  private serverStarted = false;
+
   constructor(configPath?: string) {
     const envLoader = new EnvLoader();
     envLoader.load(configPath);
     const config = new PluginConfig(envLoader);
-    const { reader, writer } = StreamFactory.create(config);
-    super(config, reader, writer);
+    const streams = StreamFactory.create(config);
+    super(config, streams.reader, streams.writer);
+    this.remoteStream = streams.reader instanceof TCPReaderWriter
+      ? streams.reader
+      : undefined;
     this.setHandler(this.handleMessage.bind(this));
   }
 
   async startServer(): Promise<void> {
+    await this.registry.ready();
+
+    if (this.remoteStream) {
+      const remoteStream = this.remoteStream;
+      remoteStream.onConnection(async () => {
+        await remoteStream.initialize(this.registry);
+        if (!this.serverStarted) {
+          this.serverStarted = true;
+          void this.start();
+        }
+      });
+      remoteStream.launch();
+      return;
+    }
+
     return this.start();
   }
 

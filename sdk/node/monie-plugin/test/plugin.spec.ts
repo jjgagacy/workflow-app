@@ -1,4 +1,4 @@
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect, beforeEach, beforeAll, afterEach, jest, afterAll } from '@jest/globals';
 import { StreamRequestEvent } from "../src/core/entities/event.enum.js";
 import { TestMessageFactory } from "../src/core/test/message-factory.js";
 import { Plugin } from "../src/plugin.js";
