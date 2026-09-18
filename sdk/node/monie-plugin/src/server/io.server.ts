@@ -274,14 +274,14 @@ export class IOServer implements Server {
     }
 
     let handleResult: HandleResult | AsyncGenerator<any, any, any> | undefined;
-    Logger.info(JSON.stringify({
+    Logger.info("Session Info: " + JSON.stringify({
       sessionId: session.sessionId,
       conversationId: session.conversationId,
       messageId: session.messageId,
       context: session.context,
       pluginDaemonUrl: session.pluginDaemonUrl
     }));
-    Logger.info(JSON.stringify(message.data));
+    Logger.info("Message Data: " + JSON.stringify(message.data));
     try {
       handleResult = await this.router.dispatch(session, message.data);
     } catch (err: any) {
@@ -289,7 +289,7 @@ export class IOServer implements Server {
     }
 
     let result: unknown;
-    if (handleResult) {
+    if (handleResult !== undefined) {
       if (handleResult instanceof Promise) {
         const resolved = (await handleResult) as HandleResult | unknown;
         if (resolved && typeof resolved === 'object' && 'taskType' in resolved) {
@@ -324,7 +324,11 @@ export class IOServer implements Server {
       }
     }
 
-    return this.handleIOTask(session, message);
+    if (handleResult === undefined) {
+      return this.handleIOTask(session, message);
+    }
+
+    return;
   }
 
   private async processAndSendMessage(message: any, session: Session) {

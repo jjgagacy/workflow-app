@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"reflect"
 
@@ -26,6 +27,15 @@ func UnmarshalJsonBytes[T any](data []byte) (T, error) {
 	var result T
 	err := json.Unmarshal(data, &result)
 	if err != nil {
+		trimmed := bytes.TrimSpace(data)
+		if len(trimmed) >= 2 && trimmed[0] == '"' && trimmed[len(trimmed)-1] == '"' {
+			var nestedString string
+			if innerErr := json.Unmarshal(trimmed, &nestedString); innerErr == nil {
+				if nestedResult, nestedErr := UnmarshalJsonBytes[T]([]byte(nestedString)); nestedErr == nil {
+					return nestedResult, nil
+				}
+			}
+		}
 		return result, err
 	}
 

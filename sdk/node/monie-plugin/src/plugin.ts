@@ -5,6 +5,7 @@ import { StreamMessage } from "./core/dtos/stream.dto.js";
 import { StreamRequestEvent } from "./core/entities/event.enum.js";
 import { IOServer } from "./server/io.server.js";
 import { TCPReaderWriter } from "./server/tcp/tcp-reader.class.js";
+import { MessageType } from "./index.js";
 
 export class Plugin extends IOServer {
   private readonly remoteStream: TCPReaderWriter | undefined;
@@ -68,6 +69,11 @@ export class Plugin extends IOServer {
   }
 
   protected async handleRequestMessage(msg: StreamMessage): Promise<any> {
-    return "no route found or handlers trigger errors";
+    return {
+      type: MessageType.TEXT,
+      message: {
+        error: "no route found or handlers trigger errors"
+      },
+    };
   }
 }

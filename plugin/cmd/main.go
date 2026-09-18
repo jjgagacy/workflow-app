@@ -16,6 +16,7 @@ import (
 	"github.com/jjgagacy/workflow-app/plugin/types"
 	"github.com/jjgagacy/workflow-app/plugin/utils"
 	"github.com/joho/godotenv"
+	"gorm.io/gorm"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -77,13 +78,31 @@ If no parameter are provided, an interactive mode will be started.`,
 		},
 	}
 
-	pluginClearCwd = &cobra.Command{
-		Use:   "clear cwd",
+	pluginClearCmd = &cobra.Command{
+		Use:   "clear",
+		Short: "Clear plugin state",
+		Long:  `Clear plugin state such as the working directory or all remote plugin records.`,
+	}
+
+	pluginClearCwdCmd = &cobra.Command{
+		Use:   "cwd",
 		Short: "Clear plugin daemon cwd all plugins",
 		Long:  `Clear the current working directory of the plugin daemon for all plugins.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := clearPluginWorkingPath(); err != nil {
 				fmt.Fprintf(os.Stderr, "clear cwd failed: %v\n", err)
+				os.Exit(1)
+			}
+		},
+	}
+
+	pluginClearRemoteCmd = &cobra.Command{
+		Use:   "remote",
+		Short: "Clear all remote plugins and their linked installations",
+		Long:  `Delete all plugin records whose install_type is remote, along with associated PluginInstallation, ToolInstallation, AgentStrategyInstallation, and AIModelInstallation records.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := clearRemotePlugins(); err != nil {
+				fmt.Fprintf(os.Stderr, "clear remote failed: %v\n", err)
 				os.Exit(1)
 			}
 		},
@@ -426,6 +445,52 @@ func syncMoniePluginsToPackageBucket(pluginsDir, packageRoot string) error {
 	return nil
 }
 
+func clearRemotePlugins() error {
+	if err := ensureDeclarationDB(); err != nil {
+		return fmt.Errorf("init db failed: %w", err)
+	}
+	defer db.Close()
+
+	plugins, err := db.GetAll[model.Plugin](
+		db.Equal("install_type", string(plugin_entities.PLUGIN_RUNTIME_TYPE_REMOTE)),
+	)
+	if err != nil {
+		return fmt.Errorf("list remote plugins failed: %w", err)
+	}
+
+	if len(plugins) == 0 {
+		fmt.Println("No remote plugins to clear")
+		return nil
+	}
+
+	for _, pluginRecord := range plugins {
+		if err := db.WithTransaction(func(tx *gorm.DB) error {
+			if err := db.DeleteBy(model.PluginInstallation{PluginID: pluginRecord.PluginID}, tx); err != nil {
+				return fmt.Errorf("delete plugin installations for %s: %w", pluginRecord.PluginID, err)
+			}
+			if err := db.DeleteBy(&model.ToolInstallation{PluginID: pluginRecord.PluginID}, tx); err != nil {
+				return fmt.Errorf("delete tool installations for %s: %w", pluginRecord.PluginID, err)
+			}
+			if err := db.DeleteBy(&model.AgentStrategyInstallation{PluginID: pluginRecord.PluginID}, tx); err != nil {
+				return fmt.Errorf("delete agent strategy installations for %s: %w", pluginRecord.PluginID, err)
+			}
+			if err := db.DeleteBy(&model.AIModelInstallation{PluginID: pluginRecord.PluginID}, tx); err != nil {
+				return fmt.Errorf("delete AI model installations for %s: %w", pluginRecord.PluginID, err)
+			}
+			if err := db.Delete(&pluginRecord, tx); err != nil {
+				return fmt.Errorf("delete plugin %s: %w", pluginRecord.PluginUniqueIdentifier, err)
+			}
+			return nil
+		}); err != nil {
+			return err
+		}
+
+		fmt.Printf("Cleared remote plugin: %s (%s)\n", pluginRecord.PluginUniqueIdentifier, pluginRecord.PluginID)
+	}
+
+	return nil
+}
+
 func clearPluginWorkingPath() error {
 	if err := godotenv.Load(); err != nil {
 		if !os.IsNotExist(err) {
@@ -512,9 +577,11 @@ func init() {
 	rootCmd.AddCommand(pluginCmd)
 	pluginCmd.AddCommand(bundleCmd)
 	pluginCmd.AddCommand(pluginInitCmd)
-	pluginCmd.AddCommand(pluginClearCwd)
+	pluginCmd.AddCommand(pluginClearCmd)
 	pluginCmd.AddCommand(pluginPackageCmd)
 	pluginCmd.AddCommand(runCmd)
+	pluginClearCmd.AddCommand(pluginClearCwdCmd)
+	pluginClearCmd.AddCommand(pluginClearRemoteCmd)
 }
 
 func initConfig() {

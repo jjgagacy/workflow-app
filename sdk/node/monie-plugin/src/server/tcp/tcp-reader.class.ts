@@ -8,9 +8,33 @@ import * as net from 'node:net';
 import { Logger } from '../../config/logger.js';
 import { AsyncMessageQueue } from './async-message-queue.class.js';
 import { StreamRequestEvent } from '../../core/entities/event.enum.js';
-import { deepCamelToSnake } from '../../utils/string.util.js';
+import { deepCamelToSnake, deepSnakeToCamel } from '../../utils/string.util.js';
 import { PluginRegistry } from '../plugin.registry.js';
 import { InitializeMessage, InitializeMessageType } from '../../core/entities/event/message.js';
+
+function toPlainObject(value: any): any {
+  if (value === null || value === undefined) {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(toPlainObject);
+  }
+
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
+
+  if (typeof value === 'object') {
+    const plain: Record<string, any> = {};
+    for (const [key, item] of Object.entries(value)) {
+      plain[key] = toPlainObject(item);
+    }
+    return plain;
+  }
+
+  return value;
+}
 
 interface TCPReaderWriterOptions {
   host: string;
@@ -148,13 +172,7 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
       });
 
       socket.on('data', (chunk: Buffer) => {
-
-
-        Logger.info(`========== Received data: ${chunk.toString('utf-8')}`);
-
-
-
-
+        // Logger.info(`Received data: ${chunk.toString('utf-8')}`);
         if (this.socket != socket) {
           return;
         }
@@ -291,7 +309,7 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
           appId: data.app_id as string | undefined,
           endpointId: data.endpointId as | string | undefined,
           event: StreamRequestEvent.REQUEST, // data.event as string,
-          data: data.data as any,
+          data: deepSnakeToCamel(data.data) as any,
           context: data.context as any,
         };
 
@@ -327,6 +345,8 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
       sessionId: message.sessionId,
       data: message.data,
     });
+
+    console.log('==write', JSON.stringify(payload));
 
     void this.write(
       JSON.stringify(payload) + '\n\n',
@@ -379,7 +399,7 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
         deepCamelToSnake({
           event: message.event,
           sessionId: message.sessionId,
-          data: message.data,
+          data: toPlainObject(message.data),
         }),
       ) + '\n\n'
     );
@@ -423,7 +443,11 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
       data: Record<string, any> | any[],
     ): Promise<void> => {
       const message = new InitializeMessage(type, data);
-      await this.write(`${JSON.stringify(deepCamelToSnake({ type: message.type, data: message.data }))}\n\n`);
+      const payload = deepCamelToSnake({
+        type: message.type,
+        data: toPlainObject(message.data),
+      });
+      await this.write(`${JSON.stringify(payload)}\n\n`);
     };
 
     await writeMessage(InitializeMessageType.MANIFEST_DECLARATION, registry.declaration);
