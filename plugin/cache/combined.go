@@ -146,7 +146,7 @@ func CombinedGetPluginDeclaration(
 				}
 				return &pluginDeclaration.Declaration, nil
 			} else {
-				// todo: fetch plugin from remote
+				// fetch plugin from remote
 				plugin, dbErr := db.GetOne[model.Plugin](
 					db.Equal("plugin_unique_identifier", pluginUniqueIdentifier.String()),
 					db.Equal("install_type", string(plugin_entities.PLUGIN_RUNTIME_TYPE_REMOTE)),

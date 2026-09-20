@@ -6,7 +6,7 @@ type HttpOptionType string
 
 type HttpOption struct {
 	Type  HttpOptionType
-	Value interface{}
+	Value any
 }
 
 const (

@@ -12,30 +12,6 @@ import { deepCamelToSnake, deepSnakeToCamel } from '../../utils/string.util.js';
 import { PluginRegistry } from '../plugin.registry.js';
 import { InitializeMessage, InitializeMessageType } from '../../core/entities/event/message.js';
 
-function toPlainObject(value: any): any {
-  if (value === null || value === undefined) {
-    return value;
-  }
-
-  if (Array.isArray(value)) {
-    return value.map(toPlainObject);
-  }
-
-  if (value instanceof Date) {
-    return value.toISOString();
-  }
-
-  if (typeof value === 'object') {
-    const plain: Record<string, any> = {};
-    for (const [key, item] of Object.entries(value)) {
-      plain[key] = toPlainObject(item);
-    }
-    return plain;
-  }
-
-  return value;
-}
-
 interface TCPReaderWriterOptions {
   host: string;
   port: number;
@@ -45,7 +21,9 @@ interface TCPReaderWriterOptions {
   onConnected?: (transport: StreamWriter) => Promise<void> | void;
 }
 
-
+/**
+ * TCPReaderWriter 类用于通过 TCP 连接读取和写入流消息。
+ */
 export class TCPReaderWriter extends RequestReader implements StreamWriter {
   private host: string;
   private port: number;
@@ -61,7 +39,6 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
   private isConnecting: boolean = false;
 
   private reconnectTimer: NodeJS.Timeout | null = null;
-  private reconnecting = false;
   private readonly messageQueue = new AsyncMessageQueue<StreamMessage>();
 
   constructor(options: TCPReaderWriterOptions) {
@@ -104,7 +81,6 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
    */
   async close(): Promise<void> {
     this.alive = false;
-    this.reconnecting = false;
     this.isConnecting = false;
 
     this.clearReconnectTimer();
@@ -112,7 +88,7 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
 
     if (!socket) {
       this.messageQueue.close();
-      return Promise.resolve();
+      return;
     }
 
     this.socket = null;
@@ -128,6 +104,21 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
       socket.destroy();
     });
     this.messageQueue.close();
+  }
+
+  private scheduleReconnect(): void {
+    if (
+      this.reconnectTimer !== null ||
+      this.isConnecting ||
+      this.alive
+    ) {
+      return;
+    }
+
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null;
+      this.connectWithRetry();
+    }, this.reconnectTimeoutMs);
   }
 
   /**
@@ -147,7 +138,6 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
           return;
         }
         this.alive = true;
-        this.reconnecting = true;
 
         // Send handshake message
         const handshakeMessage = {
@@ -188,7 +178,7 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
           reject(err);
           return;
         }
-        this.handleReconnection();
+        // close 已经触发，会自动处理重连
       });
 
       socket.on('close', () => {
@@ -200,7 +190,7 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
         this.alive = false;
         if (wasAlive) {
           Logger.warn('Socket closed unexpectedly. Attempting reconnect...');
-          this.handleReconnection();
+          this.scheduleReconnect();
         }
       });
     });
@@ -211,7 +201,7 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
    * @returns 
    */
   public launch(): void {
-    if (this.alive || this.isConnecting)
+    if (this.alive || this.isConnecting || this.reconnectTimer !== null)
       return;
     this.connectWithRetry();
   }
@@ -232,11 +222,7 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
   }
 
   private connectWithRetry(): void {
-    if (
-      this.isConnecting ||
-      this.alive ||
-      this.reconnecting
-    ) {
+    if (this.isConnecting || this.alive) {
       return;
     }
 
@@ -246,7 +232,6 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
       this.connect()
         .then(() => {
           this.isConnecting = false;
-          this.reconnecting = false;
           this.currentAttempts = 0;
         })
         .catch(err => {
@@ -258,7 +243,6 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
           this.currentAttempts++;
           if (this.currentAttempts >= this.reconnectAttempts) {
             this.isConnecting = false;
-            this.reconnecting = false;
             this.emit('tcp.connect.error', new Error(`Exceeded max reconnect attempts (${this.reconnectAttempts})`));
             return;
           }
@@ -268,9 +252,9 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
             attemptConnect();
           }, this.reconnectTimeoutMs);
         })
-        .finally(() => {
-          this.isConnecting = false;
-        });
+      // .finally(() => {
+      //   this.isConnecting = false;
+      // });
     }
     attemptConnect();
   }
@@ -329,11 +313,6 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
     }
   }
 
-  private handleReconnection(): void {
-    this.close();
-    this.connectWithRetry();
-  }
-
   // 
   // StreamWriter
   //
@@ -345,9 +324,7 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
       sessionId: message.sessionId,
       data: message.data,
     });
-
-    console.log('==write', JSON.stringify(payload));
-
+    // console.log('==write', JSON.stringify(payload));
     void this.write(
       JSON.stringify(payload) + '\n\n',
     ).catch(err => {
@@ -399,7 +376,7 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
         deepCamelToSnake({
           event: message.event,
           sessionId: message.sessionId,
-          data: toPlainObject(message.data),
+          data: message.data,
         }),
       ) + '\n\n'
     );
@@ -445,7 +422,7 @@ export class TCPReaderWriter extends RequestReader implements StreamWriter {
       const message = new InitializeMessage(type, data);
       const payload = deepCamelToSnake({
         type: message.type,
-        data: toPlainObject(message.data),
+        data: message.data,
       });
       await this.write(`${JSON.stringify(payload)}\n\n`);
     };

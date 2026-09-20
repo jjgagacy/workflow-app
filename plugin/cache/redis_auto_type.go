@@ -33,7 +33,7 @@ func AutoGetWithGetter[T any](key string, getter func() (*T, error), context ...
 
 	var result *T
 
-	typeInfo := reflect.TypeOf((*T)(nil)).Elem()
+	typeInfo := reflect.TypeFor[T]()
 	pkgPath := typeInfo.PkgPath()
 	typeName := typeInfo.Name()
 	fullTypeName := pkgPath + "." + typeName

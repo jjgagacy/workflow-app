@@ -12,7 +12,7 @@ type BasicChecksum struct {
 	WorkingPath string
 	Decoder     decoder.PluginDecoder
 
-	checksumValue string
+	ChecksumValue string
 }
 
 func (r *BasicChecksum) doChecksum() (string, error) {
@@ -25,15 +25,15 @@ func (r *BasicChecksum) doChecksum() (string, error) {
 }
 
 func (r *BasicChecksum) Checksum() (string, error) {
-	if r.checksumValue == "" {
+	if r.ChecksumValue == "" {
 		checksum, err := r.doChecksum()
 		if err != nil {
 			return "", err
 		}
-		r.checksumValue = checksum
+		r.ChecksumValue = checksum
 	}
 
-	return r.checksumValue, nil
+	return r.ChecksumValue, nil
 }
 
 func (r *BasicChecksum) Cleanup() {

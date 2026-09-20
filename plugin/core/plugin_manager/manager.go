@@ -12,6 +12,7 @@ import (
 	"github.com/jjgagacy/workflow-app/plugin/core/invocation"
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager/debugging_runtime"
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager/media_transport"
+	"github.com/jjgagacy/workflow-app/plugin/core/plugin_manager/serverless_connector"
 	"github.com/jjgagacy/workflow-app/plugin/core/plugin_packager/decoder"
 	"github.com/jjgagacy/workflow-app/plugin/model"
 	"github.com/jjgagacy/workflow-app/plugin/oss"
@@ -84,10 +85,13 @@ func (p *PluginManager) Get(identity plugin_entities.PluginUniqueIdentifier) (pl
 		}
 		return nil, errors.New("plugin not found")
 	} else {
-		// todo: otherwise, use serverless runtime instead
+		// otherwise, use serverless runtime instead
+		serverlessRuntime, err := p.getServerlessRuntime(identity)
+		if err != nil {
+			return nil, err
+		}
+		return serverlessRuntime, nil
 	}
-
-	return nil, errors.New("unsupported platform")
 }
 
 func (p *PluginManager) Launch(config *core.Config) {
@@ -136,7 +140,7 @@ func (p *PluginManager) Launch(config *core.Config) {
 	}
 	// start serverless watcher
 	if config.Platform == core.PLATFORM_SERVERLESS {
-		// todo
+		serverless_connector.Init(config)
 	}
 	// start remote watcher
 	p.startRemoteWatcher(config)

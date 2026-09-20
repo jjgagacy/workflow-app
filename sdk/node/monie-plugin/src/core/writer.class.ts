@@ -29,8 +29,8 @@ function toPlainObject(value: any): any {
 }
 
 export abstract class ResponseWriter extends EventEmitter implements StreamWriter {
-  abstract write(data: string): Promise<void>;
-  abstract close(): Promise<void>;
+  abstract write(data: string, sessionId?: string | null): Promise<void>;
+  abstract close(sessionId?: string | null): Promise<void>;
 
   put(
     event: Event,
@@ -43,8 +43,8 @@ export abstract class ResponseWriter extends EventEmitter implements StreamWrite
       sessionId: message.sessionId,
       data: message.data,
     });
-    this.write(JSON.stringify(payload));
-    this.write("\n\n");
+    this.write(JSON.stringify(payload), sessionId);
+    this.write("\n\n", sessionId);
   }
 
   error(

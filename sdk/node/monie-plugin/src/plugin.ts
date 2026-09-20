@@ -5,11 +5,15 @@ import { StreamMessage } from "./core/dtos/stream.dto.js";
 import { StreamRequestEvent } from "./core/entities/event.enum.js";
 import { IOServer } from "./server/io.server.js";
 import { TCPReaderWriter } from "./server/tcp/tcp-reader.class.js";
-import { MessageType } from "./index.js";
+import { MessageType, RequestReader } from "./index.js";
+import { ServerlessRequestReader } from "./server/serverless/request-reader.class.js";
+import { StreamWriter } from "./core/streams/stream.js";
 
 export class Plugin extends IOServer {
   private readonly remoteStream: TCPReaderWriter | undefined;
   private serverStarted = false;
+  private requestReader: RequestReader;
+  private responseWriter: StreamWriter;
 
   constructor(configPath?: string) {
     const envLoader = new EnvLoader();
@@ -17,6 +21,8 @@ export class Plugin extends IOServer {
     const config = new PluginConfig(envLoader);
     const streams = StreamFactory.create(config);
     super(config, streams.reader, streams.writer);
+    this.requestReader = streams.reader;
+    this.responseWriter = streams.writer;
     this.remoteStream = streams.reader instanceof TCPReaderWriter
       ? streams.reader
       : undefined;
@@ -26,8 +32,8 @@ export class Plugin extends IOServer {
   async startServer(): Promise<void> {
     await this.registry.ready();
 
-    if (this.remoteStream) {
-      const remoteStream = this.remoteStream;
+    if (this.requestReader.type == 'remote') {
+      const remoteStream = this.requestReader as TCPReaderWriter;
       remoteStream.onConnection(async () => {
         await remoteStream.initialize(this.registry);
         if (!this.serverStarted) {
@@ -36,6 +42,10 @@ export class Plugin extends IOServer {
         }
       });
       remoteStream.launch();
+      return;
+    } else if (this.requestReader.type == 'serverless') {
+      const serverlessReader = this.requestReader as ServerlessRequestReader;
+      serverlessReader.launch();
       return;
     }
 

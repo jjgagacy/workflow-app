@@ -3,6 +3,8 @@ import { StreamPair } from "./streams/stream.js";
 import { StdioReader } from "../server/stdio/stdio-reader.class.js";
 import { StdioWriter } from "../server/stdio/stdio-writer.class.js";
 import { TCPReaderWriter } from "../server/tcp/tcp-reader.class.js";
+import { ServerlessRequestReader } from "../server/serverless/request-reader.class.js";
+import { ServerlessResponseWriter } from "../server/serverless/response-writer.class.js";
 import { PluginConfig } from "../config/config.js";
 
 export class StreamFactory {
@@ -11,18 +13,32 @@ export class StreamFactory {
       case InstallMethod.LOCAL:
         return { reader: new StdioReader(), writer: new StdioWriter() };
       case InstallMethod.REMOTE:
-        const [host, port] = this.getRemoteHostAndPort(config);
-        const tcp = new TCPReaderWriter({
-          host,
-          port,
-          key: String(config.remoteInstallKey),
-        });
-        return { reader: tcp, writer: tcp };
+        return StreamFactory.launchRemoteStream(config);
       case InstallMethod.SERVERLESS:
-        // return new ServerlessStream();
-        break;
+        return StreamFactory.launchServerlessStream(config);
+      default:
+        throw new Error(`Unsupported install method: ${config.installMethod}`);
     }
-    throw new Error("Method not implemented.");
+  }
+
+  private static launchRemoteStream(config: PluginConfig) {
+    const [host, port] = this.getRemoteHostAndPort(config);
+    const tcp = new TCPReaderWriter({
+      host,
+      port,
+      key: String(config.remoteInstallKey),
+    });
+    return { reader: tcp, writer: tcp };
+  }
+
+  private static launchServerlessStream(config: PluginConfig): StreamPair {
+    const host = config.serverlessHost ?? '0.0.0.0';
+    const port = config.serverlessPort ?? 8080;
+    const writer = new ServerlessResponseWriter();
+    return {
+      reader: new ServerlessRequestReader("serverless", host, port, 300, writer),
+      writer,
+    };
   }
 
   private static getRemoteHostAndPort(config: PluginConfig): [string, number] {

@@ -111,9 +111,9 @@ type PluginLifetime interface {
 
 // PluginRuntime implement PluginBasicInfo
 
-func (r *PluginRuntime) Type() PluginRuntimeType {
-	return PLUGIN_RUNTIME_TYPE_LOCAL
-}
+// func (r *PluginRuntime) Type() PluginRuntimeType {
+// 	return PLUGIN_RUNTIME_TYPE_LOCAL
+// }
 
 func (r *PluginRuntime) Configuration() *PluginDeclaration {
 	return &r.Config

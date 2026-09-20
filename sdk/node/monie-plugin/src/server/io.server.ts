@@ -185,7 +185,7 @@ export class IOServer implements Server {
 
   private async cleanup() {
     this.reader.stop();
-    this.writer?.close();
+    await this.writer?.close();
     await this.sleep(1000);
     process.exit(0);
   }
