@@ -39,11 +39,6 @@ export const VarPicker = ({
   minWidth,
   varType,
 }: PickerProps) => {
-  const { t } = useTranslation();
-  const store = useStoreApi();
-  const reactflow = useReactFlow();
-  console.log('##', value);
-
   return (
     <div className={cn("h-full w-full", className)}>
       <Popover
@@ -61,13 +56,14 @@ export const VarPicker = ({
         offset={0}
         padding={8}
         triggerClassName="h-full w-full"
-        panelClassName=""
+        panelClassName="space-y-3 overflow-hidden!"
         sameWidth={false}
         disabled={false}
         portal={true}
       >
         {({ close }) => (
           <VarPopList
+            value={value}
             variables={nodeOutputVariables || []}
             onChange={(variable, selector) => {
               onChange(variable, selector);

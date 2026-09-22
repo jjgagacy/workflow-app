@@ -1,5 +1,5 @@
 import { QuotaConfiguration } from "@/ai/model_runtime/entities/quota.entity";
-import { ModelType } from "@/ai/model_runtime/enums/model-runtime.enum";
+import { FetchFrom, ModelType } from "@/ai/model_runtime/enums/model-runtime.enum";
 import { CustomConfigurationStatus } from "@/ai/model_runtime/enums/quota.enum";
 import { ProviderService } from "@/ai/model_runtime/services/provider.service";
 import { EnumConverter } from "@/common/utils/enums";
@@ -35,14 +35,7 @@ export class ModelProviderService {
         providerName: config.provider.provider,
         label: config.provider.label || {},
         description: config.provider.description,
-        icon: {
-          en_US: this.marketplaceService.getModelProviderIconUrl(pluginId),
-          zh_Hans: this.marketplaceService.getModelProviderIconUrl(pluginId, 'light', 'zh_Hans'),
-        },
-        iconDark: {
-          en_US: this.marketplaceService.getModelProviderIconUrl(pluginId, 'dark'),
-          zh_Hans: this.marketplaceService.getModelProviderIconUrl(pluginId, 'dark', 'zh_Hans'),
-        },
+        ...this.getAllIconObject(pluginId),
         supportedModelTypes: config.provider.supportedModelTypes.map((v) => v as string),
         preferredProviderType: config.preferredProviderType,
         customConfiguration: {
@@ -142,10 +135,12 @@ export class ModelProviderService {
     for (const [providerName, providerModels] of modelsByProvider) {
       // Skip providers without any models left after filtering.
       if (providerModels.length === 0) continue;
+      const pluginId = new ProviderID(providerName).pluginId;
 
       modelProviderModelsResponse.push({
         tenantId,
         providerName,
+        ...this.getAllIconObject(pluginId),
         label: providerModels[0].provider.label,
         status: CustomConfigurationStatus.ACTIVE,
         models: providerModels.map(m => ({
@@ -153,7 +148,7 @@ export class ModelProviderService {
           label: m.label,
           modelType: m.modelType,
           features: m.features,
-          fetchFrom: m.fetchFrom,
+          fetchFrom: m.fetchFrom || FetchFrom.PREDEFINED_MODEL,
           modelProperties: m.modelProperties,
           deprecated: m.deprecated,
           provider: m.provider.provider,
@@ -163,5 +158,26 @@ export class ModelProviderService {
     }
 
     return modelProviderModelsResponse;
+  }
+
+  getAllIconObject(pluginId: string) {
+    return {
+      icon: {
+        en_US: this.marketplaceService.getModelProviderIconUrl(pluginId),
+        zh_Hans: this.marketplaceService.getModelProviderIconUrl(pluginId, 'light', 'zh_Hans'),
+      },
+      iconDark: {
+        en_US: this.marketplaceService.getModelProviderIconUrl(pluginId, 'dark'),
+        zh_Hans: this.marketplaceService.getModelProviderIconUrl(pluginId, 'dark', 'zh_Hans'),
+      },
+      iconSmall: {
+        en_US: this.marketplaceService.getModelProviderIconUrl(pluginId, 'light', 'en_US', true),
+        zh_Hans: this.marketplaceService.getModelProviderIconUrl(pluginId, 'light', 'zh_Hans', true),
+      },
+      iconSmallDark: {
+        en_US: this.marketplaceService.getModelProviderIconUrl(pluginId, 'dark', undefined, true),
+        zh_Hans: this.marketplaceService.getModelProviderIconUrl(pluginId, 'dark', 'zh_Hans', true),
+      },
+    };
   }
 }

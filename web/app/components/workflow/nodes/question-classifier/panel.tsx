@@ -2,16 +2,14 @@ import { useMemo } from "react";
 import { CirclePlus } from "lucide-react";
 import { useStoreApi } from "@xyflow/react";
 import { useTranslation } from "react-i18next";
-import { SimpleSelect } from "@/app/ui/select";
 import { VarPicker } from "../../components/variable/var-picker";
-import {
-  getWorkflowModelSelectItems,
-  getWorkflowModelById,
-} from "../../components/nodes-shared/model-options";
 import { useWorkflowStore } from "../../context";
 import { useNodeConfig } from "../../hooks/use-node-config";
 import { useNodesUpdate } from "../../hooks/use-nodesUpdate";
 import type { Node, Variable, VariableSelector } from "../../types";
+import { useModelProviderContext } from "@/context/model-provider-context";
+import { ModelPicker } from "../../components/model-picker";
+import { toSelectModel } from "@/types/model";
 import ClassifierList from "./list";
 import type { QuestionClassifierCategory, QuestionClassifierNodeData } from "./types";
 import { useQuestionClassifier } from "./hooks";
@@ -26,12 +24,13 @@ const QuestionClassifierPanel = ({ node }: QuestionClassifierPanelProps) => {
   const { availableNodes, nodeVariableList } = useNodeConfig(node.id);
   const { onNodeDataUpdate } = useNodesUpdate();
   const { createCategory, normalizeCategories, getDefaultCategoryName } = useQuestionClassifier();
+  const { modelProviderModels } = useModelProviderContext();
 
   const categories = normalizeCategories(node.data.categories);
   const inputVariable = node.data.inputVariable;
   const modelId = node.data.modelId ?? '';
-  const modelItems = getWorkflowModelSelectItems();
-  const selectedModel = getWorkflowModelById(modelId);
+  const provider = node.data.provider ?? '';
+  const selectedModel = toSelectModel(modelProviderModels, provider, modelId);
 
   const syncNodeData = (patch: Partial<QuestionClassifierNodeData>) => {
     const nextNode = {
@@ -91,7 +90,7 @@ const QuestionClassifierPanel = ({ node }: QuestionClassifierPanelProps) => {
         </div>
         <div className="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
           <span className="rounded-full bg-background px-2.5 py-1">
-            {selectedModel ? `${selectedModel.provider} / ${selectedModel.name}` : t('workflow.nodes.base.no-select-model')}
+            {selectedModel ? `${selectedModel.provider} / ${selectedModel.model}` : t('workflow.nodes.base.no-select-model')}
           </span>
           <span className="rounded-full bg-background px-2.5 py-1">{t('workflow.nodes.question-classifier.category-count', { count: categories.length })}</span>
         </div>
@@ -99,12 +98,11 @@ const QuestionClassifierPanel = ({ node }: QuestionClassifierPanelProps) => {
 
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-1">
         <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.base.llm-select-label')}</div>
-        <SimpleSelect
-          items={modelItems}
-          defaultValue={modelId}
-          allowSearch={false}
+        <ModelPicker
+          selectedModel={selectedModel}
+          modelList={modelProviderModels}
+          onSelect={(model) => syncNodeData({ modelId: model.model, provider: model.provider })}
           className="w-full"
-          onSelect={(item) => syncNodeData({ modelId: String(item.value) })}
         />
       </section>
 

@@ -9,6 +9,7 @@ export type ParameterExtractorItem = {
 
 export type ParameterExtractorNodeData = NodeData<{
   modelId?: string;
+  provider?: string;
   inputVariable?: VariableSelector;
   enableVision?: boolean;
   parameters?: ParameterExtractorItem[];

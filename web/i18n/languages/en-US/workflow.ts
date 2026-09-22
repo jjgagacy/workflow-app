@@ -2,6 +2,9 @@ import { dialogueCountVariable } from "@/app/components/workflow/constants";
 
 const translation = {
   parallelLimit: 'Maximum parallel limit of {{num}} exceeded',
+  common: {
+    noResults: 'No results found',
+  },
   nodes: {
     base: {
       name: 'Base',
@@ -180,6 +183,7 @@ const translation = {
       exceptionStopExecution: 'Exception Handling: Stop Execution',
       description2: 'Select a model and configure prompts to generate text results for subsequent nodes.',
       model: 'Model',
+      selectModel: 'Select Model',
       prompt: 'Prompt',
       systemPrompt: 'System Prompt',
       systemPromptPlaceholder: 'Define the role, boundaries, and style of the assistant.',
@@ -735,6 +739,16 @@ const translation = {
       ifElseConditionMissing: 'Please add at least one condition for branch "{{branch}}".',
       ifElseVariableMissing: 'Please select a variable for condition {{index}} in branch "{{branch}}".',
       ifElseValueMissing: 'Please enter a comparison value for condition {{index}} in branch "{{branch}}".'
+    }
+  },
+  model: {
+    modelStatus: {
+      active: 'Active',
+      noConfigure: 'No Configure',
+      quotaExceeded: 'Quota Exceeded',
+      noPermission: 'No Permission',
+      disabled: 'Disabled',
+      unknown: 'Unknown Status',
     }
   }
 };

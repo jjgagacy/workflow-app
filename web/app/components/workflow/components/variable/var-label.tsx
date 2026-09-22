@@ -30,7 +30,7 @@ export const VariableLabel = ({
 
   return (
     <div
-      className={cn('w-full inline-flex h-6 max-w-full items-center space-x-0.5 rounded-sm border-[var(--border)] px-1.5 shadow-xs', className)}
+      className={cn('w-full inline-flex h-6 max-w-full items-center space-x-0.5 rounded-sm border-[var(--border)] px-1.5 shadow-xs flex-1', className)}
       ref={ref}
       onClick={onClick}
     >

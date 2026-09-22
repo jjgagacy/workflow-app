@@ -2,13 +2,16 @@ import { NodeProps, useUpdateNodeInternals } from "@xyflow/react";
 import { useEffect, useMemo } from "react";
 import { NodeSourceHandle } from "../../components/handle/node-source-handle";
 import { BranchItem, NodeHeader } from "../../components/nodes-shared";
-import { getWorkflowModelById } from "../../components/nodes-shared/model-options";
 import { getNodeTypeIcon } from "../../data";
 import type { Node } from "../../types";
 import { getNodeTypeIconColor } from "../../utils/node";
 import type { QuestionClassifierNodeData } from "./types";
 import { useTranslation } from "react-i18next";
 import { useQuestionClassifier } from "./hooks";
+import { useModelProviderContext } from "@/context/model-provider-context";
+import { ModelIcon } from "../../components/model-picker/model-icon";
+import { getClientLocale, getLocalizedText } from "@/i18n";
+import { getLanguage } from "@/i18n/config";
 
 const QuestionClassifierNode = ({ id, data }: NodeProps<Node<QuestionClassifierNodeData>>) => {
   const { t } = useTranslation();
@@ -16,10 +19,13 @@ const QuestionClassifierNode = ({ id, data }: NodeProps<Node<QuestionClassifierN
   const iconColor = getNodeTypeIconColor(data.type);
   const updateNodeInternals = useUpdateNodeInternals();
   const { normalizeCategories, getDefaultCategoryName } = useQuestionClassifier();
+  const { modelProviderModels } = useModelProviderContext();
+  const locale = getLanguage(getClientLocale());
 
   const categories = useMemo(() => normalizeCategories(data.categories), [data.categories]);
-  const model = getWorkflowModelById(data.modelId);
-  const modelLabel = model ? `${model.provider} / ${model.name}` : t('workflow.nodes.base.no-select-model');
+  const currentProvider = modelProviderModels.find((item) => item.providerName === data.provider);
+  const currentModel = currentProvider?.models.find((item) => item.model === data.modelId);
+  const modelLabel = currentModel ? getLocalizedText(currentModel.label, locale) || currentModel.model : t('workflow.nodes.base.no-select-model');
 
   useEffect(() => {
     updateNodeInternals(id);
@@ -33,6 +39,7 @@ const QuestionClassifierNode = ({ id, data }: NodeProps<Node<QuestionClassifierN
         <>
           <div className="space-y-2 p-4">
             <div className="flex items-center gap-1 text-xs">
+              {currentProvider ? <ModelIcon small src={currentProvider} alt={currentProvider.providerName} /> : null}
               <span className="truncate text-foreground">{modelLabel}</span>
             </div>
 

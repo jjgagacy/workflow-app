@@ -58,6 +58,46 @@ export const PROVIDER_CREDENTIALS = gql`
   }
 `;
 
+export const MODELS_BY_MODEL_TYPE = gql`
+  query($modelType: String) {
+    modelsByModelType(modelType: $modelType) {
+      tenantId,
+      providerName,
+      label {
+        ${I18N_FIELDS}
+      },
+      description {
+        ${I18N_FIELDS}
+      },
+      icon {
+        ${I18N_FIELDS}
+      },
+      iconDark {
+        ${I18N_FIELDS}
+      },
+      iconSmall {
+        ${I18N_FIELDS}
+      },
+      iconSmallDark {
+        ${I18N_FIELDS}
+      },
+      status,
+      models {
+        model,
+        label {
+          ${I18N_FIELDS}
+        },
+        modelType,
+        features,
+        fetchFrom,
+        modelProperties,
+        deprecated,
+        status
+      }
+    }
+  }
+`;
+
 export const MODEL_CREDENTIALS = gql`
   query($providerName: String!, model: String!, modelType: String!) {
     modelCredentials(providerName: $providerName, model: $model, modelType: $modelType) {

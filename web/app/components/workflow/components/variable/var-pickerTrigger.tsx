@@ -38,7 +38,7 @@ export const VarPickerTrigger = ({
     >
       {hasVariable ? (
         <VariableLabel
-          className="h-full border-0 bg-transparent p-0 shadow-none"
+          className="h-full border-0 bg-transparent p-0 shadow-none flex-1"
           varType={varType}
           nodeTitle={nodeData.label || ""}
           nodeType={nodeData.type}

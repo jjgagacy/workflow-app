@@ -10,6 +10,7 @@ export type LLMExceptionStrategy = 'stop-execution' | 'return-default';
 
 export type LLMNodeData = NodeData<{
   modelId?: string;
+  provider?: string;
   inputVariable?: VariableSelector;
   systemPrompt?: string;
   userPrompt?: string;

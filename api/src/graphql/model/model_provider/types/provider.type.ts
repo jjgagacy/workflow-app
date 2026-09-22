@@ -158,6 +158,12 @@ export class ModelProviderInfo {
   @Field(() => I18nObject, { nullable: true })
   iconDark?: I18nObject;
 
+  @Field(() => I18nObject, { nullable: true })
+  iconSmall?: I18nObject;
+
+  @Field(() => I18nObject, { nullable: true })
+  iconSmallDark?: I18nObject;
+
   @Field(() => [String!]!)
   supportedModelTypes!: string[];
 
@@ -206,6 +212,12 @@ export class ModelProviderModelsResponse {
 
   @Field(() => I18nObject, { nullable: true })
   iconDark?: I18nObject;
+
+  @Field(() => I18nObject, { nullable: true })
+  iconSmall?: I18nObject;
+
+  @Field(() => I18nObject, { nullable: true })
+  iconSmallDark?: I18nObject;
 
   @Field(() => CustomConfigurationStatus, { nullable: false })
   status!: CustomConfigurationStatus;

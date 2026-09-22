@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { NodeOutputVariable, Variable, VariableSelector } from "../../types";
 import { EmptyData } from "@/app/components/base/empty-data";
 import { Input } from "@/app/ui/input";
+import { cn } from "@/utils/classnames";
 import {
   getVariableGroupType,
   getVariableTypeImage,
@@ -12,6 +13,7 @@ import {
 } from "./var-functions";
 
 interface VarSelectorProps {
+  value?: VariableSelector;
   variables: NodeOutputVariable[];
   onChange: (variable: Variable, selector: VariableSelector) => void;
   wrapperWidth?: number;
@@ -20,6 +22,7 @@ interface VarSelectorProps {
 }
 
 export const VarPopList = ({
+  value,
   variables,
   onChange,
   wrapperWidth,
@@ -89,10 +92,10 @@ export const VarPopList = ({
             </div>
           )}
 
-          <div className="max-h-[260px] overflow-y-auto pr-1">
+          <div className="max-h-[360px] space-y-3 overflow-y-auto pr-1">
             {filteredVariables.length === 0 ? (
               <div className="rounded-md border border-dashed border-[var(--border)] bg-background px-3 py-4 text-center text-xs text-muted-foreground">
-                {t("workflow.common.noResults") || "No matching variables"}
+                {t("workflow.common.noResults")}
               </div>
             ) : (
               filteredVariables.map((group) => {
@@ -107,28 +110,40 @@ export const VarPopList = ({
                     </div>
 
                     <div className="space-y-1">
-                      {group.visibleVariables.map((variable) => (
-                        <button
-                          key={`${group.nodeId}-${variable.id}`}
-                          type="button"
-                          onClick={() => onChange(variable, {
-                            nodeId: group.nodeId,
-                            path: [variable.name],
-                          })}
-                          className="flex w-full items-center justify-between gap-2 rounded-md border border-transparent px-2 text-left transition-colors hover:border-[var(--border)] hover:bg-muted/50"
-                        >
-                          <span className="flex min-w-0 items-center gap-1.5">
-                            <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm bg-muted/70">
-                              {renderVariableTypeImage(group.nodeId, "h-3.5 w-3.5")}
-                            </span>
-                            <span className="truncate text-[13px] font-medium text-foreground/90">{variable.name}</span>
-                          </span>
+                      {group.visibleVariables.map((variable) => {
+                        const isSelected =
+                          value?.nodeId === group.nodeId &&
+                          Array.isArray(value.path) &&
+                          value.path[0] === variable.name;
 
-                          <span className="shrink-0 rounded bg-muted/70 px-1.5 py-0.5 text-[10px] text-muted-foreground">
-                            {variable.dataType || "string"}
-                          </span>
-                        </button>
-                      ))}
+                        return (
+                          <button
+                            key={`${group.nodeId}-${variable.id}`}
+                            type="button"
+                            onClick={() => onChange(variable, {
+                              nodeId: group.nodeId,
+                              path: [variable.name],
+                            })}
+                            className={cn(
+                              "flex w-full items-center justify-between gap-2 rounded-md border px-2 py-1.5 text-left transition-colors",
+                              isSelected
+                                ? "border-[var(--border)] bg-primary/5"
+                                : "border-transparent hover:border-[var(--border)] hover:bg-muted/50",
+                            )}
+                          >
+                            <span className="flex min-w-0 items-center gap-1.5">
+                              <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm bg-muted/70">
+                                {renderVariableTypeImage(group.nodeId, "h-3.5 w-3.5")}
+                              </span>
+                              <span className="truncate text-[13px] font-medium text-foreground/90">{variable.name}</span>
+                            </span>
+
+                            <span className="shrink-0 rounded bg-muted/70 px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                              {variable.dataType || "string"}
+                            </span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 );

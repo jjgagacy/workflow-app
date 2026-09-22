@@ -1,6 +1,7 @@
 import { createMutationHook, useGraphQLQuery } from "@/hooks/use-graphql";
 import { ModelProviderInfo } from "../types/model-provider";
-import { LIST_MODEL_PROVIDER, PROVIDER_CREDENTIALS } from "../queries";
+import type { ModelProviderModels } from "@/types/model";
+import { LIST_MODEL_PROVIDER, MODELS_BY_MODEL_TYPE, PROVIDER_CREDENTIALS } from "../queries";
 import { CredentialInput } from "../types";
 import { SAVE_CREDENTIALS } from "../mutations";
 
@@ -18,6 +19,28 @@ export const useGetModelProviderList = (params: {
 
   return {
     modelProviders: data?.modelProviderList?.data,
+    isLoading,
+    error,
+    mutate
+  }
+}
+
+export const useGetModelsByModelType = (params: {
+  modelType?: string;
+} = {}) => {
+  const { data, error, isLoading, mutate } = useGraphQLQuery<{
+    modelsByModelType: ModelProviderModels[];
+  }, typeof params>(
+    MODELS_BY_MODEL_TYPE,
+    params,
+    {
+      shouldRetryOnError: false,
+      revalidateOnReconnect: true
+    }
+  );
+
+  return {
+    modelProviderModels: data?.modelsByModelType,
     isLoading,
     error,
     mutate

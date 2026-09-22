@@ -12,7 +12,7 @@ export const VariableName = ({
 }: VarNameProps) => {
   const varName = useVarName(variableSelector);
   return (
-    <div className={`max-w-[100px] truncate text-text-secondary ${className}`} title={varName}>
+    <div className={`max-w-[180px] truncate text-text-secondary ${className}`} title={varName}>
       {varName}
     </div>
   );

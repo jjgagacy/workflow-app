@@ -1,5 +1,8 @@
 const translation = {
   parallelLimit: '超过最大并行限制 {{num}}',
+  common: {
+    noResults: '未找到结果',
+  },
   nodes: {
     base: {
       name: '基础节点',
@@ -176,6 +179,7 @@ const translation = {
       exceptionStopExecution: '异常处理: 停止执行',
       description2: '选择模型并配置提示词，生成文本结果供后续节点使用。',
       model: '大模型',
+      selectModel: '选择模型',
       prompt: '提示词',
       systemPrompt: '系统提示词',
       systemPromptPlaceholder: '定义助手的角色、边界和风格。',
@@ -730,6 +734,16 @@ const translation = {
       ifElseConditionMissing: '请为分支"{{branch}}"至少添加一个条件。',
       ifElseVariableMissing: '请为分支"{{branch}}"中的条件 {{index}} 选择变量。',
       ifElseValueMissing: '请为分支"{{branch}}"中的条件 {{index}} 输入比较值。'
+    }
+  },
+  model: {
+    modelStatus: {
+      active: '激活',
+      noConfigure: '未配置',
+      quotaExceeded: '超出配额',
+      noPermission: '无权限',
+      disabled: '已禁用',
+      unknown: '未知状态',
     }
   }
 };

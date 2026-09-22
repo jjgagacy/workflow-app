@@ -1,8 +1,9 @@
 'use client';
 
-import { useGetModelProviderList } from "@/api/graphql/model-provider/settings/model-provider";
+import { useGetModelProviderList, useGetModelsByModelType } from "@/api/graphql/model-provider/settings/model-provider";
 import { ModelProviderInfo } from "@/api/graphql/model-provider/types/model-provider";
 import { toast } from "@/app/ui/toast";
+import { ModelProviderModels, ModelType } from "@/types/model";
 import { getErrorMessage } from "@/utils/errors";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -10,17 +11,22 @@ export interface ModelProviderContextType {
   modelProviderList: ModelProviderInfo[];
   mutateModelProviderList: () => Promise<any>;
   enableBilling: boolean;
+  modelProviderModels: ModelProviderModels[];
+  mutateModelsByModelType: () => Promise<any>;
 }
 
 const ModelProviderContext = createContext<ModelProviderContextType>({
   modelProviderList: [],
   mutateModelProviderList: async () => { },
-  enableBilling: false
+  enableBilling: false,
+  modelProviderModels: [],
+  mutateModelsByModelType: async () => { },
 });
 
 export function ModelProviderContextProvider({ children }: { children: React.ReactNode }) {
   const [enableBilling, setEnableBilling] = useState<boolean>(false);
   const { modelProviders, mutate, error } = useGetModelProviderList();
+  const { modelProviderModels, mutate: mutateModelsByModelType, error: modelsByModelTypeError } = useGetModelsByModelType({ modelType: ModelType.llm });
 
   useEffect(() => {
     if (error) {
@@ -32,7 +38,9 @@ export function ModelProviderContextProvider({ children }: { children: React.Rea
     <ModelProviderContext.Provider value={{
       modelProviderList: modelProviders || [],
       mutateModelProviderList: mutate,
-      enableBilling
+      enableBilling,
+      modelProviderModels: modelProviderModels || [],
+      mutateModelsByModelType: mutateModelsByModelType
     }}>
       {children}
     </ModelProviderContext.Provider>

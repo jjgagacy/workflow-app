@@ -1,16 +1,14 @@
 import { useTranslation } from "react-i18next";
 import { Checkbox } from "@/app/ui/checkbox";
-import { SimpleSelect } from "@/app/ui/select";
 import { NodeInput } from "../../components/base/node-input";
 import { VarPicker } from "../../components/variable/var-picker";
-import {
-  getWorkflowModelById,
-  getWorkflowModelSelectItems,
-} from "../../components/nodes-shared/model-options";
 import { useWorkflowStore } from "../../context";
 import { useNodeConfig } from "../../hooks/use-node-config";
 import { useNodesUpdate } from "../../hooks/use-nodesUpdate";
 import type { Node, Variable, VariableSelector } from "../../types";
+import { useModelProviderContext } from "@/context/model-provider-context";
+import { ModelPicker } from "../../components/model-picker";
+import { toSelectModel } from "@/types/model";
 import {
   createParameterExtractorItem,
   normalizeParameterExtractorItems,
@@ -29,13 +27,15 @@ const ParameterExtractorPanel = ({ node }: ParameterExtractorPanelProps) => {
   const updateActivePanelNode = useWorkflowStore((state) => state.updateActivePanelNode);
   const { availableNodes, nodeVariableList } = useNodeConfig(node.id);
   const { onNodeDataUpdate } = useNodesUpdate();
+  const { modelProviderModels } = useModelProviderContext();
 
   const modelId = node.data.modelId ?? '';
+  const provider = node.data.provider ?? '';
   const inputVariable = node.data.inputVariable;
   const enableVision = Boolean(node.data.enableVision);
   const parameters = normalizeParameterExtractorItems(node.data.parameters);
   const outputVariableName = node.data.outputVariableName ?? DEFAULT_OUTPUT_VARIABLE_NAME;
-  const model = getWorkflowModelById(modelId);
+  const selectedModel = toSelectModel(modelProviderModels, provider, modelId);
   const outputFields = [
     ...parameters
       .filter((parameter) => parameter.name.trim())
@@ -47,8 +47,6 @@ const ParameterExtractorPanel = ({ node }: ParameterExtractorPanelProps) => {
     { name: '_errorMessage', description: t('workflow.nodes.parameter-extractor.outputFieldErrorMessage') },
     { name: '_usage', description: t('workflow.nodes.parameter-extractor.outputFieldUsage') },
   ];
-
-  const modelItems = getWorkflowModelSelectItems();
 
   const syncNodeData = (patch: Partial<ParameterExtractorNodeData>) => {
     const nextNode = {
@@ -102,19 +100,18 @@ const ParameterExtractorPanel = ({ node }: ParameterExtractorPanelProps) => {
     <div className="space-y-0">
       <ParameterExtractorInfo
         label={node.data.label}
-        modelLabel={model ? `${model.provider} / ${model.name}` : t('workflow.nodes.parameter-extractor.no_models')}
+        modelLabel={selectedModel?.model ? `${selectedModel.provider} / ${selectedModel.model}` : t('workflow.nodes.parameter-extractor.no_models')}
         parameterCount={parameters.length}
         enableVision={enableVision}
       />
 
       <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-1">
         <div className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">{t('workflow.nodes.parameter-extractor.model')}</div>
-        <SimpleSelect
-          items={modelItems}
-          defaultValue={modelId}
-          allowSearch={false}
+        <ModelPicker
+          selectedModel={selectedModel}
+          modelList={modelProviderModels}
+          onSelect={(model) => syncNodeData({ modelId: model.model, provider: model.provider })}
           className="w-full"
-          onSelect={(item) => syncNodeData({ modelId: String(item.value) })}
         />
       </section>
 

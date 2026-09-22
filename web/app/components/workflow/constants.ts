@@ -278,7 +278,7 @@ export const workflowRunIdVariable: Variable = {
 
 export const timestampVariable: Variable = {
   id: 'system.timestamp',
-  name: 'system.timestamp',
+  name: 'timestamp',
   sourceType: ValueSourceMode.constant,
   dataType: VariableDataType.string,
   label: 'workflow.var.system.timestamp',

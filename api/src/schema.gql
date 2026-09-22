@@ -320,15 +320,15 @@ type ModelCredentialSchema {
 
 """模型功能"""
 enum ModelFeature {
-  AGENT_THROUGHT
+  AGENT_THOUGHT
   AUDIO
   DOCUMENT
   MULTI_TOOL_CALL
   STREAM_TOOL_CALL
   STRUCTURED_OUTPUT
   TOOL_CALL
-  VESION
   VIDEO
+  VISION
 }
 
 type ModelProviderInfo {
@@ -336,6 +336,8 @@ type ModelProviderInfo {
   description: I18nObject
   icon: I18nObject
   iconDark: I18nObject
+  iconSmall: I18nObject
+  iconSmallDark: I18nObject
   label: I18nObject!
   modelCredentialSchema: ModelCredentialSchema
   preferredProviderType: String!
@@ -354,6 +356,8 @@ type ModelProviderModelsResponse {
   description: I18nObject
   icon: I18nObject
   iconDark: I18nObject
+  iconSmall: I18nObject
+  iconSmallDark: I18nObject
   label: I18nObject!
   models: [ProviderModelResponse!]!
   providerName: String!

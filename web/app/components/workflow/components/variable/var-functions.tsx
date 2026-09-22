@@ -37,7 +37,6 @@ export const getVariableTypeImage = (nodeId?: string): LucideIcon => {
 };
 
 export const renderVariableTypeImage = (nodeId?: string, className = "h-3 w-3") => {
-  const Icon = getVariableTypeImage(nodeId);
   const groupType = getVariableGroupType(nodeId);
 
   return renderVariableByGroup(groupType, className);

@@ -8,6 +8,7 @@ export type QuestionClassifierCategory = {
 
 export type QuestionClassifierNodeData = NodeData<{
   modelId?: string;
+  provider?: string;
   inputVariable?: VariableSelector;
   categories?: QuestionClassifierCategory[];
 }>;

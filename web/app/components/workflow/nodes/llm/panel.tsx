@@ -24,6 +24,7 @@ const LLMPanel = ({ node }: LLMPanelProps) => {
   const { onNodeDataUpdate } = useNodesUpdate();
 
   const modelId = node.data.modelId ?? '';
+  const provider = node.data.provider ?? '';
   const inputVariable = node.data.inputVariable;
   const systemPrompt = node.data.systemPrompt ?? '';
   const userPrompt = node.data.userPrompt ?? '';
@@ -59,7 +60,7 @@ const LLMPanel = ({ node }: LLMPanelProps) => {
   return (
     <div className="space-y-0">
       <PanelHeader label={node.data.label} />
-      <ModelSection modelId={modelId} onChange={syncNodeData} />
+      <ModelSection modelId={modelId} provider={provider} onChange={syncNodeData} />
       <InputVariableSection
         nodeId={node.id}
         inputVariable={inputVariable}

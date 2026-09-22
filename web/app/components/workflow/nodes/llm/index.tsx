@@ -1,20 +1,30 @@
 import { NodeProps } from "@xyflow/react";
 import { NodeSourceHandle } from "../../components/handle/node-source-handle";
 import { NodeHeader } from "../../components/nodes-shared";
-import { getWorkflowModelById } from "../../components/nodes-shared/model-options";
 import { getNodeTypeIcon } from "../../data";
 import type { Node } from "../../types";
 import { getNodeTypeIconColor } from "../../utils/node";
 import type { LLMNodeData } from "./types";
 import { useTranslation } from "react-i18next";
 import { LLM_DEFAULT_EXCEPTION_STRATEGY } from "./data";
+import { useModelProviderContext } from "@/context/model-provider-context";
+import { ModelIcon } from "../../components/model-picker/model-icon";
+import { getClientLocale, getLocalizedText } from "@/i18n";
+import { getLanguage } from "@/i18n/config";
 
 const LLMNode = ({ id, data }: NodeProps<Node<LLMNodeData>>) => {
   const { t } = useTranslation();
   const label = data.label?.trim() || 'LLM';
   const iconColor = getNodeTypeIconColor(data.type);
-  const model = getWorkflowModelById(data.modelId);
-  const modelLabel = model ? `${model.provider} / ${model.name}` : t('workflow.nodes.no-selected-model');
+  const { modelProviderModels } = useModelProviderContext();
+  const locale = getLanguage(getClientLocale());
+  const modelId = data.modelId;
+  const provider = data.provider;
+
+  const currentProvider = modelProviderModels.find((item) => item.providerName === provider);
+  const currentModel = currentProvider?.models.find((item) => item.model === modelId);
+  const modelLabel = currentModel ? getLocalizedText(currentModel.label, locale) || currentModel.model : t('workflow.nodes.no-selected-model');
+
   const enableVision = Boolean(data.enableVision);
   const retryOnFailure = Boolean(data.retryOnFailure);
   const retryCount = Math.max(1, Number(data.retryCount) || 1);
@@ -29,7 +39,10 @@ const LLMNode = ({ id, data }: NodeProps<Node<LLMNodeData>>) => {
           <div className="space-y-2 p-4">
             <div className="rounded-lg border border-[var(--border)] bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
               <div className="flex flex-wrap gap-2">
-                <span className="rounded-full bg-background px-2.5 py-1">{modelLabel}</span>
+                <span className="inline-flex items-center gap-2 rounded-full bg-background px-2.5 py-1">
+                  {currentProvider ? <ModelIcon small src={currentProvider} alt={currentProvider.providerName} /> : null}
+                  <span>{modelLabel}</span>
+                </span>
                 <span className="rounded-full bg-background px-2.5 py-1">{enableVision ? t('workflow.nodes.llm.visionEnabled') : t('workflow.nodes.llm.visionDisabled')}</span>
                 <span className="rounded-full bg-background px-2.5 py-1">
                   {retryOnFailure ? t('workflow.nodes.llm.retryOnFailure', { count: retryCount, interval: retryIntervalMs }) : t('workflow.nodes.llm.retryOnFailure', { count: 0, interval: 0 })}

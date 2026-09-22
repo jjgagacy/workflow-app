@@ -11,7 +11,7 @@ export const HorizontalHelpLine = ({ top, left, width }: HorizontalSnapGuideLine
         top: top * zoom + y,
         left: left * zoom + x,
         width: width * zoom,
-        borderTop: '1px dashed var(--color-primary)',
+        borderTop: '1px dashed var(--color-green)',
         background: 'transparent',
       }}
     />

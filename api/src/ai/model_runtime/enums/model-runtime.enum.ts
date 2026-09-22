@@ -15,13 +15,13 @@ export enum FetchFrom {
 export enum ModelFeature {
   TOOL_CALL = 'tool-call',
   MULTI_TOOL_CALL = 'multi-tool-call',
-  AGENT_THROUGHT = 'agent-through',
-  VESION = 'vision',
+  AGENT_THOUGHT = 'agent-thought',
+  VISION = 'vision',
   STREAM_TOOL_CALL = 'stream-tool-call',
   DOCUMENT = 'document',
   VIDEO = 'video',
   AUDIO = 'audio',
-  STRUCTURED_OUTPUT = 'structure-output',
+  STRUCTURED_OUTPUT = 'structured-output',
 }
 
 export enum ModelPropertyKey {

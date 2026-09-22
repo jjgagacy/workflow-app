@@ -37,7 +37,7 @@ export class ServerlessRequestReader extends RequestReader {
     this.responseWriter = responseWriter;
 
     // 初始化 Fastify 实例
-    this.app = Fastify({ logger: true });
+    this.app = Fastify({ logger: false });
     this.setupRoutes();
   }
 

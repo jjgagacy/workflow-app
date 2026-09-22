@@ -1,5 +1,4 @@
 import type { NodeDefaultData } from "../../types";
-import { WORKFLOW_MODEL_DEFAULT_ID } from "../../components/nodes-shared/model-options";
 import type { QuestionClassifierNodeData } from "./types";
 
 const normalizeQuestionClassifierCategories = (categories?: QuestionClassifierNodeData['categories']) => {
@@ -8,7 +7,8 @@ const normalizeQuestionClassifierCategories = (categories?: QuestionClassifierNo
 
 export const questionClassifierNodeDefaultData: NodeDefaultData<QuestionClassifierNodeData> = {
   value: {
-    modelId: WORKFLOW_MODEL_DEFAULT_ID,
+    modelId: '',
+    provider: 'OpenAI',
     categories: [
       {
         id: `question-classifier-category:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`,

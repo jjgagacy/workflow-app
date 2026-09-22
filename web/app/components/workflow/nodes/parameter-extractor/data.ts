@@ -1,4 +1,3 @@
-import { WORKFLOW_MODEL_DEFAULT_ID } from "../../components/nodes-shared/model-options";
 import type { NodeDefaultData, VariableDataType } from "../../types";
 import type { ParameterExtractorItem, ParameterExtractorNodeData } from "./types";
 
@@ -24,7 +23,8 @@ export const normalizeParameterExtractorItems = (items?: ParameterExtractorItem[
 
 export const parameterExtractorNodeDefaultData: NodeDefaultData<ParameterExtractorNodeData> = {
   value: {
-    modelId: WORKFLOW_MODEL_DEFAULT_ID,
+    modelId: '',
+    provider: 'OpenAI',
     enableVision: false,
     parameters: normalizeParameterExtractorItems(),
     outputVariableName: DEFAULT_PARAMETER_EXTRACTOR_NAME,

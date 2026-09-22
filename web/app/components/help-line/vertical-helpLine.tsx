@@ -11,7 +11,7 @@ export const VerticalHelpLine = ({ top, left, height }: VerticalSnapGuideLine) =
         top: top * zoom + y,
         left: left * zoom + x,
         height: height * zoom,
-        borderLeft: '1px dashed var(--color-primary)',
+        borderLeft: '1px dashed var(--color-green)',
         background: 'transparent',
       }}
     />

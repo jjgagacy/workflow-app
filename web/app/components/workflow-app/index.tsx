@@ -19,7 +19,7 @@ const WorkflowAppContent = () => {
   const nodes = useMemo(() => {
     if (workflowDraft) {
       const nodes = prepareNodes(workflowDraft.graph.nodes || [], workflowDraft.graph.edges || []);
-      console.log('nodes', nodes)
+      // console.log('nodes', nodes)
       return nodes;
     }
     return [];
@@ -28,7 +28,7 @@ const WorkflowAppContent = () => {
   const edges = useMemo(() => {
     if (workflowDraft) {
       const edges = prepareEdges(workflowDraft.graph.nodes || [], workflowDraft.graph.edges || []);
-      console.log('edges', edges);
+      // console.log('edges', edges);
       return edges;
     }
     return [];
