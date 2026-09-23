@@ -7,8 +7,20 @@ export const GET_MODEL_PROVIDERS = gql`
       data {
         providerType,
         author,
+        provider,
         name,
-        icon,
+        icon {
+          ${I18N_FIELDS}
+        },
+        iconSmall {
+          ${I18N_FIELDS}
+        },
+        iconDark {
+          ${I18N_FIELDS}
+        },
+        iconSmallDark {
+          ${I18N_FIELDS}
+        },
         label {
           ${I18N_FIELDS}
         },

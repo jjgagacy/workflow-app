@@ -11,8 +11,6 @@ import ModelProviderSetupModal from "@/app/components/plugins/model-provider-set
 import { ModelProviderInfo } from "@/api/graphql/model-provider/types/model-provider";
 import { SearchInput } from "@/app/components/base/search-input";
 import { useRefreshPlugins } from "@/app/components/plugins/install-plugin/hooks/use-refresh-plugins";
-import { useSWRConfig } from "swr/_internal";
-import { LIST_MODEL_PROVIDER } from "@/api/graphql/model-provider/queries";
 import { toast } from "@/app/ui/toast";
 
 export default function ModelProvider() {

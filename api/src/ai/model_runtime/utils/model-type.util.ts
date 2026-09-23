@@ -3,12 +3,12 @@ import { ModelType } from "../enums/model-runtime.enum";
 
 export class ModelTypeUtil {
   private static readonly MODEL_TYPE_MAP = new Map<ModelType, string>([
-    [ModelType.LLM, 'text-generation'],
-    [ModelType.TEXT_EMBEDDING, 'embeddings'],
-    [ModelType.RERANK, 'reranking'],
-    [ModelType.SPEECH2TEXT, 'speech2text'],
-    [ModelType.TTS, 'tts'],
-    [ModelType.MODERATION, 'moderation'],
+    [ModelType.llm, 'text-generation'],
+    [ModelType.text_embedding, 'embeddings'],
+    [ModelType.rerank, 'reranking'],
+    [ModelType.speech2text, 'speech2text'],
+    [ModelType.tts, 'tts'],
+    [ModelType.moderation, 'moderation'],
   ]);
 
   private static readonly REVERSE_MODEL_TYPE_MAP: Record<string, ModelType> = (() => {

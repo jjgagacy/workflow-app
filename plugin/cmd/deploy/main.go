@@ -5,8 +5,10 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 
+	deploy_config "github.com/jjgagacy/workflow-app/plugin/cmd/deploy/config"
 	"github.com/jjgagacy/workflow-app/plugin/pkg/entities/plugin_entities"
 	"github.com/jjgagacy/workflow-app/plugin/utils"
 )
@@ -55,6 +57,11 @@ func main() {
 		}
 
 		pluginName := entry.Name()
+
+		if slices.Contains(deploy_config.PLUGIN_EXCLUDES, pluginName) || !slices.Contains(deploy_config.PLUGIN_INCLUDES, pluginName) {
+			continue
+		}
+
 		pluginPath := filepath.Join(pluginsDir, pluginName)
 		distPath := filepath.Join(pluginPath, "dist")
 		manifestPath := filepath.Join(pluginPath, "manifest.yaml")

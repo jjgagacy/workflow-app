@@ -19,3 +19,36 @@ export const GET_APP_INFO = gql`
     }
   }
 `;
+
+export const GET_SYSTEM_FEATURES = gql`
+  query GetSystemFeatures($tenantId: String) {
+    systemFeatures(tenantId: $tenantId) {
+      enableChangeEmail
+      enableEmailCodeLogin
+      enableEmailPasswordLogin
+      enableSocialOauthLogin
+      canReplaceLogo
+      datasetOperatorEnabled
+      defaultModelProviderSelectorList
+      marketplaceEnabled
+      branding {
+        enabled
+        applicationTitle
+        loginPageLogo
+        workspaceLogo
+        favicon
+      }
+      allowRegister
+      allowCreateWorkSpace
+      license {
+        status
+        expiredAt
+        workspaces {
+          enabled
+          size
+          limit
+        }
+      }
+    }
+  }
+`;

@@ -5,6 +5,10 @@ export interface ModelProvider {
   author: string;
   name: string;
   icon: string;
+  iconSmall: string;
+  iconDark: string;
+  iconSmallDark: string;
+  provider: string;
   label: I18nObject;
   description: I18nObject;
 }

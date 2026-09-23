@@ -1,41 +1,42 @@
 export enum ModelType {
-  LLM = 'llm',
-  TEXT_EMBEDDING = 'text-embedding',
-  RERANK = 'rerank',
-  SPEECH2TEXT = 'speech2text', // speech to text
-  MODERATION = 'moderation',
-  TTS = 'tts', // text to speech 
+  llm = 'llm',
+  text_embedding = 'text-embedding',
+  rerank = 'rerank',
+  speech2text = 'speech2text', // speech to text
+  moderation = 'moderation',
+  tts = 'tts', // text to speech 
 }
 
 export enum FetchFrom {
-  PREDEFINED_MODEL = 'predefined-model',
-  CUSTOMIZABLE_MODEL = 'customizable-model',
+  predefined_model = 'predefined-model',
+  customizable_model = 'customizable-model',
 }
 
 export enum ModelFeature {
-  TOOL_CALL = 'tool-call',
-  MULTI_TOOL_CALL = 'multi-tool-call',
-  AGENT_THOUGHT = 'agent-thought',
-  VISION = 'vision',
-  STREAM_TOOL_CALL = 'stream-tool-call',
-  DOCUMENT = 'document',
-  VIDEO = 'video',
-  AUDIO = 'audio',
-  STRUCTURED_OUTPUT = 'structured-output',
+  tool_call = 'tool-call',
+  multi_tool_call = 'multi-tool-call',
+  agent_thought = 'agent-thought',
+  vision = 'vision',
+  stream_tool_call = 'stream-tool-call',
+  document = 'document',
+  video = 'video',
+  audio = 'audio',
+  image = 'image',
+  structured_output = 'structured-output',
 }
 
 export enum ModelPropertyKey {
-  MODE = 'mode',
-  CONTENT_SIZE = 'content_size',
-  MAC_CHUNKS = 'max_chunks',
-  FILE_UPLOAD_LIMIT = 'file_upload_limit',
-  SUPPORTED_FILE_EXTENSIONS = 'supported_file_extensions',
-  MAX_CHARACTERS_PER_CHUNK = 'max_characters_per_chunk',
-  DEFAULT_VOICE = 'default_voice',
-  VOICES = 'voices',
-  WORD_LIMIT = 'word_limit',
-  AUDIO_TYPE = 'audio_type',
-  MAX_WORKERS = 'max_workers',
+  mode = 'mode',
+  content_size = 'content_size',
+  max_chunks = 'max_chunks',
+  file_upload_limit = 'file_upload_limit',
+  supported_file_extensions = 'supported_file_extensions',
+  max_characters_per_chunk = 'max_characters_per_chunk',
+  default_voice = 'default_voice',
+  voices = 'voices',
+  word_limit = 'word_limit',
+  audio_type = 'audio_type',
+  max_workers = 'max_workers',
 }
 
 export type ConfigureMethod = FetchFrom;

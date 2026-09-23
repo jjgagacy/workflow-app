@@ -5,19 +5,19 @@ import { ParameterOption } from "./parameter";
 export type ToolParameterOption = ParameterOption;
 
 export enum ToolParameterType {
-  STRING = CommonParameterType.STRING,
-  NUMBER = CommonParameterType.NUMBER,
-  BOOLEAN = CommonParameterType.BOOLEAN,
-  SELECT = CommonParameterType.SELECT,
-  SECRET_INPUT = CommonParameterType.SECRET_INPUT,
-  FILE = CommonParameterType.FILE,
-  FILES = CommonParameterType.FILES,
-  MODEL_SELECTOR = CommonParameterType.MODEL_SELECTOR,
-  APP_SELECTOR = CommonParameterType.APP_SELECTOR,
-  ANY = CommonParameterType.ANY,
-  OBJECT = CommonParameterType.OBJECT,
-  ARRAY = CommonParameterType.ARRAY,
-  DYNAMIC_SELECT = CommonParameterType.DYNAMIC_SELECT
+  STRING = CommonParameterType.string,
+  NUMBER = CommonParameterType.number,
+  BOOLEAN = CommonParameterType.boolean,
+  SELECT = CommonParameterType.select,
+  SECRET_INPUT = CommonParameterType.secret_input,
+  FILE = CommonParameterType.file,
+  FILES = CommonParameterType.files,
+  MODEL_SELECTOR = CommonParameterType.model_selector,
+  APP_SELECTOR = CommonParameterType.app_selector,
+  ANY = CommonParameterType.any,
+  OBJECT = CommonParameterType.object,
+  ARRAY = CommonParameterType.array,
+  DYNAMIC_SELECT = CommonParameterType.dynamic_select
 }
 
 export enum ToolParameterForm {

@@ -5,10 +5,11 @@ import { EmptyData } from "@/app/components/base/empty-data";
 import { Input } from "@/app/ui/input";
 import { getClientLocale, getLocalizedText } from "@/i18n";
 import { getLanguage } from "@/i18n/config";
-import { cn } from "@/utils/classnames";
 import type { ModelProviderModels, SelectModel } from "@/types/model";
-import { useCustomTheme } from "@/app/components/provider/customThemeProvider";
-import { ModelIcon } from "./model-icon";
+import { useModelProviderContext } from "@/context/model-provider-context";
+import { useGlobalContextStore } from "@/app/components/provider/globalContextProvider";
+import { ModelPopItem } from "./model-popItem";
+import { ModelInstallList } from "./model-installList";
 
 type ModelPopListProps = {
   modelList: ModelProviderModels[];
@@ -31,6 +32,8 @@ export const ModelPopList = ({
   const [internalSearchValue, setInternalSearchValue] = useState("");
   const locale = getLanguage(getClientLocale());
   const searchValue = searchText ?? internalSearchValue;
+  const { modelProviderList: installedProviderList } = useModelProviderContext();
+  const { systemFeatures } = useGlobalContextStore();
 
   const filteredProviders = useMemo(() => {
     const normalizedQuery = searchValue.trim().toLowerCase();
@@ -57,6 +60,13 @@ export const ModelPopList = ({
       .filter((provider) => provider.visibleModels.length > 0);
   }, [locale, modelList, searchValue]);
 
+  console.log('==', modelList)
+
+  const marketplaceProviders = useMemo(() => {
+    const marketplaceProviders = systemFeatures.defaultModelProviderSelectorList.split(',');
+    return marketplaceProviders.filter(provider => !installedProviderList.some(installed => installed.providerName === provider));
+  }, [installedProviderList, systemFeatures]);
+
   return (
     <div
       className="space-y-2 rounded-md border border-[var(--border)] bg-popover p-1.5 shadow-lg"
@@ -65,7 +75,6 @@ export const ModelPopList = ({
       {!modelList || modelList.length === 0 ? (
         <EmptyData
           title={t("workflow.common.noResults")}
-          description={<div className="text-text-secondary">{t("workflow.common.noResults")}</div>}
         />
       ) : (
         <>
@@ -92,51 +101,20 @@ export const ModelPopList = ({
               </div>
             ) : (
               filteredProviders.map((provider) => (
-                <div key={provider.providerName} className="space-y-1.5">
-                  <div className="flex items-center gap-2 px-1.5 py-1 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
-                    <ModelIcon
-                      small
-                      src={provider}
-                      alt={provider.providerName}
-                    />
-                    <span>{getLocalizedText(provider.label, locale) || provider.providerName}</span>
-                  </div>
-
-                  <div className="space-y-1">
-                    {provider.visibleModels.map((model) => {
-                      const isSelected =
-                        selectedModel?.provider === provider.providerName && selectedModel?.model === model.model;
-
-                      return (
-                        <button
-                          key={`${provider.providerName}-${model.model}`}
-                          type="button"
-                          onClick={() => onSelect({ provider: provider.providerName, model: model.model })}
-                          className={cn(
-                            "flex w-full items-center justify-between gap-2 rounded-md border px-2 py-1.5 text-left transition-colors",
-                            isSelected
-                              ? "border-[var(--border)] bg-primary/5"
-                              : "border-transparent hover:border-[var(--border)] hover:bg-muted/50",
-                          )}
-                        >
-                          <div className="flex min-w-0 items-center gap-2">
-                            <ModelIcon
-                              small
-                              src={provider}
-                              alt={provider.providerName}
-                            />
-                            <span className="truncate text-[13px] font-medium text-foreground/90">
-                              {getLocalizedText(model.label, locale) || model.model}
-                            </span>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+                <ModelPopItem
+                  key={provider.providerName}
+                  provider={provider}
+                  selectedModel={selectedModel}
+                  onSelect={onSelect}
+                />
               ))
             )}
           </div>
+
+          <ModelInstallList
+            marketplaceProviders={marketplaceProviders}
+            onInstallPlugin={(plugin: string) => { }}
+          />
         </>
       )}
     </div>

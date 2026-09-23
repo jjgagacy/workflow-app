@@ -2,9 +2,9 @@
  * Enum class for model status
  */
 export enum ModelStatus {
-  ACTIVE = 'active',
-  NO_CONFIGURE = 'no_configure',
-  QUOTA_EXCEEDED = 'quota_exceeded',
-  NO_PERMISSION = 'no_permission',
-  DISABLED = 'disabled',
+  active = 'active',
+  no_configure = 'no_configure',
+  quota_exceeded = 'quota_exceeded',
+  no_permission = 'no_permission',
+  disabled = 'disabled',
 }

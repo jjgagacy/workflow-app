@@ -40,8 +40,8 @@ export class ModelProviderService {
         preferredProviderType: config.preferredProviderType,
         customConfiguration: {
           status: config.customConfigurationAvailable()
-            ? CustomConfigurationStatus.ACTIVE
-            : CustomConfigurationStatus.UNSUPPORTED
+            ? CustomConfigurationStatus.active
+            : CustomConfigurationStatus.unsupported
         } as CustomConfiguration,
         systemConfiguration: {
           enabled: config.systemConfiguration.enabled,
@@ -142,13 +142,13 @@ export class ModelProviderService {
         providerName,
         ...this.getAllIconObject(pluginId),
         label: providerModels[0].provider.label,
-        status: CustomConfigurationStatus.ACTIVE,
+        status: CustomConfigurationStatus.active,
         models: providerModels.map(m => ({
           model: m.model,
           label: m.label,
           modelType: m.modelType,
           features: m.features,
-          fetchFrom: m.fetchFrom || FetchFrom.PREDEFINED_MODEL,
+          fetchFrom: m.fetchFrom || FetchFrom.predefined_model,
           modelProperties: m.modelProperties,
           deprecated: m.deprecated,
           provider: m.provider.provider,

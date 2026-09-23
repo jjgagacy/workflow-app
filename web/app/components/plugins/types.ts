@@ -7,6 +7,9 @@ export type Plugin = {
   author: string;
   name: string;
   icon: string;
+  iconDark: string;
+  iconSmall: string;
+  iconSmallDark: string;
   label: Record<string, string>;
   description?: Record<string, string>;
 }

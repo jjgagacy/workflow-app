@@ -93,6 +93,12 @@ export class Feature {
   @ApiProperty({ default: false })
   datasetOperatorEnabled: boolean = false;
 
+  @ApiProperty({ default: '' })
+  defaultModelProviderSelectorList: string = '';
+
+  @ApiProperty({ default: false })
+  marketplaceEnabled: boolean = false;
+
   @ApiProperty({ type: LicenseLimitation })
   workspaceMembers: LicenseLimitation = new LicenseLimitation();
 

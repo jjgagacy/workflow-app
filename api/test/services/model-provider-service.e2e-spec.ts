@@ -50,11 +50,12 @@ describe('ModelProviderService (e2e)', () => {
         for (const model of providerModels.models) {
           expect(model.modelType).toBe('llm');
         }
-        console.log(`${providerModels.providerName} icon`, providerModels.icon);
-        console.log(`${providerModels.providerName} iconDark`, providerModels.iconDark);
-        console.log(`${providerModels.providerName} iconSmall`, providerModels.iconSmall);
-        console.log(`${providerModels.providerName} iconSmallDark`, providerModels.iconSmallDark);
-        // console.log(`${providerModels.providerName} models:`, JSON.stringify(providerModels.models, null, 2));
+        // console.log(`${providerModels.providerName} icon`, providerModels.icon);
+        // console.log(`${providerModels.providerName} iconDark`, providerModels.iconDark);
+        // console.log(`${providerModels.providerName} iconSmall`, providerModels.iconSmall);
+        // console.log(`${providerModels.providerName} iconSmallDark`, providerModels.iconSmallDark);
+        // console.log(`${providerModels.providerName}:`, JSON.stringify(providerModels, null, 2));
+        console.log(`${providerModels.providerName} models:`, JSON.stringify(providerModels.models, null, 2));
       }
     });
   });

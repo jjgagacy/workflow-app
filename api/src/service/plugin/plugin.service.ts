@@ -34,7 +34,7 @@ export class PluginService {
       }
 
       if (!isValidPluginUniqueIdentifier(uniqueIdentifier)) {
-        throw new BadRequestException("identifier invalid");
+        throw new BadRequestException("identifier invalid " + uniqueIdentifier);
       }
       const pluginUniqueIdentifier = await this.marketplaceService.findPluginUniqueIdentifier(uniqueIdentifier);
       if (pluginUniqueIdentifier) {

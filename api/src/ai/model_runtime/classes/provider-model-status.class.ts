@@ -21,16 +21,16 @@ export class ProviderModelStatus extends ProviderModel {
   }
 
   raiseForStatus(): void {
-    if (this.status == ModelStatus.ACTIVE) {
+    if (this.status == ModelStatus.active) {
       return;
     }
 
     const errorMessages: Record<ModelStatus, string> = {
-      [ModelStatus.NO_CONFIGURE]: 'Model is not configured',
-      [ModelStatus.QUOTA_EXCEEDED]: 'Model quota has been exceeded',
-      [ModelStatus.NO_PERMISSION]: 'No Permission to use this model',
-      [ModelStatus.DISABLED]: 'Model is disabled',
-      [ModelStatus.ACTIVE]: "", // This case is handled above
+      [ModelStatus.no_configure]: 'Model is not configured',
+      [ModelStatus.quota_exceeded]: 'Model quota has been exceeded',
+      [ModelStatus.no_permission]: 'No Permission to use this model',
+      [ModelStatus.disabled]: 'Model is disabled',
+      [ModelStatus.active]: "", // This case is handled above
     };
 
     if (this.status in errorMessages) {

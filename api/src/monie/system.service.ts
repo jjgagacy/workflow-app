@@ -23,6 +23,8 @@ export class SystemService {
   enterpriseEnabled: boolean;
   canReplaceLogo: boolean;
   enableChangeEmail: boolean;
+  defaultModelProviderSelectorList: string;
+  marketplaceEnabled: boolean;
 
   constructor(
     private readonly monieConfig: MonieConfig
@@ -47,5 +49,7 @@ export class SystemService {
     this.canReplaceLogo = this.monieConfig.canReplaceLogo();
     this.enableChangeEmail = this.monieConfig.enableChangeEmail();
     this.enableRequestLogging = this.monieConfig.enableRequestLogging();
+    this.defaultModelProviderSelectorList = this.monieConfig.defaultModelProviderSelectorList();
+    this.marketplaceEnabled = this.monieConfig.marketplaceEnabled();
   }
 }

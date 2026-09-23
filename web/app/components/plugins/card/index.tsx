@@ -5,6 +5,7 @@ import { getLanguage } from "@/i18n/config";
 import { cn } from "@/utils/classnames";
 import Button from "../../base/button";
 import { useTranslation } from "react-i18next";
+import { ModelIcon } from "../../workflow/components/model-picker/model-icon";
 
 export type CardProps = {
   className?: string;
@@ -26,7 +27,15 @@ const Card = ({ className, plugin, footer, isLoading, locale: localeFromProps, o
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center space-x-3">
           <div className={`w-auto rounded-lg flex items-center justify-center text-white font-medium`}>
-            <img src={plugin.icon} alt={plugin.author} className="w-auto h-[16px]" />
+            <ModelIcon
+              small={true}
+              src={{
+                icon: plugin.icon,
+                iconDark: plugin.iconDark,
+                iconSmall: plugin.iconSmall,
+                iconSmallDark: plugin.iconSmallDark,
+              }}
+            />
           </div>
           <div>
             <h3 className="font-medium text-gray-900 dark:text-white">{getLocalizedText(plugin.label, locale)}</h3>

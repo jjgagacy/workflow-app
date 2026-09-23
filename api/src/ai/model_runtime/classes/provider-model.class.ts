@@ -30,7 +30,7 @@ export class ProviderModel {
   deprecated?: boolean = false;
 
   get supportStructureOutput(): boolean {
-    return this.features?.includes(ModelFeature.STRUCTURED_OUTPUT) ?? false;
+    return this.features?.includes(ModelFeature.structured_output) ?? false;
   }
 
   constructor(props: ProviderModelProps) {
@@ -39,7 +39,7 @@ export class ProviderModel {
     this.label = props.label;
     this.modelType = props.modelType;
     this.features = props.features;
-    this.fetchFrom = props.fetchFrom || FetchFrom.PREDEFINED_MODEL;
+    this.fetchFrom = props.fetchFrom || FetchFrom.predefined_model;
     this.deprecated = props.deprecated ?? false;
   }
 }

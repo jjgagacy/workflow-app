@@ -40,6 +40,8 @@ export class FeatureService {
     feature.enableEmailPasswordLogin = this.systemService.enableEmailPasswordLogin;
     feature.enableSocialOauthLogin = this.systemService.enableSocialOauthLogin;
     feature.enableChangeEmail = this.systemService.enableChangeEmail;
+    feature.defaultModelProviderSelectorList = this.systemService.defaultModelProviderSelectorList;
+    feature.marketplaceEnabled = this.systemService.marketplaceEnabled;
   }
 
   private async fullfillFeatureFromBillingApi(feature: Feature, tenantId: string): Promise<void> {

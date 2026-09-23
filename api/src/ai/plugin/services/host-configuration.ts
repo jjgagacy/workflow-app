@@ -298,7 +298,7 @@ export class HostConfiguration implements OnModuleInit {
     return modelList
       .map(modelName => modelName.trim())
       .filter(modelName => modelName)
-      .map(modelName => new RestrictModel(modelName, ModelType.LLM));
+      .map(modelName => new RestrictModel(modelName, ModelType.llm));
   }
 
 }

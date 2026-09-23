@@ -6,14 +6,14 @@ describe("ModelType (e2e)", () => {
 
   describe("ModelType Util", () => {
     it('toValue() util function', () => {
-      const llm = ModelType.LLM;
+      const llm = ModelType.llm;
       const llm_value = ModelTypeUtil.toValue(llm);
       expect(llm_value).toBe('text-generation');
     });
 
     it('valueOf() util function', () => {
       const llm_object = ModelTypeUtil.valueOf('text-generation');
-      expect(llm_object).toBe(ModelType.LLM);
+      expect(llm_object).toBe(ModelType.llm);
     });
 
     it('valueOf() should throw error for invalid value', () => {

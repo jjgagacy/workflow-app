@@ -7,23 +7,6 @@ import { GraphQLJSON } from 'graphql-type-json';
 registerEnumType(ModelStatus, {
   name: 'ModelStatus', // GraphQL 中的类型名称
   description: '模型状态', // 可选：类型描述
-  valuesMap: {
-    ACTIVE: {
-      description: '模型处于活动状态', // 可选：为每个值添加描述
-    },
-    NO_CONFIGURE: {
-      description: '模型未配置', // 可选：为每个值添加描述
-    },
-    QUOTA_EXCEEDED: {
-      description: '模型配额已超出', // 可选：为每个值添加描述
-    },
-    NO_PERMISSION: {
-      description: '没有权限使用该模型', // 可选：为每个值添加描述
-    },
-    DISABLED: {
-      description: '模型已禁用', // 可选：为每个值添加描述
-    },
-  },
 });
 
 registerEnumType(ModelFeature, {

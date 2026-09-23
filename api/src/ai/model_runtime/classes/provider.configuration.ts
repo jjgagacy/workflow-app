@@ -111,10 +111,10 @@ export class ProviderConfiguration {
     const providerModels: ModelWithProvider[] = [];
     for (const modelType of modelTypes) {
       for (const model of providerDeclaration.models.filter(m => m.modelType === modelType)) {
-        let status = ModelStatus.ACTIVE;
+        let status = ModelStatus.active;
         const modelSetting = modelSettingMap[modelType]?.[model.model];
         if (modelSetting && !modelSetting.enabled) {
-          status = ModelStatus.DISABLED;
+          status = ModelStatus.disabled;
         }
 
         providerModels.push(new ModelWithProvider({
@@ -142,10 +142,10 @@ export class ProviderConfiguration {
           continue;
         }
 
-        let status = credentials ? ModelStatus.ACTIVE : ModelStatus.DISABLED;
+        let status = credentials ? ModelStatus.active : ModelStatus.disabled;
         const modelSetting = modelSettingMap[modelType]?.[model.model];
         if (modelSetting && !modelSetting.enabled) {
-          status = ModelStatus.DISABLED;
+          status = ModelStatus.disabled;
         }
 
         providerModels.push(new ModelWithProvider({

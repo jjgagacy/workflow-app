@@ -113,6 +113,7 @@ import { AppsService } from './ai/apps/apps.service';
 import { AppManagerService } from './service/app-manager.service';
 import { InstalledAppService } from './ai/apps/installed-app.service';
 import { WorkflowResolver } from './graphql/workspace/resolvers/workflow.resolver';
+import { SystemFeaturesResolver } from './graphql/app/resolvers/system-features.resolver';
 import { ClearCacheCommand } from './commands/clear-cache.command';
 
 // const isWorkerThread = !require.main?.filename.includes('worker');
@@ -280,6 +281,7 @@ import { ClearCacheCommand } from './commands/clear-cache.command';
     InstalledAppService,
     AppManagerService,
     WorkflowResolver,
+    SystemFeaturesResolver,
     ClearCacheCommand
   ],
 })

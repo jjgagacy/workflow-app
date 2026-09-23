@@ -15,9 +15,9 @@ export class AIModel extends ProviderModel {
 
   private validateModel(): void {
     if (!this.features) {
-      this.features = [ModelFeature.STRUCTURED_OUTPUT];
+      this.features = [ModelFeature.structured_output];
     } else {
-      this.features.push(ModelFeature.STRUCTURED_OUTPUT);
+      this.features.push(ModelFeature.structured_output);
     }
   }
 }

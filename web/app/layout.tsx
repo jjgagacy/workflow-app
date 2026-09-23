@@ -7,6 +7,7 @@ import Providers from "./components/provider/providers";
 import { generateMetadata as Metadata } from "./components/layout/metadata";
 import { ThemeProvider } from "next-themes";
 import { Inter } from 'next/font/google'
+import { GlobalContextProvider } from "./components/provider/globalContextProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,19 +42,21 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-black`}
       >
-        <ThemeProvider
-          attribute={'data-theme'}
-          defaultTheme='system'
-          enableSystem={true}
-          disableTransitionOnChange
-        >
-          <I18nServer>
-            <Providers activeThemeValue={activeThemeValue || 'system'} activeColorThemeValue={activeAppearanceValue || 'default'}>
-              {children}
-            </Providers>
-          </I18nServer>
-        </ThemeProvider>
+        <GlobalContextProvider>
+          <ThemeProvider
+            attribute={'data-theme'}
+            defaultTheme='system'
+            enableSystem={true}
+            disableTransitionOnChange
+          >
+            <I18nServer>
+              <Providers activeThemeValue={activeThemeValue || 'system'} activeColorThemeValue={activeAppearanceValue || 'default'}>
+                {children}
+              </Providers>
+            </I18nServer>
+          </ThemeProvider>
+        </GlobalContextProvider>
       </body>
-    </html>
+    </html >
   );
 }

@@ -17,6 +17,6 @@ export enum SystemConfigurationStatus {
 }
 
 export enum CustomConfigurationStatus {
-  ACTIVE = 'active',
-  UNSUPPORTED = 'unsupported'
+  active = 'active',
+  unsupported = 'unsupported'
 }

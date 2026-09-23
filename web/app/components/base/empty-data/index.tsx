@@ -17,7 +17,7 @@ export const EmptyData = ({
 }: EmptyDataProps) => {
   return (
     <div className={cn(
-      "flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-[var(--border)] p-4 text-center",
+      "flex flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-[var(--border)] p-2 text-center",
       className
     )}>
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background text-foreground">

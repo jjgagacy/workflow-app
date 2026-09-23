@@ -59,23 +59,6 @@ export class SystemConfiguration {
 registerEnumType(FormType, {
   name: 'FormType', // GraphQL 中的类型名称
   description: '表单字段类型', // 可选：类型描述
-  valuesMap: {
-    TEXT_INPUT: {
-      description: '文本输入框', // 可选：为每个值添加描述
-    },
-    SECRET_INPUT: {
-      description: '密码/密钥输入框',
-    },
-    SELECT: {
-      description: '下拉选择框',
-    },
-    RADIO: {
-      description: '单选框',
-    },
-    SWITCH: {
-      description: '开关',
-    },
-  },
 });
 
 @ObjectType('CredentialFormSchema')

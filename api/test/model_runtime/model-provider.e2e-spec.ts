@@ -11,11 +11,11 @@ describe("ModelProvider (e2e)", () => {
     it('raiseForStatus() not throw', () => {
       const modelWithStatus = new ModelWithProvider({
         model: 'gpt-4',
-        modelType: ModelType.LLM,
+        modelType: ModelType.llm,
         modelProperties: {},
         label: { zh_Hans: 'GPT-4', en_US: 'GPT-4' },
-        status: ModelStatus.ACTIVE,
-        fetchFrom: FetchFrom.CUSTOMIZABLE_MODEL,
+        status: ModelStatus.active,
+        fetchFrom: FetchFrom.customizable_model,
         loadBalancingEnabled: true,
         provider: new SimpleProvider()
       });
@@ -25,7 +25,7 @@ describe("ModelProvider (e2e)", () => {
     it('SimpleProvider create', () => {
       const simpleProvider = new SimpleProvider();
       simpleProvider.provider = 'openai';
-      simpleProvider.supportedModelTypes = [ModelType.LLM, ModelType.TEXT_EMBEDDING];
+      simpleProvider.supportedModelTypes = [ModelType.llm, ModelType.text_embedding];
     });
 
     it('toSimpleProvider create', () => {
@@ -33,7 +33,7 @@ describe("ModelProvider (e2e)", () => {
         provider: 'openai',
         label: { zh_Hans: 'OpenAI', en_US: 'OpenAI' },
         description: { zh_Hans: 'OpenAI提供的模型', en_US: 'Models provided by OpenAI' },
-        supportedModelTypes: [ModelType.LLM, ModelType.TEXT_EMBEDDING],
+        supportedModelTypes: [ModelType.llm, ModelType.text_embedding],
         providerCredentialSchema: {},
         modelCredentialSchema: {
           model: new FieldModelSchema({ zh_Hans: '模型名称', en_US: 'Model Name' }),
@@ -41,7 +41,7 @@ describe("ModelProvider (e2e)", () => {
             {
               label: { zh_Hans: 'API密钥', en_US: 'API Key' },
               variable: 'apiKey',
-              type: FormType.ANY,
+              type: FormType.any,
               required: true,
               placeholder: { zh_Hans: '请输入API密钥', en_US: 'Please enter the API key' },
               maxLength: 1000,
@@ -52,7 +52,7 @@ describe("ModelProvider (e2e)", () => {
         models: [],
       });
       provider.provider = 'openai';
-      provider.supportedModelTypes = [ModelType.LLM, ModelType.TEXT_EMBEDDING];
+      provider.supportedModelTypes = [ModelType.llm, ModelType.text_embedding];
 
       const simpleProvider = provider.toSimpleProvider();
       console.log(simpleProvider.provider);

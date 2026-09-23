@@ -3,32 +3,32 @@ import { I18nObject } from "../classes/model-runtime.class";
 export type Mapping<T = any> = Record<string, T>;
 
 export enum FormType {
-  TEXT_INPUT = 'text-input',
-  SECRET_INPUT = 'secret-input',
-  NUMBER = 'number',
-  SELECT = 'select',
-  RADIO = 'radio',
-  SWITCH = 'switch',
-  BOOLEAN = 'boolean',
-  ANY = 'any',
-  FILES = 'files',
-  FILE = 'file',
+  text_input = 'text-input',
+  secret_input = 'secret-input',
+  number = 'number',
+  select = 'select',
+  radio = 'radio',
+  switch = 'switch',
+  boolean = 'boolean',
+  any = 'any',
+  files = 'files',
+  file = 'file',
 }
 
 export enum CommonParameterType {
-  STRING = "string",
-  NUMBER = "number",
-  BOOLEAN = "boolean",
-  SELECT = "select",
-  SECRET_INPUT = "secret-input",
-  FILE = "file",
-  FILES = "files",
-  MODEL_SELECTOR = "model-selector",
-  APP_SELECTOR = "app-selector",
-  ANY = "any",
-  OBJECT = "object",
-  ARRAY = "array",
-  DYNAMIC_SELECT = "dynamic-select"
+  string = "string",
+  number = "number",
+  boolean = "boolean",
+  select = "select",
+  secret_input = "secret-input",
+  file = "file",
+  files = "files",
+  model_selector = "model-selector",
+  app_selector = "app-selector",
+  any = "any",
+  object = "object",
+  array = "array",
+  dynamic_select = "dynamic-select"
 }
 
 export class FormOption {
@@ -90,7 +90,7 @@ export class CredentialFormSchema {
 export function extractSecretVariables(credentialFormSchemas: CredentialFormSchema[]): string[] {
   const secretFormVariables: string[] = [];
   for (const credentialFormSchema of credentialFormSchemas) {
-    if (credentialFormSchema.type === FormType.SECRET_INPUT) {
+    if (credentialFormSchema.type === FormType.secret_input) {
       secretFormVariables.push(credentialFormSchema.variable);
     }
   }

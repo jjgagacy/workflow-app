@@ -13,8 +13,20 @@ export class MarketplaceModelProviderResponse {
   @Field(() => String, { description: "Name of the model" })
   name!: string;
 
-  @Field(() => String, { description: "Url of the provider icon" })
-  icon!: string;
+  @Field(() => String, { description: "Provider of the model" })
+  provider!: string;
+
+  @Field(() => I18nObject, { description: "Url of the provider icon" })
+  icon!: I18nObject;
+
+  @Field(() => I18nObject, { description: "Url of the small provider icon" })
+  iconSmall!: I18nObject;
+
+  @Field(() => I18nObject, { description: "Url of the dark provider icon" })
+  iconDark!: I18nObject;
+
+  @Field(() => I18nObject, { description: "Url of the small dark provider icon" })
+  iconSmallDark!: I18nObject;
 
   @Field(() => I18nObject, { description: "Label of the provider in multiple languages" })
   label!: I18nObject;

@@ -68,13 +68,51 @@ var (
 		Long:  "Bundle commands",
 	}
 
+	// go run cmd/main.go plugin init monyii/openai:1.0.0
+	// 注意：正常开发使用，如果是线上，用户安装插件直接会初始化，而且这个初始化不全，参考：AtomicInstallPlugin()
 	pluginInitCmd = &cobra.Command{
-		Use:   "init",
-		Short: "Initialize a new plugin",
-		Long: `Initialize a new plugin with the given parameters.
-If no parameter are provided, an interactive mode will be started.`,
+		Use:   "init [plugin_unique_identifier] [install_type] [plugins_dir]",
+		Short: "Initialize a new plugin record",
+		Long: `Initialize a Plugin record if it does not already exist.
+By default the record is created with Refers=1 and install_type=local.`,
+		Args: cobra.MaximumNArgs(3),
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("plugin init command executed")
+			if len(args) == 0 {
+				fmt.Fprintln(os.Stderr, "plugin_unique_identifier is required")
+				os.Exit(1)
+			}
+
+			pluginUID, err := plugin_entities.NewPluginUniqueIdentifier(args[0])
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "invalid plugin_unique_identifier %q: %v\n", args[0], err)
+				os.Exit(1)
+			}
+
+			installType := "local"
+			pluginsDir := "../monie-plugins"
+			if len(args) >= 2 {
+				installType = args[1]
+			}
+			if len(args) >= 3 {
+				pluginsDir = args[2]
+			}
+
+			if err := ensureDeclarationDB(); err != nil {
+				fmt.Fprintf(os.Stderr, "init db failed: %v\n", err)
+				os.Exit(1)
+			}
+			defer db.Close()
+
+			declaration, err := loadPluginDeclarationByUniqueIdentifier(pluginsDir, pluginUID)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "load declaration for %s from %s failed: %v\n", pluginUID.String(), pluginsDir, err)
+				os.Exit(1)
+			}
+
+			if err := initPluginRecord(pluginUID, installType, declaration); err != nil {
+				fmt.Fprintf(os.Stderr, "init plugin failed: %v\n", err)
+				os.Exit(1)
+			}
 		},
 	}
 
@@ -263,6 +301,56 @@ func ensureDeclarationDB() error {
 	return nil
 }
 
+func normalizeInstallType(value string) plugin_entities.PluginRuntimeType {
+	switch strings.TrimSpace(strings.ToLower(value)) {
+	case "remote":
+		return plugin_entities.PLUGIN_RUNTIME_TYPE_REMOTE
+	case "serverless":
+		return plugin_entities.PLUGIN_RUNTIME_TYPE_SERVERLESS
+	case "", "local":
+		fallthrough
+	default:
+		return plugin_entities.PLUGIN_RUNTIME_TYPE_LOCAL
+	}
+}
+
+func initPluginRecord(
+	pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier,
+	installType string,
+	declaration *plugin_entities.PluginDeclaration,
+) error {
+	normalizedInstallType := normalizeInstallType(installType)
+
+	if _, err := db.GetOne[model.Plugin](
+		db.Equal("plugin_unique_identifier", pluginUniqueIdentifier.String()),
+		db.Equal("plugin_id", pluginUniqueIdentifier.PluginID()),
+		db.Equal("install_type", string(normalizedInstallType)),
+	); err == nil {
+		fmt.Printf("plugin already exists: %s\n", pluginUniqueIdentifier.String())
+		return nil
+	} else if err != nil && err != types.ErrRecordNotFound {
+		return fmt.Errorf("query existing plugin for %s failed: %w", pluginUniqueIdentifier.String(), err)
+	}
+
+	plugin := model.Plugin{
+		PluginID:               pluginUniqueIdentifier.PluginID(),
+		PluginUniqueIdentifier: pluginUniqueIdentifier.String(),
+		InstallType:            normalizedInstallType,
+		Refers:                 1,
+	}
+
+	if normalizedInstallType == plugin_entities.PLUGIN_RUNTIME_TYPE_REMOTE && declaration != nil {
+		plugin.RemoteDeclaration = *declaration
+	}
+
+	if err := db.Create(&plugin); err != nil {
+		return fmt.Errorf("create plugin %s failed: %w", pluginUniqueIdentifier.String(), err)
+	}
+
+	fmt.Printf("Initialized plugin %s with install_type=%s refers=%d\n", pluginUniqueIdentifier.String(), normalizedInstallType, plugin.Refers)
+	return nil
+}
+
 func loadPluginDeclarationForPath(pluginPath string) (*plugin_entities.PluginDeclaration, plugin_entities.PluginUniqueIdentifier, error) {
 	decoder, err := decoder.NewFSPluginDecoder(pluginPath)
 	if err != nil {
@@ -278,6 +366,34 @@ func loadPluginDeclarationForPath(pluginPath string) (*plugin_entities.PluginDec
 	}
 
 	return &declaration, uniqueIdentifier, nil
+}
+
+func loadPluginDeclarationByUniqueIdentifier(pluginsDir string, pluginUniqueIdentifier plugin_entities.PluginUniqueIdentifier) (*plugin_entities.PluginDeclaration, error) {
+	pluginsDir = expandHomeDir(pluginsDir)
+	entries, err := os.ReadDir(pluginsDir)
+	if err != nil {
+		return nil, fmt.Errorf("read plugins directory %q: %w", pluginsDir, err)
+	}
+
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			continue
+		}
+
+		pluginPath := filepath.Join(pluginsDir, entry.Name(), "dist")
+		declaration, uniqueIdentifier, err := loadPluginDeclarationForPath(pluginPath)
+		if err != nil {
+			continue
+		}
+
+		if uniqueIdentifier.String() == pluginUniqueIdentifier.String() ||
+			uniqueIdentifier.BaseName() == pluginUniqueIdentifier.String() ||
+			uniqueIdentifier.BaseName() == pluginUniqueIdentifier.BaseName() {
+			return declaration, nil
+		}
+	}
+
+	return nil, fmt.Errorf("declaration not found for %s under %s", pluginUniqueIdentifier.String(), pluginsDir)
 }
 
 func syncPluginDeclarations(action, pluginsDir, targetName string) error {

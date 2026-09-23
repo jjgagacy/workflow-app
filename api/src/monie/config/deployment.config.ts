@@ -28,4 +28,8 @@ export class DeploymentConfig {
   deployEnvironment(): string {
     return this.configService.get<string>('DEPLY_ENVIRONMENT', 'PRODUCTION')
   }
+
+  defaultModelProviderSelectorList(): string {
+    return this.configService.get<string>('DEFAULT_MODEL_PROVIDER_SELECTOR_LIST', 'monyii/deepseek/deepseek,monyii/tongyi/tongyi');
+  }
 }
