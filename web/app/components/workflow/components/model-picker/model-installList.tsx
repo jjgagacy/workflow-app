@@ -13,6 +13,7 @@ import { toast } from "@/app/ui/toast";
 import { getErrorMessage } from "@/utils/errors";
 import { useGlobalContextStore } from "@/app/components/provider/globalContextProvider";
 import { toPluginId } from "../../utils/identifier";
+import { usePluginInstallPoll } from "@/hooks/use-pluginInstallPoll";
 
 type ModelInstallListProps = {
   marketplaceProviders: string[];
@@ -31,6 +32,7 @@ export const ModelInstallList = ({
   const { refreshPlugins } = useRefreshPlugins();
   const [installingKey, setInstallingKey] = useState<string | null>(null);
   const { systemFeatures } = useGlobalContextStore();
+  const { waitForPluginInstallation } = usePluginInstallPoll();
 
   const canInstallModelProviders = useMemo(() => {
     return (modelProviders ?? []).filter((provider) =>
@@ -40,13 +42,26 @@ export const ModelInstallList = ({
 
   const handleInstall = async (providerKey: string) => {
     setInstallingKey(providerKey);
+    const installToast = toast.loading('Installing plugin...');
     try {
       const pluginId = toPluginId(providerKey);
-      await installPluginFromMarketplace({ identifiers: [pluginId] });
-      refreshPlugins(undefined, true);
-      await refreshMarketplaceList();
+      const { allInstalled, taskId } = await installPluginFromMarketplace({ identifiers: [pluginId] });
+
+      if (!allInstalled) {
+        if (!taskId) {
+          toast.error('Plugin installation taskId is missing.');
+          return;
+        }
+        await waitForPluginInstallation(taskId);
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+      }
+
+      toast.dismiss();
+      toast.success('Plugin installed successfully');
+      await refreshPlugins(undefined, true);
       await onInstallPlugin(providerKey);
     } catch (error: any) {
+      toast.dismiss();
       toast.error(getErrorMessage(error));
     } finally {
       setInstallingKey(null);

@@ -5,7 +5,7 @@ import { TenantContextGuard } from "@/common/guards/tenant-context.guard";
 import { PluginService } from "@/service/plugin/plugin.service";
 import { BadRequestException, UseGuards } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { PluginInstallationResponse, PluginInstallResponse, PluginUninstallResponse } from "../types/plugin.type";
+import { PluginInstallationResponse, PluginInstallResponse, PluginTaskInstallationStatusResponse, PluginUninstallResponse } from "../types/plugin.type";
 import { PluginInstallation } from "@/ai/plugin/entities/plugin-installation";
 
 @Resolver()
@@ -46,6 +46,29 @@ export class PluginResolver {
     // Uninstall plugins
     const success = await this.pluginService.uninstallFromMarketplace(tenant.id, identifiers);
     return { success };
+  }
+
+  @Mutation(() => PluginTaskInstallationStatusResponse)
+  @UseGuards(AccountInitializedGuard)
+  @UseGuards(TenantContextGuard)
+  async checkPluginInstallationTask(
+    @Args('taskId', { type: () => String, nullable: true }) taskId: string | null,
+    @CurrentTenent() tenant: any
+  ): Promise<PluginTaskInstallationStatusResponse> {
+    if (taskId !== null && taskId !== undefined && typeof taskId !== 'string') {
+      throw new BadRequestException('Invalid task id');
+    }
+
+    const { success, taskInstallations } = await this.pluginService.getPluginInstallationTask(tenant.id, taskId ?? undefined);
+    return {
+      success: success,
+      taskInstallations: taskInstallations ? {
+        id: taskInstallations.id,
+        status: taskInstallations.status,
+        totalPlugins: taskInstallations.totalPlugins,
+        completedPlugins: taskInstallations.completedPlugins,
+      } : null
+    }
   }
 
   @Query(() => [PluginInstallationResponse])

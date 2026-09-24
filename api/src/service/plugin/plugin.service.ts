@@ -5,6 +5,7 @@ import { MarketplaceService } from "../marketplace.service";
 import { getPluginIdFromUniqueIdentifier, isPluginId, isValidPluginUniqueIdentifier } from "@/ai/plugin/entities/identify";
 import { PluginInstallationSource } from "@/ai/plugin/entities/plugin";
 import { PluginInstallation } from "@/ai/plugin/entities/plugin-installation";
+import { PluginInstallationTask } from "@/ai/plugin/interfaces/response.interface";
 
 @Injectable()
 export class PluginService {
@@ -14,7 +15,7 @@ export class PluginService {
     protected readonly marketplaceService: MarketplaceService
   ) { }
 
-  async installFromMarketplace(tenantId: string, identifiers: string[]): Promise<{ allInstalled: boolean }> {
+  async installFromMarketplace(tenantId: string, identifiers: string[]): Promise<{ allInstalled: boolean, taskId: string }> {
     if (!this.monieConfig.marketplaceEnabled()) {
       throw new BadRequestException("marketplace is not enabled");
     }
@@ -45,12 +46,21 @@ export class PluginService {
       }
     }
 
-    const { allInstalled } = await this.installer.installFromIdentifiers(tenantId, pluginUniqueIdentifiers, PluginInstallationSource.Marketplace, metas);
-    return { allInstalled };
+    const { allInstalled, taskId } = await this.installer.installFromIdentifiers(tenantId, pluginUniqueIdentifiers, PluginInstallationSource.Marketplace, metas);
+    return { allInstalled, taskId };
   }
 
   async listPluginsFromIds(tenantId: string, pluginIds: string[]): Promise<PluginInstallation[]> {
     return this.installer.fetchPluginInstallationByPluginIds(tenantId, pluginIds);
+  }
+
+  async fetchPluginInstallationTask(tenantId: string, taskId?: string): Promise<PluginInstallationTask | null> {
+    const { taskInstallations } = await this.installer.checkPluginInstallationTask(tenantId, taskId);
+    return taskInstallations;
+  }
+
+  async getPluginInstallationTask(tenantId: string, taskId?: string): Promise<{ success: boolean, taskInstallations: PluginInstallationTask | null }> {
+    return this.installer.checkPluginInstallationTask(tenantId, taskId);
   }
 
   async uninstallFromMarketplace(tenantId: string, identifiers: string[]): Promise<boolean> {

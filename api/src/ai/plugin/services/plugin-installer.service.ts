@@ -3,19 +3,45 @@ import { BasePluginClient } from "../../../monie/classes/base-plugin-client";
 import { PluginDeclaration } from "@/ai/model_runtime/classes/plugin/declaration";
 import { PluginInstallationSource } from "../entities/plugin";
 import { PluginInstallation } from "../entities/plugin-installation";
-import { deepSnakeToCamel } from "@/common/utils/string";
 import { ProviderID } from "../entities/provider-id.entities";
+import { PluginCheckTaskResponse, PluginInstallationTask, PluginInstallTaskResponse } from "../interfaces/response.interface";
 
-export interface PluginInstallTaskResponse {
-  allInstalled: boolean;
-  taskId: string;
-}
 
 @Injectable()
 export class PluginInstallerService {
   constructor(
     private readonly baseClient: BasePluginClient
   ) { }
+
+  async fetchPluginInstallationTask(tenantId: string, taskId: string): Promise<PluginInstallationTask> {
+    return new Promise((resolve, reject) => {
+      this.baseClient.requestWithPluginDaemonResponse<PluginInstallationTask>(
+        'GET',
+        `plugin/${tenantId}/management/install/tasks/${taskId}`,
+      ).subscribe({
+        next: (response) => resolve(response),
+        error: (error) => reject(error),
+      });
+    });
+  }
+
+  async checkPluginInstallationTask(
+    tenantId: string,
+    taskId?: string
+  ): Promise<PluginCheckTaskResponse> {
+    if (!taskId) {
+      return {
+        success: true,
+        taskInstallations: null,
+      };
+    }
+
+    const taskInstallations = await this.fetchPluginInstallationTask(tenantId, taskId);
+    return {
+      success: taskInstallations?.status === 'success',
+      taskInstallations,
+    };
+  }
 
   async fetchPluginManifest(tenantId: string, pluginUniqueIdentifier: string): Promise<PluginDeclaration> {
     return new Promise((resolve, reject) => {

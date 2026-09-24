@@ -1,13 +1,14 @@
-import { useGraphQLMutation, useGraphQLQuery } from "@/hooks/use-graphql";
-import { INSTALL_PLUGIN_FROM_MARKETPLACE, UNINSTALL_PLUGIN_FROM_MARKETPLACE } from "./mutations/plugin-mutation";
+import { createMutationHook, useGraphQLMutation, useGraphQLQuery } from "@/hooks/use-graphql";
+import { CHECK_PLUGIN_INSTALLATION_TASK, INSTALL_PLUGIN_FROM_MARKETPLACE, UNINSTALL_PLUGIN_FROM_MARKETPLACE } from "./mutations/plugin-mutation";
 import { GET_PLUGIN_INSTALLATIONS } from "./queries";
 import { PluginInstallation } from "@/app/components/plugins/types";
+import { TaskInstalltions } from "./types";
 
 export const useInstallPluginFromMarketplace = () => {
-  const mutation =
-    useGraphQLMutation<
-      { installFromMarketplace: { allInstalled: boolean } }, { identifiers: string[] }
-    >(INSTALL_PLUGIN_FROM_MARKETPLACE);
+  const mutation = useGraphQLMutation<
+    { installFromMarketplace: { allInstalled: boolean, taskId: string } },
+    { identifiers: string[] }
+  >(INSTALL_PLUGIN_FROM_MARKETPLACE);
 
   return async (params: { identifiers: string[] }) => {
     const response = await mutation({ identifiers: params.identifiers });
@@ -18,7 +19,8 @@ export const useInstallPluginFromMarketplace = () => {
 export const useUninstallPluginFromMarketplace = () => {
   const mutation =
     useGraphQLMutation<
-      { uninstallFromMarketplace: { success: boolean } }, { identifiers: string[] }
+      { uninstallFromMarketplace: { success: boolean } },
+      { identifiers: string[] }
     >(UNINSTALL_PLUGIN_FROM_MARKETPLACE);
 
   return async (params: { identifiers: string[] }) => {
@@ -26,6 +28,27 @@ export const useUninstallPluginFromMarketplace = () => {
     return response.uninstallFromMarketplace;
   };
 }
+
+export const useCheckPluginInstallationTask = createMutationHook<
+  {
+    checkPluginInstallationTask: {
+      success: boolean;
+      taskInstallations: TaskInstalltions | null;
+    };
+  },
+  {
+    taskId?: string | null;
+  },
+  {
+    success: boolean;
+    taskInstallations: TaskInstalltions | null;
+  }
+>(
+  CHECK_PLUGIN_INSTALLATION_TASK,
+  {
+    transform: (data) => data.checkPluginInstallationTask,
+  }
+);
 
 export const useListPluginInstallationFromIds = (params: {
   pluginIds: string[];

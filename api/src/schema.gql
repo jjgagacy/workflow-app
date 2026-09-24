@@ -433,6 +433,7 @@ type ModuleResponse {
 type Mutation {
   changeEmailOldSend(input: ChangeEmailSendInput!): String!
   checkLoginEmail(email: String!): Boolean!
+  checkPluginInstallationTask(taskId: String): PluginTaskInstallationStatusResponse!
   checkSignUpUsername(username: String!): Boolean!
   confirmEmailNewSend(input: ConfirmEmailNewInput!): String!
   createAccount(input: AccountInput!): AccountResponse!
@@ -530,6 +531,7 @@ input PermInput {
 
 type PluginInstallResponse {
   allInstalled: Boolean!
+  taskId: String!
 }
 
 type PluginInstallationResponse {
@@ -541,6 +543,11 @@ type PluginInstallationResponse {
   tenantId: String!
   updatedAt: Date!
   version: String!
+}
+
+type PluginTaskInstallationStatusResponse {
+  success: Boolean!
+  taskInstallations: JSON
 }
 
 type PluginUninstallResponse {

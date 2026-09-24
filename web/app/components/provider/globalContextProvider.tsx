@@ -30,6 +30,8 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
   useEffect(() => {
     if (error) {
       toast.error(getErrorMessage(error));
+      setSystemFeatures({} as SystemFeatures);
+      setPending(false);
       return;
     }
     setSystemFeatures(features);

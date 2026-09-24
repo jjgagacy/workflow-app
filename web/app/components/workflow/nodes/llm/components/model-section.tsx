@@ -13,6 +13,7 @@ type ModelSectionProps = {
 export const ModelSection = ({ modelId, provider, onChange }: ModelSectionProps) => {
   const { t } = useTranslation();
   const { modelProviderModels } = useModelProviderContext();
+  console.log("Model provider models from context:", modelProviderModels);
 
   return (
     <section className="space-y-3 rounded-xl bg-muted/15 px-4 py-4">

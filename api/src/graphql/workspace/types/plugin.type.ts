@@ -3,14 +3,25 @@ import GraphQLJSON from 'graphql-type-json';
 
 @ObjectType('PluginInstallResponse')
 export class PluginInstallResponse {
-  @Field()
+  @Field(() => Boolean)
   allInstalled!: boolean;
+  @Field({ defaultValue: '' })
+  taskId!: string;
 }
 
 @ObjectType('PluginUninstallResponse')
 export class PluginUninstallResponse {
   @Field()
   success!: boolean;
+}
+
+@ObjectType('PluginTaskInstallationStatusResponse')
+export class PluginTaskInstallationStatusResponse {
+  @Field(() => Boolean)
+  success!: boolean;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  taskInstallations!: Record<string, any> | null;
 }
 
 @ObjectType('PluginInstallationResponse')

@@ -85,7 +85,15 @@ export function createQueryHook<
           mergedQueryOptions,
         );
         if (error) {
-          throw error;
+          console.error("GraphQL query error:", error);
+          options?.onError?.(error);
+          config?.hookOptions?.onError?.(error);
+          return {
+            data: null as unknown as TTransformed,
+            mutate: null,
+            isLoading: false,
+            error
+          }
         }
         const transformedData = transform ? transform(data!) : (data as unknown as TTransformed);
         hookOptions?.onSuccess?.(transformedData);
@@ -99,7 +107,12 @@ export function createQueryHook<
       } catch (error) {
         options?.onError?.(error);
         config?.hookOptions?.onError?.(error);
-        throw error;
+        return {
+          data: null as unknown as TTransformed,
+          mutate: null,
+          isLoading: false,
+          error
+        }
       }
     }
     return enhancedQuery;
